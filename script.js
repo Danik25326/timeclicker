@@ -5,26 +5,36 @@ window.onload = function() {
   const secondHand = document.querySelector('.second');
   const clickBtn = document.getElementById('clickBtn');
   const scoreText = document.getElementById('score');
-  const phonk = document.getElementById('phonk'); // ФОНК
+  const phonk = document.getElementById('phonk');
 
   let score = 0;
+  let musicStarted = false;
 
-  // === ГРА НА ФОНК ===
-  phonk.volume = 0.4; // не дуже гучно
-  phonk.play().catch(() => {}); // автозапуск (може блокуватися)
+  // === Запускаємо фонк тільки після першої взаємодії ===
+  function startPhonk() {
+    if (!musicStarted) {
+      phonk.volume = 0.3;
+      phonk.play().catch(() => {});
+      musicStarted = true;
+    }
+  }
 
-  // Клік по годиннику — ФОНК БУМКАЄ
+  function boomEffect() {
+    // короткий "бум" в бас
+    phonk.currentTime = 0;
+    phonk.play();
+  }
+
   clock.addEventListener('click', () => {
+    startPhonk(); // запускаємо музику при першому кліку
     score++;
     scoreText.textContent = `Часу зібрано: ${score} сек`;
 
-    // Ефект зупинки
+    // ефект блиску
     clock.style.borderColor = "#ec4899";
     clock.style.boxShadow = "0 0 50px #ec4899, 0 0 100px #ec4899";
     
-    // ФОНК — РЕВЕРБ
-    phonk.currentTime = 0;
-    phonk.play();
+    boomEffect();
 
     setTimeout(() => {
       clock.style.borderColor = "#0ea5e9";
@@ -33,13 +43,12 @@ window.onload = function() {
     }, 300);
   });
 
-  // Кнопка — теж бум
   clickBtn.addEventListener('click', () => {
+    startPhonk();
     score++;
     scoreText.textContent = `Часу зібрано: ${score} сек`;
     clickBtn.textContent = 'Час піймано!';
-    phonk.currentTime = 0;
-    phonk.play();
+    boomEffect();
     setTimeout(() => {
       clickBtn.textContent = 'Клікни, щоб зупинити час!';
     }, 800);
