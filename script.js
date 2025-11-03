@@ -17,19 +17,15 @@ window.onload = function() {
     const h = Math.floor(seconds / 3600);
     const m = Math.floor((seconds % 3600) / 60);
     const s = Math.floor(seconds % 60);
-
-    let parts = [];
-    if (h > 0) parts.push(`${h} год`);
-    if (m > 0) parts.push(`${m} хв`);
-    if (s > 0 || parts.length === 0) parts.push(`${s} сек`);
-    return parts.join(' ');
+    // Завжди показує всі три одиниці
+    return `${h} год ${m} хв ${s} сек`;
   }
 
   // === АПГРЕЙДИ ===
   const upgrades = [
-    { name: "📱 Включити телефон", baseCost: 10, bonus: 1, level: 0 },
-    { name: "☕ Зробити каву", baseCost: 100, bonus: 2, level: 0 },
-    { name: "💻 Увімкнути ноут", baseCost: 1000, bonus: 3, level: 0 },
+    { name: "📱 Включити телефон", baseCost: 65, bonus: 1, level: 0 },
+    { name: "☕ Зробити каву", baseCost: 125, bonus: 2, level: 0 },
+    { name: "💻 Увімкнути ноут", baseCost: 3605, bonus: 3, level: 0 },
     { name: "🎧 Надіти навушники", baseCost: 10000, bonus: 4, level: 0 },
     { name: "💪 Почати тренування", baseCost: 100000, bonus: 5, level: 0 },
     { name: "📚 Відкрити книгу", baseCost: 1000000, bonus: 6, level: 0 },
@@ -38,7 +34,6 @@ window.onload = function() {
     { name: "🧠 Медитувати над сенсом часу", baseCost: 1000000000, bonus: 9, level: 0 },
   ];
 
-  // === СТВОРЕННЯ КНОПОК АПГРЕЙДІВ ===
   upgrades.forEach(upgrade => {
     const btn = document.createElement('button');
     btn.className = 'upgrade-btn';
@@ -63,18 +58,15 @@ window.onload = function() {
     upgradesContainer.appendChild(btn);
   });
 
-  // === ОНОВЛЕННЯ РАХУНКУ ===
   function updateScore() {
     scoreText.textContent = `Часу зібрано: ${formatTime(score)}`;
   }
 
-  // === ЕФЕКТ КЛІКУ ===
   function boomEffect() {
     clock.style.scale = "1.05";
     setTimeout(() => (clock.style.scale = "1"), 100);
   }
 
-  // === ДОДАВАННЯ ЧАСУ ===
   function addTime() {
     score += clickPower;
     updateScore();
@@ -93,7 +85,6 @@ window.onload = function() {
   clickBtn.addEventListener('click', addTime);
   clock.addEventListener('click', addTime);
 
-  // === МУЗИКА ===
   musicBtn.addEventListener('click', () => {
     if (phonk.paused) {
       phonk.volume = 0.4;
@@ -107,7 +98,6 @@ window.onload = function() {
     }
   });
 
-  // === АНІМАЦІЯ ГОДИННИКА ===
   function updateClock() {
     const now = new Date();
     const seconds = now.getSeconds();
@@ -123,5 +113,3 @@ window.onload = function() {
   updateClock();
   updateScore();
 };
-
-
