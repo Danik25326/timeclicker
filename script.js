@@ -8,13 +8,13 @@ window.onload = function() {
 
   let score = 0;
 
-  // === ФУНКЦІЇ ===
+  // === Ефект при кліку ===
   function boomEffect() {
     clock.style.scale = "1.05";
     setTimeout(() => (clock.style.scale = "1"), 100);
   }
 
-  // === ВЗАЄМОДІЯ ===
+  // === Клік по годиннику ===
   clock.addEventListener('click', () => {
     score++;
     scoreText.textContent = `Часу зібрано: ${score} сек`;
@@ -30,17 +30,14 @@ window.onload = function() {
     }, 300);
   });
 
+  // === Клік по кнопці (рахує, але не змінює текст — щоб не заважати музиці) ===
   clickBtn.addEventListener('click', () => {
     score++;
     scoreText.textContent = `Часу зібрано: ${score} сек`;
-    clickBtn.textContent = 'Час піймано!';
     boomEffect();
-    setTimeout(() => {
-      clickBtn.textContent = 'Клікни, щоб зупинити час!';
-    }, 800);
   });
 
-  // === ГОДИННИК ===
+  // === Оновлення стрілок годинника ===
   function updateClock() {
     const now = new Date();
     const seconds = now.getSeconds();
