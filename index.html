@@ -22,7 +22,7 @@
   <button id="clickBtn">Клікни, щоб зупинити час!</button>
   <p id="score">Часу зібрано: 0 сек</p>
 
- <!-- ФОНК ТУТ -->
+ <!-- 🎧 ФОНК ТУТ -->
 <audio id="phonk" loop preload="auto">
   <source src="https://raw.githubusercontent.com/Danik25326/timeclicker/main/phonk-music-409064.mp3" type="audio/mpeg">
 </audio>
@@ -31,21 +31,23 @@
 <script>
   const clickBtn = document.getElementById('clickBtn');
   const phonk = document.getElementById('phonk');
+  let playing = false; // стан: грає чи ні
 
-  let started = false;
-  function startPhonk() {
-    if (!started) {
+  function togglePhonk() {
+    if (!playing) {
       phonk.volume = 0.4;
       phonk.play().catch(() => {});
-      started = true;
+      playing = true;
+      clickBtn.textContent = '⏸ Зупинити музику';
+    } else {
+      phonk.pause();
+      playing = false;
+      clickBtn.textContent = '▶️ Включити фонк';
     }
   }
 
-  // Запуск після будь-якого кліку
-  document.addEventListener('click', startPhonk);
-
-  // або при натисканні кнопки
-  clickBtn.addEventListener('click', startPhonk);
+  // Перемикач на кнопку
+  clickBtn.addEventListener('click', togglePhonk);
 </script>
 </body>
 </html>
