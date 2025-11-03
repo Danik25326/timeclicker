@@ -4,57 +4,55 @@ window.onload = function() {
   const minuteHand = document.querySelector('.minute');
   const secondHand = document.querySelector('.second');
   const clickBtn = document.getElementById('clickBtn');
+  const musicBtn = document.getElementById('musicBtn');
+  const phonk = document.getElementById('phonk');
   const scoreText = document.getElementById('score');
   const upgradesContainer = document.getElementById('upgrades');
 
   let score = 0;
   let clickPower = 1;
+  let playing = false;
 
+  // === АПГРЕЙДИ ===
   const upgrades = [
-    { name: "📱 Включити телефон", cost: 10, bonus: 1 },
-    { name: "☕ Зробити каву", cost: 100, bonus: 2 },
-    { name: "💻 Увімкнути ноут", cost: 1000, bonus: 3 },
-    { name: "🎧 Надіти навушники", cost: 10000, bonus: 4 },
-    { name: "💪 Почати тренування", cost: 100000, bonus: 5 },
-    { name: "📚 Відкрити книгу", cost: 1000000, bonus: 6 },
-    { name: "🌇 Вийти на прогулянку", cost: 10000000, bonus: 7 },
-    { name: "🚀 Почати проєкт", cost: 100000000, bonus: 8 },
-    { name: "🧠 Медитувати над сенсом часу", cost: 1000000000, bonus: 9 },
-    { name: "⏳ Стати володарем часу", cost: 10000000000, bonus: 10 },
+    { name: "📱 Включити телефон", baseCost: 10, bonus: 1, level: 0 },
+    { name: "☕ Зробити каву", baseCost: 100, bonus: 2, level: 0 },
+    { name: "💻 Увімкнути ноут", baseCost: 1000, bonus: 3, level: 0 },
+    { name: "🎧 Надіти навушники", baseCost: 10000, bonus: 4, level: 0 },
+    { name: "💪 Почати тренування", baseCost: 100000, bonus: 5, level: 0 },
+    { name: "📚 Відкрити книгу", baseCost: 1000000, bonus: 6, level: 0 },
+    { name: "🌇 Вийти на прогулянку", baseCost: 10000000, bonus: 7, level: 0 },
+    { name: "🚀 Почати проєкт", baseCost: 100000000, bonus: 8, level: 0 },
+    { name: "🧠 Медитувати над сенсом часу", baseCost: 1000000000, bonus: 9, level: 0 },
   ];
 
   upgrades.forEach(upgrade => {
     const btn = document.createElement('button');
-    btn.textContent = `${upgrade.name} — ${upgrade.cost.toLocaleString()} сек`;
     btn.className = 'upgrade-btn';
-    btn.disabled = true;
+    updateUpgradeText();
 
     btn.addEventListener('click', () => {
-      if (score >= upgrade.cost) {
-        score -= upgrade.cost;
+      const cost = upgrade.baseCost + upgrade.level;
+      if (score >= cost) {
+        score -= cost;
+        upgrade.level++;
         clickPower += upgrade.bonus;
+        updateUpgradeText();
         updateScore();
-        btn.remove(); // ← видаляємо кнопку після покупки
-        updateButtons();
       }
     });
+
+    function updateUpgradeText() {
+      const cost = upgrade.baseCost + upgrade.level;
+      btn.textContent = `${upgrade.name} (Lv.${upgrade.level}) — ${cost.toLocaleString()} сек`;
+    }
 
     upgradesContainer.appendChild(btn);
-    upgrade.element = btn;
   });
 
+  // === ОСНОВНА ЛОГІКА ===
   function updateScore() {
     scoreText.textContent = `Часу зібрано: ${score.toLocaleString()} сек`;
-  }
-
-  function updateButtons() {
-    upgrades.forEach(upg => {
-      if (upg.element && score >= upg.cost) {
-        upg.element.disabled = false;
-      } else if (upg.element) {
-        upg.element.disabled = true;
-      }
-    });
   }
 
   function boomEffect() {
@@ -65,7 +63,6 @@ window.onload = function() {
   function addTime() {
     score += clickPower;
     updateScore();
-    updateButtons();
 
     clock.style.borderColor = "#ec4899";
     clock.style.boxShadow = "0 0 50px #ec4899, 0 0 100px #ec4899";
@@ -78,9 +75,22 @@ window.onload = function() {
     }, 300);
   }
 
-  clock.addEventListener('click', addTime);
   clickBtn.addEventListener('click', addTime);
+  clock.addEventListener('click', addTime);
 
+  // === Музика ===
+  musicBtn.addEventListener('click', () => {
+    if (phonk.paused) {
+      phonk.volume = 0.4;
+      phonk.play();
+      musicBtn.textContent = "⏸ Зупинити фонк";
+    } else {
+      phonk.pause();
+      musicBtn.textContent = "▶️ Включити фонк";
+    }
+  });
+
+  // === ГОДИННИК ===
   function updateClock() {
     const now = new Date();
     const seconds = now.getSeconds();
