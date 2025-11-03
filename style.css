@@ -132,3 +132,74 @@ body {
   font-size: 20px;
   text-shadow: 0 0 10px #3b82f6;
 }
+/* ===== КНОПКА ФОНК ===== */
+.phonk-wrapper {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}
+
+.phonk-btn {
+  position: relative;
+  background: linear-gradient(90deg, #ec4899, #8b5cf6);
+  border: none;
+  color: white;
+  font-size: 20px;
+  font-weight: 600;
+  padding: 14px 32px;
+  border-radius: 50px;
+  cursor: pointer;
+  transition: 0.3s;
+  box-shadow:
+    0 0 20px #ec4899,
+    0 0 40px rgba(236, 72, 153, 0.5),
+    inset 0 0 10px rgba(255, 255, 255, 0.3);
+  text-shadow: 0 0 6px rgba(255,255,255,0.6);
+  overflow: hidden;
+}
+
+/* блиск при наведенні */
+.phonk-btn::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -75%;
+  width: 50%;
+  height: 100%;
+  background: linear-gradient(
+    120deg,
+    rgba(255, 255, 255, 0.2) 0%,
+    rgba(255, 255, 255, 0.7) 50%,
+    rgba(255, 255, 255, 0.2) 100%
+  );
+  transform: skewX(-25deg);
+  transition: 0.7s;
+}
+
+.phonk-btn:hover::before {
+  left: 125%;
+}
+
+/* ефект пульсу */
+@keyframes phonkPulse {
+  0%, 100% {
+    box-shadow:
+      0 0 20px #ec4899,
+      0 0 40px rgba(236, 72, 153, 0.5),
+      inset 0 0 10px rgba(255, 255, 255, 0.3);
+    transform: scale(1);
+  }
+  50% {
+    box-shadow:
+      0 0 35px #8b5cf6,
+      0 0 70px rgba(139, 92, 246, 0.5),
+      inset 0 0 20px rgba(255, 255, 255, 0.4);
+    transform: scale(1.05);
+  }
+}
+
+.phonk-btn:hover {
+  animation: phonkPulse 1.2s infinite;
+  letter-spacing: 1px;
+}
+
