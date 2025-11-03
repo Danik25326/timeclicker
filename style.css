@@ -1,118 +1,87 @@
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
 body {
-  background: radial-gradient(circle at center, #0f172a, #020617);
-  color: #a5f3fc;
+  margin: 0;
   font-family: 'Poppins', sans-serif;
-  text-align: center;
-  height: 100vh;
+  background: radial-gradient(circle at center, #0b1220, #050810);
+  color: white;
   display: flex;
-  flex-direction: column;
   justify-content: center;
   align-items: center;
+  height: 100vh;
   overflow: hidden;
 }
 
-.clock {
-  position: relative;
-  width: 300px;
-  height: 300px;
-  border: 12px solid #0ea5e9;
-  border-radius: 50%;
-  margin-bottom: 40px;
-  box-shadow: 
-    0 0 30px #0ea5e9,
-    0 0 60px #0ea5e9,
-    inset 0 0 30px rgba(14, 165, 233, 0.3);
-  cursor: pointer;
-  transition: transform 0.2s;
+.container {
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 80px;
 }
 
-.clock:hover {
-  transform: scale(1.05);
-  box-shadow: 
-    0 0 50px #0ea5e9,
-    0 0 100px #0ea5e9;
+.left-panel {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
 }
 
-.clock:active {
-  transform: scale(0.95);
-}
-
-.hand {
-  position: absolute;
-  bottom: 50%;
-  left: 50%;
-  transform-origin: bottom;
-  transform: translateX(-50%) rotate(0deg);
-  border-radius: 4px;
-  transition: none;
-}
-
-.hour {
-  width: 8px;
-  height: 80px;
-  background: linear-gradient(to top, #60a5fa, #3b82f6);
-  box-shadow: 0 0 10px #60a5fa;
-}
-
-.minute {
-  width: 6px;
-  height: 110px;
-  background: linear-gradient(to top, #38bdf8, #0ea5e9);
-  box-shadow: 0 0 12px #38bdf8;
-}
-
-.second {
-  width: 3px;
-  height: 130px;
-  background: linear-gradient(to top, #f43f5e, #ec4899);
-  box-shadow: 0 0 15px #f43f5e;
-}
-
-.center-dot {
-  position: absolute;
-  width: 16px;
-  height: 16px;
-  background: #ec4899;
-  border-radius: 50%;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  box-shadow: 0 0 20px #ec4899;
-  z-index: 10;
-}
-
+/* Кнопка кліку */
 #clickBtn {
-  background: linear-gradient(135deg, #38bdf8, #0ea5e9);
-  color: #0f172a;
-  font-weight: 700;
-  font-size: 18px;
+  background: linear-gradient(90deg, #0ea5e9, #3b82f6);
   border: none;
-  padding: 14px 28px;
-  border-radius: 50px;
+  color: white;
+  font-size: 18px;
+  padding: 12px 24px;
+  border-radius: 12px;
   cursor: pointer;
-  transition: all 0.3s;
-  box-shadow: 0 0 20px rgba(14, 165, 233, 0.5);
-  margin-top: 20px;
+  transition: 0.3s;
 }
 
 #clickBtn:hover {
-  transform: translateY(-3px) scale(1.05);
-  box-shadow: 0 0 30px #0ea5e9;
+  transform: scale(1.05);
+  box-shadow: 0 0 15px #3b82f6;
 }
 
-#clickBtn:active {
-  transform: translateY(1px) scale(0.98);
-}
-
+/* Текст рахунку */
 #score {
-  margin-top: 20px;
-  font-size: 22px;
-  font-weight: 600;
-  text-shadow: 0 0 10px #38bdf8;
+  font-size: 20px;
+  text-shadow: 0 0 10px #3b82f6;
+}
+
+/* Контейнер апгрейдів (праворуч) */
+.upgrades-container {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 20px;
+  background: rgba(15, 23, 42, 0.6);
+  border-radius: 16px;
+  box-shadow: 0 0 20px rgba(59, 130, 246, 0.2);
+  width: 260px;
+  height: 500px;
+  overflow-y: auto;
+}
+
+/* Кнопки апгрейдів */
+.upgrade-btn {
+  background: linear-gradient(90deg, #0ea5e9, #3b82f6);
+  border: none;
+  color: white;
+  font-size: 16px;
+  padding: 10px 20px;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: 0.3s;
+  width: 100%;
+  text-align: left;
+}
+
+.upgrade-btn:hover:not(:disabled) {
+  transform: scale(1.05);
+  box-shadow: 0 0 15px #3b82f6;
+}
+
+.upgrade-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
