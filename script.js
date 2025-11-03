@@ -5,29 +5,17 @@ window.onload = function() {
   const secondHand = document.querySelector('.second');
   const clickBtn = document.getElementById('clickBtn');
   const scoreText = document.getElementById('score');
-  const phonk = document.getElementById('phonk');
 
   let score = 0;
-  let musicStarted = false;
 
   // === ФУНКЦІЇ ===
-  function startPhonk() {
-    if (!musicStarted) {
-      phonk.volume = 0.4;
-      phonk.play().catch(() => {});
-      musicStarted = true;
-    }
-  }
-
   function boomEffect() {
-    // короткий візуальний ефект
     clock.style.scale = "1.05";
     setTimeout(() => (clock.style.scale = "1"), 100);
   }
 
   // === ВЗАЄМОДІЯ ===
   clock.addEventListener('click', () => {
-    startPhonk();
     score++;
     scoreText.textContent = `Часу зібрано: ${score} сек`;
 
@@ -43,7 +31,6 @@ window.onload = function() {
   });
 
   clickBtn.addEventListener('click', () => {
-    startPhonk();
     score++;
     scoreText.textContent = `Часу зібрано: ${score} сек`;
     clickBtn.textContent = 'Час піймано!';
@@ -72,4 +59,3 @@ window.onload = function() {
   setInterval(updateClock, 1000);
   updateClock();
 };
-
