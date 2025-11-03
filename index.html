@@ -6,14 +6,16 @@
   <title>TimesClicker ⏰</title>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css" />
-  
-  <!-- ФАВОРИТКА -->
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⏰</text></svg>">
 </head>
 <body>
+
   <div class="container">
-    <!-- ЛІВА ПАНЕЛЬ -->
-    <div class="left-panel">
+    <!-- ЛІВА ПАНЕЛЬ: АПГРЕЙДИ -->
+    <div class="upgrades-container" id="upgrades"></div>
+
+    <!-- ПРАВА ПАНЕЛЬ: ГОДИННИК -->
+    <div class="right-panel">
       <div class="clock" id="clickableClock">
         <div class="hand hour"></div>
         <div class="hand minute"></div>
@@ -24,42 +26,14 @@
       <button id="clickBtn">Клікни, щоб зупинити час!</button>
       <p id="score">Часу зібрано: 0 сек</p>
 
+      <!-- 🎧 Музика -->
       <button id="musicBtn">▶️ Включити фонк</button>
+      <audio id="phonk" loop preload="auto">
+        <source src="https://raw.githubusercontent.com/Danik25326/timeclicker/main/phonk-music-409064.mp3" type="audio/mpeg">
+      </audio>
     </div>
-
-    <!-- ПРАВА ПАНЕЛЬ -->
-    <div id="upgrades" class="upgrades-container"></div>
   </div>
 
-  <!-- 🎧 ФОНК -->
-  <audio id="phonk" loop preload="auto">
-    <source src="https://raw.githubusercontent.com/Danik25326/timeclicker/main/phonk-music-409064.mp3" type="audio/mpeg">
-  </audio>
-
   <script src="script.js"></script>
-
-  <script>
-    // === МУЗИКА ===
-    const musicBtn = document.getElementById('musicBtn');
-    const phonk = document.getElementById('phonk');
-    let playing = false;
-
-    function togglePhonk() {
-      if (phonk.paused) {
-        phonk.currentTime = 0;
-        phonk.volume = 0.4;
-        phonk.play().then(() => {
-          playing = true;
-          musicBtn.textContent = '⏸ Зупинити фонк';
-        }).catch(err => console.log('Autoplay error:', err));
-      } else {
-        phonk.pause();
-        playing = false;
-        musicBtn.textContent = '▶️ Включити фонк';
-      }
-    }
-
-    musicBtn.addEventListener('click', togglePhonk);
-  </script>
 </body>
 </html>
