@@ -13,34 +13,31 @@ window.onload = function() {
   let clickPower = 1;
 
   // === ФОРМАТУВАННЯ ЧАСУ ===
-function formatTime(seconds) {
-  const units = [
-    { name: "століття", value: 60 * 60 * 24 * 365 * 100 },
-    { name: "десятиліття", value: 60 * 60 * 24 * 365 * 10 },
-    { name: "рік", value: 60 * 60 * 24 * 365 },
-    { name: "міс", value: 60 * 60 * 24 * 30 },
-    { name: "дн", value: 60 * 60 * 24 },
-    { name: "год", value: 60 * 60 },
-    { name: "хв", value: 60 },
-    { name: "сек", value: 1 }
-  ];
+  function formatTime(seconds) {
+    const units = [
+      { name: "століття", value: 60 * 60 * 24 * 365 * 100 },
+      { name: "десятиліття", value: 60 * 60 * 24 * 365 * 10 },
+      { name: "рік", value: 60 * 60 * 24 * 365 },
+      { name: "міс", value: 60 * 60 * 24 * 30 },
+      { name: "дн", value: 60 * 60 * 24 },
+      { name: "год", value: 60 * 60 },
+      { name: "хв", value: 60 },
+      { name: "сек", value: 1 }
+    ];
 
-  let remaining = seconds;
-  const parts = [];
-
-  for (const u of units) {
-    const amount = Math.floor(remaining / u.value);
-    if (amount > 0 || parts.length > 0) { 
-      // додаємо тільки якщо ця одиниця вже активна
-      if (amount > 0) parts.push(`${amount} ${u.name}`);
-      remaining %= u.value;
+    let remaining = seconds;
+    const parts = [];
+    for (const u of units) {
+      const amount = Math.floor(remaining / u.value);
+      if (amount > 0 || parts.length > 0) {
+        if (amount > 0) parts.push(`${amount} ${u.name}`);
+        remaining %= u.value;
+      }
     }
+    if (parts.length === 0) return `${Math.floor(seconds)} сек`;
+    return parts.join(" ");
   }
 
-  // якщо менше 1 хвилини — показуємо лише секунди
-  if (parts.length === 0) return `${Math.floor(seconds)} сек`;
-  return parts.join(" ");
-}
   // === АПГРЕЙДИ ===
   const upgrades = [
     { name: "📱 Включити телефон", baseCost: 65, bonus: 1, level: 0 },
@@ -54,7 +51,7 @@ function formatTime(seconds) {
     { name: "🧠 Медитувати над сенсом часу", baseCost: 1000000000, bonus: 9, level: 0 },
   ];
 
-  upgrades.forEach(upgrade => {
+  upgrades.forEach((upgrade, index) => {
     const btn = document.createElement('button');
     btn.className = 'upgrade-btn';
     updateUpgradeText();
@@ -67,16 +64,35 @@ function formatTime(seconds) {
         clickPower += upgrade.bonus;
         updateUpgradeText();
         updateScore();
+        revealNextUpgrade(index);
       }
     });
 
     function updateUpgradeText() {
       const cost = upgrade.baseCost + upgrade.level;
-      btn.textContent = `${upgrade.name} (Lv.${upgrade.level}) — ${formatTime(cost)}`;
+
+      // логіка загадковості
+      if (index < 3) {
+        btn.textContent = `${upgrade.name} (Lv.${upgrade.level}) — ${formatTime(cost)}`;
+      } else if (index === 3) {
+        btn.textContent = `❓ ??? — ${formatTime(cost)}`;
+      } else {
+        btn.textContent = `🔒 Недоступно`;
+        btn.disabled = true;
+      }
     }
 
     upgradesContainer.appendChild(btn);
   });
+
+  function revealNextUpgrade(currentIndex) {
+    const next = upgradesContainer.children[currentIndex + 1];
+    if (next && next.disabled) {
+      next.disabled = false;
+      next.textContent = `❓ ??? — ${formatTime(upgrades[currentIndex + 1].baseCost)}`;
+      next.classList.add('mystery');
+    }
+  }
 
   function updateScore() {
     scoreText.textContent = `Часу зібрано: ${formatTime(score)}`;
