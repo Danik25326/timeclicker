@@ -40,11 +40,11 @@ window.onload = function() {
 
   // === АПГРЕЙДИ ===
   const upgrades = [
-    { name: "📱 Включити телефон", baseCost: 65, bonus: 1, level: 0 },
-    { name: "☕ Зробити каву", baseCost: 125, bonus: 2, level: 0 },
-    { name: "💻 Увімкнути ноут", baseCost: 3605, bonus: 3, level: 0 },
-    { name: "🎧 Надіти навушники", baseCost: 10000, bonus: 4, level: 0 },
-    { name: "💪 Почати тренування", baseCost: 100000, bonus: 5, level: 0 },
+    { name: "📱 Включити телефон", baseCost: 10, bonus: 1, level: 0 },
+    { name: "☕ Зробити каву", baseCost: 60, bonus: 2, level: 0 },
+    { name: "💻 Увімкнути ноут", baseCost: 120, bonus: 3, level: 0 },
+    { name: "🎧 Надіти навушники", baseCost: 1000, bonus: 4, level: 0 },
+    { name: "💪 Почати тренування", baseCost: 10000, bonus: 5, level: 0 },
     { name: "📚 Відкрити книгу", baseCost: 1000000, bonus: 6, level: 0 },
     { name: "🌇 Вийти на прогулянку", baseCost: 10000000, bonus: 7, level: 0 },
     { name: "🚀 Почати проєкт", baseCost: 100000000, bonus: 8, level: 0 },
