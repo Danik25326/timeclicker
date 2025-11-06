@@ -1,113 +1,74 @@
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
 body {
+  margin: 0;
+  font-family: 'Poppins', sans-serif;
   background: radial-gradient(circle at center, #0b1220, #050810);
   color: white;
-  font-family: 'Poppins', sans-serif;
   height: 100vh;
   display: flex;
   justify-content: center;
   align-items: center;
-  overflow: hidden;
 }
 
 .container {
   display: flex;
-  flex-direction: column;
+  gap: 100px;
   align-items: center;
-  gap: 25px;
+  justify-content: center;
 }
 
-/* 🕒 ГОДИННИК */
-.clock {
-  position: relative;
-  width: 300px;
-  height: 300px;
-  border: 10px solid #0ea5e9;
-  border-radius: 50%;
-  box-shadow: 0 0 30px #0ea5e9, 0 0 60px #0ea5e9, inset 0 0 30px rgba(14, 165, 233, 0.3);
-  cursor: pointer;
-  transition: transform 0.2s, box-shadow 0.2s, border-color 0.3s;
+/* ===== Ліва панель ===== */
+.upgrades-container {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 20px;
+  background: rgba(15, 23, 42, 0.6);
+  border-radius: 16px;
+  box-shadow: 0 0 20px rgba(59, 130, 246, 0.2);
+  width: 260px;
+  height: 500px;
+  overflow: hidden;
 }
 
-.clock:active {
-  transform: scale(0.95);
-  border-color: #ec4899;
-  box-shadow: 0 0 40px #ec4899, 0 0 80px #ec4899, inset 0 0 20px rgba(236, 72, 153, 0.4);
-}
-
-.hand {
-  position: absolute;
-  bottom: 50%;
-  left: 50%;
-  transform-origin: bottom;
-  border-radius: 3px;
-}
-
-.hour {
-  width: 8px;
-  height: 80px;
-  background: linear-gradient(to top, #60a5fa, #3b82f6);
-  box-shadow: 0 0 10px #60a5fa;
-}
-
-.minute {
-  width: 6px;
-  height: 110px;
-  background: linear-gradient(to top, #38bdf8, #0ea5e9);
-  box-shadow: 0 0 12px #38bdf8;
-}
-
-.second {
-  width: 3px;
-  height: 130px;
-  background: linear-gradient(to top, #f43f5e, #ec4899);
-  box-shadow: 0 0 15px #f43f5e;
-}
-
-.center-dot {
-  position: absolute;
-  width: 16px;
-  height: 16px;
-  background: #ec4899;
-  border-radius: 50%;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  box-shadow: 0 0 20px #ec4899;
-  z-index: 10;
-}
-
-/* 🎧 КНОПКИ */
-#clickBtn, #musicBtn {
+/* Кнопки апгрейдів */
+.upgrade-btn {
   background: linear-gradient(90deg, #0ea5e9, #3b82f6);
   border: none;
   color: white;
-  font-size: 18px;
-  padding: 12px 28px;
+  font-size: 16px;
+  padding: 10px 20px;
   border-radius: 12px;
   cursor: pointer;
   transition: 0.3s;
+  width: 100%;
+  text-align: left;
 }
 
-#clickBtn:hover, #musicBtn:hover {
+.upgrade-btn:hover:not(:disabled) {
   transform: scale(1.05);
   box-shadow: 0 0 15px #3b82f6;
 }
 
-#score {
-  font-size: 20px;
-  text-shadow: 0 0 10px #3b82f6;
+.upgrade-btn.hidden {
+  display: none;
 }
 
-/* Фонк кнопка */
-.phonk-btn {
-  background: linear-gradient(90deg, #ec4899, #8b5cf6);
-  box-shadow: 0 0 20px #ec4899, 0 0 40px rgba(236,72,153,0.5);
-  border-radius: 50px;
-  font-weight: 600;
+/* Права панель */
+.right-panel {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
 }
+
+/* Годинник */
+.clock {
+  position: relative;
+  width: 250px;
+  height: 250px;
+  border: 6px solid #0ea5e9;
+  border-radius: 50%;
+  box-shadow: 0 0 30px #0ea5e9, 0 0 60px #0ea5e9, inset 0 0 30px rgba(14, 165, 233, 0.3);
+}
+
+/* Решта стилів як у тебе */
