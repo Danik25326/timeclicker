@@ -1,28 +1,31 @@
 <!DOCTYPE html>
 <html lang="uk">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>TimesClicker</title>
-  <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>TimesClicker ⏰</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⏰</text></svg>">
 </head>
 <body>
-  <h1>🕒 TimesClicker</h1>
-
-  <div id="clockContainer">
-    <canvas id="clock" width="200" height="200"></canvas>
+  <div class="container">
+    <div class="clock-wrapper">
+      <div class="clock" id="clickableClock">
+        <div class="hand hour"></div>
+        <div class="hand minute"></div>
+        <div class="hand second"></div>
+        <div class="center-dot"></div>
+      </div>
+      <p id="score">Часу зібрано: 0 сек</p>
+      <button id="clickBtn">⏰ Клікни, щоб зупинити час!</button>
+      <button id="musicBtn" class="phonk-btn">▶️ Включити фонк</button>
+      <audio id="phonk" loop preload="auto">
+        <source src="https://github.com/Danik25326/timeclicker/blob/main/phonk-music-409064.mp3?raw=true" type="audio/mpeg">
+      </audio>
+    </div>
   </div>
 
-  <div id="score">Час: 0 сек</div>
-
-  <div id="upgrades"></div>
-
-  <button id="musicToggle">🎵</button>
-  <button id="musicPrev">⏮️</button>
-  <button id="musicNext">⏭️</button>
-  <audio id="phonk" loop preload="auto"></audio>
-
-  <script src="musicList.js"></script>
   <script src="script.js"></script>
 </body>
 </html>
