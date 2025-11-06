@@ -1,13 +1,13 @@
-window.onload = function() {
-  const clock = document.getElementById('clickableClock');
-  const hourHand = document.querySelector('.hour');
-  const minuteHand = document.querySelector('.minute');
-  const secondHand = document.querySelector('.second');
-  const clickBtn = document.getElementById('clickBtn');
-  const musicBtn = document.getElementById('musicBtn');
-  const phonk = document.getElementById('phonk');
-  const scoreText = document.getElementById('score');
-  const upgradesContainer = document.getElementById('upgrades');
+window.onload = function () {
+  const clock = document.getElementById("clickableClock");
+  const hourHand = document.querySelector(".hour");
+  const minuteHand = document.querySelector(".minute");
+  const secondHand = document.querySelector(".second");
+  const clickBtn = document.getElementById("clickBtn");
+  const musicBtn = document.getElementById("musicBtn");
+  const phonk = document.getElementById("phonk");
+  const scoreText = document.getElementById("score");
+  const upgradesContainer = document.getElementById("upgrades");
 
   let score = 0;
   let clickPower = 1;
@@ -21,10 +21,12 @@ window.onload = function() {
       { name: "дн", value: 60 * 60 * 24 },
       { name: "год", value: 60 * 60 },
       { name: "хв", value: 60 },
-      { name: "сек", value: 1 }
+      { name: "сек", value: 1 },
     ];
+
     let remaining = seconds;
     const parts = [];
+
     for (const u of units) {
       const amount = Math.floor(remaining / u.value);
       if (amount > 0 || parts.length > 0) {
@@ -32,6 +34,7 @@ window.onload = function() {
         remaining %= u.value;
       }
     }
+
     if (parts.length === 0) return `${Math.floor(seconds)} сек`;
     return parts.join(" ");
   }
@@ -51,15 +54,15 @@ window.onload = function() {
   const buttons = [];
 
   upgrades.forEach((upgrade, i) => {
-    const btn = document.createElement('button');
-    btn.className = 'upgrade-btn hidden';
+    const btn = document.createElement("button");
+    btn.className = "upgrade-btn hidden";
     buttons.push(btn);
     upgradesContainer.appendChild(btn);
 
     function updateText() {
       const cost = upgrade.baseCost + upgrade.level;
       if (btn.dataset.locked === "true") {
-        btn.textContent = `🔒 ??? — ???`;
+        btn.textContent = "🔒 ??? — ???";
       } else {
         btn.textContent = `${upgrade.name} (Lv.${upgrade.level}) — ${formatTime(cost)}`;
       }
@@ -68,7 +71,7 @@ window.onload = function() {
     btn.dataset.locked = "false";
     updateText();
 
-    btn.addEventListener('click', () => {
+    btn.addEventListener("click", () => {
       const cost = upgrade.baseCost + upgrade.level;
       if (score >= cost && btn.dataset.locked !== "true") {
         score -= cost;
@@ -83,38 +86,32 @@ window.onload = function() {
     upgrade.update = updateText;
   });
 
-  // Показати перші 3
-  for (let i = 0; i < 3; i++) buttons[i].classList.remove('hidden');
+  // Показати перші 3 апгрейди
+  for (let i = 0; i < 3; i++) buttons[i].classList.remove("hidden");
 
-  // Перші два після них — з замочками
-  buttons[3].classList.remove('hidden');
-  buttons[3].dataset.locked = "true";
-  buttons[3].textContent = "🔒 ??? — ???";
+  // Наступні 2 з замочками
+  if (buttons[3]) {
+    buttons[3].classList.remove("hidden");
+    buttons[3].dataset.locked = "true";
+    buttons[3].textContent = "🔒 ??? — ???";
+  }
 
-  buttons[4].classList.remove('hidden');
-  buttons[4].dataset.locked = "true";
-  buttons[4].textContent = "🔒 ??? — ???";
+  if (buttons[4]) {
+    buttons[4].classList.remove("hidden");
+    buttons[4].dataset.locked = "true";
+    buttons[4].textContent = "🔒 ??? — ???";
+  }
 
   function revealNextUpgrade(index) {
-    // Логіка відкриття наступних
-    if (index === 0) {
-      revealWithLock(3);
-    } else if (index === 1) {
-      revealWithLock(4);
-    } else if (index === 2) {
-      revealWithLock(5);
-    } else if (index === 3) {
-      revealWithLock(6);
-    } else if (index === 4) {
-      revealWithLock(7);
-    } else if (index === 5) {
-      revealWithLock(8);
-    }
+    // логіка відкриття наступних апгрейдів
+    const nextMap = { 0: 3, 1: 4, 2: 5, 3: 6, 4: 7, 5: 8 };
+    const nextIndex = nextMap[index];
+    if (nextIndex !== undefined) revealWithLock(nextIndex);
   }
 
   function revealWithLock(index) {
     if (buttons[index]) {
-      buttons[index].classList.remove('hidden');
+      buttons[index].classList.remove("hidden");
       buttons[index].dataset.locked = "true";
       buttons[index].textContent = "🔒 ??? — ???";
     }
@@ -126,7 +123,9 @@ window.onload = function() {
 
   function boomEffect() {
     clock.style.scale = "1.05";
-    setTimeout(() => (clock.style.scale = "1"), 100);
+    setTimeout(() => {
+      clock.style.scale = "1";
+    }, 100);
   }
 
   function addTime() {
@@ -137,14 +136,15 @@ window.onload = function() {
     boomEffect();
     setTimeout(() => {
       clock.style.borderColor = "#0ea5e9";
-      clock.style.boxShadow = "0 0 30px #0ea5e9, 0 0 60px #0ea5e9, inset 0 0 30px rgba(14,165,233,0.3)";
+      clock.style.boxShadow =
+        "0 0 30px #0ea5e9, 0 0 60px #0ea5e9, inset 0 0 30px rgba(14,165,233,0.3)";
     }, 300);
   }
 
-  clickBtn.addEventListener('click', addTime);
-  clock.addEventListener('click', addTime);
+  clickBtn.addEventListener("click", addTime);
+  clock.addEventListener("click", addTime);
 
-  musicBtn.addEventListener('click', () => {
+  musicBtn.addEventListener("click", () => {
     if (phonk.paused) {
       phonk.volume = 0.4;
       phonk.play();
@@ -162,9 +162,14 @@ window.onload = function() {
     const seconds = now.getSeconds();
     const minutes = now.getMinutes();
     const hours = now.getHours() % 12;
+
     secondHand.style.transform = `translateX(-50%) rotate(${seconds * 6}deg)`;
-    minuteHand.style.transform = `translateX(-50%) rotate(${minutes * 6 + seconds * 0.1}deg)`;
-    hourHand.style.transform = `translateX(-50%) rotate(${hours * 30 + minutes * 0.5}deg)`;
+    minuteHand.style.transform = `translateX(-50%) rotate(${
+      minutes * 6 + seconds * 0.1
+    }deg)`;
+    hourHand.style.transform = `translateX(-50%) rotate(${
+      hours * 30 + minutes * 0.5
+    }deg)`;
   }
 
   setInterval(updateClock, 1000);
