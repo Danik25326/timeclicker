@@ -117,3 +117,11 @@ body {
   .clock { width: 240px; height: 240px; }
   .upgrades-container { width: 90%; height: 300px; }
 }
+.clock.clicked {
+  transform: scale(1.05);
+  transition: transform 0.15s ease;
+}
+.clock.clicked .hand {
+  filter: brightness(1.4);
+}
+
