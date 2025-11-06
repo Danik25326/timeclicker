@@ -212,4 +212,13 @@ body {
   animation: phonkPulse 1.2s infinite;
   letter-spacing: 1px;
 }
+.upgrade-btn.mystery {
+  background: linear-gradient(90deg, #6b21a8, #9333ea);
+  color: #d8b4fe;
+  text-align: center;
+  font-style: italic;
+  text-shadow: 0 0 10px rgba(255,255,255,0.4);
+  cursor: default;
+}
+
 
