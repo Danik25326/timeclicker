@@ -1,76 +1,247 @@
+/* ===============================
+   🎨 Основні стилі сторінки
+=============================== */
 body {
-.minute { width: 5px; height: 120px; background: #60a5fa; }
-.second { width: 3px; height: 150px; background: #ec4899; }
+  margin: 0;
+  padding: 0;
+  font-family: 'Poppins', sans-serif;
+  background: radial-gradient(circle at center, #1a1a1a, #000);
+  color: #fff;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  overflow: hidden;
+}
 
+/* Контейнер загальний */
+.container {
+  display: flex;
+  gap: 40px;
+  align-items: center;
+}
 
+/* ===============================
+   ⏰ Права панель: годинник
+=============================== */
+.right-panel {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px;
+}
+
+.clock-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Циферблат */
+.clock {
+  width: 200px;
+  height: 200px;
+  border: 6px solid #fff;
+  border-radius: 50%;
+  position: relative;
+  box-shadow: 0 0 25px rgba(255, 255, 255, 0.2);
+  transition: transform 0.1s ease;
+}
+
+/* Центр годинника */
 .center-dot {
-position: absolute;
-top: 50%;
-left: 50%;
-width: 14px;
-height: 14px;
-background: #ec4899;
-border-radius: 50%;
-transform: translate(-50%, -50%);
+  width: 12px;
+  height: 12px;
+  background: #fff;
+  border-radius: 50%;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
 }
 
-
-#clickBtn, #musicBtn {
-background: linear-gradient(90deg, #0ea5e9, #3b82f6);
-border: none;
-color: white;
-font-size: 18px;
-padding: 12px 24px;
-border-radius: 12px;
-cursor: pointer;
-transition: 0.3s;
+/* Стрілки годинника */
+.hand {
+  position: absolute;
+  width: 50%;
+  height: 3px;
+  background: #fff;
+  top: 50%;
+  transform-origin: 100%;
+  transform: rotate(90deg);
+  transition: transform 0.05s ease-out;
 }
 
-
-#clickBtn:hover, #musicBtn:hover {
-transform: scale(1.05);
-box-shadow: 0 0 15px #3b82f6;
+.hand.hour {
+  width: 35%;
+  height: 4px;
+  background: #ffcc00;
 }
 
+.hand.minute {
+  width: 45%;
+  background: #00e1ff;
+}
 
-#score { font-size: 22px; text-shadow: 0 0 10px #3b82f6; }
+.hand.second {
+  width: 50%;
+  background: #ff006e;
+}
 
+/* Ефект підсвітки при автогенерації */
+.clock.glow {
+  box-shadow: 0 0 25px #00e1ff, 0 0 50px #00e1ff;
+}
 
+/* ===============================
+   💎 Ліва панель: апгрейди
+=============================== */
+.upgrades-container {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 20px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 20px;
+  width: 240px;
+  max-height: 80vh;
+  overflow-y: auto;
+  box-shadow: 0 0 15px rgba(255, 255, 255, 0.1);
+}
+
+/* Кнопки апгрейдів */
+.upgrade-btn {
+  padding: 12px 16px;
+  border: none;
+  border-radius: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  background: linear-gradient(135deg, #00e1ff, #0072ff);
+  color: #fff;
+  transition: 0.2s;
+}
+
+.upgrade-btn:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 10px #00e1ff;
+}
+
+/* Заблоковані кнопки */
+.upgrade-btn.locked {
+  background: #444;
+  color: #999;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+/* ===============================
+   🖱️ Основна кнопка
+=============================== */
+#clickBtn {
+  margin-top: 10px;
+  padding: 14px 20px;
+  font-size: 1.1em;
+  font-weight: 600;
+  color: #fff;
+  background: linear-gradient(135deg, #ff006e, #ff8c00);
+  border: none;
+  border-radius: 15px;
+  cursor: pointer;
+  transition: 0.25s ease;
+}
+
+#clickBtn:hover {
+  transform: scale(1.07);
+  box-shadow: 0 0 20px rgba(255, 0, 110, 0.6);
+}
+
+/* ===============================
+   🧮 Лічильник
+=============================== */
+#score {
+  font-size: 1.1em;
+  font-weight: 500;
+  margin: 10px 0;
+  text-shadow: 0 0 10px #00e1ff;
+}
+
+/* ===============================
+   🎧 Панель музики
+=============================== */
 .phonk-wrapper {
-display: flex;
-justify-content: center;
-align-items: center;
-gap: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 10px;
 }
 
-
+/* Головна кнопка музики */
 .phonk-btn {
-position: relative;
-background: linear-gradient(90deg, #ec4899, #8b5cf6);
-border: none;
-color: white;
-font-size: 20px;
-font-weight: 600;
-padding: 14px 32px;
-border-radius: 50px;
-cursor: pointer;
-transition: 0.3s;
-box-shadow: 0 0 20px #ec4899, 0 0 40px rgba(236, 72, 153, 0.5);
-overflow: hidden;
+  background: linear-gradient(135deg, #6f00ff, #c800ff);
+  color: #fff;
+  font-weight: 600;
+  padding: 12px 18px;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: 0.2s;
 }
 
+.phonk-btn:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 12px #c800ff;
+}
 
+/* Кнопки перемикання */
 .phonk-small {
-background: linear-gradient(90deg, #9333ea, #4c1d95);
-border: none;
-color: white;
-font-size: 20px;
-border-radius: 50%;
-width: 50px;
-height: 50px;
-cursor: pointer;
-transition: 0.3s;
+  background: #333;
+  color: #fff;
+  border: none;
+  border-radius: 50%;
+  width: 42px;
+  height: 42px;
+  font-size: 1.1em;
+  cursor: pointer;
+  transition: 0.2s;
 }
 
+.phonk-small:hover {
+  background: #555;
+  transform: scale(1.1);
+}
 
-.phonk-small:hover { transform: scale(1.1); }
+/* Назва треку */
+.track-title {
+  font-size: 0.95em;
+  color: #ccc;
+  text-align: center;
+  margin-top: 5px;
+  font-style: italic;
+}
+
+/* ===============================
+   📱 Адаптивність
+=============================== */
+@media (max-width: 768px) {
+  .container {
+    flex-direction: column;
+    gap: 25px;
+  }
+
+  .upgrades-container {
+    width: 90%;
+    max-height: 300px;
+    order: 2;
+  }
+
+  .clock {
+    width: 160px;
+    height: 160px;
+  }
+
+  #clickBtn {
+    font-size: 1em;
+  }
+}
