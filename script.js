@@ -55,3 +55,73 @@ window.onload = function () {
   // --- Клік ---
   clock.addEventListener("click", () => {
     clock.classList.add("clicked");
+    setTimeout(() => clock.classList.remove("clicked"), 120);
+    score += clickPower;
+    updateScore();
+  });
+
+  // --- Оновлення рахунку ---
+  function updateScore() {
+    scoreDisplay.textContent = `Час: ${score.toFixed(0)} сек`;
+  }
+
+  // --- Автододавання ---
+  setInterval(() => {
+    score += autoGain;
+    updateScore();
+  }, 1000);
+
+  // --- Апгрейди ---
+  const upgrades = [
+    { name: "📱 Увімкнути телефон", baseCost: 50, bonus: 1, level: 0 },
+    { name: "💡 Зайнятись справою", baseCost: 200, bonus: 5, level: 0 },
+    { name: "🏙️ Вийти на вулицю", baseCost: 1000, bonus: 25, level: 0 },
+    { name: "🚀 Зловити вайб", baseCost: 5000, bonus: 100, level: 0 },
+  ];
+
+  upgrades.forEach((u) => {
+    const btn = document.createElement("button");
+    btn.className = "upgrade";
+    btn.textContent = `${u.name} | 💰 ${u.baseCost} | 🔼 +${u.bonus}`;
+    btn.onclick = () => {
+      if (score >= u.baseCost) {
+        score -= u.baseCost;
+        u.level++;
+        clickPower += u.bonus;
+        u.baseCost = Math.round(u.baseCost * 1.8);
+        updateScore();
+        btn.textContent = `${u.name} (lvl ${u.level}) | 💰 ${u.baseCost} | 🔼 +${u.bonus}`;
+      }
+    };
+    upgradesContainer.appendChild(btn);
+  });
+
+  // --- Музика ---
+  function playTrack(index) {
+    if (!tracks[index]) return;
+    phonk.src = tracks[index].src;
+    phonk.play();
+    isMusicPlaying = true;
+    musicToggle.textContent = `⏸️ ${tracks[index].name}`;
+  }
+
+  musicToggle.onclick = () => {
+    if (isMusicPlaying) {
+      phonk.pause();
+      isMusicPlaying = false;
+      musicToggle.textContent = "▶️";
+    } else {
+      playTrack(currentTrack);
+    }
+  };
+
+  nextBtn.onclick = () => {
+    currentTrack = (currentTrack + 1) % tracks.length;
+    playTrack(currentTrack);
+  };
+
+  prevBtn.onclick = () => {
+    currentTrack = (currentTrack - 1 + tracks.length) % tracks.length;
+    playTrack(currentTrack);
+  };
+};
