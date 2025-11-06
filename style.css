@@ -1,127 +1,63 @@
-:root {
-  --bg1: #0b1220;
-  --cyan: #0ea5e9;
-  --cyan2: #3b82f6;
-  --pink: #ec4899;
-}
-
-* { box-sizing: border-box; }
 body {
-  margin: 0;
-  font-family: 'Poppins', sans-serif;
-  background: radial-gradient(circle at center, #0b1220, #050810);
+  background: #0b0b0b;
   color: white;
-  min-height: 100vh;
+  font-family: 'Segoe UI', sans-serif;
+  text-align: center;
+  margin-top: 30px;
+}
+
+#clockContainer {
   display: flex;
-  align-items: center;
   justify-content: center;
-  padding: 32px;
+  margin: 20px;
 }
 
-/* Layout */
-.container {
-  display: flex;
-  gap: 60px;
-  align-items: flex-start;
-  width: 1100px;
-  max-width: calc(100% - 64px);
+#clock {
+  background: radial-gradient(circle at center, #222 70%, #111);
+  border-radius: 50%;
+  box-shadow: 0 0 15px #ff0;
+  cursor: pointer;
+  transition: transform 0.1s ease;
 }
 
-/* Upgrades panel */
-.upgrades-container {
-  width: 320px;
-  background: rgba(15,23,42,0.75);
-  padding: 18px;
-  border-radius: 12px;
-  box-shadow: inset 0 0 20px rgba(59,130,246,0.08);
+#clock.clicked {
+  transform: scale(1.1);
+}
+
+#upgrades {
+  margin-top: 25px;
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  height: 640px;
-  overflow-y: auto;
+  align-items: center;
+  gap: 10px;
 }
 
-/* Upgrade button */
-.upgrade-btn {
-  background: linear-gradient(90deg, var(--cyan), var(--cyan2));
+.upgrade {
+  background: #333;
   border: none;
-  color: white;
-  padding: 12px 14px;
-  border-radius: 10px;
+  color: #fff;
+  padding: 10px 20px;
+  border-radius: 8px;
+  cursor: pointer;
+  width: 250px;
   text-align: left;
-  cursor: pointer;
-  transition: transform .18s, box-shadow .18s, opacity .18s;
+  transition: background 0.2s;
 }
-.upgrade-btn.locked {
-  background: #1f2937;
-  color: #94a3b8;
-  cursor: not-allowed;
-  opacity: 0.85;
+
+.upgrade:hover {
+  background: #555;
 }
-.upgrade-btn:hover:not(.locked) { transform: translateY(-4px); box-shadow: 0 8px 30px rgba(14,165,233,0.12); }
 
-/* Right panel */
-.right-panel { display:flex; flex-direction:column; align-items:center; gap:18px; flex:1; }
-
-/* Clock */
-.clock-wrapper { width: 420px; height: 420px; display:flex; align-items:center; justify-content:center; }
-.clock {
-  width: 360px; height: 360px;
-  border: 10px solid var(--cyan);
-  border-radius: 50%;
-  box-shadow: 0 0 40px var(--cyan), 0 0 80px var(--cyan), inset 0 0 40px rgba(14,165,233,0.12);
-  position: relative;
-  transition: transform .12s ease;
-}
-.hand { position:absolute; bottom:50%; left:50%; transform-origin: bottom; transform: translateX(-50%) rotate(0deg); border-radius: 2px; transition: transform .12s cubic-bezier(.2,.9,.2,1); }
-.hour { width: 10px; height: 90px; background: #3b82f6; }
-.minute { width: 8px; height: 120px; background: #60a5fa; }
-.second { width: 4px; height: 150px; background: var(--pink); }
-.center-dot { position:absolute; top:50%; left:50%; width:14px; height:14px; background: var(--pink); border-radius:50%; transform: translate(-50%,-50%); }
-
-/* Buttons */
-.main-btn {
-  background: linear-gradient(90deg, #ff6a88, #ff8e53);
+button {
+  background: #222;
   border: none;
   color: white;
-  padding: 12px 24px;
-  border-radius: 14px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: transform .18s, box-shadow .18s;
-}
-.main-btn:hover { transform: translateY(-4px); box-shadow: 0 10px 30px rgba(255,110,140,0.12); }
-
-/* Score */
-#score { font-size: 18px; text-shadow: 0 0 12px rgba(59,130,246,0.08); }
-
-/* Music controls */
-.phonk-wrapper { display:flex; gap:10px; align-items:center; }
-.phonk-btn {
-  background: linear-gradient(90deg, #6f00ff, #c800ff);
-  border: none;
-  color: white;
-  padding: 10px 18px;
-  border-radius: 12px;
+  margin: 5px;
+  padding: 10px;
+  border-radius: 8px;
   cursor: pointer;
 }
-.phonk-small {
-  width:44px; height:44px; border-radius:50%; border:none; background:#222; color:#fff; cursor:pointer;
-}
-.track-title { font-style: italic; color:#cbd5e1; margin-top:6px; font-size:0.95rem; }
 
-/* small screens */
-@media (max-width: 900px) {
-  .container { flex-direction: column; align-items:center; gap:20px; }
-  .clock-wrapper { width: 280px; height: 280px; }
-  .clock { width: 240px; height: 240px; }
-  .upgrades-container { width: 90%; height: 300px; }
+button:hover {
+  background: #444;
 }
-.clock.clicked {
-  transform: scale(1.05);
-  transition: transform 0.15s ease;
-}
-.clock.clicked .hand {
-  filter: brightness(1.4);
-}
-
