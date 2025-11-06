@@ -1,127 +1,54 @@
-window.onload = function () {
-  const clock = document.getElementById("clock");
-  const ctx = clock.getContext("2d");
-  const scoreDisplay = document.getElementById("score");
-  const upgradesContainer = document.getElementById("upgrades");
-  const phonk = document.getElementById("phonk");
-  const musicToggle = document.getElementById("musicToggle");
-  const prevBtn = document.getElementById("musicPrev");
-  const nextBtn = document.getElementById("musicNext");
+window.onload = function() {
+  const hourHand = document.querySelector('.hour');
+  const minuteHand = document.querySelector('.minute');
+  const secondHand = document.querySelector('.second');
+  const clickBtn = document.getElementById('clickBtn');
+  const scoreText = document.getElementById('score');
+  const clock = document.getElementById('clickableClock');
+  const phonk = document.getElementById('phonk');
+  const musicBtn = document.getElementById('musicBtn');
 
   let score = 0;
-  let clickPower = 1;
-  let autoGain = 0;
-  let isMusicPlaying = false;
-  let currentTrack = 0;
+  let isPlaying = false;
 
-  // --- Годинник ---
-  function drawClock() {
-    ctx.clearRect(0, 0, 200, 200);
+  // 🕓 плавний рух стрілок
+  function updateClock() {
     const now = new Date();
-    ctx.save();
-    ctx.translate(100, 100);
-    ctx.strokeStyle = "#fff";
-    ctx.lineWidth = 4;
-    ctx.beginPath();
-    ctx.arc(0, 0, 90, 0, Math.PI * 2);
-    ctx.stroke();
+    const ms = now.getMilliseconds();
+    const seconds = now.getSeconds() + ms / 1000;
+    const minutes = now.getMinutes() + seconds / 60;
+    const hours = now.getHours() % 12 + minutes / 60;
 
-    const sec = now.getSeconds();
-    const min = now.getMinutes();
-    const hr = now.getHours();
+    secondHand.style.transform = `translateX(-50%) rotate(${seconds * 6}deg)`;
+    minuteHand.style.transform = `translateX(-50%) rotate(${minutes * 6}deg)`;
+    hourHand.style.transform = `translateX(-50%) rotate(${hours * 30}deg)`;
 
-    drawHand((hr % 12) / 12 * 2 * Math.PI, 50, 5);
-    drawHand((min / 60) * 2 * Math.PI, 70, 3);
-    drawHand((sec / 60) * 2 * Math.PI, 85, 2, "red");
-    ctx.restore();
+    requestAnimationFrame(updateClock);
+  }
+  requestAnimationFrame(updateClock);
 
-    requestAnimationFrame(drawClock);
+  // 🖱 Клік по кнопці або годиннику
+  function addTime() {
+    score++;
+    scoreText.textContent = `Часу зібрано: ${score} сек`;
+    clock.style.borderColor = "#ec4899";
+    setTimeout(() => clock.style.borderColor = "#0ea5e9", 200);
   }
 
-  function drawHand(angle, length, width, color = "#fff") {
-    ctx.save();
-    ctx.rotate(angle - Math.PI / 2);
-    ctx.strokeStyle = color;
-    ctx.lineWidth = width;
-    ctx.beginPath();
-    ctx.moveTo(0, 0);
-    ctx.lineTo(length, 0);
-    ctx.stroke();
-    ctx.restore();
-  }
+  clickBtn.addEventListener('click', addTime);
+  clock.addEventListener('click', addTime);
 
-  requestAnimationFrame(drawClock);
-
-  // --- Клік ---
-  clock.addEventListener("click", () => {
-    clock.classList.add("clicked");
-    setTimeout(() => clock.classList.remove("clicked"), 120);
-    score += clickPower;
-    updateScore();
-  });
-
-  // --- Оновлення рахунку ---
-  function updateScore() {
-    scoreDisplay.textContent = `Час: ${score.toFixed(0)} сек`;
-  }
-
-  // --- Автододавання ---
-  setInterval(() => {
-    score += autoGain;
-    updateScore();
-  }, 1000);
-
-  // --- Апгрейди ---
-  const upgrades = [
-    { name: "📱 Увімкнути телефон", baseCost: 50, bonus: 1, level: 0 },
-    { name: "💡 Зайнятись справою", baseCost: 200, bonus: 5, level: 0 },
-    { name: "🏙️ Вийти на вулицю", baseCost: 1000, bonus: 25, level: 0 },
-    { name: "🚀 Зловити вайб", baseCost: 5000, bonus: 100, level: 0 },
-  ];
-
-  upgrades.forEach((u) => {
-    const btn = document.createElement("button");
-    btn.className = "upgrade";
-    btn.textContent = `${u.name} | 💰 ${u.baseCost} | 🔼 +${u.bonus}`;
-    btn.onclick = () => {
-      if (score >= u.baseCost) {
-        score -= u.baseCost;
-        u.level++;
-        clickPower += u.bonus;
-        u.baseCost = Math.round(u.baseCost * 1.8);
-        updateScore();
-        btn.textContent = `${u.name} (lvl ${u.level}) | 💰 ${u.baseCost} | 🔼 +${u.bonus}`;
-      }
-    };
-    upgradesContainer.appendChild(btn);
-  });
-
-  // --- Музика ---
-  function playTrack(index) {
-    if (!tracks[index]) return;
-    phonk.src = tracks[index].src;
-    phonk.play();
-    isMusicPlaying = true;
-    musicToggle.textContent = `⏸️ ${tracks[index].name}`;
-  }
-
-  musicToggle.onclick = () => {
-    if (isMusicPlaying) {
-      phonk.pause();
-      isMusicPlaying = false;
-      musicToggle.textContent = "▶️";
+  // 🎵 Кнопка фонку
+  musicBtn.addEventListener('click', () => {
+    if (phonk.paused) {
+      phonk.volume = 0.5;
+      phonk.play();
+      musicBtn.textContent = "⏸ Зупинити фонк";
+      musicBtn.classList.add("active");
     } else {
-      playTrack(currentTrack);
+      phonk.pause();
+      musicBtn.textContent = "▶️ Включити фонк";
+      musicBtn.classList.remove("active");
     }
-  };
-
-  nextBtn.onclick = () => {
-    currentTrack = (currentTrack + 1) % tracks.length;
-    playTrack(currentTrack);
-  };
-
-  prevBtn.onclick = () => {
-    currentTrack = (currentTrack - 1 + tracks.length) % tracks.length;
-    playTrack(currentTrack);
-  };
+  });
 };
