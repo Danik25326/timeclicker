@@ -1,48 +1,46 @@
 <!DOCTYPE html>
 <html lang="uk">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>TimesClicker ⏰</title>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
-
-  <!-- Підключаємо CSS з версією -->
-  <link rel="stylesheet" href="style.css?v=1" />
-
-  <!-- Іконка -->
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⏰</text></svg>">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>TimesClicker ⏰</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css?v=2" />
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⏰</text></svg>">
 </head>
 <body>
+<div class="container">
+<div class="upgrades-container" id="upgrades"></div>
 
-  <div class="container">
-    <!-- ЛІВА ПАНЕЛЬ: АПГРЕЙДИ -->
-    <div class="upgrades-container" id="upgrades"></div>
 
-    <!-- ПРАВА ПАНЕЛЬ: ГОДИННИК -->
-    <div class="right-panel">
-      <div class="clock" id="clickableClock">
-        <div class="hand hour"></div>
-        <div class="hand minute"></div>
-        <div class="hand second"></div>
-        <div class="center-dot"></div>
-      </div>
+<div class="right-panel">
+<div class="clock-wrapper">
+<div class="clock glow" id="clickableClock">
+<div class="hand hour"></div>
+<div class="hand minute"></div>
+<div class="hand second"></div>
+<div class="center-dot"></div>
+</div>
+</div>
 
-      <button id="clickBtn">Клікни, щоб зупинити час!</button>
-      <p id="score">Часу зібрано: 0 сек</p>
 
-      <!-- 🎧 Музика -->
-      <div class="phonk-wrapper">
-        <button id="musicBtn" class="phonk-btn">▶️ Включити фонк</button>
-      </div>
+<button id="clickBtn">Клікни, щоб зупинити час!</button>
+<p id="score">Часу зібрано: 0 сек</p>
 
-      <audio id="phonk" loop preload="auto">
-        <source src="https://raw.githubusercontent.com/Danik25326/timeclicker/main/phonk-music-409064.mp3" type="audio/mpeg">
-      </audio>
-    </div>
-  </div>
 
-  <!-- 🔗 Головний скрипт з версією -->
-  <script src="script.js?v=1"></script>
+<div class="phonk-wrapper">
+<button id="musicPrev" class="phonk-small">⏮️</button>
+<button id="musicBtn" class="phonk-btn">▶️ Включити фонк</button>
+<button id="musicNext" class="phonk-small">⏭️</button>
+</div>
 
+
+<audio id="phonk" loop preload="auto"></audio>
+</div>
+</div>
+
+
+<script src="musicList.js?v=1"></script>
+<script src="script.js?v=2"></script>
 </body>
 </html>
