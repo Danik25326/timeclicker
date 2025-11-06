@@ -1,10 +1,15 @@
-// ===============================
-// 🎮 Основні елементи
-// ===============================
+// --------------------------------------------------
+// TimesClicker — script.js (чисто, зрозуміло)
+// --------------------------------------------------
+
+/* DOM */
 const clickBtn = document.getElementById('clickBtn');
 const scoreDisplay = document.getElementById('score');
 const upgradesContainer = document.getElementById('upgrades');
 const clock = document.getElementById('clickableClock');
+const hourHand = document.querySelector('.hour');
+const minuteHand = document.querySelector('.minute');
+const secondHand = document.querySelector('.second');
 
 const musicBtn = document.getElementById('musicBtn');
 const musicPrev = document.getElementById('musicPrev');
@@ -12,31 +17,60 @@ const musicNext = document.getElementById('musicNext');
 const trackTitle = document.getElementById('trackTitle');
 const phonk = document.getElementById('phonk');
 
-// ===============================
-// ⚙️ Змінні гри
-// ===============================
-let score = 0;
-let perClick = 1;
-let autoGain = 0;
-let autoGainInterval = null;
+/* STATE */
+let score = parseFloat(localStorage.getItem('score')) || 0;
+let clickPower = parseFloat(localStorage.getItem('clickPower')) || 1;
+let autoGain = parseFloat(localStorage.getItem('autoGain')) || 0;
+let musicIndex = parseInt(localStorage.getItem('musicIndex')) || 0;
 
-let musicIndex = 0;
+/* Простий список апгрейдів (для початку) */
+const upgrades = [
+  { name: '📱 Включити телефон', baseCost: 10, bonus: 1, level: 0, type: 'click' },
+  { name: '☕ Зробити каву', baseCost: 60, bonus: 2, level: 0, type: 'click' },
+  { name: '💻 Увімкнути ноут', baseCost: 120, bonus: 3, level: 0, type: 'auto' },
+  { name: '🎧 Надіти навушники', baseCost: 1000, bonus: 4, level: 0, type: 'click' }
+];
 
-// ===============================
-// 🎵 Музика
-// ===============================
+/* ---------- HELPERS ---------- */
+function formatTime(seconds) {
+  seconds = Math.floor(seconds);
+  const units = [
+    { name: "год", value: 3600 },
+    { name: "хв", value: 60 },
+    { name: "сек", value: 1 }
+  ];
+  const parts = [];
+  let rem = seconds;
+  for (const u of units) {
+    const amt = Math.floor(rem / u.value);
+    if (amt > 0) {
+      parts.push(`${amt} ${u.name}`);
+      rem %= u.value;
+    }
+  }
+  return parts.length ? parts.join(' ') : `${seconds} сек`;
+}
+
+/* ---------- MUSIC: load & controls ---------- */
 function loadMusic(index) {
-  const track = musicList[index];
-  if (!track) return;
-
+  if (!Array.isArray(window.musicList) || !window.musicList.length) {
+    trackTitle.textContent = 'Phonk: не вибрано';
+    return;
+  }
+  musicIndex = (index + window.musicList.length) % window.musicList.length;
+  const track = window.musicList[musicIndex];
   phonk.src = track.url;
   trackTitle.textContent = `Phonk: ${track.title}`;
-  phonk.load();
+  localStorage.setItem('musicIndex', musicIndex);
 }
 
 musicBtn.addEventListener('click', () => {
+  if (!phonk.src) return;
   if (phonk.paused) {
-    phonk.play();
+    phonk.volume = 0.45;
+    phonk.play().catch(() => {
+      // деякі браузери вимагають user gesture; тут нічого не робимо, але користувач клацнув кнопку, тому має працювати
+    });
     musicBtn.textContent = '⏸️ Зупинити фонк';
   } else {
     phonk.pause();
@@ -45,130 +79,120 @@ musicBtn.addEventListener('click', () => {
 });
 
 musicPrev.addEventListener('click', () => {
-  musicIndex = (musicIndex - 1 + musicList.length) % musicList.length;
-  loadMusic(musicIndex);
+  loadMusic(musicIndex - 1);
   phonk.play();
   musicBtn.textContent = '⏸️ Зупинити фонк';
 });
 
 musicNext.addEventListener('click', () => {
-  musicIndex = (musicIndex + 1) % musicList.length;
-  loadMusic(musicIndex);
+  loadMusic(musicIndex + 1);
   phonk.play();
   musicBtn.textContent = '⏸️ Зупинити фонк';
 });
 
-// Завантажуємо перший трек
-loadMusic(musicIndex);
-
-// ===============================
-// 🕹️ Основна механіка кліку
-// ===============================
-clickBtn.addEventListener('click', () => {
-  score += perClick;
-  updateScore();
-  animateClock();
-});
-
-// Оновлення тексту очок
-function updateScore() {
-  scoreDisplay.textContent = `Часу зібрано: ${score} сек`;
-  checkUpgrades();
-}
-
-// Анімація годинника при кліку
-function animateClock() {
-  clock.style.transform = 'scale(1.1)';
-  setTimeout(() => {
-    clock.style.transform = 'scale(1)';
-  }, 120);
-}
-
-// ===============================
-// ⏳ Автоматична генерація
-// ===============================
-function startAutoGain() {
-  clearInterval(autoGainInterval);
-
-  if (autoGain > 0) {
-    autoGainInterval = setInterval(() => {
-      score += autoGain;
-      updateScore();
-      glowPulse();
-    }, 1000);
-  }
-}
-
-// Візуальний ефект для автогенерації
-function glowPulse() {
-  clock.classList.add('glow');
-  setTimeout(() => clock.classList.remove('glow'), 300);
-}
-
-// ===============================
-// 💎 Система апгрейдів
-// ===============================
-const upgrades = [
-  { name: '⏰ +1 за клік', cost: 10, bonus: 1, type: 'click' },
-  { name: '⚙️ +5 автогенерації', cost: 100, bonus: 5, type: 'auto' },
-  { name: '💎 +10 за клік', cost: 500, bonus: 10, type: 'click' },
-  { name: '🪐 +20 автогенерації', cost: 2000, bonus: 20, type: 'auto' },
-  { name: '💥 +100 за клік', cost: 10000, bonus: 100, type: 'click' }
-];
-
-// Створення кнопок апгрейдів
+/* ---------- UPGRADES UI ---------- */
 function renderUpgrades() {
   upgradesContainer.innerHTML = '';
-
-  upgrades.forEach((upg, i) => {
+  upgrades.forEach((u, idx) => {
+    const price = u.baseCost * (u.level + 1);
     const btn = document.createElement('button');
-    btn.textContent = `${upg.name} — ${upg.cost} сек`;
-    btn.className = 'upgrade-btn locked';
-    btn.disabled = true;
-
-    btn.addEventListener('click', () => buyUpgrade(i, btn));
-
+    btn.className = 'upgrade-btn' + (score >= price ? '' : ' locked');
+    btn.textContent = `${u.name} (Lv.${u.level}) — ${formatTime(price)}`;
+    btn.disabled = score < price;
+    btn.addEventListener('click', () => buyUpgrade(idx));
     upgradesContainer.appendChild(btn);
-    upg.button = btn;
+    u._btn = btn;
   });
 }
 
-// Перевірка, які апгрейди можна купити
-function checkUpgrades() {
-  upgrades.forEach(upg => {
-    if (score >= upg.cost && upg.button.disabled) {
-      upg.button.disabled = false;
-      upg.button.classList.remove('locked');
+function checkUpgradesState() {
+  upgrades.forEach(u => {
+    const price = u.baseCost * (u.level + 1);
+    if (u._btn) {
+      u._btn.disabled = score < price;
+      u._btn.classList.toggle('locked', score < price);
+      u._btn.textContent = `${u.name} (Lv.${u.level}) — ${formatTime(price)}`;
     }
   });
 }
 
-// Покупка апгрейду
-function buyUpgrade(index, button) {
-  const upg = upgrades[index];
+function buyUpgrade(index) {
+  const u = upgrades[index];
+  const price = u.baseCost * (u.level + 1);
+  if (score < price) return;
+  score -= price;
+  u.level++;
+  if (u.type === 'click') clickPower += u.bonus;
+  if (u.type === 'auto') autoGain += u.bonus;
+  saveProgress();
+  updateScoreDisplay();
+  renderUpgrades();
+}
 
-  if (score >= upg.cost) {
-    score -= upg.cost;
+/* ---------- SCORE / AUTO ---------- */
+function updateScoreDisplay() {
+  scoreDisplay.textContent = `Часу зібрано: ${formatTime(score)}`;
+  checkUpgradesState();
+}
 
-    if (upg.type === 'click') {
-      perClick += upg.bonus;
-    } else if (upg.type === 'auto') {
-      autoGain += upg.bonus;
-      startAutoGain();
+function saveProgress() {
+  localStorage.setItem('score', score);
+  localStorage.setItem('clickPower', clickPower);
+  localStorage.setItem('autoGain', autoGain);
+  localStorage.setItem('upgradesState', JSON.stringify(upgrades.map(u => u.level)));
+}
+
+/* auto per second (applies autoGain) */
+setInterval(() => {
+  score += autoGain;
+  updateScoreDisplay();
+  saveProgress();
+  if (autoGain > 0) {
+    // little visual cue
+    clock.style.transform = 'scale(1.02)';
+    setTimeout(() => (clock.style.transform = ''), 150);
+  }
+}, 1000);
+
+/* ---------- CLICK interaction ---------- */
+clickBtn.addEventListener('click', () => {
+  score += clickPower;
+  updateScoreDisplay();
+  saveProgress();
+  // small clock pop
+  clock.style.transform = 'scale(1.06)';
+  setTimeout(() => (clock.style.transform = ''), 120);
+});
+
+/* ---------- Clock hands (real time) ---------- */
+function updateClockHands() {
+  const now = new Date();
+  const s = now.getSeconds();
+  const m = now.getMinutes();
+  const h = now.getHours() % 12;
+  secondHand.style.transform = `translateX(-50%) rotate(${s * 6}deg)`;
+  minuteHand.style.transform = `translateX(-50%) rotate(${m * 6 + s * 0.1}deg)`;
+  hourHand.style.transform = `translateX(-50%) rotate(${h * 30 + m * 0.5}deg)`;
+}
+setInterval(updateClockHands, 1000);
+updateClockHands();
+
+/* ---------- Init ---------- */
+function applySavedUpgrades() {
+  const saved = JSON.parse(localStorage.getItem('upgradesState') || 'null');
+  if (Array.isArray(saved)) {
+    for (let i = 0; i < Math.min(saved.length, upgrades.length); i++) {
+      upgrades[i].level = saved[i] || 0;
+      // reapply their effects
+      for (let k = 0; k < upgrades[i].level; k++) {
+        if (upgrades[i].type === 'click') clickPower += upgrades[i].bonus;
+        if (upgrades[i].type === 'auto') autoGain += upgrades[i].bonus;
+      }
     }
-
-    upg.cost = Math.floor(upg.cost * 2.5);
-    button.textContent = `${upg.name} — ${upg.cost} сек`;
-    button.disabled = true;
-    button.classList.add('locked');
-
-    updateScore();
   }
 }
 
-// ===============================
-// 🚀 Старт гри
-// ===============================
+applySavedUpgrades();
+loadMusic(musicIndex);
 renderUpgrades();
-updateScore();
-startAutoGain();
+updateScoreDisplay();
