@@ -1,46 +1,65 @@
 <!DOCTYPE html>
 <html lang="uk">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>TimesClicker ⏰</title>
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css?v=2" />
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⏰</text></svg>">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TimesClicker ⏰</title>
+
+  <!-- Шрифт -->
+  <link
+    href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap"
+    rel="stylesheet"
+  />
+
+  <!-- Підключення CSS -->
+  <link rel="stylesheet" href="style.css?v=1" />
+
+  <!-- Іконка сайту -->
+  <link
+    rel="icon"
+    href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⏰</text></svg>"
+  />
 </head>
 <body>
-<div class="container">
-<div class="upgrades-container" id="upgrades"></div>
+  <div class="container">
+    <!-- ЛІВА ПАНЕЛЬ: АПГРЕЙДИ -->
+    <div class="upgrades-container" id="upgrades"></div>
 
+    <!-- ПРАВА ПАНЕЛЬ: ГОДИННИК + МУЗИКА -->
+    <div class="right-panel">
+      <!-- Годинник -->
+      <div class="clock-wrapper">
+        <div class="clock" id="clickableClock">
+          <div class="hand hour"></div>
+          <div class="hand minute"></div>
+          <div class="hand second"></div>
+          <div class="center-dot"></div>
+        </div>
+      </div>
 
-<div class="right-panel">
-<div class="clock-wrapper">
-<div class="clock glow" id="clickableClock">
-<div class="hand hour"></div>
-<div class="hand minute"></div>
-<div class="hand second"></div>
-<div class="center-dot"></div>
-</div>
-</div>
+      <!-- Кнопка кліку -->
+      <button id="clickBtn">Клікни, щоб зупинити час!</button>
 
+      <!-- Лічильник -->
+      <p id="score">Часу зібрано: 0 сек</p>
 
-<button id="clickBtn">Клікни, щоб зупинити час!</button>
-<p id="score">Часу зібрано: 0 сек</p>
+      <!-- 🎧 Блок музики -->
+      <div class="phonk-wrapper">
+        <button id="musicPrev" class="phonk-small">⏮️</button>
+        <button id="musicBtn" class="phonk-btn">▶️ Включити фонк</button>
+        <button id="musicNext" class="phonk-small">⏭️</button>
+      </div>
 
+      <!-- Назва треку -->
+      <p id="trackTitle" class="track-title">Phonk: не вибрано</p>
 
-<div class="phonk-wrapper">
-<button id="musicPrev" class="phonk-small">⏮️</button>
-<button id="musicBtn" class="phonk-btn">▶️ Включити фонк</button>
-<button id="musicNext" class="phonk-small">⏭️</button>
-</div>
+      <!-- Програвач -->
+      <audio id="phonk" loop preload="auto"></audio>
+    </div>
+  </div>
 
-
-<audio id="phonk" loop preload="auto"></audio>
-</div>
-</div>
-
-
-<script src="musicList.js?v=1"></script>
-<script src="script.js?v=2"></script>
+  <!-- Скрипти -->
+  <script src="musicList.js?v=1"></script>
+  <script src="script.js?v=1"></script>
 </body>
 </html>
