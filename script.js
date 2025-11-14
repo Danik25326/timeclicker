@@ -145,4 +145,25 @@ window.onload = function () {
   setInterval(updateClock, 1000);
   updateClock();
   updateScore();
+  // ========== РЕДАГОВАННЯ НАЗВИ ==========
+const worldName = document.getElementById("worldName");
+
+// Забороняємо перенос рядків
+worldName.addEventListener("keypress", (e) => {
+  if (e.key === "Enter") {
+    e.preventDefault();
+    worldName.blur();
+  }
+});
+
+// Коли користувач закінчив редагувати
+worldName.addEventListener("blur", () => {
+  let text = worldName.textContent.trim();
+
+  // Беремо тільки перше слово
+  const firstWord = text.split(" ")[0] || "Earth";
+
+  // Встановлюємо формат: "<перше слово> Time"
+  worldName.textContent = `${firstWord} Time`;
+});
 };
