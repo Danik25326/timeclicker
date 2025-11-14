@@ -1,89 +1,74 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="uk">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Times Clicker</title>
-  <link rel="stylesheet" href="style.css" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>TimesClicker ⏰</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css?v=4" />
+
   <style>
-    /* Тимчасові стилі лише для прикладу, ти можеш замінити на свої */
-    body {
-      margin: 0;
-      padding: 0;
-      background: #111;
-      color: white;
-      font-family: Arial, sans-serif;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      height: 100vh;
-      user-select: none;
-    }
-
-    #editableTitle {
-      font-size: 32px;
-      margin-bottom: 20px;
-      outline: none;
-      border: none;
-      text-align: center;
-    }
-
-    #clock {
-      width: 250px;
-      height: 250px;
-      border: 6px solid white;
-      border-radius: 50%;
-      position: relative;
-    }
-
-    .hand {
+    /* Заголовок над годинником */
+    .editable-title {
       position: absolute;
-      width: 50%;
-      height: 4px;
-      background: white;
-      top: 50%;
-      transform-origin: 100%;
-      transform: rotate(90deg);
-    }
-
-    #clickZone {
-      margin-top: 25px;
-      font-size: 20px;
-      cursor: pointer;
-      padding: 10px 20px;
-      background: #222;
-      border-radius: 8px;
-      border: 1px solid #555;
-    }
-
-    #clickZone:hover {
-      background: #333;
+      top: 40px;
+      font-size: 32px;
+      font-weight: 700;
+      text-align: center;
+      width: 100%;
+      color: white;
+      text-shadow: 0 0 12px #3b82f6;
+      user-select: text;
+      outline: none;
+      cursor: text;
     }
   </style>
 </head>
+
 <body>
 
-  <!-- ТЕПЕР НАЗВА САМЕ НАД ГОДИННИКОМ -->
-  <div id="editableTitle" contenteditable="true">Times Clicker</div>
-
-  <div id="clock">
-    <div id="hourHand" class="hand"></div>
-    <div id="minuteHand" class="hand" style="height:3px"></div>
-    <div id="secondHand" class="hand" style="height:2px; background:red"></div>
+  <!-- !!! РЕДАГОВАНИЙ ТЕКСТ ПРЯМО НА СТОРІНЦІ !!! -->
+  <div id="worldTitle" class="editable-title" contenteditable="true">
+    Times Clicker
   </div>
 
-  <div id="clickZone">Click!</div>
+  <div class="container">
+    <div class="upgrades-container" id="upgrades"></div>
 
-  <script src="script.js"></script>
+    <div class="right-panel">
+      <div class="clock" id="clickableClock">
+        <div class="hand hour"></div>
+        <div class="hand minute"></div>
+        <div class="hand second"></div>
+        <div class="center-dot"></div>
+      </div>
+
+      <p id="score">Часу зібрано: 0 сек</p>
+
+      <button id="musicBtn" class="phonk-btn">▶️ Включити фонк</button>
+
+      <audio id="phonk" loop preload="auto">
+        <source src="https://raw.githubusercontent.com/Danik25326/timeclicker/main/phonk-music-409064.mp3" type="audio/mpeg">
+      </audio>
+    </div>
+  </div>
+
+  <script src="script.js?v=4"></script>
 
   <script>
-    // Дозволяємо редагувати назву без появи вікон — як у Word
-    const title = document.getElementById("editableTitle");
+    /* ========== РЕДАГУВАННЯ НАЗВИ, ЯК У WORD ========== */
+    const worldTitle = document.getElementById("worldTitle");
 
-    // Прибирання перенесення рядка, щоб не ламалась верстка
-    title.addEventListener("keydown", e => {
+    // Заборона переносу рядка (Enter)
+    worldTitle.addEventListener("keypress", (e) => {
       if (e.key === "Enter") e.preventDefault();
+    });
+
+    // Автоматичне очищення лишніх пробілів після редагування
+    worldTitle.addEventListener("blur", () => {
+      const text = worldTitle.textContent.trim();
+      if (text.length === 0) worldTitle.textContent = "Times Clicker";
     });
   </script>
 
