@@ -72,6 +72,22 @@ body {
   cursor: not-allowed;
 }
 
+.editable-title {
+  font-size: 32px;
+  font-weight: 700;
+  text-align: center;
+  margin-bottom: 15px;
+  text-shadow: 0 0 10px #3b82f6;
+  cursor: text;
+  outline: none;
+  user-select: text;
+}
+
+.editable-title:focus {
+  color: #fff;
+  text-shadow: 0 0 15px #60a5fa;
+}
+
 .upgrade-btn.hidden {
   display: none;
 }
