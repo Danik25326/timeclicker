@@ -5,13 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>TimesClicker ⏰</title>
 
-  <!-- Шрифт -->
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css?v=3" />
 
-  <!-- Стилі -->
-  <link rel="stylesheet" href="style.css?v=2" />
-
-  <!-- Іконка у вкладці -->
   <link rel="icon" 
     href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'>
       <text y='.9em' font-size='90'>⏰</text>
@@ -19,11 +15,14 @@
 </head>
 
 <body>
+  <div class="title-box">
+    <span id="worldName">Earth</span> Time
+    <button id="editNameBtn">✏️</button>
+  </div>
+
   <div class="container">
-    <!-- Ліва панель: апгрейди -->
     <div class="upgrades-container" id="upgrades"></div>
 
-    <!-- Права панель: годинник -->
     <div class="right-panel">
       <div class="clock" id="clickableClock">
         <div class="hand hour"></div>
@@ -32,7 +31,6 @@
         <div class="center-dot"></div>
       </div>
 
-      <button id="clickBtn">Клікни, щоб зупинити час!</button>
       <p id="score">Часу зібрано: 0 сек</p>
 
       <div class="phonk-wrapper">
@@ -45,6 +43,6 @@
     </div>
   </div>
 
-  <script src="script.js?v=2"></script>
+  <script src="script.js?v=3"></script>
 </body>
 </html>
