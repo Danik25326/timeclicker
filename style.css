@@ -241,14 +241,37 @@ body {
   letter-spacing: 1px;
 }
 
-/* Базовий стан обідка */
-#clickableClock {
-    border: 6px solid #4da6ff; /* синій */
-    transition: border-color 0.15s ease, scale 0.12s ease;
+/* Клас, який додається при кліку */
+.clock.click-anim {
+    animation: clickPulse 0.18s ease-out;
 }
 
-/* Стан при кліку */
-#clickableClock.clicked {
-    border-color: #ff4d4d; /* червоний */
+/* Анімація неонового спалаху */
+@keyframes clickPulse {
+    0% {
+        box-shadow:
+            0 0 30px #0ea5e9,
+            0 0 60px #0ea5e9,
+            inset 0 0 30px rgba(14,165,233,0.3);
+        border-color: #0ea5e9;
+        transform: scale(1);
+    }
+    50% {
+        box-shadow:
+            0 0 40px #ff3b5c,
+            0 0 80px #ff3b5c,
+            inset 0 0 40px rgba(255,59,92,0.4);
+        border-color: #ff3b5c;
+        transform: scale(1.08);
+    }
+    100% {
+        box-shadow:
+            0 0 30px #0ea5e9,
+            0 0 60px #0ea5e9,
+            inset 0 0 30px rgba(14,165,233,0.3);
+        border-color: #0ea5e9;
+        transform: scale(1);
+    }
 }
+
 
