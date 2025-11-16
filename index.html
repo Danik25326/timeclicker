@@ -6,7 +6,7 @@
   <title>TimesClicker ⏰</title>
 
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css?v=4" />
+  <link rel="stylesheet" href="style.css?v=5" />
 
   <style>
     /* Заголовок над годинником */
@@ -25,16 +25,19 @@
     }
   </style>
 </head>
+
 <body>
 
-  <!-- !!! РЕДАГОВАНИЙ ТЕКСТ ПРЯМО НА СТОРІНЦІ !!! -->
+  <!-- Редагований заголовок -->
   <div id="worldTitle" class="editable-title" contenteditable="true">
     Times Clicker
   </div>
 
   <div class="container">
+    <!-- Ліва панель апгрейдів -->
     <div class="upgrades-container" id="upgrades"></div>
 
+    <!-- Права панель -->
     <div class="right-panel">
       <div class="clock" id="clickableClock">
         <div class="hand hour"></div>
@@ -45,28 +48,37 @@
 
       <p id="score">Часу зібрано: 0 сек</p>
 
-      <button id="musicBtn" class="phonk-btn">▶️ Включити фонк</button>
-      <audio id="phonk" loop preload="auto">
-        <source src="https://raw.githubusercontent.com/Danik25326/timeclicker/main/phonk-music-409064.mp3" type="audio/mpeg">
-      </audio>
+      <!-- Музичний плеєр -->
+      <div class="music-player">
+        <button id="prevTrack" class="music-switch">⬅️</button>
+        <button id="musicBtn" class="phonk-btn">▶️ Включити музику</button>
+        <button id="nextTrack" class="music-switch">➡️</button>
+      </div>
+
+      <audio id="player" preload="auto"></audio>
     </div>
   </div>
 
-  <script src="script.js?v=4"></script>
+  <script src="script.js?v=5"></script>
 
   <script>
-    /* ========== РЕДАГУВАННЯ НАЗВИ, ЯК У WORD ========== */
+    // Заборона Enter та автододавання "Time"
     const worldTitle = document.getElementById("worldTitle");
 
-    // Заборона переносу рядка (Enter)
     worldTitle.addEventListener("keypress", (e) => {
       if (e.key === "Enter") e.preventDefault();
     });
 
-    // Автоматичне очищення лишніх пробілів після редагування
     worldTitle.addEventListener("blur", () => {
-      const text = worldTitle.textContent.trim();
-      if (text.length === 0) worldTitle.textContent = "Times Clicker";
+      let text = worldTitle.textContent.trim();
+      if (text.length === 0) {
+        worldTitle.textContent = "Times Time";
+        return;
+      }
+      if (!/(\bTime)$/i.test(text)) {
+        text = `${text} Time`;
+      }
+      worldTitle.textContent = text;
     });
   </script>
 
