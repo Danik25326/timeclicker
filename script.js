@@ -13,7 +13,7 @@ window.onload = function () {
   let score = 0;
   let clickPower = 1;
 
-  /* 🎧 СПИСОК ТРЕКІВ */
+  /* ===== СПИСОК ТРЕКІВ ===== */
   const tracks = [
     "asphalt-menace.mp3",
     "digital-overdrive.mp3",
@@ -32,39 +32,34 @@ window.onload = function () {
     if (isPlaying) phonk.play();
   }
 
-  // Початкове завантаження
   loadTrack(currentTrack);
 
-  /* 🎧 Кнопка Play/Pause */
+  /* ===== КНОПКА PLAY/PAUSE ===== */
   musicBtn.addEventListener("click", () => {
     if (!isPlaying) {
       phonk.volume = 0.45;
       phonk.play();
-      musicBtn.textContent = "⏸ Зупинити фонк";
+      musicBtn.textContent = "Зупинити фонк";
       isPlaying = true;
     } else {
       phonk.pause();
-      musicBtn.textContent = "▶️ Включити фонк";
+      musicBtn.textContent = "Включити фонк";
       isPlaying = false;
     }
   });
 
-  /* 🎧 Перемикання треків */
+  /* ===== ПЕРЕМІКАННЯ ТРЕКІВ ===== */
   prevTrack.addEventListener("click", () => {
-    if (!isPlaying) return;
     currentTrack = (currentTrack - 1 + tracks.length) % tracks.length;
     loadTrack(currentTrack);
   });
 
   nextTrack.addEventListener("click", () => {
-    if (!isPlaying) return;
     currentTrack = (currentTrack + 1) % tracks.length;
     loadTrack(currentTrack);
   });
 
-
-  /* --- ГОДИННИКОВА ЛОГІКА --- */
-
+  /* ===== ЛОГІКА ГОДИННИКА ===== */
   function triggerClockAnimation() {
     clock.classList.remove("click-anim");
     void clock.offsetWidth;
@@ -80,9 +75,19 @@ window.onload = function () {
   if (clock) clock.addEventListener("click", addTime);
 
   function updateScore() {
-    scoreText.textContent = `⭐: ${score}`;
+    let display = "";
+    if (score < 60) display = `${score} сек`;
+    else if (score < 3600) display = `${Math.floor(score/60)} хв ${score%60} сек`;
+    else {
+      let hours = Math.floor(score/3600);
+      let mins = Math.floor((score%3600)/60);
+      let secs = score % 60;
+      display = `${hours} год ${mins} хв ${secs} сек`;
+    }
+    scoreText.textContent = `Часу зібрано: ${display}`;
   }
 
+  /* ===== ОНОВЛЕННЯ СТРІЛОК ГОДИННИКА ===== */
   function updateClock() {
     const now = new Date();
     const seconds = now.getSeconds();
@@ -96,4 +101,26 @@ window.onload = function () {
 
   setInterval(updateClock, 1000);
   updateClock();
+
+  /* ===== ПРИКЛАД АПГРЕЙДІВ ЛІВОРУЧ ===== */
+  const exampleUpgrades = [
+    {name: "Подвоїти клік", cost: 10},
+    {name: "Швидший годинник", cost: 50},
+  ];
+
+  exampleUpgrades.forEach(u => {
+    const btn = document.createElement("button");
+    btn.classList.add("upgrade-btn");
+    btn.textContent = `${u.name} (${u.cost} Time)`;
+    upgradesContainer.appendChild(btn);
+
+    btn.addEventListener("click", () => {
+      if (score >= u.cost) {
+        score -= u.cost;
+        clickPower *= 2;
+        updateScore();
+        btn.disabled = true;
+      }
+    });
+  });
 };
