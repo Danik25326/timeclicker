@@ -6,9 +6,10 @@
   <title>TimesClicker ⏰</title>
 
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css?v=5" />
+  <link rel="stylesheet" href="style.css?v=4" />
 
   <style>
+    /* Заголовок над годинником */
     .editable-title {
       position: absolute;
       top: 40px;
@@ -24,11 +25,11 @@
     }
   </style>
 </head>
-
 <body>
 
+  <!-- !!! РЕДАГОВАНИЙ ТЕКСТ ПРЯМО НА СТОРІНЦІ !!! -->
   <div id="worldTitle" class="editable-title" contenteditable="true">
-    Times Clicker Time
+    Times Clicker
   </div>
 
   <div class="container">
@@ -44,29 +45,28 @@
 
       <p id="score">Часу зібрано: 0 сек</p>
 
-      <!-- Музичний плеєр -->
-      <div class="music-player">
-        <button id="prevTrack" class="music-switch"></button>
-        <button id="musicBtn" class="phonk-btn">Включити фонк</button>
-        <button id="nextTrack" class="music-switch"></button>
-      </div>
-
-      <audio id="phonk" preload="auto"></audio>
+      <button id="musicBtn" class="phonk-btn">▶️ Включити фонк</button>
+      <audio id="phonk" loop preload="auto">
+        <source src="https://raw.githubusercontent.com/Danik25326/timeclicker/main/phonk-music-409064.mp3" type="audio/mpeg">
+      </audio>
     </div>
   </div>
 
-  <script src="script.js?v=5"></script>
+  <script src="script.js?v=4"></script>
 
   <script>
+    /* ========== РЕДАГУВАННЯ НАЗВИ, ЯК У WORD ========== */
     const worldTitle = document.getElementById("worldTitle");
+
+    // Заборона переносу рядка (Enter)
     worldTitle.addEventListener("keypress", (e) => {
       if (e.key === "Enter") e.preventDefault();
     });
+
+    // Автоматичне очищення лишніх пробілів після редагування
     worldTitle.addEventListener("blur", () => {
-      let text = worldTitle.textContent.trim();
-      if (text.length === 0) text = "Times Clicker";
-      if (!text.endsWith(" Time")) text += " Time";
-      worldTitle.textContent = text;
+      const text = worldTitle.textContent.trim();
+      if (text.length === 0) worldTitle.textContent = "Times Clicker";
     });
   </script>
 
