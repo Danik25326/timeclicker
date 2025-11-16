@@ -8,15 +8,13 @@ window.onload = function () {
   const phonk = document.getElementById("phonk");
   const scoreText = document.getElementById("score");
   const upgradesContainer = document.getElementById("upgrades");
-  const worldTitle = document.getElementById("worldTitle"); // contenteditable в index.html
+  const worldTitle = document.getElementById("worldTitle");
 
   // Ігрові змінні
   let score = 0;
   let clickPower = 1;
 
-  // --------------------------
-  // Форматування часу для відображення
-  // --------------------------
+  // Форматування часу
   function formatTime(seconds) {
     const units = [
       { name: "століття", value: 60 * 60 * 24 * 365 * 100 },
@@ -44,9 +42,7 @@ window.onload = function () {
     return parts.join(" ");
   }
 
-  // --------------------------
-  // Апгрейди (ціни зменшені)
-  // --------------------------
+  // Апгрейди
   const upgrades = [
     { name: "📱 Включити телефон", baseCost: 12, bonus: 1, level: 0 },
     { name: "☕ Зробити каву", baseCost: 25, bonus: 2, level: 0 },
@@ -70,7 +66,7 @@ window.onload = function () {
     function updateText() {
       const cost = upgrade.baseCost * (upgrade.level + 1);
       btn.textContent = `${upgrade.name} (Lv.${upgrade.level}) — ${formatTime(cost)}`;
-      btn.disabled = score < cost; // візуально блокувати, якщо немає грошей
+      btn.disabled = score < cost;
     }
 
     updateText();
@@ -90,23 +86,17 @@ window.onload = function () {
     upgrade.update = updateText;
   });
 
-  // Показуємо тільки перший апгрейд спочатку
   if (buttons[0]) buttons[0].classList.remove("hidden");
 
   function revealNext(i) {
     if (buttons[i + 1]) {
       buttons[i + 1].classList.remove("hidden");
-      // При відкритті оновлюємо текст/стан кнопки
       upgrades[i + 1].update?.();
     }
   }
 
-  // --------------------------
-  // Оновлення рахунку
-  // --------------------------
   function updateScore() {
     scoreText.textContent = `Часу зібрано: ${formatTime(score)}`;
-    // Оновимо стани кнопок апгрейдів (щоб вмикалися/вимикалися)
     buttons.forEach((b, idx) => {
       if (!b.classList.contains("hidden")) {
         const cost = upgrades[idx].baseCost * (upgrades[idx].level + 1);
@@ -115,34 +105,25 @@ window.onload = function () {
     });
   }
 
-  // --------------------------
-  // Ефект кліку
-  // --------------------------
-function boomEffect() {
+  // 💥 НОВА 100% ПРАЦЮЮЧА АНІМАЦІЯ КЛІКУ
+  function triggerClockAnimation() {
+    clock.classList.remove("click-anim");
+    void clock.offsetWidth; // скидання анімації
     clock.classList.add("click-anim");
-
-    setTimeout(() => {
-        clock.classList.remove("click-anim");
-    }, 180);
-}
-
+  }
 
   function addTime() {
     score += clickPower;
     updateScore();
-    boomEffect();
+    triggerClockAnimation();
   }
 
-  // Клік тільки по годиннику
   if (clock) clock.addEventListener("click", addTime);
 
-  // --------------------------
-  // Музика (фонк)
-  // --------------------------
+  // Музика
   if (musicBtn && phonk) {
     musicBtn.addEventListener("click", () => {
       if (phonk.paused) {
-        // браузери дозволяють звук лише після дії користувача — клік по кнопці достатній
         try {
           phonk.volume = 0.4;
           phonk.play();
@@ -157,9 +138,7 @@ function boomEffect() {
     });
   }
 
-  // --------------------------
-  // Оновлення стрілок годинника
-  // --------------------------
+  // Оновлення годинника
   function updateClock() {
     const now = new Date();
     const seconds = now.getSeconds();
@@ -175,25 +154,18 @@ function boomEffect() {
   updateClock();
   updateScore();
 
-  // --------------------------
-  // РЕДАГУВАННЯ НАЗВИ (ВАРІАНТ C)
-  // Беремо весь введений текст і додаємо " Time" (один раз)
-  // --------------------------
+  // ВАРІАНТ C — автододавання "Time"
   if (worldTitle) {
-    // Заборонити Enter
     worldTitle.addEventListener("keydown", (e) => {
       if (e.key === "Enter") e.preventDefault();
     });
 
     worldTitle.addEventListener("blur", () => {
       let text = worldTitle.textContent.trim();
-
       if (text.length === 0) {
-        worldTitle.textContent = "Times Time"; // якщо порожньо — дефолт
+        worldTitle.textContent = "Times Time";
         return;
       }
-
-      // Якщо користувач вже написав "Time" вкінці — не додаємо ще раз
       if (!/(\bTime)$/i.test(text)) {
         text = `${text} Time`;
       }
