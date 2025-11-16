@@ -136,3 +136,63 @@ body {
   cursor: pointer;
   text-shadow: 0 0 6px rgba(255,255,255,0.6);
 }
+
+.music-switch {
+  position: relative;
+  width: 60px;
+  height: 60px;
+  border-radius: 50px;
+  background: linear-gradient(90deg, #ec4899, #8b5cf6);
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 0 20px #ec4899, 0 0 40px rgba(236, 72, 153, 0.5),
+              inset 0 0 10px rgba(255, 255, 255, 0.3);
+  color: white;
+  font-size: 24px;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: 0.3s;
+  overflow: hidden;
+}
+
+.music-switch::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -75%;
+  width: 50%;
+  height: 100%;
+  background: linear-gradient(
+    120deg,
+    rgba(255, 255, 255, 0.2) 0%,
+    rgba(255, 255, 255, 0.7) 50%,
+    rgba(255, 255, 255, 0.2) 100%
+  );
+  transform: skewX(-25deg);
+  transition: 0.7s;
+}
+
+.music-switch:hover::before {
+  left: 125%;
+}
+
+.music-switch:hover {
+  animation: phonkPulse 1.2s infinite;
+  letter-spacing: 1px;
+}
+
+@keyframes phonkPulse {
+  0%, 100% {
+    box-shadow: 0 0 20px #ec4899, 0 0 40px rgba(236, 72, 153, 0.5),
+                inset 0 0 10px rgba(255, 255, 255, 0.3);
+    transform: scale(1);
+  }
+  50% {
+    box-shadow: 0 0 35px #8b5cf6, 0 0 70px rgba(139, 92, 246, 0.5),
+                inset 0 0 20px rgba(255, 255, 255, 0.4);
+    transform: scale(1.05);
+  }
+}
+
