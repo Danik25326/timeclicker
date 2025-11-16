@@ -8,12 +8,10 @@ window.onload = function () {
   const nextTrack = document.getElementById("nextTrack");
   const phonk = document.getElementById("phonk");
   const scoreText = document.getElementById("score");
-  const upgradesContainer = document.getElementById("upgrades");
 
   let score = 0;
   let clickPower = 1;
 
-  /* 🎧 СПИСОК ТВОЇХ ТРЕКІВ */
   const tracks = [
     "asphalt-menace.mp3",
     "digital-overdrive.mp3",
@@ -26,26 +24,31 @@ window.onload = function () {
 
   let currentTrack = 0;
 
+  function updateMusicButton() {
+    musicBtn.textContent = phonk.paused ? "Play" : "Pause";
+  }
+
   function loadTrack(i) {
+    const wasPlaying = !phonk.paused;
     phonk.src = tracks[i];
-    if (!phonk.paused) phonk.play();
+    if (wasPlaying) phonk.play();
+    updateMusicButton();
   }
 
   loadTrack(currentTrack);
 
-  /* 🎧 Кнопка Play/Pause */
+  // Play/Pause
   musicBtn.addEventListener("click", () => {
     if (phonk.paused) {
       phonk.volume = 0.45;
       phonk.play();
-      musicBtn.textContent = "⏸ Зупинити фонк";
     } else {
       phonk.pause();
-      musicBtn.textContent = "▶️ Включити фонк";
     }
+    updateMusicButton();
   });
 
-  /* 🎧 Перемикання треків */
+  // Prev/Next
   prevTrack.addEventListener("click", () => {
     currentTrack = (currentTrack - 1 + tracks.length) % tracks.length;
     loadTrack(currentTrack);
@@ -56,7 +59,16 @@ window.onload = function () {
     loadTrack(currentTrack);
   });
 
-  /* --- Далі йде твоя логіка апгрейдів, годинника, анімацій --- */
+  // Click на годинник
+  clock.addEventListener("click", () => {
+    score += clickPower;
+    updateScore();
+    triggerClockAnimation();
+  });
+
+  function updateScore() {
+    scoreText.textContent = `Часу зібрано: ${score} сек`;
+  }
 
   function triggerClockAnimation() {
     clock.classList.remove("click-anim");
@@ -64,14 +76,7 @@ window.onload = function () {
     clock.classList.add("click-anim");
   }
 
-  function addTime() {
-    score += clickPower;
-    updateScore();
-    triggerClockAnimation();
-  }
-
-  if (clock) clock.addEventListener("click", addTime);
-
+  // Годинник
   function updateClock() {
     const now = new Date();
     const seconds = now.getSeconds();
