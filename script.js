@@ -46,15 +46,41 @@ window.onload = function () {
   });
 
   /* 🎧 Перемикання треків */
-  prevTrack.addEventListener("click", () => {
-    currentTrack = (currentTrack - 1 + tracks.length) % tracks.length;
-    loadTrack(currentTrack);
-  });
+  function loadTrack(i) {
+  phonk.src = tracks[i];
 
-  nextTrack.addEventListener("click", () => {
-    currentTrack = (currentTrack + 1) % tracks.length;
-    loadTrack(currentTrack);
-  });
+  if (isPlaying) {
+    phonk.play();
+  }
+}
+
+let isPlaying = false;
+
+musicBtn.addEventListener("click", () => {
+  if (!isPlaying) {
+    phonk.volume = 0.45;
+    phonk.play();
+    musicBtn.textContent = "⏸ Зупинити фонк";
+    isPlaying = true;
+  } else {
+    phonk.pause();
+    musicBtn.textContent = "▶️ Включити фонк";
+    isPlaying = false;
+  }
+});
+
+prevTrack.addEventListener("click", () => {
+  if (!isPlaying) return;  // якщо звук вимкнено – не перемикаємо
+  currentTrack = (currentTrack - 1 + tracks.length) % tracks.length;
+  loadTrack(currentTrack);
+});
+
+nextTrack.addEventListener("click", () => {
+  if (!isPlaying) return;  // якщо звук вимкнено – не перемикаємо
+  currentTrack = (currentTrack + 1) % tracks.length;
+  loadTrack(currentTrack);
+});
+
 
   /* --- Далі йде твоя логіка апгрейдів, годинника, анімацій --- */
 
