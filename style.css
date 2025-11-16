@@ -10,24 +10,6 @@ body {
   align-items: center;
 }
 
-.title-box {
-  position: absolute;
-  top: 20px;
-  font-size: 32px;
-  font-weight: 700;
-  display: flex;
-  gap: 10px;
-  align-items: center;
-}
-
-#editNameBtn {
-  font-size: 20px;
-  padding: 4px 10px;
-  border-radius: 8px;
-  cursor: pointer;
-  border: none;
-}
-
 .container {
   display: flex;
   gap: 100px;
@@ -72,25 +54,7 @@ body {
   cursor: not-allowed;
 }
 
-.upgrade-btn.hidden {
-  display: none;
-}
-
-.editable-title {
-  font-size: 32px;
-  font-weight: 700;
-  text-align: center;
-  margin-bottom: 15px;
-  text-shadow: 0 0 10px #3b82f6;
-  cursor: text;
-  outline: none;
-  user-select: text;
-}
-
-.editable-title:focus {
-  color: #fff;
-  text-shadow: 0 0 15px #60a5fa;
-}
+.upgrade-btn.hidden { display: none; }
 
 /* ===== ПРАВА ПАНЕЛЬ ===== */
 .right-panel {
@@ -107,8 +71,8 @@ body {
   height: 250px;
   border: 6px solid #0ea5e9;
   border-radius: 50%;
-  transition: box-shadow 0.12s ease-out, border-color 0.12s ease-out, transform 0.12s ease-out;
   box-shadow: 0 0 30px #0ea5e9, 0 0 60px #0ea5e9, inset 0 0 30px rgba(14, 165, 233, 0.3);
+  transition: box-shadow 0.12s ease-out, border-color 0.12s ease-out, transform 0.12s ease-out;
 }
 
 .clock.click-anim {
@@ -116,21 +80,9 @@ body {
 }
 
 @keyframes clickPulse {
-  0% {
-    box-shadow: 0 0 30px #0ea5e9, 0 0 60px #0ea5e9, inset 0 0 30px rgba(14,165,233,0.3);
-    border-color: #0ea5e9;
-    transform: scale(1);
-  }
-  50% {
-    box-shadow: 0 0 40px #ff3b5c, 0 0 80px #ff3b5c, inset 0 0 40px rgba(255,59,92,0.4);
-    border-color: #ff3b5c;
-    transform: scale(1.08);
-  }
-  100% {
-    box-shadow: 0 0 30px #0ea5e9, 0 0 60px #0ea5e9, inset 0 0 30px rgba(14,165,233,0.3);
-    border-color: #0ea5e9;
-    transform: scale(1);
-  }
+  0% { box-shadow: 0 0 30px #0ea5e9; border-color: #0ea5e9; transform: scale(1); }
+  50% { box-shadow: 0 0 40px #ff3b5c; border-color: #ff3b5c; transform: scale(1.08); }
+  100% { box-shadow: 0 0 30px #0ea5e9; border-color: #0ea5e9; transform: scale(1); }
 }
 
 /* ===== СТРІЛКИ ГОДИННИКА ===== */
@@ -146,19 +98,10 @@ body {
 .hour { width: 6px; height: 50px; background: #3b82f6; }
 .minute { width: 4px; height: 70px; background: #60a5fa; }
 .second { width: 2px; height: 90px; background: #ec4899; }
-.center-dot {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 10px;
-  height: 10px;
-  background: #ec4899;
-  border-radius: 50%;
-  transform: translate(-50%, -50%);
-}
+.center-dot { position: absolute; top: 50%; left: 50%; width: 10px; height: 10px; background: #ec4899; border-radius: 50%; transform: translate(-50%, -50%); }
 
 /* ===== КНОПКИ ===== */
-#clickBtn, #musicBtn {
+#musicBtn, #clickBtn {
   background: linear-gradient(90deg, #0ea5e9, #3b82f6);
   border: none;
   color: white;
@@ -169,8 +112,7 @@ body {
   transition: 0.3s;
 }
 
-#clickBtn:hover,
-#musicBtn:hover {
+#musicBtn:hover, #clickBtn:hover {
   transform: scale(1.05);
   box-shadow: 0 0 15px #3b82f6;
 }
@@ -181,9 +123,7 @@ body {
   text-shadow: 0 0 10px #3b82f6;
 }
 
-/* ===== КНОПКА ФОНК ===== */
-.phonk-wrapper { display: flex; justify-content: center; width: 100%; }
-
+/* ===== Phonk Button ===== */
 .phonk-btn {
   position: relative;
   background: linear-gradient(90deg, #ec4899, #8b5cf6);
@@ -194,71 +134,5 @@ body {
   padding: 14px 32px;
   border-radius: 50px;
   cursor: pointer;
-  transition: 0.3s;
-  box-shadow: 0 0 20px #ec4899, 0 0 40px rgba(236, 72, 153, 0.5),
-              inset 0 0 10px rgba(255, 255, 255, 0.3);
   text-shadow: 0 0 6px rgba(255,255,255,0.6);
-  overflow: hidden;
 }
-
-.phonk-btn::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: -75%;
-  width: 50%;
-  height: 100%;
-  background: linear-gradient(120deg,
-              rgba(255, 255, 255, 0.2) 0%,
-              rgba(255, 255, 255, 0.7) 50%,
-              rgba(255, 255, 255, 0.2) 100%);
-  transform: skewX(-25deg);
-  transition: 0.7s;
-}
-
-.phonk-btn:hover::before { left: 125%; }
-
-@keyframes phonkPulse {
-  0%, 100% {
-    box-shadow: 0 0 20px #ec4899, 0 0 40px rgba(236, 72, 153, 0.5),
-                inset 0 0 10px rgba(255, 255, 255, 0.3);
-    transform: scale(1);
-  }
-  50% {
-    box-shadow: 0 0 35px #8b5cf6, 0 0 70px rgba(139, 92, 246, 0.5),
-                inset 0 0 20px rgba(255, 255, 255, 0.4);
-    transform: scale(1.05);
-  }
-}
-
-.phonk-btn:hover {
-  animation: phonkPulse 1.2s infinite;
-  letter-spacing: 1px;
-}
-
-/* ===== Музичний плеєр ===== */
-.music-player {
-  display: flex;
-  gap: 12px;
-  align-items: center;
-}
-
-.music-switch {
-  width: 48px;
-  height: 48px;
-  border-radius: 14px;
-  background: linear-gradient(90deg, #8b5cf6, #ec4899);
-  border: none;
-  cursor: pointer;
-  box-shadow: 0 0 15px #8b5cf6;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: 0.25s;
-}
-
-.music-switch:hover {
-  transform: scale(1.1);
-  box-shadow: 0 0 25px #ec4899;
-}
-
