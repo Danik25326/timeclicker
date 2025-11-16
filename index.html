@@ -6,23 +6,8 @@
   <title>TimesClicker ⏰</title>
 
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css?v=5" />
+  <link rel="stylesheet" href="style.css?v=6" />
 
-  <style>
-    .editable-title {
-      position: absolute;
-      top: 40px;
-      font-size: 32px;
-      font-weight: 700;
-      text-align: center;
-      width: 100%;
-      color: white;
-      text-shadow: 0 0 12px #3b82f6;
-      user-select: text;
-      outline: none;
-      cursor: text;
-    }
-  </style>
 </head>
 
 <body>
@@ -44,27 +29,35 @@
 
       <p id="score">Часу зібрано: 0 сек</p>
 
-      <!-- 🎧 НОВИЙ МУЗИЧНИЙ ПЛЕЄР -->
+      <!-- Музичний плеєр -->
       <div class="music-player">
-        <button id="prevTrack" class="music-switch">⬅️</button>
-        <button id="musicBtn" class="phonk-btn">▶️ Включити фонк</button>
-        <button id="nextTrack" class="music-switch">➡️</button>
+        <button id="prevTrack" class="music-switch">Prev</button>
+        <button id="musicBtn" class="phonk-btn">Play</button>
+        <button id="nextTrack" class="music-switch">Next</button>
       </div>
 
       <audio id="phonk" preload="auto"></audio>
     </div>
   </div>
 
-  <script src="script.js?v=5"></script>
+  <script src="script.js?v=6"></script>
 
   <script>
     const worldTitle = document.getElementById("worldTitle");
+
+    // Заборона Enter
     worldTitle.addEventListener("keypress", (e) => {
       if (e.key === "Enter") e.preventDefault();
     });
+
+    // Додавання слова "Time"
     worldTitle.addEventListener("blur", () => {
-      const text = worldTitle.textContent.trim();
-      if (text.length === 0) worldTitle.textContent = "Times Clicker";
+      let text = worldTitle.textContent.trim();
+      if (text.length === 0) {
+        worldTitle.textContent = "Times Clicker";
+      } else if (!text.includes("Time")) {
+        worldTitle.textContent = text + " Time";
+      }
     });
   </script>
 
