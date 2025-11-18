@@ -81,7 +81,7 @@ body{
 .upgrades-container{
   display:flex;
   flex-direction:column;
-  gap:14px; /* більше відстань між кнопками */
+  gap:14px;
   max-height:420px;
   overflow:auto;
   padding-right:6px;
@@ -140,7 +140,7 @@ body{
 }
 
 /* Clock */
-#clockWrapper{position:relative;display:flex;align-items:center;gap:28px;}
+#clockWrapper{position:relative;display:flex;align-items:center;gap:28px;width:100%;}
 .clock{
   position:relative;
   width:25%; /* займатиме 25% правої панелі */
@@ -160,7 +160,7 @@ body{
   transform-origin:bottom;
   transform:translateX(-50%) rotate(0deg);
   border-radius:2px;
-  background:#001f5f; /* темно-сині за замовчуванням */
+  background:#001f5f;
 }
 .hour{width:8px;height:58px}
 .minute{width:6px;height:86px}
@@ -180,6 +180,10 @@ body{
   box-shadow:0 6px 18px rgba(0,0,0,0.5);
   opacity:0;
   transition:opacity 0.3s, transform 0.3s;
+}
+.click-cloud.show{
+  opacity:1;
+  transform:translateY(-20px);
 }
 #clickGain{font-size:16px;color:var(--accent)}
 #totalCloud{font-size:13px;color:#a8d8ff;margin-top:6px}
