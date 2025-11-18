@@ -1,55 +1,44 @@
+/* TimesClicker — main script */
 window.onload = function () {
-  // Elements
+  // DOM
   const clock = document.getElementById("clickableClock");
   const hourHand = document.querySelector(".hour");
   const minuteHand = document.querySelector(".minute");
   const secondHand = document.querySelector(".second");
-  const scoreText = document.getElementById("score");
-  const upgradesContainer = document.getElementById("upgrades");
-  const comboBubble = document.getElementById("comboBubble");
-  const bubbleContainer = document.getElementById("bubbleContainer");
-  const player = document.getElementById("player");
   const musicBtn = document.getElementById("musicBtn");
   const prevTrack = document.getElementById("prevTrack");
   const nextTrack = document.getElementById("nextTrack");
-  const currentTrackName = document.getElementById("currentTrackName");
-  const toastArea = document.getElementById("toastArea");
+  const player = document.getElementById("player");
+  const scoreText = document.getElementById("score");
+  const upgradesContainer = document.getElementById("upgrades");
+  const clickGainEl = document.getElementById("clickGain");
+  const cloudTotalEl = document.getElementById("cloudTotal");
+  const nowPlaying = document.getElementById("nowPlaying");
+  const realTimePlayedEl = document.getElementById("realTimePlayed");
+  const virtualTimeEl = document.getElementById("virtualTime");
+  const totalUpgradesEl = document.getElementById("totalUpgrades");
+  const maxPerClickEl = document.getElementById("maxPerClick");
+  const prestigeMultEl = document.getElementById("prestigeMult");
+  const reverbBtn = document.getElementById("reverbBtn");
+  const timeTunnel = document.getElementById("timeTunnel");
+  const worldTitle = document.getElementById("worldTitle");
 
-  // Game vars
-  let score = 0; // seconds lost (virtual)
-  let clickPower = 1; // seconds per click
-  let clickCountFast = 0; // for combo bubble
-  let comboTimer = null;
-  let lastClickTime = 0;
-  let currentTrack = 0;
+  // State
+  let score = 0;               // virtual time spent
+  let clickPower = 1;         // seconds per click
+  let autoRate = 0;           // seconds per second from auto upgrades
   let isPlaying = false;
+  let currentTrack = 0;
+  let sessionStart = Date.now();
+  let totalUpgradesBought = 0;
+  let maxPerClick = 1;
+  let prestigeMultiplier = 1.0;
+  let clickCloudTotal = 0;
 
-  // Format time (reused)
-  function formatTime(seconds) {
-    const units = [
-      { name: "століття", value: 60*60*24*365*100 },
-      { name: "десятиліття", value: 60*60*24*365*10 },
-      { name: "рік", value: 60*60*24*365 },
-      { name: "міс", value: 60*60*24*30 },
-      { name: "дн", value: 60*60*24 },
-      { name: "год", value: 60*60 },
-      { name: "хв", value: 60 },
-      { name: "сек", value: 1 },
-    ];
-    let remaining = Math.floor(seconds);
-    const parts = [];
-    for (const u of units) {
-      const amount = Math.floor(remaining / u.value);
-      if (amount > 0 || parts.length > 0) {
-        if (amount > 0) parts.push(`${amount} ${u.name}`);
-        remaining %= u.value;
-      }
-    }
-    if (parts.length === 0) return `${Math.floor(seconds)} сек`;
-    return parts.join(" ");
-  }
-
-  // TRACKS
+  // Tracks (assume files are in musicList/)
+  const trackNames = [
+    "Фонк №1","Фонк №2","Фонк №3","Фонк №4","Фонк №5","Фонк №6","Фонк №7"
+  ];
   const tracks = [
     "asphalt-menace.mp3",
     "digital-overdrive.mp3",
@@ -58,32 +47,32 @@ window.onload = function () {
     "phonk-music-409064 (2).mp3",
     "phonk-music-phonk-2025-432208.mp3",
     "pixel-drift.mp3"
-  ].map(n => `musicList/${n}`);
+  ].map(x => `musicList/${x}`);
 
-  function setTrackName(i){ currentTrackName.textContent = `Фонк №${i+1}`; }
-
+  // Load track
   function loadTrack(i){
     player.src = tracks[i];
-    setTrackName(i);
-    if (isPlaying) {
-      // play new immediately
-      player.currentTime = 0;
-      player.play().catch(()=>{});
-    }
+    nowPlaying.textContent = `Зараз: ${trackNames[i]}`;
+    if(isPlaying) player.play();
   }
-  loadTrack(currentTrack);
+  loadTrack(0);
 
-  // Player controls
+  // when ended -> next
+  player.addEventListener("ended", () => {
+    currentTrack = (currentTrack + 1) % tracks.length;
+    loadTrack(currentTrack);
+  });
+
   musicBtn.addEventListener("click", () => {
-    if (!isPlaying) {
-      player.volume = 0.45;
-      player.play().catch(()=>{});
-      musicBtn.textContent = "⏸ Зупинити музику";
+    if(!isPlaying){
       isPlaying = true;
+      player.volume = 0.45;
+      player.play().catch(()=>{ /* autoplay restrictions handled by user click */ });
+      musicBtn.textContent = "⏸ Зупинити музику";
     } else {
+      isPlaying = false;
       player.pause();
       musicBtn.textContent = "▶️ Включити музику";
-      isPlaying = false;
     }
   });
 
@@ -96,259 +85,287 @@ window.onload = function () {
     loadTrack(currentTrack);
   });
 
-  // Ensure loop
-  player.addEventListener("ended", () => {
-    player.currentTime = 0;
-    player.play().catch(()=>{});
-  });
+  // format time (seconds) into units
+  function formatTime(seconds){
+    seconds = Math.floor(seconds);
+    const units = [
+      {name:"століття", value:60*60*24*365*100},
+      {name:"десятиліття", value:60*60*24*365*10},
+      {name:"рік", value:60*60*24*365},
+      {name:"міс", value:60*60*24*30},
+      {name:"дн", value:60*60*24},
+      {name:"год", value:60*60},
+      {name:"хв", value:60},
+      {name:"сек", value:1},
+    ];
+    let remaining = seconds;
+    const parts = [];
+    for(const u of units){
+      const amt = Math.floor(remaining / u.value);
+      if(amt>0){
+        parts.push(`${amt} ${u.name}`);
+        remaining %= u.value;
+      }
+    }
+    return parts.length ? parts.join(" ") : `${seconds} сек`;
+  }
 
-  // UPGRADES — creative list tuned to 'time wasting'
+  // Upgrades: mix of click and auto
   const upgrades = [
-    { id:'blink', name:"Кліпати очима", baseCost:1, bonusClick:1, type:'click', level:0, desc:'+1 сек за клік' },
-    { id:'phone', name:"Включити телефон", baseCost:5, bonusAuto:1, type:'auto', level:0, desc:'+1 сек кожні 5 сек' },
-    { id:'scroll', name:"Листати стрічку", baseCost:20, bonusAuto:3, type:'auto', level:0, desc:'+3 сек / 5с' },
-    { id:'ads', name:"Дивитися рекламу", baseCost:80, bonusClick:2, type:'click', level:0, desc:'+2 сек за клік' },
-    { id:'notif', name:"Перевіряти нотифікації", baseCost:300, bonusAuto:10, type:'auto', level:0, desc:'+10 сек / 5с' },
-    { id:'doomscroll', name:"Doomscrolling", baseCost:2000, bonusAuto:60, type:'auto', level:0, desc:'+60 сек / 5с' },
-    { id:'project', name:"Почати мем-проєкт", baseCost:12000, bonusClick:10, type:'click', level:0, desc:'+10 сек за клік' },
-    { id:'deepdiv', name:"Глибокий дайв в треди", baseCost:90000, bonusAuto:600, type:'auto', level:0, desc:'+600 сек / 5с' },
+    { name:"Кліпати очима", baseCost:1, type:"click", bonus:1, level:0, desc:"Кліп - мінус секунду швидко." },
+    { name:"Включити телефон", baseCost:8, type:"auto", bonus:1, level:0, desc:"Телефон віднімає час автоматично (1 сек / 5 с базово)." },
+    { name:"Гортати стрічку новин", baseCost:25, type:"auto", bonus:3, level:0, desc:"Погладжування стрічки — пасивний втрачач часу." },
+    { name:"Невеликий мем-тур", baseCost:90, type:"click", bonus:2, level:0, desc:"Клік дає більше втрат." },
+    { name:"Автоперегортання", baseCost:450, type:"auto", bonus:10, level:0, desc:"Серйозна автоматизація." },
+    { name:"Придбати підписку", baseCost:2400, type:"auto", bonus:30, level:0, desc:"Всі підписки крадуть час." },
+    { name:"Серіал-марафон", baseCost:15000, type:"auto", bonus:120, level:0, desc:"Великий пасив." },
+    { name:"Проєкт із затримкою", baseCost:120000, type:"click", bonus:50, level:0, desc:"Коли клікаєш, втрачається дуже багато." },
+    { name:"Життєвий крінж", baseCost:800000, type:"auto", bonus:500, level:0, desc:"Топовий авто-витрачальник." },
   ];
 
+  // Render upgrades
   const buttons = [];
-
-  upgrades.forEach((u, idx) => {
+  upgrades.forEach((up, idx) => {
     const btn = document.createElement("button");
     btn.className = "upgrade-btn hidden";
+    btn.addEventListener("click", () => buyUpgrade(idx));
     upgradesContainer.appendChild(btn);
     buttons.push(btn);
 
-    function updateText(){
-      // cost scales exponentially a bit
-      const cost = Math.floor(u.baseCost * Math.pow(3, u.level));
-      btn.textContent = `${u.name} (Lv.${u.level}) — ${formatTime(cost)} — ${u.desc}`;
+    up.update = function(){
+      const cost = Math.floor(up.baseCost * Math.pow(1.15, up.level));
+      btn.textContent = `${up.name} (Lv.${up.level}) — ${formatTime(cost)}`;
       btn.disabled = score < cost;
-    }
-    updateText();
-
-    btn.addEventListener("click", () => {
-      const cost = Math.floor(u.baseCost * Math.pow(3, u.level));
-      if (score >= cost){
-        score -= cost;
-        u.level++;
-        // apply effect
-        if (u.bonusClick) clickPower += u.bonusClick;
-        if (u.bonusAuto){
-          // spawn automatic income every 5s (track via setInterval per upgrade level)
-          // we'll store timers on u
-          if (!u._interval) {
-            u._interval = setInterval(() => {
-              // seconds per tick equals bonusAuto * level
-              const add = u.bonusAuto * u.level;
-              score += add;
-              updateScore();
-            }, 5000);
-          }
-        }
-        updateText();
-        updateScore();
-        revealNext(idx);
-        showToast(`Куплено: ${u.name}`);
-      }
-    });
-
-    u.update = updateText;
+    };
+    up.getCost = function(){
+      return Math.floor(up.baseCost * Math.pow(1.15, up.level));
+    };
+    up.update();
   });
-
-  // Show first upgrade
-  if (buttons[0]) buttons[0].classList.remove("hidden");
+  if(buttons[0]) buttons[0].classList.remove("hidden");
 
   function revealNext(i){
-    if (buttons[i+1]) {
-      buttons[i+1].classList.remove("hidden");
-      upgrades[i+1].update?.();
-    }
+    if(buttons[i+1]) buttons[i+1].classList.remove("hidden");
   }
 
-  function updateScore(){
-    scoreText.textContent = `Часу втрачено: ${formatTime(score)}`;
-    buttons.forEach((b, idx) => {
-      if (!b.classList.contains('hidden')){
-        const u = upgrades[idx];
-        const cost = Math.floor(u.baseCost * Math.pow(3, u.level));
-        b.disabled = score < cost;
+  function buyUpgrade(i){
+    const up = upgrades[i];
+    const cost = up.getCost();
+    if(score < cost) return;
+    score -= cost;
+    up.level++;
+    totalUpgradesBought++;
+    if(up.type === "click"){
+      clickPower += Math.round(up.bonus * prestigeMultiplier);
+      if(clickPower > maxPerClick) maxPerClick = clickPower;
+    } else {
+      autoRate += Math.round(up.bonus * prestigeMultiplier);
+    }
+    // progressive reveal - show next every buy
+    up.update();
+    revealNext(i);
+    updateAllButtons();
+    updateScore();
+    updateStats();
+  }
+
+  function updateAllButtons(){
+    upgrades.forEach((up, idx) => {
+      up.update();
+      if(!buttons[idx].classList.contains("hidden")){
+        buttons[idx].disabled = score < up.getCost();
       }
     });
-    // update stats tab if present
-    const statVirtual = document.getElementById('statVirtual');
-    if (statVirtual) statVirtual.textContent = formatTime(score);
   }
 
-  // CLICK EFFECTS, BUBBLES, COMBO
-  function spawnSmallBubble(text){
-    const el = document.createElement('div');
-    el.className = 'small-bubble';
-    el.textContent = text;
-    bubbleContainer.appendChild(el);
-    setTimeout(()=> el.remove(), 900);
+  // Score / UI updates
+  function updateScore(){
+    scoreText.textContent = `Часу витрачено: ${formatTime(score)}`;
+    cloudTotalEl.textContent = `${formatTime(clickCloudTotal)}`;
+    updateAllButtons();
+  }
+  function updateStats(){
+    realTimePlayedEl.textContent = formatTime((Date.now()-sessionStart)/1000);
+    virtualTimeEl.textContent = formatTime(score);
+    totalUpgradesEl.textContent = totalUpgradesBought;
+    maxPerClickEl.textContent = `${formatTime(maxPerClick)}`;
+    prestigeMultEl.textContent = `${prestigeMultiplier.toFixed(2)}×`;
   }
 
-  function updateComboBubble(){
-    if (clickCountFast >= 3){
-      comboBubble.classList.remove('hidden');
-      comboBubble.textContent = clickCountFast;
-      // scale with clicks but cap
-      const s = Math.min(1 + clickCountFast/20, 1.8);
-      comboBubble.style.transform = `scale(${s})`;
-    } else {
-      comboBubble.classList.add('hidden');
-    }
-  }
-
-  // trigger clock animation — choose skin class from data attr
-  let clickSkin = 'skin-red'; // default
-  function triggerClockAnim(){
-    if (!clock) return;
-    clock.classList.remove('click-anim','skin-red','skin-blue','skin-glitch');
+  // Click animation and bubble
+  function triggerClockAnimation(){
+    clock.classList.remove("click-anim");
     void clock.offsetWidth;
-    clock.classList.add('click-anim', clickSkin);
+    clock.classList.add("click-anim");
   }
 
-  // main addTime on click
-  function addTime() {
-    const now = Date.now();
-    const delta = now - lastClickTime;
-    lastClickTime = now;
+  function showFloating(text){
+    // create floating element near clock on the right
+    const el = document.createElement("div");
+    el.textContent = text;
+    el.style.position = "absolute";
+    el.style.right = "-10px";
+    el.style.top = "30px";
+    el.style.color = "#ffccd1";
+    el.style.fontWeight = "700";
+    el.style.opacity = "1";
+    el.style.transition = "transform 900ms ease-out, opacity 900ms";
+    document.getElementById("clockWrapper").appendChild(el);
+    requestAnimationFrame(()=> {
+      el.style.transform = "translateX(40px) translateY(-60px)";
+      el.style.opacity = "0";
+    });
+    setTimeout(()=> el.remove(), 920);
+  }
 
-    score += clickPower;
-    updateScore();
+  // Click handler
+  function addTime(){
+    const gained = Math.round(clickPower * 1); // multiplied already by prestige when bought
+    score += gained;
+    clickCloudTotal += gained;
+    clickGainEl.textContent = `+${formatTime(gained)}`;
+    showFloating(`+${formatTime(gained)}`);
+    triggerClockAnimation();
+    if(gained > maxPerClick) maxPerClick = gained;
+    updateScore(); updateStats();
+  }
+  clock.addEventListener("click", addTime);
 
-    spawnSmallBubble(`+${clickPower}`);
-
-    // combo logic: rapid clicks within 450ms count
-    if (delta < 450) {
-      clickCountFast++;
-    } else {
-      // small pause — start new combo
-      if (clickCountFast > 0) {
-        // if there was a combo, pop it
-        popCombo();
-      }
-      clickCountFast = 1;
+  // Auto tick (per second)
+  setInterval(() => {
+    // autoRate is seconds per second (total passive loss)
+    const gained = Math.round(autoRate * 1);
+    if(gained>0){
+      score += gained;
+      clickCloudTotal += gained;
+      updateScore();
+      updateStats();
     }
-    updateComboBubble();
+    // update real-time display
+    updateStats();
+  }, 1000);
 
-    // reset combo timer
-    if (comboTimer) clearTimeout(comboTimer);
-    comboTimer = setTimeout(()=> {
-      popCombo();
-      clickCountFast = 0;
-      updateComboBubble();
-    }, 900);
-
-    triggerClockAnim();
-  }
-
-  function popCombo(){
-    if (clickCountFast <= 0) return;
-    // show popup toast near bottom with count
-    showToast(`Витрачено ${clickCountFast} кліків`, 2000);
-    // small particle pop visual: spawn multiple small bubbles
-    for (let i=0;i<Math.min(clickCountFast,12);i++){
-      spawnSmallBubble('💥');
-    }
-  }
-
-  if (clock) clock.addEventListener('click', addTime);
-
-  // CLOCK visual update
-  function updateClock(){
+  // Clock hands
+  function updateClockHands(){
     const now = new Date();
     const s = now.getSeconds();
     const m = now.getMinutes();
-    const h = now.getHours() % 12;
-
-    if (secondHand) secondHand.style.transform = `translateX(-50%) rotate(${s*6}deg)`;
-    if (minuteHand) minuteHand.style.transform = `translateX(-50%) rotate(${m*6 + s*0.1}deg)`;
-    if (hourHand) hourHand.style.transform = `translateX(-50%) rotate(${h*30 + m*0.5}deg)`;
+    const h = now.getHours()%12;
+    if(secondHand) secondHand.style.transform = `translateX(-50%) rotate(${s*6}deg)`;
+    if(minuteHand) minuteHand.style.transform = `translateX(-50%) rotate(${m*6 + s*0.1}deg)`;
+    if(hourHand) hourHand.style.transform = `translateX(-50%) rotate(${h*30 + m*0.5}deg)`;
   }
-  setInterval(updateClock,1000);
-  updateClock();
-  updateScore();
+  setInterval(updateClockHands,1000);
+  updateClockHands();
 
-  // TOAST
-  function showToast(text, ms=3000){
-    const t = document.createElement('div');
-    t.className = 'toast';
-    t.textContent = text;
-    toastArea.appendChild(t);
+  // Skins (simple — change border color or background)
+  const skins = [
+    {name:"Неон синій", style:()=>{ clock.style.borderColor="#0ea5e9"; clock.style.boxShadow="0 0 30px #0ea5e9"; }},
+    {name:"Пурпурний", style:()=>{ clock.style.borderColor="#8b5cf6"; clock.style.boxShadow="0 0 30px #8b5cf6"; }},
+    {name:"Рожевий", style:()=>{ clock.style.borderColor="#ec4899"; clock.style.boxShadow="0 0 30px #ec4899"; }},
+    {name:"Чорний мінімал", style:()=>{ clock.style.borderColor="#222"; clock.style.boxShadow="none"; }},
+  ];
+  const skinsRoot = document.getElementById("skins");
+  skins.forEach((s, i) => {
+    const el = document.createElement("div");
+    el.className = "skin";
+    el.textContent = s.name;
+    el.style.background = "linear-gradient(180deg, rgba(255,255,255,0.02), transparent)";
+    el.onclick = ()=> {
+      skins.forEach((_,j)=> skinsRoot.children[j].classList.remove("active"));
+      el.classList.add("active");
+      s.style();
+    };
+    skinsRoot.appendChild(el);
+    if(i===0) el.classList.add("active");
+  });
+
+  // Achievements (simple examples)
+  const achievementsList = [
+    {id:"ach1", title:"Перший клік", desc:"Зробити перший клік", check: ()=> clickCloudTotal >= 1},
+    {id:"ach2", title:"100 сек", desc:"Витратити 100 сек", check: ()=> clickCloudTotal >= 100},
+    {id:"ach3", title:"Перша покупка", desc:"Купити перший апгрейд", check: ()=> totalUpgradesBought >= 1},
+    {id:"ach4", title:"Авто запущено", desc:"Маєш autoRate > 0", check: ()=> autoRate > 0},
+  ];
+  const achRoot = document.getElementById("achievements");
+  achievementsList.forEach(a => {
+    const el = document.createElement("div");
+    el.className = "achievement";
+    el.id = a.id;
+    el.innerHTML = `<strong>${a.title}</strong><div style="font-size:12px;color:#bcd">${a.desc}</div><div class="ach-state" style="margin-top:8px;color:#ffd">Стан: Чекає</div>`;
+    achRoot.appendChild(el);
+  });
+
+  function updateAchievements(){
+    achievementsList.forEach(a => {
+      const el = document.getElementById(a.id);
+      const state = el.querySelector(".ach-state");
+      if(a.check()){
+        state.textContent = "Пройдено ✅";
+        state.style.color = "#8df299";
+      } else {
+        state.textContent = "Чекає";
+        state.style.color = "#ffd";
+      }
+    });
+  }
+
+  // Reverb (prestige) — animation + reset
+  reverbBtn.addEventListener("click", ()=>{
+    // animation
+    timeTunnel.classList.add("active");
     setTimeout(()=> {
-      t.style.opacity = '0';
-      setTimeout(()=> t.remove(),400);
-    }, ms);
+      timeTunnel.classList.remove("active");
+      // apply prestige: multiply multiplier by 1.2 and reset progress
+      prestigeMultiplier *= 1.2;
+      // reset basics
+      score = 0;
+      clickPower = 1;
+      autoRate = 0;
+      totalUpgradesBought = 0;
+      maxPerClick = 1;
+      // reset upgrades levels
+      upgrades.forEach((u, idx)=> {
+        u.level = 0;
+        if(buttons[idx]) buttons[idx].classList.add("hidden");
+        // reveal first again
+        if(idx===0 && buttons[0]) buttons[0].classList.remove("hidden");
+        u.update();
+      });
+      updateScore();
+      updateStats();
+      updateAchievements();
+      alert(`Реверб завершено. Новий множник: ${prestigeMultiplier.toFixed(2)}×`);
+    }, 2400);
+  });
+
+  // Tabs switching
+  document.querySelectorAll(".tab").forEach(btn=>{
+    btn.addEventListener("click", ()=> {
+      document.querySelectorAll(".tab").forEach(b=>b.classList.remove("active"));
+      document.querySelectorAll(".tab-page").forEach(p=>p.classList.remove("active"));
+      btn.classList.add("active");
+      document.getElementById(btn.dataset.tab).classList.add("active");
+    });
+  });
+
+  // periodic UI updates
+  setInterval(()=>{
+    updateScore();
+    updateStats();
+    updateAchievements();
+  }, 1000);
+
+  // prevent Enter in title and auto append "Time" on blur
+  if(worldTitle){
+    worldTitle.addEventListener("keydown", (e)=>{ if(e.key==="Enter") e.preventDefault(); });
+    worldTitle.addEventListener("blur", ()=>{
+      let t = worldTitle.textContent.trim();
+      if(!t) worldTitle.textContent = "Times Clicker";
+      else if(!/(\bTime)$/i.test(t)) worldTitle.textContent = `${t} Time`;
+    });
   }
 
-  // Tabs simple logic
-  document.querySelectorAll('.tab-btn').forEach(btn=>{
-    btn.addEventListener('click',()=>{
-      document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
-      btn.classList.add('active');
-      const target = btn.dataset.tab;
-      document.querySelectorAll('.tab-content').forEach(tc=>tc.classList.add('hidden'));
-      document.getElementById(target+'Tab').classList.remove('hidden');
-    });
-  });
-
-  // Populate skins lists (simple)
-  const skins = ['skin-red','skin-blue','skin-glitch'];
-  const skinsList = document.getElementById('skinsList');
-  const handsList = document.getElementById('handsList');
-  const caseList = document.getElementById('caseList');
-
-  skins.forEach(s=>{
-    const el = document.createElement('div');
-    el.className='skin-item';
-    el.textContent = s;
-    el.addEventListener('click', ()=> {
-      clickSkin = s; showToast(`Вибрано шкіна: ${s}`);
-    });
-    skinsList.appendChild(el);
-  });
-
-  ['dark-blue','neon','pixel'].forEach(h=>{
-    const el = document.createElement('div');
-    el.className='skin-item';
-    el.textContent = h;
-    el.addEventListener('click', ()=>{
-      // simple mapping
-      if (h==='dark-blue'){ document.querySelector('.hour').style.background='#063b7a'; document.querySelector('.minute').style.background='#0e61a8'; document.querySelector('.second').style.background='#0b2846'; }
-      if (h==='neon'){ document.querySelector('.hour').style.background='#ffb86b'; document.querySelector('.minute').style.background='#ffd86b'; document.querySelector('.second').style.background='#ff6b9a'; }
-      if (h==='pixel'){ document.querySelector('.hour').style.background='#111'; document.querySelector('.minute').style.background='#222'; document.querySelector('.second').style.background='#000'; }
-      showToast(`Вибрано стиль стрілок: ${h}`);
-    });
-    handsList.appendChild(el);
-  });
-
-  ['classic','glass','tech'].forEach(c=>{
-    const el = document.createElement('div');
-    el.className='skin-item';
-    el.textContent=c;
-    el.addEventListener('click', ()=> {
-      if (c==='classic'){ document.querySelector('.clock').style.borderRadius='14px'; document.querySelector('.clock').style.border='6px solid var(--neon)'; }
-      if (c==='glass'){ document.querySelector('.clock').style.borderRadius='26px'; document.querySelector('.clock').style.border='4px solid rgba(255,255,255,0.06)'; }
-      if (c==='tech'){ document.querySelector('.clock').style.borderRadius='8px'; document.querySelector('.clock').style.border='6px solid #8b5cf6'; }
-      showToast(`Вибрано корпус: ${c}`);
-    });
-    caseList.appendChild(el);
-  });
-
-  // Small accessibility: keyboard space to click
-  window.addEventListener('keydown', (e)=>{
-    if (e.code==='Space') { e.preventDefault(); addTime(); }
-  });
-
-  // small touch: spawn +bubble visually on click creation
-  // spawnSmallBubble used in addTime already
-
-  // final: show initial toast
-  showToast('Готово — оновлено V3', 1800);
+  // initial UI refresh
+  updateScore(); updateStats(); updateAchievements();
 };
