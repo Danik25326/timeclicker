@@ -1,230 +1,198 @@
 /* ===== БАЗА ===== */
-body {
-  margin: 0;
-  font-family: 'Poppins', sans-serif;
-  background: radial-gradient(circle at center, #0b1220, #050810);
-  color: white;
-  height: 100vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+:root{
+  --bg1:#0b1220;
+  --neon:#0ea5e9;
+  --accent:#ec4899;
+  --glass: rgba(15,23,42,0.6);
 }
 
-.container {
-  display: flex;
-  gap: 100px;
-  align-items: center;
-  justify-content: center;
+*{box-sizing:border-box}
+body{
+  margin:0;
+  font-family:'Poppins',sans-serif;
+  background: radial-gradient(circle at center, var(--bg1), #050810);
+  color:#fff;
+  min-height:100vh;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:20px;
 }
 
-/* ===== ЛІВА ПАНЕЛЬ ===== */
-.upgrades-container {
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-  padding: 20px;
-  background: rgba(15, 23, 42, 0.6);
-  border-radius: 16px;
-  box-shadow: 0 0 20px rgba(59, 130, 246, 0.2);
-  width: 260px;
-  height: 500px;
-  overflow-y: auto;
+/* Заголовок редагований */
+.editable-title{
+  position:absolute;
+  top:28px;
+  width:100%;
+  text-align:center;
+  font-weight:700;
+  font-size:28px;
+  color:#fff;
+  text-shadow:0 0 12px var(--neon);
+  cursor:text;
+  user-select:text;
 }
 
-.upgrade-btn {
-  background: linear-gradient(90deg, #0ea5e9, #3b82f6);
-  border: none;
-  color: white;
-  font-size: 16px;
-  padding: 10px 20px;
-  border-radius: 12px;
-  cursor: pointer;
-  transition: 0.3s;
-  width: 100%;
-  text-align: left;
+/* Контейнер */
+.container{
+  display:flex;
+  gap:28px;
+  width:min(1100px,95vw);
 }
 
-.upgrade-btn:hover:not(:disabled) {
-  transform: scale(1.05);
-  box-shadow: 0 0 15px #3b82f6;
+/* Ліва панель + таби */
+.left-panel{
+  width:420px;
+  background:var(--glass);
+  border-radius:14px;
+  padding:14px;
+  box-shadow:0 8px 30px rgba(0,0,0,0.6);
+  min-height:560px;
 }
 
-.upgrade-btn:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
+/* Таби */
+.tabs{
+  display:flex;
+  gap:8px;
+  margin-bottom:12px;
+}
+.tab{
+  flex:1;
+  padding:10px;
+  background:transparent;
+  border:none;
+  color:#cfeaff;
+  cursor:pointer;
+  border-radius:8px;
+  transition:all .18s;
+}
+.tab.active{
+  background:#111827;
+  box-shadow:0 0 10px rgba(14,165,233,0.12) inset;
+  color:#fff;
 }
 
-.upgrade-btn.hidden {
-  display: none;
+/* tab body */
+.tab-body{min-height:420px;}
+.tab-page{display:none}
+.tab-page.active{display:block}
+
+/* upgrades container */
+.upgrades-container{
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+  max-height:420px;
+  overflow:auto;
+  padding-right:6px;
+}
+.upgrade-btn{
+  background:linear-gradient(90deg,var(--neon),#3b82f6);
+  border:none;
+  color:white;
+  font-size:15px;
+  padding:10px 12px;
+  border-radius:10px;
+  cursor:pointer;
+  text-align:left;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  transition:transform .12s,opacity .12s;
+}
+.upgrade-btn:disabled{opacity:.45; cursor:not-allowed}
+.upgrade-btn:hover:not(:disabled){transform:translateY(-3px)}
+
+/* Skins */
+.skins-grid{display:flex;gap:10px;flex-wrap:wrap}
+.skin{
+  width:100px;height:100px;
+  border-radius:12px;
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;
+  box-shadow:0 6px 18px rgba(0,0,0,0.5);
+  border:3px solid transparent;
+}
+.skin.active{outline:3px solid rgba(255,255,255,0.06)}
+
+/* Achievements */
+.achievements-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.achievement{background:#0f1724;padding:10px;border-radius:10px;text-align:center}
+
+/* Right panel (clock + music) */
+.right-panel{
+  width:520px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:14px;
 }
 
-/* ===== ПРАВА ПАНЕЛЬ ===== */
-.right-panel {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 20px;
+/* Clock */
+#clockWrapper{position:relative;display:flex;align-items:center;gap:14px}
+.clock{
+  position:relative;
+  width:260px;height:260px;border-radius:50%;
+  border:6px solid var(--neon);
+  box-shadow:0 0 30px var(--neon), 0 0 60px var(--neon), inset 0 0 20px rgba(14,165,233,0.12);
+  transition:box-shadow .12s,transform .12s,border-color .12s;
+  display:flex;align-items:center;justify-content:center;
+  background:linear-gradient(180deg,rgba(255,255,255,0.02),transparent);
+}
+.hand{position:absolute;bottom:50%;left:50%;transform-origin:bottom;transform:translateX(-50%) rotate(0deg);background:#000;border-radius:2px}
+.hour{width:8px;height:58px}
+.minute{width:6px;height:86px}
+.second{width:3px;height:110px;background:var(--accent)}
+.center-dot{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:12px;height:12px;background:var(--accent);border-radius:50%}
+
+/* Click cloud (справа від годинника) */
+.click-cloud{
+  width:150px;
+  padding:10px;
+  background:rgba(255,255,255,0.03);
+  border-radius:12px;
+  text-align:center;
+  font-weight:600;
+  font-size:14px;
+  color:#cfeaff;
+  box-shadow:0 6px 18px rgba(0,0,0,0.5);
+}
+#clickGain{font-size:16px;color:var(--accent)}
+#totalCloud{font-size:13px;color:#a8d8ff;margin-top:6px}
+
+/* Score text */
+#score{font-size:18px;text-shadow:0 0 10px var(--neon)}
+
+/* Music player */
+.music-player{display:flex;gap:8px;align-items:center}
+.phonk-btn{
+  padding:12px 18px;border-radius:50px;background:linear-gradient(90deg,var(--neon),#3b82f6);
+  border:none;color:white;font-weight:700;cursor:pointer;box-shadow:0 0 18px rgba(14,165,233,0.18);
+}
+.music-switch{padding:10px 12px;border-radius:12px;background:linear-gradient(90deg,#8b5cf6,#ec4899);border:none;cursor:pointer;color:white;font-weight:700}
+.now-playing{margin-top:6px;font-size:14px;color:#cfeaff}
+
+/* Click animation class */
+.clock.click-anim{animation:clickPulse .18s ease-out}
+@keyframes clickPulse{
+  0%{box-shadow:0 0 30px var(--neon);border-color:var(--neon);transform:scale(1)}
+  50%{box-shadow:0 0 40px #ff3b5c; border-color:#ff3b5c; transform:scale(1.06)}
+  100%{box-shadow:0 0 30px var(--neon);border-color:var(--neon);transform:scale(1)}
 }
 
-/* ===== ГОДИННИК ===== */
-.clock {
-  position: relative;
-  width: 250px;
-  height: 250px;
-  border: 6px solid #0ea5e9;
-  border-radius: 50%;
-  box-shadow: 0 0 30px #0ea5e9, 0 0 60px #0ea5e9, inset 0 0 30px rgba(14, 165, 233, 0.3);
-  transition: box-shadow 0.12s ease-out, border-color 0.12s ease-out, transform 0.12s ease-out;
+/* Time tunnel for reverb */
+.time-tunnel{
+  position:fixed;inset:0;pointer-events:none;opacity:0;transition:opacity .25s;z-index:40;
+  background:radial-gradient(circle at center, rgba(255,80,80,0.06), rgba(10,10,20,0.6));
+  backdrop-filter:blur(4px);
 }
+.time-tunnel.active{opacity:1;animation:tunnelSpin 2.2s linear}
+@keyframes tunnelSpin{0%{transform:scale(1) rotate(0deg)}100%{transform:scale(1.05) rotate(360deg)}}
 
-.clock.click-anim {
-  animation: clickPulse 0.18s ease-out;
-}
+/* Reverb button */
+.reverb-btn{padding:10px 16px;border-radius:10px;background:#ff3b5c;border:none;color:white;cursor:pointer}
+.reverb-preview{margin-top:10px;color:#ffd7d7}
 
-@keyframes clickPulse {
-  0% {
-    box-shadow: 0 0 30px #0ea5e9, 0 0 60px #0ea5e9, inset 0 0 30px rgba(14,165,233,0.3);
-    border-color: #0ea5e9;
-    transform: scale(1);
-  }
-  50% {
-    box-shadow: 0 0 40px #ff3b5c, 0 0 80px #ff3b5c, inset 0 0 40px rgba(255,59,92,0.4);
-    border-color: #ff3b5c;
-    transform: scale(1.08);
-  }
-  100% {
-    box-shadow: 0 0 30px #0ea5e9, 0 0 60px #0ea5e9, inset 0 0 30px rgba(14,165,233,0.3);
-    border-color: #0ea5e9;
-    transform: scale(1);
-  }
-}
-
-/* ===== СТРІЛКИ ГОДИННИКА ===== */
-.hand {
-  position: absolute;
-  bottom: 50%;
-  left: 50%;
-  transform-origin: bottom;
-  transform: translateX(-50%) rotate(0deg);
-  border-radius: 2px;
-}
-
-.hour { width: 6px; height: 50px; background: #3b82f6; }
-.minute { width: 4px; height: 70px; background: #60a5fa; }
-.second { width: 2px; height: 90px; background: #ec4899; }
-
-.center-dot {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 10px;
-  height: 10px;
-  background: #ec4899;
-  border-radius: 50%;
-  transform: translate(-50%, -50%);
-}
-
-/* ===== КНОПКИ ===== */
-#clickBtn, #musicBtn {
-  background: linear-gradient(90deg, #0ea5e9, #3b82f6);
-  border: none;
-  color: white;
-  font-size: 18px;
-  padding: 12px 24px;
-  border-radius: 12px;
-  cursor: pointer;
-  transition: 0.3s;
-}
-
-#clickBtn:hover, #musicBtn:hover {
-  transform: scale(1.05);
-  box-shadow: 0 0 15px #3b82f6;
-}
-
-/* ===== ТЕКСТ ===== */
-#score {
-  font-size: 20px;
-  text-shadow: 0 0 10px #3b82f6;
-}
-
-/* ===== Основна кнопка фонку ===== */
-.phonk-btn {
-  position: relative;
-  background: linear-gradient(90deg, #0ea5e9, #3b82f6);
-  border: none;
-  color: white;
-  font-size: 20px;
-  font-weight: 600;
-  padding: 14px 32px;
-  border-radius: 50px;
-  cursor: pointer;
-  text-shadow: 0 0 6px rgba(255,255,255,0.6);
-  box-shadow: 0 0 20px #0ea5e9, 0 0 40px rgba(14,165,233,0.5), inset 0 0 10px rgba(255,255,255,0.3);
-  overflow: hidden;
-}
-
-.phonk-btn::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: -75%;
-  width: 50%;
-  height: 100%;
-  background: linear-gradient(
-    120deg,
-    rgba(255, 255, 255, 0.2) 0%,
-    rgba(255, 255, 255, 0.7) 50%,
-    rgba(255, 255, 255, 0.2) 100%
-  );
-  transform: skewX(-25deg);
-  transition: 0.7s;
-}
-
-.phonk-btn:hover::before {
-  left: 125%;
-}
-
-/* Анімація спалаху навколо центральної кнопки */
-@keyframes phonkPulse {
-  0%, 100% {
-    box-shadow: 0 0 20px #0ea5e9, 0 0 40px rgba(14,165,233,0.5), inset 0 0 10px rgba(255,255,255,0.3);
-    transform: scale(1);
-  }
-  50% {
-    box-shadow: 0 0 35px #3b82f6, 0 0 70px rgba(14,165,233,0.5), inset 0 0 20px rgba(255,255,255,0.4);
-    transform: scale(1.05);
-  }
-}
-
-.phonk-btn:hover {
-  animation: phonkPulse 1.2s infinite;
-  letter-spacing: 1px;
-}
-
-/* ===== Кнопки перемикання треків ===== */
-.music-player {
-  display: flex;
-  gap: 12px;
-  align-items: center;
-}
-
-.music-switch {
-  background: linear-gradient(90deg, #0ea5e9, #3b82f6); /* синій неоновий */
-  border: none;
-  color: white;
-  font-size: 22px;
-  font-weight: 700;
-  padding: 12px 18px;
-  border-radius: 14px;
-  cursor: pointer;
-  transition: 0.25s;
-  box-shadow: 0 0 15px #0ea5e9;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.music-switch:hover {
-  transform: scale(1.1);
-  box-shadow: 0 0 25px #3b82f6;
-}
+/* scrollbar small */
+.upgrades-container::-webkit-scrollbar{width:8px}
+.upgrades-container::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.06);border-radius:8px}
