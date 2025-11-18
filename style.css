@@ -1,152 +1,198 @@
 /* ===== БАЗА ===== */
 :root{
-  --left-w:260px;
-  --bg1: #0b1220;
-  --neon: #0ea5e9;
-  --accent: #ec4899;
+  --bg1:#0b1220;
+  --neon:#0ea5e9;
+  --accent:#ec4899;
+  --glass: rgba(15,23,42,0.6);
 }
+
 *{box-sizing:border-box}
 body{
   margin:0;
   font-family:'Poppins',sans-serif;
-  background:radial-gradient(circle at center,var(--bg1),#050810);
-  color:white;
+  background: radial-gradient(circle at center, var(--bg1), #050810);
+  color:#fff;
   min-height:100vh;
   display:flex;
-  justify-content:center;
   align-items:center;
+  justify-content:center;
+  padding:20px;
 }
 
-/* Заголовок */
+/* Заголовок редагований */
 .editable-title{
   position:absolute;
   top:28px;
   width:100%;
   text-align:center;
-  font-size:28px;
   font-weight:700;
+  font-size:28px;
   color:#fff;
-  text-shadow:0 0 10px #3b82f6;
-  user-select:text;
-  outline:none;
+  text-shadow:0 0 12px var(--neon);
   cursor:text;
+  user-select:text;
 }
 
 /* Контейнер */
 .container{
-  width:calc(var(--left-w) + 460px);
   display:flex;
-  gap:32px;
-  align-items:flex-start;
-  padding:28px;
+  gap:28px;
+  width:min(1100px,95vw);
 }
 
-/* Ліва панель */
+/* Ліва панель + таби */
 .left-panel{
-  width:var(--left-w);
+  width:420px;
+  background:var(--glass);
+  border-radius:14px;
+  padding:14px;
+  box-shadow:0 8px 30px rgba(0,0,0,0.6);
+  min-height:560px;
 }
+
+/* Таби */
 .tabs{
   display:flex;
-  gap:6px;
-  margin-bottom:10px;
+  gap:8px;
+  margin-bottom:12px;
 }
-.tab-btn{
+.tab{
   flex:1;
-  padding:8px 6px;
-  background:linear-gradient(90deg,#0f1724,#0b1220);
-  color:#9fb7d9;
+  padding:10px;
+  background:transparent;
   border:none;
-  border-radius:8px;
+  color:#cfeaff;
   cursor:pointer;
-  font-weight:600;
+  border-radius:8px;
+  transition:all .18s;
 }
-.tab-btn.active{ color:white; box-shadow:0 0 12px rgba(59,130,246,0.12); }
+.tab.active{
+  background:#111827;
+  box-shadow:0 0 10px rgba(14,165,233,0.12) inset;
+  color:#fff;
+}
 
-.tab-content{ background:rgba(15,23,42,0.45); padding:12px; border-radius:12px; min-height:120px; box-shadow:0 6px 20px rgba(2,6,23,0.6); }
+/* tab body */
+.tab-body{min-height:420px;}
+.tab-page{display:none}
+.tab-page.active{display:block}
 
-.hidden{ display:none!important; }
-
-/* Апгрейди */
-.upgrades-container{ display:flex; flex-direction:column; gap:12px; max-height:400px; overflow:auto; padding:6px; }
+/* upgrades container */
+.upgrades-container{
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+  max-height:420px;
+  overflow:auto;
+  padding-right:6px;
+}
 .upgrade-btn{
   background:linear-gradient(90deg,var(--neon),#3b82f6);
   border:none;
   color:white;
-  font-size:14px;
+  font-size:15px;
   padding:10px 12px;
   border-radius:10px;
   cursor:pointer;
   text-align:left;
-  transition:transform .15s,opacity .12s;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  transition:transform .12s,opacity .12s;
 }
-.upgrade-btn:disabled{ opacity:.45; cursor:not-allowed; transform:none; }
+.upgrade-btn:disabled{opacity:.45; cursor:not-allowed}
+.upgrade-btn:hover:not(:disabled){transform:translateY(-3px)}
 
-/* Скіни */
-.skins-list{ display:flex; gap:8px; flex-wrap:wrap; margin-top:8px; }
-.skin-item{ padding:8px 10px; border-radius:8px; background:rgba(255,255,255,0.03); cursor:pointer; font-size:13px; }
+/* Skins */
+.skins-grid{display:flex;gap:10px;flex-wrap:wrap}
+.skin{
+  width:100px;height:100px;
+  border-radius:12px;
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;
+  box-shadow:0 6px 18px rgba(0,0,0,0.5);
+  border:3px solid transparent;
+}
+.skin.active{outline:3px solid rgba(255,255,255,0.06)}
 
-/* Панель праворуч */
-.right-panel{ flex:1; display:flex; flex-direction:column; align-items:center; gap:14px; }
+/* Achievements */
+.achievements-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.achievement{background:#0f1724;padding:10px;border-radius:10px;text-align:center}
 
-/* Обгортка годинника (щоб контролювати розміри) */
-#clockWrap{ position:relative; width:var(--left-w); display:flex; justify-content:center; align-items:center; }
+/* Right panel (clock + music) */
+.right-panel{
+  width:520px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:14px;
+}
 
-/* ГОДИННИК: same width as left */
+/* Clock */
+#clockWrapper{position:relative;display:flex;align-items:center;gap:14px}
 .clock{
   position:relative;
-  width:100%;
-  padding-top:100%; /* square */
-  border-radius:16px;
+  width:260px;height:260px;border-radius:50%;
   border:6px solid var(--neon);
-  box-shadow:0 0 30px var(--neon),0 0 60px var(--neon), inset 0 0 30px rgba(14,165,233,0.12);
-  overflow:hidden;
+  box-shadow:0 0 30px var(--neon), 0 0 60px var(--neon), inset 0 0 20px rgba(14,165,233,0.12);
+  transition:box-shadow .12s,transform .12s,border-color .12s;
+  display:flex;align-items:center;justify-content:center;
+  background:linear-gradient(180deg,rgba(255,255,255,0.02),transparent);
 }
-.clock > .hand, .center-dot{ position:absolute; left:50%; transform-origin:bottom; transform:translateX(-50%) rotate(0deg); }
+.hand{position:absolute;bottom:50%;left:50%;transform-origin:bottom;transform:translateX(-50%) rotate(0deg);background:#000;border-radius:2px}
+.hour{width:8px;height:58px}
+.minute{width:6px;height:86px}
+.second{width:3px;height:110px;background:var(--accent)}
+.center-dot{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:12px;height:12px;background:var(--accent);border-radius:50%}
 
-/* стрелки — за замовчуванням темно-сині */
-.hand.hour{ width:8px; height:20%; bottom:50%; background:#063b7a; border-radius:4px; }
-.hand.minute{ width:6px; height:28%; bottom:50%; background:#0e61a8; border-radius:3px; }
-.hand.second{ width:3px; height:36%; bottom:50%; background:#0b2846; border-radius:2px; }
-
-.center-dot{ top:50%; left:50%; width:12px; height:12px; background:var(--accent); border-radius:50%; transform:translate(-50%,-50%); }
-
-/* Бульбашки +1 */
-.bubble-container{ position:absolute; right:14px; top:10px; pointer-events:none; width:120px; height:140px; overflow:visible; }
-.small-bubble{ position:absolute; right:0; top:0; background:rgba(236,72,153,0.95); color:white; padding:6px 8px; border-radius:16px; font-weight:700; transform: translateY(0); animation:rise 900ms forwards; }
-@keyframes rise{ 0%{ transform:translateY(0) scale(0.9); opacity:1 } 100%{ transform:translateY(-80px) scale(1.05); opacity:0 } }
-
-/* Комбо-бульба (велика) */
-.combo-bubble{ position:absolute; right:6px; top:6px; min-width:44px; height:44px; padding:8px; border-radius:999px; background: linear-gradient(90deg,#ec4899,#ff7aa3); display:flex; align-items:center; justify-content:center; font-weight:800; box-shadow:0 8px 30px rgba(236,72,153,0.18); transform-origin:center; transition:transform .12s; }
+/* Click cloud (справа від годинника) */
+.click-cloud{
+  width:150px;
+  padding:10px;
+  background:rgba(255,255,255,0.03);
+  border-radius:12px;
+  text-align:center;
+  font-weight:600;
+  font-size:14px;
+  color:#cfeaff;
+  box-shadow:0 6px 18px rgba(0,0,0,0.5);
+}
+#clickGain{font-size:16px;color:var(--accent)}
+#totalCloud{font-size:13px;color:#a8d8ff;margin-top:6px}
 
 /* Score text */
-#score{ font-size:18px; text-shadow:0 0 10px #3b82f6; }
+#score{font-size:18px;text-shadow:0 0 10px var(--neon)}
 
 /* Music player */
-.music-player{ display:flex; gap:12px; align-items:center; margin-top:4px; }
-.music-switch{ width:48px; height:48px; border-radius:12px; background:linear-gradient(90deg,#8b5cf6,#ec4899); border:none; cursor:pointer; box-shadow:0 0 12px #8b5cf6; color:white; font-weight:800; }
-.phonk-btn{ padding:12px 20px; border-radius:999px; border:none; cursor:pointer; background:linear-gradient(90deg,#0ea5e9,#3b82f6); color:white; font-weight:700; box-shadow:0 0 18px rgba(14,165,233,0.14); }
-.track-name{ font-size:14px; margin-top:6px; color:#cfe7ff; }
-
-/* Анімація кліку (скіни) — різні класи застосовуються до .clock при кліку */
-.clock.click-anim.skin-red{ animation:clickPulseRed .18s ease-out; }
-@keyframes clickPulseRed{
-  0%{ box-shadow:0 0 30px var(--neon); border-color:var(--neon); transform:scale(1); }
-  50%{ box-shadow:0 0 40px #ff3b5c; border-color:#ff3b5c; transform:scale(1.05); }
-  100%{ box-shadow:0 0 30px var(--neon); border-color:var(--neon); transform:scale(1); }
+.music-player{display:flex;gap:8px;align-items:center}
+.phonk-btn{
+  padding:12px 18px;border-radius:50px;background:linear-gradient(90deg,var(--neon),#3b82f6);
+  border:none;color:white;font-weight:700;cursor:pointer;box-shadow:0 0 18px rgba(14,165,233,0.18);
 }
-.clock.click-anim.skin-blue{ animation:clickPulseBlue .18s ease-out; }
-@keyframes clickPulseBlue{
-  0%{ box-shadow:0 0 20px #0ea5e9; transform:scale(1) }
-  50%{ box-shadow:0 0 60px #60a5fa; transform:scale(1.06) }
-  100%{ box-shadow:0 0 20px #0ea5e9; transform:scale(1) }
+.music-switch{padding:10px 12px;border-radius:12px;background:linear-gradient(90deg,#8b5cf6,#ec4899);border:none;cursor:pointer;color:white;font-weight:700}
+.now-playing{margin-top:6px;font-size:14px;color:#cfeaff}
+
+/* Click animation class */
+.clock.click-anim{animation:clickPulse .18s ease-out}
+@keyframes clickPulse{
+  0%{box-shadow:0 0 30px var(--neon);border-color:var(--neon);transform:scale(1)}
+  50%{box-shadow:0 0 40px #ff3b5c; border-color:#ff3b5c; transform:scale(1.06)}
+  100%{box-shadow:0 0 30px var(--neon);border-color:var(--neon);transform:scale(1)}
 }
-.clock.click-anim.skin-glitch{ animation:glitch .22s steps(2); }
-@keyframes glitch{ 0%{ transform:translateX(0) } 50%{ transform:translateX(4px) } 100%{ transform:translateX(0)} }
 
-/* Toast */
-.toast-area{ position:fixed; left:50%; transform:translateX(-50%); bottom:18px; display:flex; flex-direction:column; gap:8px; z-index:9999; pointer-events:none; }
-.toast{ background:rgba(10,14,22,0.9); padding:10px 14px; border-radius:10px; color:#fff; box-shadow:0 8px 30px rgba(2,6,23,0.55); pointer-events:auto; animation:toastIn .36s; }
-@keyframes toastIn{ from{ transform:translateY(16px); opacity:0 } to{ transform:translateY(0); opacity:1 } }
+/* Time tunnel for reverb */
+.time-tunnel{
+  position:fixed;inset:0;pointer-events:none;opacity:0;transition:opacity .25s;z-index:40;
+  background:radial-gradient(circle at center, rgba(255,80,80,0.06), rgba(10,10,20,0.6));
+  backdrop-filter:blur(4px);
+}
+.time-tunnel.active{opacity:1;animation:tunnelSpin 2.2s linear}
+@keyframes tunnelSpin{0%{transform:scale(1) rotate(0deg)}100%{transform:scale(1.05) rotate(360deg)}}
 
-/* small responsive */
-@media (max-width:900px){ .container{ flex-direction:column; width:95%; } #clockWrap{ width:100%; } .left-panel{ width:100%; } }
+/* Reverb button */
+.reverb-btn{padding:10px 16px;border-radius:10px;background:#ff3b5c;border:none;color:white;cursor:pointer}
+.reverb-preview{margin-top:10px;color:#ffd7d7}
+
+/* scrollbar small */
+.upgrades-container::-webkit-scrollbar{width:8px}
+.upgrades-container::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.06);border-radius:8px}
