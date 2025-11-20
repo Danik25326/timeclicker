@@ -280,3 +280,36 @@ body{
 /* Scrollbar */
 .upgrades-container::-webkit-scrollbar{width:8px}
 .upgrades-container::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.08);border-radius:8px}
+/* ТАБИ — тепер завжди в один рядок і не залазять під годинник */
+.tabs{
+  display:flex;
+  gap:8px;
+  margin-bottom:16px;
+  flex-wrap:nowrap !important;     /* ← головне! */
+  overflow-x:auto;
+  padding-bottom:4px;
+}
+.tab{
+  flex:0 0 auto;                   /* ← не розтягуються */
+  min-width:82px;
+  padding:10px 12px;
+  font-size:13px;
+}
+
+/* Заголовок піднімаємо вище, щоб годинник не ліз */
+.editable-title{
+  top:16px !important;             /* було 28px → тепер вище */
+  font-size:32px;
+  z-index:10;
+}
+
+/* Тости — довше видно (було 3.5 сек → тепер 6 сек) */
+.toast{
+  animation: toastIn 0.5s ease-out, toastOut 0.5s 5.5s ease-in forwards !important;
+}
+@keyframes toastOut{to{transform:translateY(40px);opacity:0}}
+
+/* Трохи піднімаємо контент правої панелі, щоб не ліз під заголовок */
+.right-panel{
+  margin-top:50px;                 /* ← новий рядок */
+}
