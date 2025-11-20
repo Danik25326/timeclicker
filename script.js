@@ -377,44 +377,111 @@ window.onload = function () {
   setInterval(updateClockHands, 1000);
   updateClockHands();
 
-  // === РЕВЕРБ ===
-  reverbBtn.addEventListener("click", () => {
+// ... весь твій попередній код до ревербу ...
+
+// ДОДАЄМО ДО achievementsList прогрес
+const achievementsList = [
+  {title:"Перший клік", desc:"Зробити перший клік", target:1, get:()=>clickCloudTotal},
+  {title:"100 сек", desc:"Витратити 100 сек", target:100, get:()=>score},
+  {title:"Перша покупка", desc:"Купити перший апгрейд", target:1, get:()=>totalUpgradesBought},
+  {title:"Авто запущено", desc:"Маєш autoRate > 0", target:1, get:()=>autoRate>0?1:0},
+  {title:"Комбо-майстер", desc:"10+ швидких кліків", target:10, get:()=>clickCombo},
+  {title:"Стильний", desc:"Змінити будь-який скін", target:1, get:()=>(currentShape!=="round"||currentClockSkin!=="neon-blue")?1:0},
+];
+
+// Рендер досягнень з прогрес-баром
+achievementsList.forEach(a => {
+  const el = document.createElement("div");
+  el.className = "achievement";
+  el.innerHTML = `
+    <strong>${a.title}</strong>
+    <div style="font-size:12px;color:#bcd">${a.desc}</div>
+    <div class="ach-progress"></div>
+    <div class="ach-state">0%</div>
+  `;
+  achRoot.appendChild(el);
+  a.el = el;
+  a.progressEl = el.querySelector(".ach-progress");
+  a.stateEl = el.querySelector(".ach-state");
+});
+
+function updateAchievements(){
+  achievementsList.forEach(a => {
+    const val = a.get();
+    const percent = Math.min(100, (val / a.target) * 100);
+    a.progressEl.style.width = percent + "%";
+    if(percent >= 100){
+      a.stateEl.textContent = "Виконано ✅";
+      a.stateEl.style.color = "#8df299";
+      if(!a.done){
+        a.done = true;
+        showToast(`Досягнення: ${a.title} ✅`);
+      }
+    } else {
+      a.stateEl.textContent = Math.floor(percent) + "%";
+    }
+  });
+}
+
+// НОВИЙ РЕВЕРБ — гравець крутить стрілки!
+const reverbOverlay = document.getElementById("reverbOverlay");
+let isReverbActive = false;
+let reverbStartX, reverbStartY;
+
+reverbBtn.addEventListener("click", () => {
+  if(confirm("Ти впевнений, що хочеш повернути час назад?")){
+    reverbOverlay.classList.remove("hidden");
     timeTunnel.classList.add("active");
-    setTimeout(() => {
-      timeTunnel.classList.remove("active");
-      prestigeMultiplier *= 1.2;
-      score = 0; clickPower = 1; autoRate = 0; totalUpgradesBought = 0; maxPerClick = 1;
-      upgrades.forEach((u, idx) => {
-        u.level = 0;
-        if(buttons[idx]) buttons[idx].classList.add("hidden");
-        u.update();
-      });
-      buttons[0].classList.remove("hidden");
-      updateScore(); updateStats(); updateAchievements();
-      alert(`Реверб! Новий множник: ${prestigeMultiplier.toFixed(2)}×`);
-    }, 2400);
-  });
-
-  // === ТАБИ ===
-  document.querySelectorAll(".tab").forEach(btn => {
-    btn.addEventListener("click", () => {
-      document.querySelectorAll(".tab").forEach(b => b.classList.remove("active"));
-      document.querySelectorAll(".tab-page").forEach(p => p.classList.remove("active"));
-      btn.classList.add("active");
-      document.getElementById(btn.dataset.tab).classList.add("active");
-    });
-  });
-
-  // === ЗАГОЛОВОК ===
-  if(worldTitle){
-    worldTitle.addEventListener("keydown", e => { if(e.key === "Enter") e.preventDefault(); });
-    worldTitle.addEventListener("blur", () => {
-      let t = worldTitle.textContent.trim();
-      if(!t) worldTitle.textContent = "Times Clicker";
-      else if(!/\sTime$/i.test(t)) worldTitle.textContent = `${t} Time`;
-    });
+    isReverbActive = true;
+    document.body.style.cursor = "grab";
   }
+});
 
-  // === СТАРТ ===
+function completeReverb(){
+  prestigeMultiplier *= 1.2;
+  score = 0; clickPower = 1; autoRate = 0; totalUpgradesBought = 0; maxPerClick = 1;
+  upgrades.forEach((u, i) => { u.level = 0; if(buttons[i]) buttons[i].classList.add("hidden"); u.update(); });
+  buttons[0].classList.remove("hidden");
   updateScore(); updateStats(); updateAchievements();
-};
+  alert(`Реверб завершено! Множник: ${prestigeMultiplier.toFixed(2)}×`);
+  reverbOverlay.classList.add("hidden");
+  timeTunnel.classList.remove("active");
+  isReverbActive = false;
+}
+
+// Крутимо стрілки мишкою/тачем
+clock.addEventListener("mousedown", e => {
+  if(!isReverbActive) return;
+  reverbStartX = e.clientX;
+  reverbStartY = e.clientY;
+  document.addEventListener("mousemove", onMouseMove);
+  document.addEventListener("mouseup", onMouseUp);
+});
+function onMouseMove(e){
+  if(!isReverbActive) return;
+  const dx = e.clientX - reverbStartX;
+  const dy = e.clientY - reverbStartY;
+  const angle = Math.atan2(dy, dx) * 180 / Math.PI + 90;
+  hourHand.style.transform = `translateX(-50%) rotate(${angle}deg)`;
+  minuteHand.style.transform = `translateX(-50%) rotate(${angle*12}deg)`;
+  secondHand.style.transform = `translateX(-50%) rotate(${angle*60}deg)`;
+  // Якщо стрілки близько до 12:00
+  if(Math.abs(angle % 360) < 15){
+    completeReverb();
+  }
+}
+function onMouseUp(){
+  document.removeEventListener("mousemove", onMouseMove);
+  document.removeEventListener("mouseup", onMouseUp);
+}
+
+// Тости — тепер 7 секунд
+function showToast(text){
+  const t = document.createElement("div");
+  t.className = "toast";
+  t.textContent = text;
+  t.style.fontSize = "17px";
+  t.style.padding = "20px 40px";
+  toastContainer.appendChild(t);
+  setTimeout(() => t.remove(), 7000);
+}
