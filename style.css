@@ -17,65 +17,77 @@ body{
   align-items:center;
   justify-content:center;
   padding:20px;
+  overflow-x:hidden;
 }
 
 /* Заголовок редагований */
 .editable-title{
   position:absolute;
-  top:28px;
-  width:100%;
-  text-align:center;
+  top:16px;
+  left:50%;
+  transform:translateX(-50%);
   font-weight:700;
-  font-size:28px;
+  font-size:36px;
   color:#fff;
-  text-shadow:0 0 12px var(--neon);
+  text-shadow:0 0 16px var(--neon);
   cursor:text;
   user-select:text;
+  z-index:30;
+  white-space:nowrap;
+}
+
+/* НОВІ ТАБИ ПІД НАЗВОЮ */
+.top-tabs{
+  position:absolute;
+  top:72px;
+  left:50%;
+  transform:translateX(-50%);
+  display:flex;
+  gap:10px;
+  z-index:20;
+  background:rgba(15,23,42,0.85);
+  padding:10px 20px;
+  border-radius:50px;
+  backdrop-filter:blur(12px);
+  box-shadow:0 8px 32px rgba(0,0,0,0.6);
+}
+.top-tabs .tab{
+  padding:10px 18px;
+  font-size:14px;
+  min-width:90px;
+  background:transparent;
+  border:none;
+  color:#cfeaff;
+  cursor:pointer;
+  border-radius:50px;
+  transition:all .2s;
+}
+.top-tabs .tab.active{
+  background:var(--neon);
+  color:#000;
+  font-weight:700;
 }
 
 /* Контейнер */
 .container{
   display:flex;
-  gap:28px;
-  width:min(1200px,95vw); /* трошки ширше під великий годинник */
+  gap:32px;
+  width:min(1350px,95vw);
+  margin-top:80px;
 }
 
-/* Ліва панель + таби */
+/* Ліва панель — ширша і нижче */
 .left-panel{
-  width:420px;
+  width:500px;
   background:var(--glass);
-  border-radius:14px;
-  padding:14px;
-  box-shadow:0 8px 30px rgba(0,0,0,0.6);
-  min-height:560px;
-}
-
-/* Таби */
-.tabs{
-  display:flex;
-  gap:8px;
-  margin-bottom:12px;
-  flex-wrap:wrap;
-}
-.tab{
-  flex:1;
-  padding:10px;
-  background:transparent;
-  border:none;
-  color:#cfeaff;
-  cursor:pointer;
-  border-radius:8px;
-  transition:all .18s;
-  font-size:14px;
-}
-.tab.active{
-  background:#111827;
-  box-shadow:0 0 10px rgba(14,165,233,0.12) inset;
-  color:#fff;
+  border-radius:16px;
+  padding:20px;
+  box-shadow:0 10px 40px rgba(0,0,0,0.7);
+  backdrop-filter:blur(10px);
 }
 
 /* tab body */
-.tab-body{min-height:480px;}
+.tab-body{min-height:580px;}
 .tab-page{display:none}
 .tab-page.active{display:block}
 
@@ -83,233 +95,249 @@ body{
 .upgrades-container{
   display:flex;
   flex-direction:column;
-  gap:10px;
-  max-height:480px;
+  gap:12px;
+  max-height:560px;
   overflow:auto;
-  padding-right:6px;
+  padding-right:8px;
 }
 .upgrade-btn{
   background:linear-gradient(90deg,var(--neon),#3b82f6);
   border:none;
   color:white;
   font-size:15px;
-  padding:10px 12px;
-  border-radius:10px;
+  padding:12px 14px;
+  border-radius:12px;
   cursor:pointer;
   text-align:left;
   display:flex;
   justify-content:space-between;
   align-items:center;
-  transition:transform .12s,opacity .12s;
+  transition:transform .15s,opacity .15s;
 }
-.upgrade-btn span{float:right; opacity:0.9;}
+.upgrade-btn span{float:right; opacity:0.9; font-weight:600;}
 .upgrade-btn:disabled{opacity:.45; cursor:not-allowed}
-.upgrade-btn:hover:not(:disabled){transform:translateY(-3px)}
-.upgrade-btn.hidden{ display:none; }
+.upgrade-btn:hover:not(:disabled){transform:translateY(-4px)}
+.upgrade-btn.hidden{display:none;}
 
 /* Skins */
-.skins-section h4{margin:20px 0 8px 0; color:#bfe9ff;}
-.skins-grid{display:flex;gap:12px;flex-wrap:wrap; margin-bottom:16px;}
+.skins-section h4{margin:24px 0 10px 0; color:#bfe9ff; font-size:16px;}
+.skins-grid{display:flex;gap:14px;flex-wrap:wrap; margin-bottom:20px;}
 .skin{
-  width:96px;height:96px;
-  border-radius:12px;
+  width:100px;height:100px;
+  border-radius:14px;
   display:flex;align-items:center;justify-content:center;
   cursor:pointer;
-  box-shadow:0 6px 18px rgba(0,0,0,0.5);
-  border:3px solid transparent;
+  box-shadow:0 8px 24px rgba(0,0,0,0.6);
+  border:4px solid transparent;
   font-size:13px;
   text-align:center;
   background:#0f1724;
+  transition:border .2s;
 }
-.skin.active{border:3px solid var(--neon);}
+.skin.active{border:4px solid var(--neon); box-shadow:0 0 20px var(--neon);}
 
-/* Achievements */
-.achievements-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.achievement{background:#0f1724;padding:12px;border-radius:10px;text-align:center; font-size:14px;}
+/* Досягнення з прогрес-баром */
+.achievements-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.achievement{
+  background:#0f1724;
+  padding:14px;
+  border-radius:12px;
+  text-align:center;
+  position:relative;
+  overflow:hidden;
+  box-shadow:0 4px 12px rgba(0,0,0,0.4);
+}
+.ach-progress{
+  position:absolute;
+  bottom:0; left:0; height:8px;
+  background:var(--neon);
+  width:0%;
+  transition:width 0.6s ease;
+  border-radius:0 4px 4px 0;
+}
+.ach-state{margin-top:12px; font-weight:700; font-size:15px; color:#ffd;}
 
 /* Right panel */
 .right-panel{
-  width:540px;
+  width:560px;
   display:flex;
   flex-direction:column;
   align-items:center;
-  gap:18px;
+  gap:20px;
+  margin-top:60px;
 }
 
-/* Clock — БІЛЬШИЙ */
+/* Clock */
 #clockWrapper{position:relative;}
 .clock{
   position:relative;
   width:380px;height:380px;
-  border:9px solid var(--neon);
+  border:10px solid var(--neon);
   border-radius:50%;
-  box-shadow:0 0 40px var(--neon), 0 0 80px var(--neon), inset 0 0 30px rgba(14,165,233,0.12);
-  transition:all .2s;
-  background:linear-gradient(180deg,rgba(255,255,255,0.02),transparent);
+  box-shadow:0 0 50px var(--neon), 0 0 100px var(--neon), inset 0 0 40px rgba(14,165,233,0.15);
+  transition:all .25s;
+  background:linear-gradient(180deg,rgba(255,255,255,0.03),transparent);
 }
-.clock.square{border-radius:14px}
+.clock.square{border-radius:16px}
 .clock.diamond{clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);}
 .clock.oval{border-radius:50%/60%}
 
-/* Стрілки за замовчуванням темно-сині */
+/* Стрілки */
 .hand{
   position:absolute;bottom:50%;left:50%;transform-origin:bottom;transform:translateX(-50%) rotate(0deg);
   background:#1e3a8a !important;
-  border-radius:2px;
+  border-radius:3px;
 }
-.hour{width:9px;height:70px}
-.minute{width:7px;height:110px}
-.second{width:4px;height:140px;background:var(--accent)!important}
-.center-dot{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:14px;height:14px;background:var(--accent);border-radius:50%}
+.hour{width:10px;height:80px}
+.minute{width:8px;height:120px}
+.second{width:4px;height:150px;background:var(--accent)!important}
+.center-dot{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:16px;height:16px;background:var(--accent);border-radius:50%; box-shadow:0 0 20px var(--accent);}
 
-/* Стара бульбашка */
+/* Бульбашки */
 .click-cloud{
   position:absolute;
-  top:20px; right:-180px;
-  width:160px;
-  padding:10px;
-  background:rgba(255,255,255,0.04);
-  border-radius:12px;
+  top:30px; right:-200px;
+  width:170px;
+  padding:12px;
+  background:rgba(255,255,255,0.05);
+  border-radius:14px;
   text-align:center;
   font-weight:600;
-  font-size:14px;
+  font-size:15px;
   color:#cfeaff;
-  box-shadow:0 6px 18px rgba(0,0,0,0.5);
-  backdrop-filter:blur(4px);
+  box-shadow:0 8px 24px rgba(0,0,0,0.6);
+  backdrop-filter:blur(6px);
 }
-#clickGain{font-size:17px;color:var(--accent)}
+#clickGain{font-size:18px;color:var(--accent)}
 #totalCloud{font-size:13px;color:#a8d8ff;margin-top:6px}
 
-/* НОВА комбо-бульбашка */
 #comboBubble{
   position:absolute;
-  top:-50px; right:-50px;
-  width:140px; height:140px;
-  background:rgba(236,72,153,0.18);
-  border:5px solid var(--accent);
+  top:-60px; right:-60px;
+  width:160px; height:160px;
+  background:rgba(236,72,153,0.22);
+  border:6px solid var(--accent);
   border-radius:50%;
   display:flex;flex-direction:column;align-items:center;justify-content:center;
   font-weight:700; color:#fff;
-  backdrop-filter:blur(8px);
+  backdrop-filter:blur(10px);
   transform:scale(0);
-  transition:transform 0.3s cubic-bezier(0.18, 0.89, 0.32, 1.28);
+  transition:transform 0.35s cubic-bezier(0.18, 0.89, 0.32, 1.28);
   pointer-events:none;
   z-index:30;
-  box-shadow:0 0 40px rgba(236,72,153,0.7);
+  box-shadow:0 0 50px rgba(236,72,153,0.8);
 }
 #comboBubble.show{transform:scale(1)}
-#comboBubble.burst{animation:burstAnim 0.7s ease-out forwards;}
-#comboCount{font-size:42px; color:var(--accent); text-shadow:0 0 14px var(--accent);}
+#comboBubble.burst{animation:burstAnim 0.8s ease-out forwards;}
+#comboCount{font-size:48px; color:var(--accent); text-shadow:0 0 16px var(--accent);}
 @keyframes burstAnim{
   0%{transform:scale(1)}
-  50%{transform:scale(1.5)}
+  50%{transform:scale(1.6)}
   100%{transform:scale(0); opacity:0}
 }
 
 /* Score */
-#score{font-size:20px;text-shadow:0 0 12px var(--neon); margin-top:10px;}
+#score{font-size:22px;text-shadow:0 0 14px var(--neon);}
 
 /* Music player */
-.music-player{display:flex;gap:10px;align-items:center; margin-top:10px;}
-.phonk-btn{padding:12px 24px;border-radius:50px;background:linear-gradient(90deg,var(--neon),#3b82f6);border:none;color:white;font-weight:700;cursor:pointer;box-shadow:0 0 20px rgba(14,165,233,0.2);}
-.music-switch{padding:12px;border-radius:12px;background:linear-gradient(90deg,#8b5cf6,#ec4899);border:none;cursor:pointer;color:white;font-weight:700; font-size:18px;}
-.now-playing{margin-top:8px;font-size:14px;color:#cfeaff;}
+.music-player{display:flex;gap:12px;align-items:center;}
+.phonk-btn{padding:14px 28px;border-radius:50px;background:linear-gradient(90deg,var(--neon),#3b82f6);border:none;color:white;font-weight:700;cursor:pointer;box-shadow:0 0 24px rgba(14,165,233,0.25);}
+.music-switch{padding:14px;border-radius:14px;background:linear-gradient(90deg,#8b5cf6,#ec4899);border:none;cursor:pointer;color:white;font-weight:700; font-size:20px;}
+.now-playing{margin-top:10px;font-size:15px;color:#cfeaff;}
 
-/* Toast досягнень */
+/* Toast */
 #toastContainer{
-  position:fixed; bottom:30px; left:50%; transform:translateX(-50%);
+  position:fixed; bottom:40px; left:50%; transform:translateX(-50%);
   z-index:100; pointer-events:none;
 }
 .toast{
-  background:rgba(15,23,42,0.97); color:#fff;
-  padding:16px 32px; border-radius:12px;
-  box-shadow:0 10px 30px rgba(0,0,0,0.7);
+  background:rgba(15,23,42,0.98); color:#fff;
+  padding:20px 40px; border-radius:14px;
+  box-shadow:0 12px 40px rgba(0,0,0,0.8);
   border-left:6px solid #8df299;
-  font-weight:600; font-size:15px;
-  margin-top:12px;
-  animation: toastIn 0.4s ease-out, toastOut 0.4s 3s ease-in forwards;
+  font-weight:600; font-size:17px;
+  margin-top:14px;
+  animation: toastIn 0.5s ease-out, toastOut 0.5s 6.5s ease-in forwards;
   opacity:0;
 }
-@keyframes toastIn{from{transform:translateY(40px);opacity:0}to{transform:translateY(0);opacity:1}}
-@keyframes toastOut{to{transform:translateY(40px);opacity:0}}
+@keyframes toastIn{from{transform:translateY(50px);opacity:0}to{transform:translateY(0);opacity:1}}
+@keyframes toastOut{to{transform:translateY(50px);opacity:0}}
 
 /* Ефекти кліку */
-.click-effect-red{animation:clickRed 0.35s ease-out}
-.click-effect-blue{animation:clickBlue 0.35s ease-out}
-.click-effect-glitch{animation:glitch 0.5s steps(3)}
-.click-effect-blackhole{animation:blackhole 0.9s ease-in-out}
-.click-effect-ripple{animation:ripple 0.9s ease-out}
+.click-effect-red{animation:clickRed 0.4s ease-out}
+.click-effect-blue{animation:clickBlue 0.4s ease-out}
+.click-effect-glitch{animation:glitch 0.6s steps(4)}
+.click-effect-blackhole{animation:blackhole 1s ease-in-out}
+.click-effect-ripple{animation:ripple 1s ease-out}
 
 @keyframes clickRed{
-  0%,100%{box-shadow:0 0 40px var(--neon)}
-  50%{box-shadow:0 0 90px #ff3b5c, 0 0 140px #ff3b5c; border-color:#ff3b5c; transform:scale(1.09)}
+  0%,100%{box-shadow:0 0 50px var(--neon)}
+  50%{box-shadow:0 0 100px #ff3b5c, 0 0 160px #ff3b5c; border-color:#ff3b5c; transform:scale(1.1)}
 }
 @keyframes clickBlue{
-  0%,100%{box-shadow:0 0 40px var(--neon)}
-  50%{box-shadow:0 0 90px #0ea5e9, 0 0 140px #0ea5e9; border-color:#0ea5e9; transform:scale(1.1)}
+  0%,100%{box-shadow:0 0 50px var(--neon)}
+  50%{box-shadow:0 0 100px #0ea5e9, 0 0 160px #0ea5e9; border-color:#0ea5e9; transform:scale(1.12)}
 }
 @keyframes glitch{
   0%,100%{transform:translate(0)}
-  20%{transform:translate(-8px,8px)}
-  40%{transform:translate(8px,-8px)}
-  60%{transform:translate(-8px,-6px)}
-  80%{transform:translate(8px,6px)}
+  20%{transform:translate(-10px,10px)}
+  40%{transform:translate(10px,-10px)}
+  60%{transform:translate(-10px,-8px)}
+  80%{transform:translate(10px,8px)}
 }
 @keyframes blackhole{
   0%{transform:scale(1)}
-  50%{transform:scale(0.88)}
+  50%{transform:scale(0.85)}
   100%{transform:scale(1)}
 }
 @keyframes ripple{
-  0%{box-shadow:0 0 40px var(--neon)}
-  100%{box-shadow:0 0 0 140px rgba(14,165,233,0)}
+  0%{box-shadow:0 0 50px var(--neon)}
+  100%{box-shadow:0 0 0 160px rgba(14,165,233,0)}
 }
 
 /* Time tunnel */
 .time-tunnel{
-  position:fixed;inset:0;pointer-events:none;opacity:0;transition:opacity .25s;z-index:40;
-  background:radial-gradient(circle at center, rgba(255,80,80,0.06), rgba(10,10,20,0.6));
-  backdrop-filter:blur(4px);
+  position:fixed;inset:0;pointer-events:none;opacity:0;transition:opacity .3s;z-index:50;
+  background:radial-gradient(circle at center, rgba(255,80,80,0.08), rgba(10,10,20,0.7));
+  backdrop-filter:blur(6px);
 }
-.time-tunnel.active{opacity:1;animation:tunnelSpin 2.2s linear}
-@keyframes tunnelSpin{0%{transform:scale(1) rotate(0deg)}100%{transform:scale(1.05) rotate(360deg)}}
+.time-tunnel.active{opacity:1;animation:tunnelSpin 2.5s linear infinite}
+@keyframes tunnelSpin{0%{transform:scale(1) rotate(0deg)}100%{transform:scale(1.08) rotate(360deg)}}
 
-/* Reverb */
-.reverb-btn{padding:12px 20px;border-radius:10px;background:#ff3b5c;border:none;color:white;cursor:pointer; font-weight:700;}
+/* Новий реверб оверлей */
+.reverb-overlay{
+  position:fixed; inset:0; background:rgba(0,0,0,0.99); z-index:999;
+  display:flex; align-items:center; justify-content:center; flex-direction:column;
+  color:#fff; font-size:32px; text-align:center;
+  opacity:0; pointer-events:none; transition:opacity .4s;
+}
+.reverb-overlay:not(.hidden){
+  opacity:1; pointer-events:all;
+}
+.reverb-instruction{
+  margin-bottom:50px; text-shadow:0 0 24px #ff3b5c; font-weight:700;
+}
+.reverb-overlay .clock{
+  width:440px; height:440px; border:14px solid #ff3b5c; box-shadow:0 0 100px #ff3b5c, inset 0 0 60px rgba(255,59,92,0.3);
+  cursor:grab;
+}
+.reverb-overlay .clock:active{cursor:grabbing;}
+
+/* Reverb кнопка */
+.reverb-btn{
+  margin-top:20px;
+  padding:14px 28px;
+  border-radius:12px;
+  background:#ff3b5c;
+  border:none;
+  color:white;
+  cursor:pointer;
+  font-weight:700;
+  font-size:16px;
+  box-shadow:0 0 30px rgba(255,59,92,0.5);
+}
 
 /* Scrollbar */
-.upgrades-container::-webkit-scrollbar{width:8px}
-.upgrades-container::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.08);border-radius:8px}
-/* ТАБИ — тепер завжди в один рядок і не залазять під годинник */
-.tabs{
-  display:flex;
-  gap:8px;
-  margin-bottom:16px;
-  flex-wrap:nowrap !important;     /* ← головне! */
-  overflow-x:auto;
-  padding-bottom:4px;
-}
-.tab{
-  flex:0 0 auto;                   /* ← не розтягуються */
-  min-width:82px;
-  padding:10px 12px;
-  font-size:13px;
-}
-
-/* Заголовок піднімаємо вище, щоб годинник не ліз */
-.editable-title{
-  top:16px !important;             /* було 28px → тепер вище */
-  font-size:32px;
-  z-index:10;
-}
-
-/* Тости — довше видно (було 3.5 сек → тепер 6 сек) */
-.toast{
-  animation: toastIn 0.5s ease-out, toastOut 0.5s 5.5s ease-in forwards !important;
-}
-@keyframes toastOut{to{transform:translateY(40px);opacity:0}}
-
-/* Трохи піднімаємо контент правої панелі, щоб не ліз під заголовок */
-.right-panel{
-  margin-top:50px;                 /* ← новий рядок */
-}
+.upgrades-container::-webkit-scrollbar{width:10px}
+.upgrades-container::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.1);border-radius:8px}
+.upgrades-container::-webkit-scrollbar-thumb:hover{background:rgba(255,255,255,0.2)}
