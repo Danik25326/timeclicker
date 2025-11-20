@@ -229,32 +229,43 @@ window.onload = function () {
 
   applyAllSkins();
 
-  // === КОМБО + ТОАСТ ===
+  // === НОВА СИСТЕМА КОМБО (швидкі кліки тільки!) ===
+  let lastClickTime = 0;
+  let clickCombo = 0;
+  let comboTimeout = null;
+  const MAX_CLICK_INTERVAL = 350; // мс — якщо повільніше, комбо скидається
+  const COMBO_THRESHOLD = 5;     // тепер з 5-го швидкого кліку показуємо бульбашку
+
   function handleClickCombo(){
-    clickCombo++;
+    const now = Date.now();
+    const timeSinceLastClick = now - lastClickTime;
+
+    if(timeSinceLastClick < MAX_CLICK_INTERVAL){
+      // швидкий клік — продовжуємо комбо
+      clickCombo++;
+    } else {
+      // повільний клік — скидаємо комбо
+      clickCombo = 1;
+    }
+    lastClickTime = now;
+
+    // показуємо бульбашку тільки при швидкому комбо
     if(clickCombo >= COMBO_THRESHOLD){
       comboCount.textContent = clickCombo;
       comboBubble.classList.add("show");
     }
+
+    // очищаємо попередній таймаут
     clearTimeout(comboTimeout);
     comboTimeout = setTimeout(()=>{
       if(clickCombo >= COMBO_THRESHOLD){
         comboBubble.classList.add("burst");
-        showToast(`Комбо! ${clickCombo} кліків 🔥`);
-        setTimeout(()=>{comboBubble.classList.remove("show","burst");},700);
+        showToast(`Комбо ×${clickCombo}! 🔥`);
+        setTimeout(()=>{comboBubble.classList.remove("show","burst");}, 700);
       }
       clickCombo = 0;
-    }, 800);
+    }, 600); // чекаємо 600мс після останнього кліку
   }
-
-  function showToast(text){
-    const t = document.createElement("div");
-    t.className="toast";
-    t.textContent = text;
-    toastContainer.appendChild(t);
-    setTimeout(()=>t.remove(), 3500);
-  }
-
   // === КЛІК ===
   function addTime(){
     const gained = Math.round(clickPower * prestigeMultiplier);
