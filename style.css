@@ -43,13 +43,13 @@ body{
   gap:10px;
   z-index:100;
   background:rgba(15,23,42,0.9);
-  padding:12px 24px;
+  :12px 24px;
   border-radius:50px;
   backdrop-filter:blur(14px);
   box-shadow:0 10px 40px rgba(0,0,0,0.7);
 }
 .top-tabs .tab{
-  padding:11px 20px;
+  :11px 20px;
   font-size:14px;
   min-width:96px;
   background:transparent;
@@ -78,7 +78,7 @@ body{
   width:500px;
   background:var(--glass);
   border-radius:16px;
-  padding:30px;
+  padding:20px;
   box-shadow:0 10px 40px rgba(0,0,0,0.7);
   backdrop-filter:blur(10px);
 }
