@@ -336,3 +336,39 @@ body{
 /* Scrollbar */
 .upgrades-container::-webkit-scrollbar{width:10px}
 .upgrades-container::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.12);border-radius:8px}
+
+/* ===== ФІКС ДЛЯ АНІМАЦІЇ КЛІКУ (гарантовано працює) ===== */
+#clickableClock{
+  pointer-events: auto !important;
+  cursor: pointer !important;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* КРАСИВА КНОПКА РЕВЕРБУ — як апгрейди, але червона і крута */
+.reverb-btn{
+  margin-top: 20px;
+  padding: 14px 32px;
+  background: linear-gradient(90deg, #ff006e, #ff3b5c) !important;
+  border: none;
+  color: white;
+  font-weight: 700;
+  font-size: 16px;
+  border-radius: 14px;
+  cursor: pointer;
+  box-shadow: 0 0 30px rgba(255,59,92,0.6), 0 6px 20px rgba(0,0,0,0.4);
+  transition: all 0.2s ease;
+  text-shadow: 0 0 10px rgba(255,255,255,0.5);
+}
+.reverb-btn:hover{
+  transform: translateY(-4px);
+  box-shadow: 0 0 50px rgba(255,59,92,0.9), 0 10px 30px rgba(0,0,0,0.5);
+}
+.reverb-btn:active{
+  transform: translateY(-2px);
+}
+
+/* Трохи піднімаємо кнопку, щоб не зливалась з текстом */
+#tab-reverb p{
+  margin-bottom: 30px;
+}
