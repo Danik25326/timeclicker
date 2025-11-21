@@ -37,17 +37,14 @@ window.onload = function () {
   let maxPerClick = 1;
   let prestigeMultiplier = 1.0;
   let clickCloudTotal = 0;
-  // Комбо
   let lastClickTime = 0;
   let currentCombo = 0;
   let maxComboEver = 0;
   let comboTimeout = null;
   const MAX_CLICK_INTERVAL = 350;
   const COMBO_THRESHOLD = 5;
-  // Реверб
   let isReverbActive = false;
   let reverbHoldTimeout = null;
-  // Скіни
   let currentShape = "round";
   let currentClockSkin = "neon-blue";
   let currentHandSkin = "darkblue";
@@ -191,7 +188,6 @@ window.onload = function () {
     {id:"blackhole", name:"Чорна діра"},
     {id:"ripple", name:"Хвиля часу"},
   ];
-
   function createSkinGrid(containerId, list, callback){
     const root = document.getElementById(containerId);
     list.forEach((s,i)=>{
@@ -207,24 +203,17 @@ window.onload = function () {
       root.appendChild(el);
     });
   }
-
   function applyAllSkins(){
-    // Форма годинника — на обидва
     document.querySelectorAll(".clock").forEach(c => {
       c.className = "clock " + currentShape;
     });
-
-    // Колір обідка
     const clockSkin = clockSkins.find(s => s.id === currentClockSkin);
     if (clockSkin && clockSkin.apply) clockSkin.apply();
-
-    // Стрілки — просто викликаємо оригінальний apply(), він сам міняє всі .hand (і в ревербі теж!)
     const handSkin = handSkins.find(s => s.id === currentHandSkin);
     if (handSkin && handSkin.apply) {
       handSkin.apply();
     }
   }
-
   createSkinGrid("shapeSkins", shapes, (id)=>{currentShape=id; applyAllSkins();});
   createSkinGrid("clockSkins", clockSkins, (id)=>{currentClockSkin=id; applyAllSkins();});
   createSkinGrid("handSkins", handSkins, (id)=>{currentHandSkin=id; applyAllSkins();});
@@ -256,7 +245,7 @@ window.onload = function () {
     }, 600);
   }
 
-  // === ТОАСТ 10 секунд ===
+  // === ТОАСТ ===
   function showToast(text){
     const t = document.createElement("div");
     t.className = "toast";
@@ -380,7 +369,7 @@ window.onload = function () {
   setInterval(updateClockHands, 1000);
   updateClockHands();
 
-  // === НОВИЙ КРУТИЙ РЕВЕРБ ===
+  // === КРУТИЙ РЕВЕРБ ===
   reverbBtn.addEventListener("click", () => {
     if (!confirm("Ти впевнений, що хочеш повернути час назад?")) return;
     reverbOverlay.classList.remove("hidden");
@@ -393,21 +382,18 @@ window.onload = function () {
   const startReverbHold = () => {
     if (!isReverbActive) return;
     reverbHint.style.opacity = "0";
-    reverbClock.classList.add("reverb-mode");       // пульсація + float
-    timeTunnel.classList.add("intense");            // потужний фон
+    reverbClock.classList.add("reverb-mode");
+    timeTunnel.classList.add("intense");
 
-    // Хаотичний рух кожної стрілки окремо
     document.querySelectorAll("#reverbClock .hand").forEach(hand => {
-      const duration = 1.2 + Math.random() * 1.8;               // 1.2–3 секунди
-      const direction = Math.random() > 0.5 ? 1 : -1;           // випадковий напрямок
-      const speed = (3 + Math.random() * 7) * direction * 360; // дуже швидко
+      const duration = 0.8 + Math.random() * 1.2;
+      const direction = Math.random() > 0.5 ? 1 : -1;
+      const turns = 15 + Math.random() * 25;
+      const rotation = direction * turns * 360;
 
-      hand.style.animation = `reverbChaos ${duration}s linear infinite`;
-      hand.style.setProperty('--chaos-rotation', `${speed}deg`);
+      hand.style.animation = `chaosSpin ${duration}s linear infinite`;
+      hand.style.setProperty('--rand', `${rotation}deg`);
     });
-
-    // Пульсація годинника
-    reverbClock.style.animation = "pulse 1.4s ease-in-out infinite";
 
     reverbHoldTimeout = setTimeout(completeReverb, 10000);
   };
@@ -416,13 +402,9 @@ window.onload = function () {
     clearTimeout(reverbHoldTimeout);
     reverbClock.classList.remove("reverb-mode");
     timeTunnel.classList.remove("intense");
-    reverbClock.style.animation = "";
-    document.querySelectorAll("#reverbClock .hand").forEach(hand => {
-      hand.style.animation = "";
-    });
+    document.querySelectorAll("#reverbClock .hand").forEach(hand => hand.style.animation = "");
   };
 
-  // Підтримка миші і тачу
   reverbClock.addEventListener("mousedown", startReverbHold);
   reverbClock.addEventListener("touchstart", e => { e.preventDefault(); startReverbHold(); });
   reverbClock.addEventListener("mouseup", stopReverbHold);
@@ -436,17 +418,17 @@ window.onload = function () {
     upgrades.forEach((u, i) => { u.level = 0; buttons[i]?.classList.add("hidden"); u.update(); });
     buttons[0].classList.remove("hidden");
 
-    // Крутий фінальний спалах
     timeTunnel.classList.add("reverb-complete");
     setTimeout(() => {
       alert(`Реверб завершено! Множник: ${prestigeMultiplier.toFixed(2)}×`);
       reverbOverlay.classList.add("hidden");
       timeTunnel.classList.remove("active", "intense", "reverb-complete");
       isReverbActive = false;
-    }, 1200);
+    }, 1300);
 
     updateScore(); updateStats(); updateAchievements();
   }
+
   // === ТАБИ ===
   document.querySelectorAll(".top-tabs .tab").forEach(btn => {
     btn.addEventListener("click", () => {
@@ -467,6 +449,5 @@ window.onload = function () {
     });
   }
 
-  // === СТАРТ ===
   updateScore(); updateStats(); updateAchievements();
 };
