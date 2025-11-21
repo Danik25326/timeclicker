@@ -205,14 +205,34 @@ window.onload = function () {
     });
   }
   function applyAllSkins(){
-    clock.className = "clock " + currentShape;
-    clockSkins.find(s=>s.id===currentClockSkin)?.apply();
-    handSkins.find(s=>s.id===currentHandSkin)?.apply();
+    // Форма годинника — на обидва (основний + реверб)
+    document.querySelectorAll(".clock").forEach(c => {
+      c.className = "clock " + currentShape;
+    });
+
+    // Колір обідка — тільки основний годинник
+    const clockSkin = clockSkins.find(s => s.id === currentClockSkin);
+    if (clockSkin && clockSkin.apply) clockSkin.apply();
+
+    // Стрілки — головне виправлення: міняємо ВСІ .hand на сторінці
+    const handSkin = handSkins.find(s => s.id === currentHandSkin);
+    if (handSkin && handSkin.apply) {
+      // Очищаємо попередній стиль і застосовуємо новий до кожної стрілки окремо
+      document.querySelectorAll(".hand").forEach(hand => {
+        // скидаємо будь-який попередній background
+        hand.style.background = "";
+        // викликаємо оригінальний apply() — він працює з поточним hand
+        handSkin.apply();
+      });
+    }
   }
+
   createSkinGrid("shapeSkins", shapes, (id)=>{currentShape=id; applyAllSkins();});
   createSkinGrid("clockSkins", clockSkins, (id)=>{currentClockSkin=id; applyAllSkins();});
   createSkinGrid("handSkins", handSkins, (id)=>{currentHandSkin=id; applyAllSkins();});
   createSkinGrid("effectSkins", effects, (id)=>{currentEffect=id;});
+
+  // Викликаємо один раз при старті
   applyAllSkins();
   // === КОМБО ===
   function handleClickCombo(){
