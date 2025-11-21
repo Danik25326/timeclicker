@@ -108,61 +108,74 @@ window.onload = function () {
   }
 
   // === АПГРЕЙДИ ===
-  const upgrades = [
-    { name:"Кліпати очима", baseCost:1, type:"click", bonus:1, level:0 },
-    { name:"Включити телефон", baseCost:8, type:"auto", bonus:1, level:0 },
-    { name:"Гортати стрічку новин", baseCost:25, type:"auto", bonus:3, level:0 },
-    { name:"Невеликий мем-тур", baseCost:90, type:"click", bonus:2, level:0 },
-    { name:"Автоперегортання", baseCost:450, type:"auto", bonus:10, level:0 },
-    { name:"Придбати підписку", baseCost:2400, type:"auto", bonus:30, level:0 },
-    { name:"Серіал-марафон", baseCost:15000, type:"auto", bonus:120, level:0 },
-    { name:"Проєкт із затримкою", baseCost:120000, type:"click", bonus:50, level:0 },
-    { name:"Життєвий крінж", baseCost:800000, type:"auto", bonus:500, level:0 },
-    { name:"Зависнути в Discord", baseCost:5000000, type:"auto", bonus:2000, level:0 },
-    { name:"Скролити Reels до ранку", baseCost:20000000, type:"click", bonus:300, level:0 },
-    { name:"Філософські роздуми", baseCost:100000000, type:"auto", bonus:10000, level:0 },
-  ];
-  const buttons = [];
-  upgrades.forEach((up, idx) => {
-    const btn = document.createElement("button");
-    btn.className = "upgrade-btn";
-    if(idx > 0) btn.classList.add("hidden");
-    btn.addEventListener("click", () => buyUpgrade(idx));
-    upgradesContainer.appendChild(btn);
-    buttons.push(btn);
-    up.update = function(){
-      const cost = Math.floor(up.baseCost * Math.pow(1.15, up.level));
-      btn.innerHTML = `${up.name} (Lv.${up.level})<span>${formatTime(cost)}</span>`;
-      btn.disabled = score < cost;
-    };
-    up.getCost = function(){
-      return Math.floor(up.baseCost * Math.pow(1.15, up.level));
-    };
-    up.update();
-  });
-  function revealNext(){
-    const boughtCount = upgrades.filter(u => u.level > 0).length;
-    if(buttons[boughtCount]) buttons[boughtCount].classList.remove("hidden");
+// === НОВІ АПГРЕЙДИ — ФІБОНАЧЧІ + КУМУЛЯТИВНИЙ ЗРІСТ ===
+const upgrades = [
+  { name:"Кліпати очима", baseCost:1, level:0 },
+  { name:"Включити телефон", baseCost:8, level:0 },
+  { name:"Гортати стрічку", baseCost:40, level:0 },
+  { name:"Мем-тур", baseCost:200, level:0 },
+  { name:"Автоперегляд", baseCost:1100, level:0 },
+  { name:"Підписка", baseCost:6500, level:0 },
+  { name:"Серіал-марафон", baseCost:40000, level:0 },
+  { name:"Робота з дедлайном", baseCost:250000, level:0 },
+  { name:"Життєвий крінж", baseCost:1600000, level:0 },
+  { name:"Discord-марафон", baseCost:10000000, level:0 },
+  { name:"Reels до ранку", baseCost:65000000, level:0 },
+  { name:"Філософські роздуми", baseCost:400000000, level:0 },
+];
+
+// Функція Фібоначчі для кумулятивного росту
+function fib(n) {
+  if (n <= 1) return n;
+  let a = 0, b = 1;
+  for (let i = 2; i <= n; i++) {
+    [a, b] = [b, a + b];
   }
-  function buyUpgrade(i){
-    const up = upgrades[i];
-    const cost = up.getCost();
-    if(score < cost) return;
-    score -= cost;
-    up.level++;
-    totalUpgradesBought++;
-    if(up.type === "click"){
-      clickPower += Math.round(up.bonus * prestigeMultiplier);
-      if(clickPower > maxPerClick) maxPerClick = clickPower;
-    } else {
-      autoRate += Math.round(up.bonus * prestigeMultiplier);
-    }
-    showToast(`Куплено: ${up.name} (Lv.${up.level}) ✅`);
-    revealNext();
-    up.update();
-    updateAllButtons();
-    updateScore(); updateStats(); updateAchievements();
-  }
+  return b;
+}
+
+upgrades.forEach((up, idx) => {
+  const btn = document.createElement("button");
+  btn.className = "upgrade-btn";
+  if(idx > 0) btn.classList.add("hidden");
+  btn.addEventListener("click", () => buyUpgrade(idx));
+  upgradesContainer.appendChild(btn);
+  buttons.push(btn);
+
+  up.update = function(){
+    const fibMultiplier = fib(up.level + 6); // починаємо з більшого числа, щоб було важко
+    const cost = Math.floor(up.baseCost * fibMultiplier * (idx + 1));
+    btn.innerHTML = `${up.name} (Lv.${up.level})<span>${formatTime(cost)}</span>`;
+    btn.disabled = score < cost;
+  };
+  up.getCost = function(){
+    const fibMultiplier = fib(up.level + 6);
+    return Math.floor(up.baseCost * fibMultiplier * (idx + 1));
+  };
+  up.update();
+});
+
+function buyUpgrade(i){
+  const up = upgrades[i];
+  const cost = up.getCost();
+  if(score < cost) return;
+  score -= cost;
+  up.level++;
+  totalUpgradesBought++;
+
+  // Всі апгрейди додають тільки авто-час (автодобыча)
+  autoRate += (i + 1) * 5 * prestigeMultiplier; // від 5 до 60 сек/с
+
+  showToast(`Куплено: ${up.name} (Lv.${up.level}) ✅`);
+  revealNext();
+  up.update();
+  updateAllButtons();
+  updateScore(); updateStats(); updateAchievements();
+
+  // Анімація "заплющення очей" при покупці
+  document.body.classList.add("blink");
+  setTimeout(() => document.body.classList.remove("blink"), 200);
+}
   function updateAllButtons(){
     upgrades.forEach(up => up.update());
   }
