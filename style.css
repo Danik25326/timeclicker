@@ -74,18 +74,13 @@ body{
 /* Ліва панель */
 .left-panel{
   width:500px;
-  height: 680px;        /* ← фіксована висота (підбери під себе, якщо треба) */
-  display: flex;        /* ← важливо! */
   background:var(--glass);
   border-radius:16px;
   padding:20px; /* ← оригінальне значення */
   box-shadow:0 10px 40px rgba(0,0,0,0.7);
   backdrop-filter:blur(10px);
 }
-.tab-body{
-  flex: 1;              /* ← весь доступний простір займає контент */
-  overflow-y: auto;     /* ← якщо контенту багато — скрол */
-  }
+.tab-body{min-height:580px;}
 .tab-page{display:none}
 .tab-page.active{display:block}
 
@@ -359,4 +354,19 @@ body{
   pointer-events:auto !important;
   cursor:pointer !important;
 }
+/* Повне виправлення для вкладки «Ефект кліку» — 5 кнопок в один рядок */
+#effectSkins {
+  display: grid !important;
+  grid-template-columns: repeat(5, 1fr);  /* 5 колонок по рівній ширині */
+  gap: 14px;
+  max-width: 480px;           /* щоб не розтягувалось занадто широко */
+  margin: 0 auto;             /* центруємо */
+}
 
+/* Зменшуємо кнопки, щоб точно вмістилися */
+#effectSkins .skin {
+  width: auto;
+  height: 85px;
+  font-size: 12px;
+  padding: 8px;
+}
