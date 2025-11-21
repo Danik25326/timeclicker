@@ -5,7 +5,7 @@ window.onload = () => {
   const player = $("player"), scoreEl = $("score"), gainEl = $("clickGain"), totalEl = $("cloudTotal"), nowPlay = $("nowPlaying");
   const realEl = $("realTimePlayed"), virtEl = $("virtualTime"), upgEl = $("upgrades"), achEl = $("achievements");
   const revBtn = $("reverbBtn"), revOv = $("reverbOverlay"), revClk = $("reverbClock"), revHint = $("reverbHint");
-  const tunnel = $("timeTunnel"), toast = $("toastContainer"), title = $("worldTitle");
+  const tunnel = $("timeTunnel"), toastCont = $("toastContainer"), title = $("worldTitle");
 
   // State
   let s = 0, cp = 1, ar = 0, pr = 1, ct = 0, bought = 0, mc = 1;
@@ -38,7 +38,7 @@ window.onload = () => {
     ["Мем-тур",90,"click",2],["Автоперегортання",450,"auto",10],["Підписка",2400,"auto",30],
     ["Серіал-марафон",15e3,"auto",120],["Проєкт із затримкою",12e4,"click",50],["Життєвий крінж",8e5,"auto",500],
     ["Discord 24/7",5e6,"auto",2000],["Reels до ранку",2e7,"click",300],["Філософія",1e8,"auto",1e4]
-  ].map(([n,c,t,b])=>({n, c, t, b, l:0}));
+  ].map(([n,c,t,b])=>({n,c,t,b,l:0}));
   const bs = ups.map((u,i)=>{
     const b=document.createElement("button"); b.className="upgrade-btn"+(i?" hidden":"");
     b.onclick=()=>buy(i); upgEl.appendChild(b);
@@ -47,7 +47,7 @@ window.onload = () => {
     u.upd(); return b;
   });
   const reveal=()=>{const c=ups.filter(u=>u.l).length; bs[c]&&bs[c].classList.remove("hidden")};
-  const buy=i=>{
+   const buy=i=>{
     const u=ups[i], c=u.cost(); if(s<c)return;
     s-=c; u.l++; bought++;
     u.t==="click"?cp+=Math.round(u.b*pr):ar+=Math.round(u.b*pr);
@@ -90,7 +90,7 @@ window.onload = () => {
   };
 
   // Тости 10 сек
-  const toast=t=>{const e=document.createElement("div");e.className="toast";e.textContent=t;toast.appendChild(e);setTimeout(()=>e.remove(),10000)};
+  const toast=t=>{const e=document.createElement("div");e.className="toast";e.textContent=t;toastCont.appendChild(e);setTimeout(()=>e.remove(),10000)};
 
   // Клік
   const click=()=>{
