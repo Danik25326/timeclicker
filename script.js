@@ -10,6 +10,7 @@ window.onload = function () {
   const player = document.getElementById("player");
   const scoreText = document.getElementById("score");
   const upgradesContainer = document.getElementById("upgrades");
+  const multipliersContainer = document.getElementById("multipliers"); // ← ДОДАНО
   const clickGainEl = document.getElementById("clickGain");
   const cloudTotalEl = document.getElementById("cloudTotal");
   const nowPlaying = document.getElementById("nowPlaying");
@@ -33,7 +34,7 @@ window.onload = function () {
   let isPlaying = false;
   let currentTrack = 0;
   let sessionStart = Date.now();
-  let totalBought = 0;
+  let totalUpgradesBought = 0; // ← ВИПРАВЛЕНО
   let maxPerClick = 1;
   let prestigeMultiplier = 1.0;
   let clickCloudTotal = 0;
@@ -49,6 +50,9 @@ window.onload = function () {
   let currentClockSkin = "neon-blue";
   let currentHandSkin = "darkblue";
   let currentEffect = "red";
+  let clickMultiplier = 1; // ← ДОДАНО
+
+  const buttons = []; // ← ДОДАНО! Критична змінна
 
   // === МУЗИКА ===
   const trackNames = ["Фонк №1","Фонк №2","Фонк №3","Фонк №4","Фонк №5","Фонк №6","Фонк №7"];
@@ -57,6 +61,7 @@ window.onload = function () {
     "drift-phonk-phonk-music-432222.mp3","phonk-music-409064 (2).mp3",
     "phonk-music-phonk-2025-432208.mp3","pixel-drift.mp3"
   ].map(x => `musicList/${x}`);
+
   function loadTrack(i){
     player.src = tracks[i];
     nowPlaying.textContent = `Зараз: ${trackNames[i]}`;
@@ -107,107 +112,116 @@ window.onload = function () {
     return parts.length ? parts.join(" ") : `${seconds} сек`;
   }
 
-// === НОВІ АПГРЕЙДИ — ФІБОНАЧЧІ + КУМУЛЯТИВНИЙ ЗРІСТ ===
-const upgrades = [
-  { name:"Кліпати очима", baseCost:1, level:0 },
-  { name:"Включити телефон", baseCost:8, level:0 },
-  { name:"Гортати стрічку", baseCost:40, level:0 },
-  { name:"Мем-тур", baseCost:200, level:0 },
-  { name:"Автоперегляд", baseCost:1100, level:0 },
-  { name:"Підписка", baseCost:6500, level:0 },
-  { name:"Серіал-марафон", baseCost:40000, level:0 },
-  { name:"Робота з дедлайном", baseCost:250000, level:0 },
-  { name:"Життєвий крінж", baseCost:1600000, level:0 },
-  { name:"Discord-марафон", baseCost:10000000, level:0 },
-  { name:"Reels до ранку", baseCost:65000000, level:0 },
-  { name:"Філософські роздуми", baseCost:400000000, level:0 },
-];
+  // === АПГРЕЙДИ (ФІБОНАЧЧІ + КУМУЛЯТИВНИЙ РІСТ) ===
+  const upgrades = [
+    { name:"Кліпати очима", baseCost:1, level:0 },
+    { name:"Включити телефон", baseCost:8, level:0 },
+    { name:"Гортати стрічку", baseCost:40, level:0 },
+    { name:"Мем-тур", baseCost:200, level:0 },
+    { name:"Автоперегляд", baseCost:1100, level:0 },
+    { name:"Підписка", baseCost:6500, level:0 },
+    { name:"Серіал-марафон", baseCost:40000, level:0 },
+    { name:"Робота з дедлайном", baseCost:250000, level:0 },
+    { name:"Життєвий крінж", baseCost:1600000, level:0 },
+    { name:"Discord-марафон", baseCost:10000000, level:0 },
+    { name:"Reels до ранку", baseCost:65000000, level:0 },
+    { name:"Філософські роздуми", baseCost:400000000, level:0 },
+  ];
 
-// Функція Фібоначчі для кумулятивного росту
-function fib(n) {
-  if (n <= 1) return n;
-  let a = 0, b = 1;
-  for (let i = 2; i <= n; i++) {
-    [a, b] = [b, a + b];
+  function fib(n) {
+    if (n <= 1) return n;
+    let a = 0, b = 1;
+    for (let i = 2; i <= n; i++) [a, b] = [b, a + b];
+    return b;
   }
-  return b;
-}
 
-upgrades.forEach((up, idx) => {
-  const btn = document.createElement("button");
-  btn.className = "upgrade-btn";
-  if(idx > 0) btn.classList.add("hidden");
-  btn.addEventListener("click", () => buyUpgrade(idx));
-  upgradesContainer.appendChild(btn);
-  buttons.push(btn);
+  upgrades.forEach((up, idx) => {
+    const btn = document.createElement("button");
+    btn.className = "upgrade-btn";
+    if(idx > 0) btn.classList.add("hidden");
+    btn.addEventListener("click", () => buyUpgrade(idx));
+    upgradesContainer.appendChild(btn);
+    buttons.push(btn);
 
-  up.update = function(){
-    const fibMultiplier = fib(up.level + 6); // починаємо з більшого числа, щоб було важко
-    const cost = Math.floor(up.baseCost * fibMultiplier * (idx + 1));
-    btn.innerHTML = `${up.name} (Lv.${up.level})<span>${formatTime(cost)}</span>`;
-    btn.disabled = score < cost;
-  };
-  up.getCost = function(){
-    const fibMultiplier = fib(up.level + 6);
-    return Math.floor(up.baseCost * fibMultiplier * (idx + 1));
-  };
-  up.update();
-});
+    up.update = function(){
+      const fibMultiplier = fib(up.level + 6);
+      const cost = Math.floor(up.baseCost * fibMultiplier * (idx + 1));
+      btn.innerHTML = `${up.name} (Lv.${up.level})<span>${formatTime(cost)}</span>`;
+      btn.disabled = score < cost;
+    };
+    up.getCost = function(){
+      const fibMultiplier = fib(up.level + 6);
+      return Math.floor(up.baseCost * fibMultiplier * (idx + 1));
+    };
+    up.update();
+  });
 
-function buyUpgrade(i){
-  const up = upgrades[i];
-  const cost = up.getCost();
-  if(score < cost) return;
-  score -= cost;
-  up.level++;
-  totalUpgradesBought++;
+  function revealNext(){
+    const boughtCount = upgrades.filter(u => u.level > 0).length;
+    if(buttons[boughtCount]) buttons[boughtCount].classList.remove("hidden");
+  }
 
-  // Всі апгрейди додають тільки авто-час (автодобыча)
-  autoRate += (i + 1) * 5 * prestigeMultiplier; // від 5 до 60 сек/с
+  function buyUpgrade(i){
+    const up = upgrades[i];
+    const cost = up.getCost();
+    if(score < cost) return;
+    score -= cost;
+    up.level++;
+    totalUpgradesBought++;
+    autoRate += (i + 1) * 5 * prestigeMultiplier;
+    showToast(`Куплено: ${up.name} (Lv.${up.level}) ✅`);
+    revealNext();
+    up.update();
+    updateAllButtons();
+    updateScore(); updateStats(); updateAchievements();
+    document.body.classList.add("blink");
+    setTimeout(() => document.body.classList.remove("blink"), 200);
+  }
 
-  showToast(`Куплено: ${up.name} (Lv.${up.level}) ✅`);
-  revealNext();
-  up.update();
-  updateAllButtons();
-  updateScore(); updateStats(); updateAchievements();
-
-  // Анімація "заплющення очей" при покупці
-  document.body.classList.add("blink");
-  setTimeout(() => document.body.classList.remove("blink"), 200);
-}
   function updateAllButtons(){
     upgrades.forEach(up => up.update());
   }
-  // Множники кліку (окремий список)
-const multipliers = [
-  { name:"Подвійний клік", cost:5000, mult:2, level:0 },
-  { name:"Потрійний клік", cost:50000, mult:3, level:0 },
-  { name:"x10 за клік", cost:1000000, mult:10, level:0 },
-  { name:"x50 за клік", cost:20000000, mult:50, level:0 },
-  { name:"x100 за клік", cost:100000000, mult:100, level:0 },
-];
 
-let clickMultiplier = 1; // глобальний множник кліку
+  // === МНОЖНИКИ КЛІКУ ===
+  const multipliers = [
+    { name:"Подвійний клік", cost:5000, mult:2, level:0 },
+    { name:"Потрійний клік", cost:50000, mult:3, level:0 },
+    { name:"x10 за клік", cost:1000000, mult:10, level:0 },
+    { name:"x50 за клік", cost:20000000, mult:50, level:0 },
+    { name:"x100 за клік", cost:100000000, mult:100, level:0 },
+  ];
 
-// Створюємо кнопки множників
-multipliers.forEach((m, idx) => {
-  const btn = document.createElement("button");
-  btn.className = "upgrade-btn multiplier-btn";
-  btn.innerHTML = `${m.name}<span>${formatTime(m.cost)}</span>`;
-  document.getElementById("multipliers").appendChild(btn);
+  multipliers.forEach((m, idx) => {
+    const btn = document.createElement("button");
+    btn.className = "upgrade-btn multiplier-btn";
+    btn.innerHTML = `${m.name}<span>${formatTime(m.cost)}</span>`;
+    multipliersContainer.appendChild(btn);
 
-  btn.addEventListener("click", () => {
-    if (score < m.cost) return;
-    score -= m.cost;
-    m.level++;
-    clickMultiplier = m.mult;
-    btn.innerHTML = `${m.name} (активно)`;
-    btn.disabled = true;
-    showToast(`Активовано: ${m.name}!`);
-    document.body.classList.add("blink");
-    setTimeout(() => document.body.classList.remove("blink"), 200);
+    btn.addEventListener("click", () => {
+      if (score < m.cost) return;
+      score -= m.cost;
+      m.level++;
+      clickMultiplier = m.mult;
+      btn.innerHTML = `${m.name} (активно)`;
+      btn.disabled = true;
+      showToast(`Активовано: ${m.name}!`);
+      document.body.classList.add("blink");
+      setTimeout(() => document.body.classList.remove("blink"), 200);
+    });
   });
-});
+
+  // === КЛІК (з множником) ===
+  function addTime(){
+    const gained = Math.round(clickMultiplier * prestigeMultiplier);
+    score += gained;
+    clickCloudTotal += gained;
+    clickGainEl.textContent = `+${formatTime(gained)}`;
+    showFloating(`+${formatTime(gained)}`);
+    triggerClickEffect();
+    handleClickCombo();
+    if(gained > maxPerClick) maxPerClick = gained;
+    updateScore(); updateStats();
+  }
 
   // === СКІНИ ===
   const shapes = [{id:"round", name:"Круг"},{id:"square", name:"Квадрат"},{id:"diamond", name:"Ромб"},{id:"oval", name:"Овал"}];
