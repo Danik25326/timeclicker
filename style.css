@@ -84,11 +84,11 @@ body{
   box-shadow:0 10px 40px rgba(0,0,0,0.7);
   backdrop-filter:blur(10px);
 }
-
 .tab-body{min-height:580px;}
 .tab-page{display:none}
 .tab-page.active{display:block}
 
+/* Апгрейди */
 .upgrades-container{
   display:flex;
   flex-direction:column;
@@ -97,7 +97,6 @@ body{
   overflow:auto;
   padding-right:8px;
 }
-
 .upgrade-btn{
   background:linear-gradient(90deg,var(--neon),#3b82f6);
   border:none;
@@ -179,19 +178,21 @@ body{
 .clock.diamond{clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);}
 .clock.oval{border-radius:50%/60%}
 
-/* ФІКС: стрілки не блокують клік по годиннику */
-.hand {
-  pointer-events: none !important;   /* ← Оце головне! */
-  position: absolute;
-  bottom: 50%;
-  left: 50%;
-  transform-origin: bottom;
-  transform: translateX(-50%) rotate(0deg);
-  background: #1e3a8a !important;
-  border-radius: 3px;
+/* СТРІЛКИ ТА ЦЕНТР — НЕ БЛОКУЮТЬ КЛІК + ВИДНІ */
+.hand, .center-dot{
+  pointer-events: none !important; /* ← Ключовий фікс! */
 }
-.center-dot {
-  pointer-events: none !important;   /* і центр теж */
+.hand{
+  position:absolute;bottom:50%;left:50%;transform-origin:bottom;transform:translateX(-50%) rotate(0deg);
+  background:#1e3a8a !important;
+  border-radius:3px;
+}
+.hour{width:10px;height:80px}
+.minute{width:8px;height:120px}
+.second{width:4px;height:150px;background:var(--accent)!important}
+.center-dot{
+  position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
+  width:16px;height:16px;background:var(--accent);border-radius:50%; box-shadow:0 0 20px var(--accent);
 }
 
 /* Бульбашки */
@@ -262,7 +263,46 @@ body{
 @keyframes toastIn{from{transform:translateY(60px);opacity:0}to{transform:translateY(0);opacity:1}}
 @keyframes toastOut{to{transform:translateY(60px);opacity:0}}
 
-/* КОСМІЧНИЙ РЕВЕРБ */
+/* Ефекти кліку */
+.click-effect-red{animation:clickRed 0.4s ease-out}
+.click-effect-blue{animation:clickBlue 0.4s ease-out}
+.click-effect-glitch{animation:glitch 0.6s steps(4)}
+.click-effect-blackhole{animation:blackhole 1s ease-in-out}
+.click-effect-ripple{animation:ripple 1s ease-out}
+
+@keyframes clickRed{
+  0%,100%{box-shadow:0 0 50px var(--neon)}
+  50%{box-shadow:0 0 100px #ff3b5c, 0 0 160px #ff3b5c; border-color:#ff3b5c; transform:scale(1.1)}
+}
+@keyframes clickBlue{
+  0%,100%{box-shadow:0 0 50px var(--neon)}
+  50%{box-shadow:0 0 100px #0ea5e9, 0 0 160px #0ea5e9; border-color:#0ea5e9; transform:scale(1.12)}
+}
+@keyframes glitch{
+  0%,100%{transform:translate(0)}
+  20%{transform:translate(-10px,10px)}
+  40%{transform:translate(10px,-10px)}
+  60%{transform:translate(-10px,-8px)}
+  80%{transform:translate(10px,8px)}
+}
+@keyframes blackhole{
+  0%{transform:scale(1)}
+  50%{transform:scale(0.85)}
+  100%{transform:scale(1)}
+}
+@keyframes ripple{
+  0%{box-shadow:0 0 50px var(--neon)}
+  100%{box-shadow:0 0 0 160px rgba(14,165,233,0)}
+}
+
+/* Time tunnel */
+.time-tunnel{
+  position:fixed;inset:0;pointer-events:none;opacity:0;transition:opacity .3s;z-index:50;
+  background:radial-gradient(circle at center, rgba(139,0,255,0.15), rgba(0,0,0,0.9));
+}
+.time-tunnel.active{opacity:1;}
+
+/* Космічний реверб */
 .reverb-overlay{
   position:fixed; inset:0; background:#000; z-index:999;
   display:flex; align-items:center; justify-content:center; flex-direction:column;
@@ -284,11 +324,9 @@ body{
   from{transform:rotate(0deg) scale(1);}
   to{transform:rotate(360deg) scale(2);}
 }
-
 .reverb-instruction{
   margin-bottom:60px; font-size:32px; text-shadow:0 0 30px #ff00ff; z-index:10;
 }
-
 .reverb-hint{
   position:absolute;
   top:20%; left:50%; transform:translateX(-50%);
@@ -301,7 +339,6 @@ body{
   0%,100%{transform:translateX(-50%) scale(1);}
   50%{transform:translateX(-50%) scale(1.15);}
 }
-
 #reverbClock{
   width:500px; height:500px;
   border:18px solid #ff00ff !important;
@@ -319,7 +356,6 @@ body{
   0%,100%{transform:translateY(0) rotate(0deg);}
   50%{transform:translateY(-40px) rotate(8deg);}
 }
-
 .reverb-chaos .hand{
   animation:chaosSpin 0.25s linear infinite;
 }
@@ -328,30 +364,11 @@ body{
   to{transform:translateX(-50%) rotate(calc(var(--rand,0deg) + 360deg));}
 }
 
-/* Time tunnel */
-.time-tunnel{
-  position:fixed;inset:0;pointer-events:none;opacity:0;transition:opacity .3s;z-index:50;
-  background:radial-gradient(circle at center, rgba(139,0,255,0.15), rgba(0,0,0,0.9));
-}
-.time-tunnel.active{opacity:1;}
-
-/* Scrollbar */
-.upgrades-container::-webkit-scrollbar{width:10px}
-.upgrades-container::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.12);border-radius:8px}
-
-/* ===== ФІКС ДЛЯ АНІМАЦІЇ КЛІКУ (гарантовано працює) ===== */
-#clickableClock{
-  pointer-events: auto !important;
-  cursor: pointer !important;
-  user-select: none;
-  -webkit-tap-highlight-color: transparent;
-}
-
-/* КРАСИВА КНОПКА РЕВЕРБУ — як апгрейди, але червона і крута */
+/* Кнопка ревербу */
 .reverb-btn{
-  margin-top: 20px;
+  margin-top: 30px;
   padding: 14px 32px;
-  background: linear-gradient(90deg, #ff006e, #ff3b5c) !important;
+  background: linear-gradient(90deg, #ff006e, #ff3b5c);
   border: none;
   color: white;
   font-weight: 700;
@@ -366,11 +383,14 @@ body{
   transform: translateY(-4px);
   box-shadow: 0 0 50px rgba(255,59,92,0.9), 0 10px 30px rgba(0,0,0,0.5);
 }
-.reverb-btn:active{
-  transform: translateY(-2px);
-}
 
-/* Трохи піднімаємо кнопку, щоб не зливалась з текстом */
-#tab-reverb p{
-  margin-bottom: 30px;
+/* Scrollbar */
+.upgrades-container::-webkit-scrollbar{width:10px}
+.upgrades-container::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.12);border-radius:8px}
+.upgrades-container::-webkit-scrollbar-thumb:hover{background:rgba(255,255,255,0.2)}
+
+/* ГАРАНТОВАНИЙ ФІКС КЛІКУ */
+#clickableClock{
+  pointer-events: auto !important;
+  cursor: pointer !important;
 }
