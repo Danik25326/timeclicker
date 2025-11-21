@@ -300,7 +300,7 @@ multipliers.forEach((m, idx) => {
 
   // === КЛІК ===
 function addTime(){
-  const gained = Math.round(1 * prestigeMultiplier); // завжди +1 сек за клік
+  const gained = Math.round(clickMultiplier * prestigeMultiplier);
   score += gained;
   clickCloudTotal += gained;
   clickGainEl.textContent = `+${formatTime(gained)}`;
