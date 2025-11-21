@@ -5,13 +5,11 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>TimesClicker ⏰</title>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css?v=5" />
+  <link rel="stylesheet" href="style.css?v=6" />
 </head>
 <body>
-  <!-- Заголовок -->
   <div id="worldTitle" class="editable-title" contenteditable="true">Times Clicker</div>
 
-  <!-- Нові таби під назвою -->
   <div class="top-tabs">
     <button class="tab active" data-tab="tab-upgrades">Апгрейди</button>
     <button class="tab" data-tab="tab-skins">Скіни</button>
@@ -20,9 +18,7 @@
     <button class="tab" data-tab="tab-reverb">Реверб</button>
   </div>
 
-  <!-- Головний контейнер -->
   <div class="container">
-    <!-- Ліва панель -->
     <div class="left-panel">
       <div class="tab-body">
         <div id="tab-upgrades" class="tab-page active">
@@ -68,7 +64,6 @@
       </div>
     </div>
 
-    <!-- Права панель -->
     <div class="right-panel">
       <div id="clockWrapper">
         <div id="clickableClock" class="clock round">
@@ -77,34 +72,29 @@
           <div class="hand second"></div>
           <div class="center-dot"></div>
         </div>
-
         <div id="clickCloud" class="click-cloud">
           <div id="clickGain">+0 сек</div>
           <div id="totalCloud">Витрачено: <span id="cloudTotal">0 сек</span></div>
         </div>
-
         <div id="comboBubble" class="combo-bubble hidden">
           <div id="comboCount">0</div>
           <div id="comboText">кліків</div>
         </div>
       </div>
-
       <p id="score">Часу витрачено: 0 сек</p>
-
       <div class="music-player">
         <button id="prevTrack" class="music-switch">⬅️</button>
         <button id="musicBtn" class="phonk-btn">▶️ Включити музику</button>
         <button id="nextTrack" class="music-switch">➡️</button>
       </div>
       <div id="nowPlaying" class="now-playing">Зараз: —</div>
-
       <audio id="player" preload="auto"></audio>
     </div>
   </div>
 
-  <!-- Новий реверб — великий годинник + хінт -->
+  <!-- Космічний реверб -->
   <div id="reverbOverlay" class="reverb-overlay hidden">
-    <div class="reverb-instruction">Зажми та тримай годинник 30 секунд,<br>щоб повернути час назад!</div>
+    <div class="reverb-instruction">Зажми та тримай годинник 10 секунд,<br>щоб повернути час назад!</div>
     <div id="reverbHint" class="reverb-hint">Зажми мене!</div>
     <div id="reverbClock" class="clock round">
       <div class="hand hour"></div>
@@ -114,10 +104,9 @@
     </div>
   </div>
 
-  <!-- Тунель часу + тости -->
-  <div id="timeTunnel" class="time-tunnel" aria-hidden="true"></div>
+  <div id="timeTunnel" class="time-tunnel"></div>
   <div id="toastContainer"></div>
 
-  <script src="script.js?v=5"></script>
+  <script src="script.js?v=6"></script>
 </body>
 </html>
