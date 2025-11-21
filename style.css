@@ -41,7 +41,7 @@ body{
   transform:translateX(-50%);
   display:flex;
   gap:10px;
-  z-index:20;
+  z-index:100;
   background:rgba(15,23,42,0.9);
   padding:12px 24px;
   border-radius:50px;
@@ -69,14 +69,16 @@ body{
   display:flex;
   gap:32px;
   width:min(1350px,95vw);
-  margin-top:100px; /* ← збільшено, щоб таби не накладались на скіни */
+  margin-top:160px; 
+  position:relative;
+  z-index:1; 
 }
 /* Ліва панель */
 .left-panel{
   width:500px;
   background:var(--glass);
   border-radius:16px;
-  padding:20px;
+  padding:30px;
   box-shadow:0 10px 40px rgba(0,0,0,0.7);
   backdrop-filter:blur(10px);
 }
