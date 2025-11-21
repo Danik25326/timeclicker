@@ -205,25 +205,19 @@ window.onload = function () {
     });
   }
   function applyAllSkins(){
-    // Форма годинника — на обидва (основний + реверб)
+    // Форма годинника — на обидва
     document.querySelectorAll(".clock").forEach(c => {
       c.className = "clock " + currentShape;
     });
 
-    // Колір обідка — тільки основний годинник
+    // Колір обідка
     const clockSkin = clockSkins.find(s => s.id === currentClockSkin);
     if (clockSkin && clockSkin.apply) clockSkin.apply();
 
-    // Стрілки — головне виправлення: міняємо ВСІ .hand на сторінці
+    // Стрілки — просто викликаємо оригінальний apply(), він і так міняє всі .hand
     const handSkin = handSkins.find(s => s.id === currentHandSkin);
     if (handSkin && handSkin.apply) {
-      // Очищаємо попередній стиль і застосовуємо новий до кожної стрілки окремо
-      document.querySelectorAll(".hand").forEach(hand => {
-        // скидаємо будь-який попередній background
-        hand.style.background = "";
-        // викликаємо оригінальний apply() — він працює з поточним hand
-        handSkin.apply();
-      });
+      handSkin.apply();   // ← ось і все! Твій оригінальний apply() вже ідеальний
     }
   }
 
@@ -232,7 +226,7 @@ window.onload = function () {
   createSkinGrid("handSkins", handSkins, (id)=>{currentHandSkin=id; applyAllSkins();});
   createSkinGrid("effectSkins", effects, (id)=>{currentEffect=id;});
 
-  // Викликаємо один раз при старті
+  // Важливо: викликаємо при старті і після кожного кліку
   applyAllSkins();
   // === КОМБО ===
   function handleClickCombo(){
