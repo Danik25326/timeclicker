@@ -74,13 +74,18 @@ body{
 /* Ліва панель */
 .left-panel{
   width:500px;
+  height: 680px;        /* ← фіксована висота (підбери під себе, якщо треба) */
+  display: flex;        /* ← важливо! */
   background:var(--glass);
   border-radius:16px;
   padding:20px; /* ← оригінальне значення */
   box-shadow:0 10px 40px rgba(0,0,0,0.7);
   backdrop-filter:blur(10px);
 }
-.tab-body{min-height:580px;}
+.tab-body{
+  flex: 1;              /* ← весь доступний простір займає контент */
+  overflow-y: auto;     /* ← якщо контенту багато — скрол */
+  }
 .tab-page{display:none}
 .tab-page.active{display:block}
 
