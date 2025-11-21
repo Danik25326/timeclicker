@@ -354,3 +354,14 @@ body{
   pointer-events:auto !important;
   cursor:pointer !important;
 }
+/* Повна фіксація висоти вкладки «Скіни» */
+#tab-skins {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+#tab-skins .skins-section {
+  flex: 1;
+  padding-bottom: 80px;   /* просто додаємо відступ знизу, як ніби там є кнопка */
+}
