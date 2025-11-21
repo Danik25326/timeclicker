@@ -276,24 +276,32 @@ window.onload = function () {
   }
 
   // === КЛІК ===
-  function addTime(){
+function addTime(){
     const gained = Math.round(clickPower * prestigeMultiplier);
     score += gained;
     clickCloudTotal += gained;
     clickGainEl.textContent = `+${formatTime(gained)}`;
     showFloating(`+${formatTime(gained)}`);
-    triggerClickEffect();
+    triggerClickEffect(); // анімація
     handleClickCombo();
     if(gained > maxPerClick) maxPerClick = gained;
     updateScore(); updateStats();
   }
 
   function triggerClickEffect(){
+    // Скидаємо всі ефекти
     clock.classList.remove("click-effect-red","click-effect-blue","click-effect-glitch","click-effect-blackhole","click-effect-ripple");
+    // Примусово перезапускаємо анімацію
     void clock.offsetWidth;
     clock.classList.add("click-effect-" + currentEffect);
   }
-
+  
+  // Головне — клік по всьому #clockWrapper, бо іноді стрілки перекривають
+  clockWrapper.addEventListener("click", (e) => {
+    if (e.target.closest("#clickableClock") || e.target === clockWrapper) {
+      addTime();
+    }
+  });
   clock.addEventListener("click", addTime);
 
   function showFloating(text){
