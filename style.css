@@ -404,3 +404,11 @@ body{
   0% { opacity: 1; background: white; }
   100% { opacity: 0; }
 }
+/* Анімація заплющення очей при покупці апгрейду */
+body.blink {
+  animation: eyeBlink 0.2s ease-in-out;
+}
+@keyframes eyeBlink {
+  0%, 100% { background: #000; }
+  50% { background: #000; opacity: 0.99; }
+}
