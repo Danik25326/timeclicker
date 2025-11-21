@@ -179,17 +179,19 @@ body{
 .clock.diamond{clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);}
 .clock.oval{border-radius:50%/60%}
 
-.hand{
-  position:absolute;bottom:50%;left:50%;transform-origin:bottom;transform:translateX(-50%) rotate(0deg);
-  background:#1e3a8a !important;
-  border-radius:3px;
+/* ФІКС: стрілки не блокують клік по годиннику */
+.hand {
+  pointer-events: none !important;   /* ← Оце головне! */
+  position: absolute;
+  bottom: 50%;
+  left: 50%;
+  transform-origin: bottom;
+  transform: translateX(-50%) rotate(0deg);
+  background: #1e3a8a !important;
+  border-radius: 3px;
 }
-.hour{width:10px;height:80px}
-.minute{width:8px;height:120px}
-.second{width:4px;height:150px;background:var(--accent)!important}
-.center-dot{
-  position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
-  width:16px;height:16px;background:var(--accent);border-radius:50%; box-shadow:0 0 20px var(--accent);
+.center-dot {
+  pointer-events: none !important;   /* і центр теж */
 }
 
 /* Бульбашки */
