@@ -78,7 +78,7 @@ body{
   width:500px;
   background:var(--glass);
   border-radius:16px;
-  padding:20px;
+  padding:30px 20px 20px 20px;
   box-shadow:0 10px 40px rgba(0,0,0,0.7);
   backdrop-filter:blur(10px);
 }
