@@ -5,7 +5,6 @@
   --accent:#ec4899;
   --glass: rgba(15,23,42,0.6);
 }
-
 *{box-sizing:border-box}
 body{
   margin:0;
@@ -245,23 +244,23 @@ body{
 .music-switch{padding:14px;border-radius:14px;background:linear-gradient(90deg,#8b5cf6,#ec4899);border:none;cursor:pointer;color:white;font-weight:700; font-size:20px;}
 .now-playing{margin-top:10px;font-size:15px;color:#cfeaff;}
 
-/* Toast */
+/* Toast — 10 секунд */
 #toastContainer{
   position:fixed; bottom:40px; left:50%; transform:translateX(-50%);
   z-index:100; pointer-events:none;
 }
 .toast{
   background:rgba(15,23,42,0.98); color:#fff;
-  padding:20px 40px; border-radius:14px;
-  box-shadow:0 12px 40px rgba(0,0,0,0.8);
-  border-left:6px solid #8df299;
-  font-weight:600; font-size:17px;
-  margin-top:14px;
-  animation: toastIn 0.5s ease-out, toastOut 0.5s 6.5s ease-in forwards;
+  padding:22px 48px; border-radius:16px;
+  box-shadow:0 14px 50px rgba(0,0,0,0.8);
+  border-left:7px solid #8df299;
+  font-weight:600; font-size:18px;
+  margin-top:16px;
+  animation: toastIn 0.6s ease-out, toastOut 0.6s 9.4s ease-in forwards;
   opacity:0;
 }
-@keyframes toastIn{from{transform:translateY(50px);opacity:0}to{transform:translateY(0);opacity:1}}
-@keyframes toastOut{to{transform:translateY(50px);opacity:0}}
+@keyframes toastIn{from{transform:translateY(60px);opacity:0}to{transform:translateY(0);opacity:1}}
+@keyframes toastOut{to{transform:translateY(60px);opacity:0}}
 
 /* Ефекти кліку */
 .click-effect-red{animation:clickRed 0.4s ease-out}
@@ -317,11 +316,36 @@ body{
 .reverb-instruction{
   margin-bottom:50px; text-shadow:0 0 24px #ff3b5c; font-weight:700;
 }
-.reverb-overlay .clock{
-  width:440px; height:440px; border:14px solid #ff3b5c; box-shadow:0 0 100px #ff3b5c, inset 0 0 60px rgba(255,59,92,0.3);
+
+/* Хінт "Зажми мене!" */
+.reverb-hint{
+  position:absolute;
+  top:20%;
+  left:50%;
+  transform:translateX(-50%);
+  background:rgba(255,59,92,0.9);
+  color:#fff;
+  padding:18px 36px;
+  border-radius:50px;
+  font-size:26px;
+  font-weight:700;
+  animation:pulseHint 2s infinite;
+  z-index:1001;
+}
+@keyframes pulseHint{
+  0%,100%{transform:translateX(-50%) scale(1)}
+  50%{transform:translateX(-50%) scale(1.12)}
+}
+
+/* Реверб-годинник — величезний */
+#reverbClock{
+  width:500px !important;
+  height:500px !important;
+  border:16px solid #ff3b5c !important;
+  box-shadow:0 0 120px #ff3b5c, inset 0 0 80px rgba(255,59,92,0.4) !important;
   cursor:grab;
 }
-.reverb-overlay .clock:active{cursor:grabbing;}
+#reverbClock:active{cursor:grabbing;}
 
 /* Reverb кнопка */
 .reverb-btn{
