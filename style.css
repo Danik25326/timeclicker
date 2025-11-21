@@ -368,3 +368,39 @@ body{
   font-size: 12px;
   padding: 8px;
 }
+
+/* Пульсація + легке гойдання */
+@keyframes reverbPulse {
+  0%, 100% { transform: scale(1) rotate(0deg); }
+  50% { transform: scale(1.18) rotate(4deg); }
+}
+
+/* Хаотичний рух стрілок (прискорюється через JS) */
+@keyframes chaosSpin {
+  from { transform: translateX(-50%) rotate(var(--rand, 0deg)); }
+  to { transform: translateX(-50%) rotate(calc(var(--rand, 0deg) + 14400deg)); }
+}
+
+/* Космічна петля часу — прискорюється через JS */
+.reverb-overlay::before {
+  animation: warpTunnel 12s linear infinite;
+}
+@keyframes warpTunnel {
+  from { transform: rotate(0deg) scale(1); }
+  to { transform: rotate(360deg) scale(3); }
+}
+
+/* Інтенсивний режим */
+#timeTunnel.intense {
+  opacity: 1;
+  background: radial-gradient(circle at center, #8b5cf6 0%, #ec4899 30%, #ff006e 60%, #000 100%);
+}
+
+/* Фінальний спалах */
+#timeTunnel.reverb-complete {
+  animation: finalFlash 1.5s ease-out forwards;
+}
+@keyframes finalFlash {
+  0% { opacity: 1; background: white; }
+  100% { opacity: 0; }
+}
