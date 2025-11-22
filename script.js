@@ -50,7 +50,7 @@ window.onload = function () {
   let currentClockSkin = "neon-blue";
   let currentHandSkin = "darkblue";
   let currentEffect = "red";
-  let clickMultiplier = 1; // множник кліку
+  let clickMultiplier = 1;
 
   const buttons = [];
 
@@ -114,19 +114,27 @@ window.onload = function () {
 
   // === АПГРЕЙДИ ===
   const upgrades = [
-    { name:"Кліпати очима", baseCost:1, type:"click", bonus:1, level:0 },
-    { name:"Включити телефон", baseCost:8, type:"auto", bonus:1, level:0 },
-    { name:"Гортати стрічку новин", baseCost:25, type:"auto", bonus:3, level:0 },
-    { name:"Невеликий мем-тур", baseCost:90, type:"click", bonus:2, level:0 },
-    { name:"Автоперегортання", baseCost:450, type:"auto", bonus:10, level:0 },
-    { name:"Придбати підписку", baseCost:2400, type:"auto", bonus:30, level:0 },
-    { name:"Серіал-марафон", baseCost:15000, type:"auto", bonus:120, level:0 },
-    { name:"Проєкт із затримкою", baseCost:120000, type:"click", bonus:50, level:0 },
-    { name:"Життєвий крінж", baseCost:800000, type:"auto", bonus:500, level:0 },
-    { name:"Зависнути в Discord", baseCost:5000000, type:"auto", bonus:2000, level:0 },
-    { name:"Скролити Reels до ранку", baseCost:20000000, type:"click", bonus:300, level:0 },
-    { name:"Філософські роздуми", baseCost:100000000, type:"auto", bonus:10000, level:0 },
+    { name:"Кліпати очима", baseCost:1, level:0 },
+    { name:"Включити телефон", baseCost:8, level:0 },
+    { name:"Гортати стрічку", baseCost:40, level:0 },
+    { name:"Мем-тур", baseCost:200, level:0 },
+    { name:"Автоперегляд", baseCost:1100, level:0 },
+    { name:"Підписка", baseCost:6500, level:0 },
+    { name:"Серіал-марафон", baseCost:40000, level:0 },
+    { name:"Робота з дедлайном", baseCost:250000, level:0 },
+    { name:"Життєвий крінж", baseCost:1600000, level:0 },
+    { name:"Discord-марафон", baseCost:10000000, level:0 },
+    { name:"Reels до ранку", baseCost:65000000, level:0 },
+    { name:"Філософські роздуми", baseCost:400000000, level:0 },
   ];
+
+  function fib(n) {
+    if (n <= 1) return n;
+    let a = 0, b = 1;
+    for (let i = 2; i <= n; i++) [a, b] = [b, a + b];
+    return b;
+  }
+
   upgrades.forEach((up, idx) => {
     const btn = document.createElement("button");
     btn.className = "upgrade-btn";
@@ -134,20 +142,25 @@ window.onload = function () {
     btn.addEventListener("click", () => buyUpgrade(idx));
     upgradesContainer.appendChild(btn);
     buttons.push(btn);
+
     up.update = function(){
-      const cost = Math.floor(up.baseCost * Math.pow(1.15, up.level));
+      const fibMultiplier = fib(up.level + 6);
+      const cost = Math.floor(up.baseCost * fibMultiplier * (idx + 1));
       btn.innerHTML = `${up.name} (Lv.${up.level})<span>${formatTime(cost)}</span>`;
       btn.disabled = score < cost;
     };
     up.getCost = function(){
-      return Math.floor(up.baseCost * Math.pow(1.15, up.level));
+      const fibMultiplier = fib(up.level + 6);
+      return Math.floor(up.baseCost * fibMultiplier * (idx + 1));
     };
     up.update();
   });
+
   function revealNext(){
     const boughtCount = upgrades.filter(u => u.level > 0).length;
     if(buttons[boughtCount]) buttons[boughtCount].classList.remove("hidden");
   }
+
   function buyUpgrade(i){
     const up = upgrades[i];
     const cost = up.getCost();
@@ -155,22 +168,62 @@ window.onload = function () {
     score -= cost;
     up.level++;
     totalUpgradesBought++;
-    if(up.type === "click"){
-      clickPower += Math.round(up.bonus * prestigeMultiplier);
-      if(clickPower > maxPerClick) maxPerClick = clickPower;
-    } else {
-      autoRate += Math.round(up.bonus * prestigeMultiplier);
-    }
+    autoRate += (i + 1) * 5 * prestigeMultiplier;
     showToast(`Куплено: ${up.name} (Lv.${up.level}) ✅`);
     revealNext();
     up.update();
     updateAllButtons();
     updateScore(); updateStats(); updateAchievements();
+
+    // Анімація заплющення очей — ТІЛЬКИ для "Кліпати очима"
+    if (up.name === "Кліпати очима") {
+      document.body.classList.add("eye-blink");
+      setTimeout(() => document.body.classList.remove("eye-blink"), 1000);
+    }
   }
+
   function updateAllButtons(){
     upgrades.forEach(up => up.update());
   }
 
+  // === МНОЖНИКИ КЛІКУ ===
+  const multipliers = [
+    { name:"Подвійний клік", cost:5000, mult:2, level:0 },
+    { name:"Потрійний клік", cost:50000, mult:3, level:0 },
+    { name:"x10 за клік", cost:1000000, mult:10, level:0 },
+    { name:"x50 за клік", cost:20000000, mult:50, level:0 },
+    { name:"x100 за клік", cost:100000000, mult:100, level:0 },
+  ];
+
+  multipliers.forEach((m, idx) => {
+    const btn = document.createElement("button");
+    btn.className = "upgrade-btn multiplier-btn";
+    btn.innerHTML = `${m.name}<span>${formatTime(m.cost)}</span>`;
+    multipliersContainer.appendChild(btn);
+    btn.addEventListener("click", () => {
+      if (score < m.cost) return;
+      score -= m.cost;
+      m.level++;
+      clickMultiplier = m.mult;
+      btn.innerHTML = `${m.name} (активно)`;
+      btn.disabled = true;
+      showToast(`Активовано: ${m.name}!`);
+    });
+  });
+
+  // === КЛІК ===
+  function addTime(){
+    const gained = Math.round(clickMultiplier * prestigeMultiplier);
+    score += gained;
+    clickCloudTotal += gained;
+    clickGainEl.textContent = `+${formatTime(gained)}`;
+    showFloating(`+${formatTime(gained)}`);
+    triggerClickEffect();
+    handleClickCombo();
+    if(gained > maxPerClick) maxPerClick = gained;
+    updateScore(); updateStats();
+  }
+  
   // === СКІНИ (стрілки працюють на обох годинниках) ===
   const shapes = [{id:"round", name:"Круг"},{id:"square", name:"Квадрат"},{id:"diamond", name:"Ромб"},{id:"oval", name:"Овал"}];
   const clockSkins = [
