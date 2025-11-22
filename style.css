@@ -425,7 +425,7 @@ body.eye-blink::before {
 #clickCloud {
   position: absolute;
   top: 20px;          /* відступ зверху */
-  right: -220px;      /* праворуч від годинника */
+  right: -200px;      /* праворуч від годинника */
   width: 170px;
   padding: 10px 16px;
   background: rgba(15,23,42,.8);
