@@ -233,10 +233,10 @@ window.onload = function () {
     {id:"black", name:"Чорний", apply:()=>{clock.style.borderColor="#111"; clock.style.boxShadow="0 0 10px #000";}},
   ];
   const handSkins = [
-    {id:"darkblue", name:"Темно-сині", apply:()=>{document.querySelectorAll(".hand").forEach(h=>h.style.background="#1e3a8a");}},
-    {id:"neon", name:"Неонові", apply:()=>{document.querySelectorAll(".hand").forEach(h=>h.style.background="#0ea5e9");}},
-    {id:"pixel", name:"Піксельні", apply:()=>{document.querySelectorAll(".hand").forEach(h=>h.style.background="linear-gradient(#fff,#aaa)");}},
-    {id:"chrome", name:"Хром", apply:()=>{document.querySelectorAll(".hand").forEach(h=>h.style.background="linear-gradient(90deg,#ddd,#888,#ddd)");}},
+    {id:"darkblue", name:"Темно-сині", apply:()=>{document.querySelectorAll(".hand:not(.second)").forEach(h=>h.style.background="#1e3a8a");}},
+    {id:"neon", name:"Неонові", apply:()=>{document.querySelectorAll(".hand:not(.second)").forEach(h=>h.style.background="#0ea5e9");}},
+    {id:"pixel", name:"Піксельні", apply:()=>{document.querySelectorAll(".hand:not(.second)").forEach(h=>h.style.background="linear-gradient(#fff,#aaa)");}},
+    {id:"chrome", name:"Хром", apply:()=>{document.querySelectorAll(".hand:not(.second)").forEach(h=>h.style.background="linear-gradient(90deg,#ddd,#888,#ddd)");}},
   ];
   const effects = [
     {id:"red", name:"Червоний спалах"},
