@@ -421,3 +421,34 @@ body.eye-blink::before {
   0% { opacity: 1; background: white; }
   100% { opacity: 0; }
 }
+/* Повертаємо +1 сек і "Витрачено" праворуч зверху від годинника */
+#clickCloud {
+  position: absolute;
+  top: 20px;          /* відступ зверху */
+  right: -180px;      /* праворуч від годинника */
+  width: 170px;
+  padding: 10px 16px;
+  background: rgba(15,23,42,.8);
+  border-radius: 16px;
+  text-align: center;
+  font-weight: 600;
+  font-size: 15px;
+  color: #cfeaff;
+  box-shadow: 0 8px 32px rgba(0,0,0,.6);
+  backdrop-filter: blur(8px);
+  z-index: 20;
+  pointer-events: none;
+  transition: all 0.4s ease;
+}
+
+#clickGain {
+  font-size: 19px;
+  color: #ff006e;
+  text-shadow: 0 0 15px #ff006e;
+  margin-bottom: 4px;
+}
+
+#totalCloud {
+  font-size: 13px;
+  color: #a8d8ff;
+}
