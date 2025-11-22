@@ -175,12 +175,37 @@ body{
   background:#1e3a8a;
   border-radius:3px;
 }
-.hour{width:10px;height:80px}
-.minute{width:8px;height:120px}
-.second{width:4px;height:150px;background:var(--accent)}
+/* Стрілки — година і хвилина міняються скіном, секунда — завжди яскраво-червона */
+.hour{
+  width:10px;
+  height:80px;
+}
+.minute{
+  width:8px;
+  height:120px;
+}
+.second{
+  width:4px;
+  height:150px;
+  background:#ff006e !important;           /* яскраво-червоний неон */
+  box-shadow:0 0 20px #ff006e, 0 0 50px #ff3366 !important;
+  animation:secondGlow 2s ease-in-out infinite alternate;
+}
 .center-dot{
-  position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
-  width:16px;height:16px;background:var(--accent);border-radius:50%;box-shadow:0 0 20px var(--accent)
+  position:absolute;
+  left:50%;top:50%;
+  transform:translate(-50%,-50%);
+  width:16px;height:16px;
+  background:#ff006e;                       /* центр теж червоний */
+  border-radius:50%;
+  box-shadow:0 0 30px #ff006e;
+}
+
+/* Легке пульсування секунди — щоб було ще крутіше */
+@keyframes secondGlow {
+  from { box-shadow:0 0 20px #ff006e, 0 0 50px #ff3366; }
+  to   { box-shadow:0 0 30px #ff006e, 0 0 70px #ff3366; }
+}
 }
 /* Бульбашки */
 .click-cloud{
