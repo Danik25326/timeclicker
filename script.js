@@ -234,7 +234,11 @@ window.onload = function () {
   ];
   const handSkins = [
     {id:"darkblue", name:"Темно-сині", apply:()=>{document.querySelectorAll(".hand:not(.second)").forEach(h=>h.style.background="#1e3a8a");}},
-    {id:"neon", name:"Неонові", apply:()=>{document.querySelectorAll(".hand:not(.second)").forEach(h=>h.style.background="#0ea5e9");}},
+    {id:"neon", name:"Неонові", apply:()=>{document.querySelectorAll(".hand:not(.second)").forEach(h=>{
+      h.style.background = "#0ea5e9";
+      h.style.boxShadow = "0 0 25px #0ea5e9, 0 0 60px #0ea5e9";
+      h.style.animation = "neonPulse 2s ease-in-out infinite alternate";
+    });}},
     {id:"pixel", name:"Піксельні", apply:()=>{document.querySelectorAll(".hand:not(.second)").forEach(h=>h.style.background="linear-gradient(#fff,#aaa)");}},
     {id:"chrome", name:"Хром", apply:()=>{document.querySelectorAll(".hand:not(.second)").forEach(h=>h.style.background="linear-gradient(90deg,#ddd,#888,#ddd)");}},
   ];
