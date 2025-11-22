@@ -390,7 +390,7 @@ body{
   padding: 8px;
 }
 
-/* Анімація заплющення очей — ТІЛЬКИ для "Кліпати очима" */
+/* Анімація заплющення очей — швидко, плавно, без мерцання */
 body.eye-blink::before {
   content: "";
   position: fixed;
@@ -398,12 +398,13 @@ body.eye-blink::before {
   background: #000;
   z-index: 999999;
   pointer-events: none;
-  animation: realEyeBlink 1s ease-in-out;
+  animation: realEyeBlink 0.5s ease-in-out forwards;
 }
+
 @keyframes realEyeBlink {
   0%   { opacity: 0; }
-  15%  { opacity: 1; }
-  85%  { opacity: 1; }
+  25%  { opacity: 1; }
+  75%  { opacity: 1; }
   100% { opacity: 0; }
 }
 
