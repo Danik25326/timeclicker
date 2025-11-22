@@ -232,16 +232,36 @@ window.onload = function () {
     {id:"pink", name:"Рожевий", apply:()=>{clock.style.borderColor="#ec4899"; clock.style.boxShadow="0 0 50px #ec4899, 0 0 100px #ec4899";}},
     {id:"black", name:"Чорний", apply:()=>{clock.style.borderColor="#111"; clock.style.boxShadow="0 0 10px #000";}},
   ];
-  const handSkins = [
-    {id:"darkblue", name:"Темно-сині", apply:()=>{document.querySelectorAll(".hand:not(.second)").forEach(h=>h.style.background="#1e3a8a");}},
-    {id:"neon", name:"Неонові", apply:()=>{document.querySelectorAll(".hand:not(.second)").forEach(h=>{
+const handSkins = [
+  {id:"darkblue", name:"Темно-сині", apply:()=>{
+    document.querySelectorAll(".hand:not(.second)").forEach(h=>{
+      h.style.background = "#1e3a8a";
+      h.style.boxShadow = "";
+      h.style.animation = "";
+    });
+  }},
+  {id:"neon", name:"Неонові", apply:()=>{
+    document.querySelectorAll(".hand:not(.second)").forEach(h=>{
       h.style.background = "#0ea5e9";
       h.style.boxShadow = "0 0 25px #0ea5e9, 0 0 60px #0ea5e9";
       h.style.animation = "neonPulse 2s ease-in-out infinite alternate";
-    });}},
-    {id:"pixel", name:"Піксельні", apply:()=>{document.querySelectorAll(".hand:not(.second)").forEach(h=>h.style.background="linear-gradient(#fff,#aaa)");}},
-    {id:"chrome", name:"Хром", apply:()=>{document.querySelectorAll(".hand:not(.second)").forEach(h=>h.style.background="linear-gradient(90deg,#ddd,#888,#ddd)");}},
-  ];
+    });
+  }},
+  {id:"pixel", name:"Піксельні", apply:()=>{
+    document.querySelectorAll(".hand:not(.second)").forEach(h=>{
+      h.style.background = "linear-gradient(#fff,#aaa)";
+      h.style.boxShadow = "";
+      h.style.animation = "";
+    });
+  }},
+  {id:"chrome", name:"Хром", apply:()=>{
+    document.querySelectorAll(".hand:not(.second)").forEach(h=>{
+      h.style.background = "linear-gradient(90deg,#ddd,#888,#ddd)";
+      h.style.boxShadow = "0 0 15px #fff, 0 0 30px #aaa";
+      h.style.animation = "";
+    });
+  }},
+];
   const effects = [
     {id:"red", name:"Червоний спалах"},
     {id:"blue", name:"Синій вибух"},
