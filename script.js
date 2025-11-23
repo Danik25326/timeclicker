@@ -501,7 +501,7 @@ const handSkins = [
     buttons[0].classList.remove("hidden");
     timeTunnel.classList.add("reverb-complete");
     setTimeout(() => {
-      alert(`Реверб завершено! Множник: ${prestigeMultiplier.toFixed(2)}×`);
+      alert(`Перезапуск завершено! Поточний множник: ${prestigeMultiplier.toFixed(2)}×`);
       reverbOverlay.classList.add("hidden");
       timeTunnel.classList.remove("active", "intense", "reverb-complete");
       isReverbActive = false;
