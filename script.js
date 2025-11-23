@@ -339,47 +339,6 @@ const handSkins = [
     toastContainer.appendChild(t);
     setTimeout(() => t.remove(), 10000);
   }
-
-  // === КЛІК ===
-  function addTime(){
-    const gained = Math.round(clickPower * prestigeMultiplier);
-    score += gained;
-    clickCloudTotal += gained;
-    clickGainEl.textContent = `+${formatTime(gained)}`;
-    showFloating(`+${formatTime(gained)}`);
-    triggerClickEffect();
-    handleClickCombo();
-    if(gained > maxPerClick) maxPerClick = gained;
-    updateScore(); updateStats();
-  }
-  function triggerClickEffect(){
-    clock.classList.remove("click-effect-red","click-effect-blue","click-effect-glitch","click-effect-blackhole","click-effect-ripple");
-    void clock.offsetWidth;
-    clock.classList.add("click-effect-" + currentEffect);
-  }
-  clockWrapper.addEventListener("click", (e) => {
-    if (e.target.closest("#clickableClock") || e.target === clockWrapper) {
-      addTime();
-    }
-  });
-  function showFloating(text){
-    const el = document.createElement("div");
-    el.textContent = text;
-    el.style.position = "absolute";
-    el.style.right = "20px";
-    el.style.top = "50px";
-    el.style.color = "#ffccd1";
-    el.style.fontWeight = "700";
-    el.style.opacity = "1";
-    el.style.transition = "all 0.9s ease-out";
-    clockWrapper.appendChild(el);
-    requestAnimationFrame(() => {
-      el.style.transform = "translateX(60px) translateY(-80px)";
-      el.style.opacity = "0";
-    });
-    setTimeout(() => el.remove(), 920);
-  }
-
   // === СТАТИСТИКА ===
   function updateScore(){
     scoreText.textContent = `Часу витрачено: ${formatTime(score)}`;
