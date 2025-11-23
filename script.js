@@ -551,14 +551,6 @@ window.onload = function () {
     const nextMult = (prestigeMultiplier * 1.2).toFixed(2);
     nextMultiplierEl.textContent = nextMult;
   }
-  // === СТВОРЕННЯ МАГАЗИНІВ ===
-createSkinGrid("shapeSkins", shapes, "shapes");
-createSkinGrid("clockSkins", clockSkins, "clockSkins");
-createSkinGrid("handSkins", handSkins, "handSkins");
-createSkinGrid("effectSkins", effects, "effects");
-
-loadSkins();
-applyAllSkins();
   updateScore(); updateStats(); updateAchievements();
 };
 
