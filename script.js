@@ -26,31 +26,106 @@ window.onload = function () {
   const reverbOverlay = document.getElementById("reverbOverlay");
   const reverbClock = document.getElementById("reverbClock");
   const reverbHint = document.getElementById("reverbHint");
-  // === State ===
-  let score = 0;
-  let clickPower = 1;
-  let autoRate = 0;
-  let isPlaying = false;
-  let currentTrack = 0;
-  let sessionStart = Date.now();
-  let totalUpgradesBought = 0;
-  let maxPerClick = 1;
-  let prestigeMultiplier = 1.0;
-  let clickCloudTotal = 0;
-  let lastClickTime = 0;
-  let currentCombo = 0;
-  let maxComboEver = 0;
-  let comboTimeout = null;
-  const MAX_CLICK_INTERVAL = 350;
-  const COMBO_THRESHOLD = 5;
-  let isReverbActive = false;
-  let reverbHoldTimeout = null;
-  let currentShape = "round";
-  let currentClockSkin = "neon-blue";
-  let currentHandSkin = "darkblue";
-  let currentEffect = "red";
-  let clickMultiplier = 1;
-  const buttons = [];
+// === State ===
+let score = 0;
+let clickPower = 1;
+let autoRate = 0;
+let isPlaying = false;
+let currentTrack = 0;
+let sessionStart = Date.now();
+let totalUpgradesBought = 0;
+let maxPerClick = 1;
+let prestigeMultiplier = 1.0;
+let clickCloudTotal = 0;
+let lastClickTime = 0;
+let currentCombo = 0;
+let maxComboEver = 0;
+let comboTimeout = null;
+const MAX_CLICK_INTERVAL = 350;
+const COMBO_THRESHOLD = 5;
+let isReverbActive = false;
+let reverbHoldTimeout = null;
+let currentShape = "round";
+let currentClockSkin = "neon-blue";
+let currentHandSkin = "darkblue";
+let currentEffect = "red";
+let clickMultiplier = 1;
+const buttons = [];
+
+// === НОВА СТАТИСТИКА ===
+let totalReverbs = 0;      // кількість перезапусків
+let maxAutoRate = 0;       // рекорд авто/сек
+
+// Оновлення статистики (тепер з усіма новими пунктами)
+function updateStats() {
+  realTimePlayedEl.textContent = formatTime((Date.now() - sessionStart) / 1000);
+  virtualTimeEl.textContent = formatTime(score);
+  totalUpgradesEl.textContent = totalUpgradesBought;
+  maxPerClickEl.textContent = formatTime(maxPerClick);
+  prestigeMultEl.textContent = prestigeMultiplier.toFixed(2) + "×";
+
+  // Нові рядки
+  document.getElementById("maxAutoRate").textContent = formatTime(autoRate);
+  document.getElementById("maxCombo").textContent = maxComboEver;
+  document.getElementById("totalReverbs").textContent = totalReverbs;
+
+  // Досягнення
+  const achieved = achievementsList.filter(a => a.done).length;
+  document.getElementById("achievedCount").textContent = achieved;
+  document.getElementById("totalAchievements").textContent = achievementsList.length;
+
+  // Скіни
+  const shapeCount = shapes.length;
+  const clockCount = clockSkins.length;
+  const handCount = handSkins.length;
+  const effectCount = effects.length;
+
+  document.getElementById("shapeSkinsCount").textContent = `1/${shapeCount}`;
+  document.getElementById("clockSkinsCount").textContent = `1/${clockCount}`;
+  document.getElementById("handSkinsCount").textContent = `1/${handCount}`;
+  document.getElementById("effectSkinsCount").textContent = `1/${effectCount}`;
+  document.getElementById("totalSkins").textContent = `4/${shapeCount + clockCount + handCount + effectCount}`;
+
+  updateReverbText();
+}
+
+// Оновлюємо рекорди в реальному часі
+setInterval(() => {
+  if (autoRate > maxAutoRate) maxAutoRate = autoRate;
+  if (maxComboEver > maxCombo) maxCombo = maxComboEver;
+}, 1000);
+
+// === ПІДРАХУНОК ПЕРЕЗАПУСКІВ (тільки одна строчка!) ===
+function completeReverb() {
+  stopReverbHold();
+  prestigeMultiplier *= 1.2;
+
+  // Скидаємо прогрес
+  score = 0;
+  clickPower = 1;
+  autoRate = 0;
+  totalUpgradesBought = 0;
+  maxPerClick = 1;
+  clickCloudTotal = 0;
+  currentCombo = 0;
+
+  upgrades.forEach((u, i) => {
+    u.level = 0;
+    buttons[i]?.classList.add("hidden");
+    u.update();
+  });
+  buttons[0].classList.remove("hidden");
+
+  totalReverbs++; // Ось і все!
+
+  timeTunnel.classList.add("reverb-complete");
+  setTimeout(() => {
+    alert(`Перезапуск завершено! Поточний множник: ${prestigeMultiplier.toFixed(2)}×`);
+    reverbOverlay.classList.add("hidden");
+    timeTunnel.classList.remove("active", "intense", "reverb-complete");
+    isReverbActive = false;
+  }, 1500);
+
   // === МУЗИКА ===
   const trackNames = ["Фонк №1","Фонк №2","Фонк №3","Фонк №4","Фонк №5","Фонк №6","Фонк №7"];
   const tracks = [
