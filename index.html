@@ -9,7 +9,6 @@
 </head>
 <body>
   <div id="worldTitle" class="editable-title" contenteditable="true">Times Clicker</div>
-
   <div class="top-tabs">
     <button class="tab active" data-tab="tab-upgrades">Апгрейди</button>
     <button class="tab" data-tab="tab-skins">Скіни</button>
@@ -18,7 +17,9 @@
     <button class="tab" data-tab="tab-reverb">Перезапуск</button>
     <button class="tab" data-tab="tab-multipliers">Множники</button>
   </div>
-<div class="left-panel">
+
+  <div class="container">
+    <div class="left-panel">
       <div class="tab-body">
         <!-- Апгрейди -->
         <div id="tab-upgrades" class="tab-page active">
@@ -78,7 +79,7 @@
           <button id="reverbBtn" class="reverb-btn">Повернути час назад</button>
         </div>
 
-        <!-- Множники -->
+        <!-- НОВА ВКЛАДКА — МНОЖНИКИ -->
         <div id="tab-multipliers" class="tab-page">
           <h3>Множники кліку</h3>
           <div id="multipliers" class="upgrades-container"></div>
@@ -86,54 +87,34 @@
       </div> <!-- кінець tab-body -->
     </div>   <!-- кінець left-panel -->
   </div>     <!-- кінець container -->
-          <!-- Досягнення (якщо ще немає) -->
-          <div id="tab-achievements" class="tab-page">
-            <h3>Досягнення</h3>
-            <div id="achievements" class="achievements-grid"></div>
-          </div>
-<div id="tab-reverb" class="tab-page">
-  <h3>Перезапуск</h3>
-  <p id="reverbDesc">
-    Повертаючи час назад, ти отримаєш множник (<span id="nextMultiplier">1.20</span>×) до всіх прибутків.
-  </p>
-  <button id="reverbBtn" class="reverb-btn">Повернути час назад</button>
-</div>
 
-        <!-- НОВА ВКЛАДКА — МНОЖНИКИ -->
-        <div id="tab-multipliers" class="tab-page">
-          <h3>Множники кліку</h3>
-          <div id="multipliers" class="upgrades-container"></div>
-        </div>
+  <div class="right-panel">
+    <div id="clockWrapper">
+      <div id="clickableClock" class="clock round">
+        <div class="hand hour"></div>
+        <div class="hand minute"></div>
+        <div class="hand second"></div>
+        <div class="center-dot"></div>
+      </div>
+      <div id="clickCloud" class="click-cloud">
+        <div id="clickGain">+0 сек</div>
+        <div id="totalCloud">Витрачено: <span id="cloudTotal">0 сек</span></div>
+      </div>
+      <div id="comboBubble" class="combo-bubble hidden">
+        <div id="comboCount">0</div>
+        <div id="comboText">кліків</div>
       </div>
     </div>
-
-    <div class="right-panel">
-      <div id="clockWrapper">
-        <div id="clickableClock" class="clock round">
-          <div class="hand hour"></div>
-          <div class="hand minute"></div>
-          <div class="hand second"></div>
-          <div class="center-dot"></div>
-        </div>
-        <div id="clickCloud" class="click-cloud">
-          <div id="clickGain">+0 сек</div>
-          <div id="totalCloud">Витрачено: <span id="cloudTotal">0 сек</span></div>
-        </div>
-        <div id="comboBubble" class="combo-bubble hidden">
-          <div id="comboCount">0</div>
-          <div id="comboText">кліків</div>
-        </div>
-      </div>
-      <p id="score">Часу витрачено: 0 сек</p>
-      <div class="music-player">
-        <button id="prevTrack" class="music-switch">⬅️</button>
-        <button id="musicBtn" class="phonk-btn">▶️ Включити музику</button>
-        <button id="nextTrack" class="music-switch">➡️</button>
-      </div>
-      <div id="nowPlaying" class="now-playing">Зараз: —</div>
-      <audio id="player" preload="auto"></audio>
+    <p id="score">Часу витрачено: 0 сек</p>
+    <div class="music-player">
+      <button id="prevTrack" class="music-switch">⬅️</button>
+      <button id="musicBtn" class="phonk-btn">▶️ Включити музику</button>
+      <button id="nextTrack" class="music-switch">➡️</button>
     </div>
+    <div id="nowPlaying" class="now-playing">Зараз: —</div>
+    <audio id="player" preload="auto"></audio>
   </div>
+</div>
 
   <!-- Космічний реверб -->
   <div id="reverbOverlay" class="reverb-overlay hidden">
@@ -148,10 +129,8 @@
       <div class="center-dot"></div>
     </div>
   </div>
-
   <div id="timeTunnel" class="time-tunnel"></div>
   <div id="toastContainer"></div>
-
   <script src="script.js?v=9"></script>
 </body>
 </html>
