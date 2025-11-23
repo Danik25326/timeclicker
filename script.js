@@ -551,15 +551,6 @@ window.onload = function () {
     const nextMult = (prestigeMultiplier * 1.2).toFixed(2);
     nextMultiplierEl.textContent = nextMult;
   }
-  // === ЗАПУСК МАГАЗИНУ СКІНІВ (ОБОВ'ЯЗКОВО В КІНЦІ!) ===
-createSkinGrid("shapeSkins", shapes, "shapes");
-createSkinGrid("clockSkins", clockSkins, "clockSkins");
-createSkinGrid("handSkins", handSkins, "handSkins");
-createSkinGrid("effectSkins", effects, "effects");
-
-loadSkins();     // ← завантажуємо збережені скіни
-applyAllSkins(); // ← застосовуємо їх одразу
-
   updateScore(); updateStats(); updateAchievements();
 };
 
