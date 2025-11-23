@@ -21,50 +21,69 @@
 
   <div class="container">
     <div class="left-panel">
-      <div class="tab-body">
-        <div id="tab-upgrades" class="tab-page active">
-          <h3>Апгрейди</h3>
-          <div id="upgrades" class="upgrades-container"></div>
-        </div>
-
-        <div id="tab-skins" class="tab-page">
-          <h3>Скіни</h3>
-          <div class="skins-section">
-            <h4>Форма годинника</h4>
-            <div class="skins-grid" id="shapeSkins"></div>
-            <h4>Колір годинника</h4>
-            <div class="skins-grid" id="clockSkins"></div>
-            <h4>Стрілки</h4>
-            <div class="skins-grid" id="handSkins"></div>
-            <h4>Анімація годинника</h4>
-            <div class="skins-grid" id="effectSkins"></div>
+<div class="tab-body">
+          <div id="tab-upgrades" class="tab-page active">
+            <h3>Апгрейди</h3>
+            <div id="upgrades" class="upgrades-container"></div>
           </div>
-        </div>
+          <div id="tab-skins" class="tab-page">
+            <h3>Скіни</h3>
+            <div class="skins-section">
+              <h4>Форма годинника</h4>
+              <div class="skins-grid" id="shapeSkins"></div>
+              <h4>Колір годинника</h4>
+              <div class="skins-grid" id="clockSkins"></div>
+              <h4>Стрілки</h4>
+              <div class="skins-grid" id="handSkins"></div>
+              <h4>Анімація годинника</h4>
+              <div class="skins-grid" id="effectSkins"></div>
+            </div>
+          </div>
 
-<div id="tab-stats" class="tab-page">
-  <h3>Статистика</h3>
-  <ul class="stats-list">
-    <!-- Основне -->
-    <li>Реальний час у грі: <span id="realTimePlayed">0 сек</span></li>
-    <li>Віртуально витрачено: <span id="virtualTime">0 сек</span></li>
-    <li>Куплено апгрейдів: <span id="totalUpgrades">0</span></li>
-    <li>Найбільше за клік: <span id="maxPerClick">0 сек</span></li>
-    <li>Найбільше за авто/сек: <span id="maxAutoRate">0 сек</span></li>
-    <li>Найдовше комбо: <span id="maxCombo">0</span> кліків</li>
-    <li>Перезапусків зроблено: <span id="totalReverbs">0</span></li>
-    <li>Поточний множник: <span id="prestigeMult">1.00</span>×</li>
+          <!-- СТАТИСТИКА -->
+          <div id="tab-stats" class="tab-page">
+            <h3>Статистика</h3>
+            <ul class="stats-list">
+              <li>Реальний час у грі: <span id="realTimePlayed">0 сек</span></li>
+              <li>Віртуально витрачено: <span id="virtualTime">0 сек</span></li>
+              <li>Куплено апгрейдів: <span id="totalUpgrades">0</span></li>
+              <li>Найбільше за клік: <span id="maxPerClick">0 сек</span></li>
+              <li>Найбільше за авто/сек: <span id="maxAutoRate">0 сек</span></li>
+              <li>Найдовше комбо: <span id="maxCombo">0</span> кліків</li>
+              <li>Перезапусків зроблено: <span id="totalReverbs">0</span></li>
+              <li>Поточний множник: <span id="prestigeMult">1.00</span>×</li>
+              <li class="stats-separator">Досягнення: <span id="achievedCount">0</span> / <span id="totalAchievements">6</span></li>
+              <li class="stats-separator">Зібрано скінів:</li>
+              <li>• Форми годинника: <span id="shapeSkinsCount">1</span>/4</li>
+              <li>• Кольори годинника: <span id="clockSkinsCount">1</span>/4</li>
+              <li>• Стрілки: <span id="handSkinsCount">1</span>/4</li>
+              <li>• Ефекти кліку: <span id="effectSkinsCount">1</span>/5</li>
+              <li>Всього скінів: <span id="totalSkins">4</span>/17</li>
+            </ul>
+          </div>
 
-    <!-- Досягнення -->
-    <li class="stats-separator">Досягнення: <span id="achievedCount">0</span> / <span id="totalAchievements">6</span></li>
-    <!-- Скіни (розбито по категоріях) -->
-    <li class="stats-separator">Зібрано скінів:</li>
-    <li> • Форми годинника: <span id="shapeSkinsCount">1</span>/4</li>
-    <li> • Кольори годинника: <span id="clockSkinsCount">1</span>/4</li>
-    <li> • Стрілки: <span id="handSkinsCount">1</span>/4</li>
-    <li> • Ефекти кліку: <span id="effectSkinsCount">1</span>/5</li>
-    <li>Всього скінів: <span id="totalSkins">4</span>/17</li>
-  </ul>
-</div>
+          <!-- ПЕРЕЗАПУСК -->
+          <div id="tab-reverb" class="tab-page">
+            <h3>Перезапуск</h3>
+            <p id="reverbDesc">
+              Повертаючи час назад, ти отримаєш множник <span id="nextMultiplier">1.20</span>× до всіх прибутків.
+            </p>
+            <button id="reverbBtn" class="reverb-btn">Повернути час назад</button>
+          </div>
+
+          <!-- МНОЖНИКИ -->
+          <div id="tab-multipliers" class="tab-page">
+            <h3>Множники кліку</h3>
+            <div id="multipliers" class="upgrades-container"></div>
+          </div>
+
+          <!-- Досягнення (якщо ще немає) -->
+          <div id="tab-achievements" class="tab-page">
+            <h3>Досягнення</h3>
+            <div id="achievements" class="achievements-grid"></div>
+          </div>
+        </div> <!-- ← ЗАКРИВАЄМО tab-body ТУТ -->
+      </div>
 
 <div id="tab-reverb" class="tab-page">
   <h3>Перезапуск</h3>
