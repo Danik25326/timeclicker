@@ -26,105 +26,36 @@ window.onload = function () {
   const reverbOverlay = document.getElementById("reverbOverlay");
   const reverbClock = document.getElementById("reverbClock");
   const reverbHint = document.getElementById("reverbHint");
-// === State ===
-let score = 0;
-let clickPower = 1;
-let autoRate = 0;
-let isPlaying = false;
-let currentTrack = 0;
-let sessionStart = Date.now();
-let totalUpgradesBought = 0;
-let maxPerClick = 1;
-let prestigeMultiplier = 1.0;
-let clickCloudTotal = 0;
-let lastClickTime = 0;
-let currentCombo = 0;
-let maxComboEver = 0;
-let comboTimeout = null;
-const MAX_CLICK_INTERVAL = 350;
-const COMBO_THRESHOLD = 5;
-let isReverbActive = false;
-let reverbHoldTimeout = null;
-let currentShape = "round";
-let currentClockSkin = "neon-blue";
-let currentHandSkin = "darkblue";
-let currentEffect = "red";
-let clickMultiplier = 1;
-const buttons = [];
 
-// === НОВА СТАТИСТИКА ===
-let totalReverbs = 0;      // кількість перезапусків
-let maxAutoRate = 0;       // рекорд авто/сек
+  // === State ===
+  let score = 0;
+  let clickPower = 1;
+  let autoRate = 0;
+  let isPlaying = false;
+  let currentTrack = 0;
+  let sessionStart = Date.now();
+  let totalUpgradesBought = 0;
+  let maxPerClick = 1;
+  let prestigeMultiplier = 1.0;
+  let clickCloudTotal = 0;
+  let lastClickTime = 0;
+  let currentCombo = 0;
+  let maxComboEver = 0;
+  let comboTimeout = null;
+  const MAX_CLICK_INTERVAL = 350;
+  const COMBO_THRESHOLD = 5;
+  let isReverbActive = false;
+  let reverbHoldTimeout = null;
+  let currentShape = "round";
+  let currentClockSkin = "neon-blue";
+  let currentHandSkin = "darkblue";
+  let currentEffect = "red";
+  let clickMultiplier = 1;
+  const buttons = [];
 
-// Оновлення статистики (тепер з усіма новими пунктами)
-function updateStats() {
-  realTimePlayedEl.textContent = formatTime((Date.now() - sessionStart) / 1000);
-  virtualTimeEl.textContent = formatTime(score);
-  totalUpgradesEl.textContent = totalUpgradesBought;
-  maxPerClickEl.textContent = formatTime(maxPerClick);
-  prestigeMultEl.textContent = prestigeMultiplier.toFixed(2) + "×";
-
-  // Нові рядки
-  document.getElementById("maxAutoRate").textContent = formatTime(autoRate);
-  document.getElementById("maxCombo").textContent = maxComboEver;
-  document.getElementById("totalReverbs").textContent = totalReverbs;
-
-  // Досягнення
-  const achieved = achievementsList.filter(a => a.done).length;
-  document.getElementById("achievedCount").textContent = achieved;
-  document.getElementById("totalAchievements").textContent = achievementsList.length;
-
-  // Скіни
-  const shapeCount = shapes.length;
-  const clockCount = clockSkins.length;
-  const handCount = handSkins.length;
-  const effectCount = effects.length;
-
-  document.getElementById("shapeSkinsCount").textContent = `1/${shapeCount}`;
-  document.getElementById("clockSkinsCount").textContent = `1/${clockCount}`;
-  document.getElementById("handSkinsCount").textContent = `1/${handCount}`;
-  document.getElementById("effectSkinsCount").textContent = `1/${effectCount}`;
-  document.getElementById("totalSkins").textContent = `4/${shapeCount + clockCount + handCount + effectCount}`;
-
-  updateReverbText();
-}
-
-// Оновлюємо рекорди в реальному часі
-setInterval(() => {
-  if (autoRate > maxAutoRate) maxAutoRate = autoRate;
-  if (maxComboEver > maxCombo) maxCombo = maxComboEver;
-}, 1000);
-
-// === ПІДРАХУНОК ПЕРЕЗАПУСКІВ (тільки одна строчка!) ===
-function completeReverb() {
-  stopReverbHold();
-  prestigeMultiplier *= 1.2;
-
-  // Скидаємо прогрес
-  score = 0;
-  clickPower = 1;
-  autoRate = 0;
-  totalUpgradesBought = 0;
-  maxPerClick = 1;
-  clickCloudTotal = 0;
-  currentCombo = 0;
-
-  upgrades.forEach((u, i) => {
-    u.level = 0;
-    buttons[i]?.classList.add("hidden");
-    u.update();
-  });
-  buttons[0].classList.remove("hidden");
-
-  totalReverbs++; // Ось і все!
-
-  timeTunnel.classList.add("reverb-complete");
-  setTimeout(() => {
-    alert(`Перезапуск завершено! Поточний множник: ${prestigeMultiplier.toFixed(2)}×`);
-    reverbOverlay.classList.add("hidden");
-    timeTunnel.classList.remove("active", "intense", "reverb-complete");
-    isReverbActive = false;
-  }, 1500);
+  // === НОВА СТАТИСТИКА ===
+  let totalReverbs = 0;
+  let maxAutoRate = 0;
 
   // === МУЗИКА ===
   const trackNames = ["Фонк №1","Фонк №2","Фонк №3","Фонк №4","Фонк №5","Фонк №6","Фонк №7"];
@@ -133,6 +64,7 @@ function completeReverb() {
     "drift-phonk-phonk-music-432222.mp3","phonk-music-409064 (2).mp3",
     "phonk-music-phonk-2025-432208.mp3","pixel-drift.mp3"
   ].map(x => `musicList/${x}`);
+
   function loadTrack(i){
     player.src = tracks[i];
     nowPlaying.textContent = `Зараз: ${trackNames[i]}`;
@@ -157,6 +89,7 @@ function completeReverb() {
   });
   prevTrack.onclick = () => { currentTrack = (currentTrack - 1 + tracks.length) % tracks.length; loadTrack(currentTrack); };
   nextTrack.onclick = () => { currentTrack = (currentTrack + 1) % tracks.length; loadTrack(currentTrack); };
+
   // === ФОРМАТУВАННЯ ЧАСУ ===
   function formatTime(seconds){
     seconds = Math.floor(seconds);
@@ -181,6 +114,7 @@ function completeReverb() {
     }
     return parts.length ? parts.join(" ") : `${seconds} сек`;
   }
+
   // === АПГРЕЙДИ ===
   const upgrades = [
     { name:"Кліпати очима", baseCost:1, level:0 },
@@ -196,12 +130,14 @@ function completeReverb() {
     { name:"Reels до ранку", baseCost:65000000, level:0 },
     { name:"Філософські роздуми", baseCost:400000000, level:0 },
   ];
+
   function fib(n) {
     if (n <= 1) return n;
     let a = 0, b = 1;
     for (let i = 2; i <= n; i++) [a, b] = [b, a + b];
     return b;
   }
+
   upgrades.forEach((up, idx) => {
     const btn = document.createElement("button");
     btn.className = "upgrade-btn";
@@ -221,10 +157,12 @@ function completeReverb() {
     };
     up.update();
   });
+
   function revealNext(){
     const boughtCount = upgrades.filter(u => u.level > 0).length;
     if(buttons[boughtCount]) buttons[boughtCount].classList.remove("hidden");
   }
+
   function buyUpgrade(i){
     const up = upgrades[i];
     const cost = up.getCost();
@@ -238,88 +176,73 @@ function completeReverb() {
     up.update();
     updateAllButtons();
     updateScore(); updateStats(); updateAchievements();
-    // Анімація заплющення очей — ТІЛЬКИ для "Кліпати очима"
     if (up.name === "Кліпати очима") {
       document.body.classList.add("eye-blink");
       setTimeout(() => document.body.classList.remove("eye-blink"), 1000);
     }
   }
-function updateAllButtons(){
-  upgrades.forEach(up => up.update());
-  multipliers.forEach(m => m.update && m.update());
-}
-// === МНОЖНИКИ КЛІКУ === 
-const multipliers = [
-  { name: "Подвійний клік", cost: 5000, mult: 2, bought: false },
-  { name: "Потрійний клік", cost: 50000, mult: 3, bought: false },
-  { name: "x10 за клік", cost: 1000000, mult: 10, bought: false },
-  { name: "x50 за клік", cost: 20000000, mult: 50, bought: false },
-  { name: "x100 за клік", cost: 100000000, mult: 100, bought: false },
-];
 
-multipliers.forEach((m, idx) => {
-  const btn = document.createElement("button");
-  btn.className = "upgrade-btn multiplier-btn";
-  
-  // Оновлення вигляду кнопки
-  function updateButton() {
-    if (m.bought) {
-      btn.remove(); // повністю видаляємо кнопку після покупки
-      return;
-    }
-    const canAfford = score >= m.cost;
-    btn.innerHTML = `${m.name}<span>${formatTime(m.cost)}</span>`;
-    btn.disabled = !canAfford;
-    // Якщо не вистачає — робимо сірою (як у апгрейдів)
-    if (!canAfford) {
-      btn.style.background = "#334155";
-      btn.style.opacity = "0.5";
-    } else {
-      btn.style.background = "";
-      btn.style.opacity = "1";
-    }
+  function updateAllButtons(){
+    upgrades.forEach(up => up.update());
+    multipliers.forEach(m => m.update && m.update());
   }
 
-  btn.addEventListener("click", () => {
-    if (score < m.cost || m.bought) return;
-    score -= m.cost;
-    m.bought = true;
-    clickMultiplier = m.mult;
-    showToast(`Активовано: ${m.name}!`);
-    updateButton(); // кнопка зникне
-    updateScore();
-    updateStats();
+  // === МНОЖНИКИ КЛІКУ ===
+  const multipliers = [
+    { name: "Подвійний клік", cost: 5000, mult: 2, bought: false },
+    { name: "Потрійний клік", cost: 50000, mult: 3, bought: false },
+    { name: "x10 за клік", cost: 1000000, mult: 10, bought: false },
+    { name: "x50 за клік", cost: 20000000, mult: 50, bought: false },
+    { name: "x100 за клік", cost: 100000000, mult: 100, bought: false },
+  ];
+
+  multipliers.forEach((m, idx) => {
+    const btn = document.createElement("button");
+    btn.className = "upgrade-btn multiplier-btn";
+   
+    function updateButton() {
+      if (m.bought) {
+        btn.remove();
+        return;
+      }
+      const canAfford = score >= m.cost;
+      btn.innerHTML = `${m.name}<span>${formatTime(m.cost)}</span>`;
+      btn.disabled = !canAfford;
+      if (!canAfford) {
+        btn.style.background = "#334155";
+        btn.style.opacity = "0.5";
+      } else {
+        btn.style.background = "";
+        btn.style.opacity = "1";
+      }
+    }
+    btn.addEventListener("click", () => {
+      if (score < m.cost || m.bought) return;
+      score -= m.cost;
+      m.bought = true;
+      clickMultiplier = m.mult;
+      showToast(`Активовано: ${m.name}!`);
+      updateButton();
+      updateScore();
+      updateStats();
+    });
+    multipliersContainer.appendChild(btn);
+    m.button = btn;
+    m.update = updateButton;
+    updateButton();
   });
 
-  multipliersContainer.appendChild(btn);
-  
-  // Зберігаємо посилання для оновлення
-  m.button = btn;
-  m.update = updateButton;
-  
-  updateButton(); // початкове оновлення
-});
-
-// Оновлюємо всі кнопки множників при кожному апдейті
-function updateAllButtons() {
-  upgrades.forEach(up => up.update());
-  multipliers.forEach(m => m.update && m.update());
-}
   // === ЄДИНА ПРАВИЛЬНА ФУНКЦІЯ КЛІКУ ===
   function addTime() {
-    const baseGain = clickPower; // зарезервовано під майбутні апгрейди кліку
+    const baseGain = clickPower;
     const finalGain = Math.round(baseGain * clickMultiplier * prestigeMultiplier);
-
     score += finalGain;
     clickCloudTotal += finalGain;
-
     if (finalGain > maxPerClick) maxPerClick = finalGain;
-
     clickGainEl.textContent = `+${formatTime(finalGain)}`;
     showFloating(`+${formatTime(finalGain)}`);
     triggerClickEffect();
     handleClickCombo();
-
     updateScore();
     updateStats();
     updateAchievements();
@@ -469,13 +392,29 @@ const handSkins = [
     cloudTotalEl.textContent = `${formatTime(clickCloudTotal)}`;
     updateAllButtons();
   }
-  function updateStats(){
+function updateStats() {
     realTimePlayedEl.textContent = formatTime((Date.now()-sessionStart)/1000);
     virtualTimeEl.textContent = formatTime(score);
     totalUpgradesEl.textContent = totalUpgradesBought;
     maxPerClickEl.textContent = `${formatTime(maxPerClick)}`;
     prestigeMultEl.textContent = `${prestigeMultiplier.toFixed(2)}×`;
+
+    document.getElementById("maxAutoRate").textContent = formatTime(autoRate);
+    document.getElementById("maxCombo").textContent = maxComboEver;
+    document.getElementById("totalReverbs").textContent = totalReverbs;
+
+    const achieved = achievementsList.filter(a => a.done).length;
+    document.getElementById("achievedCount").textContent = achieved;
+    document.getElementById("totalAchievements").textContent = achievementsList.length;
+
+    updateReverbText();
   }
+
+  // Оновлюємо рекорди
+  setInterval(() => {
+    if (autoRate > maxAutoRate) maxAutoRate = autoRate;
+    if (maxComboEver > maxCombo) maxCombo = maxComboEver;
+  }, 1000);
   // === ДОСЯГНЕННЯ ===
   const achRoot = document.getElementById("achievements");
   const achievementsList = [
@@ -572,8 +511,10 @@ const handSkins = [
     stopReverbHold();
     prestigeMultiplier *= 1.2;
     score = 0; clickPower = 1; autoRate = 0; totalUpgradesBought = 0; maxPerClick = 1;
+    clickCloudTotal = 0; currentCombo = 0;
     upgrades.forEach((u, i) => { u.level = 0; buttons[i]?.classList.add("hidden"); u.update(); });
     buttons[0].classList.remove("hidden");
+    totalReverbs++; // ← ЄДИНЕ ДОДАНЕ
     timeTunnel.classList.add("reverb-complete");
     setTimeout(() => {
       alert(`Перезапуск завершено! Поточний множник: ${prestigeMultiplier.toFixed(2)}×`);
