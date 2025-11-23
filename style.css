@@ -459,3 +459,62 @@ body.eye-blink::before {
   from { box-shadow: 0 0 25px #0ea5e9, 0 0 60px #0ea5e9; }
   to   { box-shadow: 0 0 35px #0ea5e9, 0 0 80px #0ea5e9; }
 }
+
+/* ——— КРУТІ НЕОНОВІ КНОПКИ МУЗИКИ ——— */
+.music-player button {
+  position: relative;
+  background: linear-gradient(90deg, #8b5cf6, #ec4899);
+  border: none;
+  border-radius: 50px;
+  padding: 14px 28px;
+  color: white;
+  font-weight: 700;
+  cursor: pointer;
+  overflow: hidden;
+  transition: all 0.35s ease;
+  box-shadow: 0 0 20px rgba(236, 72, 153, 0.5);
+  z-index: 1;
+}
+
+/* Біжучий неоновий блиск */
+.music-player button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 50%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+  transform: skewX(-20deg);
+  transition: left 0.8s;
+}
+
+.music-player button:hover::before {
+  left: 100%;
+}
+
+/* Легке розширення + підсвітка */
+.music-player button:hover {
+  transform: scale(1.08);
+  box-shadow: 0 0 40px rgba(236, 72, 153, 0.9), 0 0 70px rgba(139, 92, 246, 0.7);
+}
+
+/* Центральна кнопка — найяскравіша */
+#musicBtn {
+  background: linear-gradient(90deg, #0ea5e9, #3b82f6) !important;
+  padding: 16px 36px !important;
+  font-size: 16px !important;
+  box-shadow: 0 0 35px #0ea5e9;
+}
+
+#musicBtn:hover {
+  transform: scale(1.1);
+  box-shadow: 0 0 60px #0ea5e9, 0 0 90px #0ea5e9aa;
+}
+
+/* Стрілки — рожеві неонові */
+.music-switch {
+  background: linear-gradient(90deg, #ec4899, #f43f5e) !important;
+  font-size: 24px !important;
+  padding: 14px !important;
+}
