@@ -526,32 +526,5 @@ const handSkins = [
       else if(!/\sTime$/i.test(t)) worldTitle.textContent = `${t} Time`;
     });
   }
-// === ПАНЕЛЬКА ЧІТІВ ДЛЯ РОЗРОБНИКА (лише для тебе, завжди видно) ===
-const devPanel = document.createElement("div");
-devPanel.innerHTML = `
-  <div style="position:fixed;bottom:20px;right:20px;z-index:99999;background:rgba(0,0,0,0.85);
-              backdrop-filter:blur(12px);border:2px solid #0ea5e9;border-radius:16px;
-              padding:14px 18px;box-shadow:0 0 40px #0ea5e9;font-family:Poppins,sans-serif;
-              color:#fff;font-size:14px;">
-    <div style="margin-bottom:8px;color:#0ea5e9;font-weight:700;text-align:center;">DEV TOOLS</div>
-    
-    <button onclick="score += 7200; clickCloudTotal += 7200; updateScore(); updateStats(); showToast('+2 години')" 
-            style="margin:3px 0;padding:10px 16px;width:100%;background:#06b6d4;border:none;border-radius:10px;color:#fff;cursor:pointer;font-weight:600;">
-            +2 години (7200 сек)</button>
-    
-    <button onclick="autoRate += 100; showToast('Авто +100/сек')" 
-            style="margin:3px 0;padding:10px 16px;width:100%;background:#3b82f6;border:none;border-radius:10px;color:#fff;cursor:pointer;">
-            +100 авто/сек</button>
-    
-    <button onclick="prestigeMultiplier *= 2; updateStats(); showToast('Prestiж ×2')" 
-            style="margin:3px 0;padding:10px 16px;width:100%;background:#8b5cf6;border:none;border-radius:10px;color:#fff;cursor:pointer;">
-            ×2 престиж</button>
-    
-    <button onclick="completeReverb(); showToast('Реверб миттєво')" 
-            style="margin:3px 0;padding:10px 16px;width:100%;background:#ec4899;border:none;border-radius:10px;color:#fff;cursor:pointer;font-weight:600;">
-            Реверб (миттєво)</button>
-  </div>
-`;
-document.body.appendChild(devPanel);
   updateScore(); updateStats(); updateAchievements();
 };
