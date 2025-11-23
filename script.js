@@ -590,5 +590,23 @@ function createDevPanel() {
 
   document.body.appendChild(panel);
 }
+  // === ДИНАМІЧНИЙ ТЕКСТ ПЕРЕЗАПУСКУ ===
+const reverbDesc = document.getElementById("reverbDesc");
+const nextMultiplierEl = document.getElementById("nextMultiplier");
+
+function updateReverbText() {
+  const nextMult = (prestigeMultiplier * 1.2).toFixed(2);
+  nextMultiplierEl.textContent = nextMult + "×";
+}
+
+function updateStats() {
+  realTimePlayedEl.textContent = formatTime((Date.now()-sessionStart)/1000);
+  virtualTimeEl.textContent = formatTime(score);
+  totalUpgradesEl.textContent = totalUpgradesBought;
+  maxPerClickEl.textContent = `${formatTime(maxPerClick)}`;
+  prestigeMultEl.textContent = `${prestigeMultiplier.toFixed(2)}×`;
+  
+  updateReverbText(); // Оновлюємо текст перезапуска
+}
   updateScore(); updateStats(); updateAchievements();
 };
