@@ -518,3 +518,8 @@ body.eye-blink::before {
   font-size: 24px !important;
   padding: 14px !important;
 }
+.skin.affordable {
+  opacity: 1 !important;
+  box-shadow: 0 0 12px #00e0ff;
+  border-color: #00e0ff;
+}
