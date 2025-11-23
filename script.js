@@ -556,7 +556,7 @@ function createDevPanel() {
   `;
 
   panel.innerHTML = `<div style="color:#ff00ff;font-weight:700;text-align:center;margin-bottom:8px;font-size:14px;">
-                      22.09.2005
+                      Секретна панель
                      </div>`;
 
   function addBtn(text, color, action) {
