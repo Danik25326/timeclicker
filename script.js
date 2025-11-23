@@ -252,16 +252,7 @@ window.onload = function () {
     updateStats();
     updateAchievements();
   }
-  ТАК, МОЖНА — І ЦЕ НАВІТЬ ПРОЩЕ І БЕЗПЕЧНІШЕ.
-Ти маєш рацію: не обов’язково виносити код за window.onload.
-Можна зробити все всередині window.onload — і це навіть краще, бо не буде ніяких помилок з порядком виконання.
-Ось як це зробити повністю всередині window.onload — 100% працює, ніяких ризиків:
-JavaScriptwindow.onload = function () {
-  // === ВЕСЬ ТВІЙ СТАРИЙ КОД (до самого кінця) ===
-  // (DOM, музика, апгрейди, клік, комбо, ревёрб, таби тощо)
-  // ... твій код до цього моменту ...
-
-  // === НОВИЙ МАГАЗИН СКІНІВ — ВСЕРЕДИНІ window.onload ===
+  // === НОВИЙ МАГАЗИН СКІНІВ — ВСЕРЕДИНІ ===
   const handSkins = [
     {id:"darkblue", name:"Темно-сині", price: 0, apply:()=>{document.querySelectorAll(".hand:not(.second)").forEach(h=>{h.style.background="#1e3a8a";h.style.boxShadow="";h.style.animation="";});}},
     {id:"pixel",    name:"Піксельні",   price: 900, apply:()=>{document.querySelectorAll(".hand:not(.second)").forEach(h=>{h.style.background="linear-gradient(#fff,#aaa)";h.style.boxShadow="";h.style.animation="";});}},
