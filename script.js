@@ -169,32 +169,67 @@ window.onload = function () {
       setTimeout(() => document.body.classList.remove("eye-blink"), 1000);
     }
   }
-  function updateAllButtons(){
-    upgrades.forEach(up => up.update());
-  }
-  // === МНОЖНИКИ КЛІКУ ===
-  const multipliers = [
-    { name:"Подвійний клік", cost:5000, mult:2, level:0 },
-    { name:"Потрійний клік", cost:50000, mult:3, level:0 },
-    { name:"x10 за клік", cost:1000000, mult:10, level:0 },
-    { name:"x50 за клік", cost:20000000, mult:50, level:0 },
-    { name:"x100 за клік", cost:100000000, mult:100, level:0 },
-  ];
-  multipliers.forEach((m, idx) => {
-    const btn = document.createElement("button");
-    btn.className = "upgrade-btn multiplier-btn";
+function updateAllButtons(){
+  upgrades.forEach(up => up.update());
+  multipliers.forEach(m => m.update && m.update());
+}
+// === МНОЖНИКИ КЛІКУ === 
+const multipliers = [
+  { name: "Подвійний клік", cost: 5000, mult: 2, bought: false },
+  { name: "Потрійний клік", cost: 50000, mult: 3, bought: false },
+  { name: "x10 за клік", cost: 1000000, mult: 10, bought: false },
+  { name: "x50 за клік", cost: 20000000, mult: 50, bought: false },
+  { name: "x100 за клік", cost: 100000000, mult: 100, bought: false },
+];
+
+multipliers.forEach((m, idx) => {
+  const btn = document.createElement("button");
+  btn.className = "upgrade-btn multiplier-btn";
+  
+  // Оновлення вигляду кнопки
+  function updateButton() {
+    if (m.bought) {
+      btn.remove(); // повністю видаляємо кнопку після покупки
+      return;
+    }
+    const canAfford = score >= m.cost;
     btn.innerHTML = `${m.name}<span>${formatTime(m.cost)}</span>`;
-    multipliersContainer.appendChild(btn);
-    btn.addEventListener("click", () => {
-      if (score < m.cost) return;
-      score -= m.cost;
-      m.level++;
-      clickMultiplier = m.mult;
-      btn.innerHTML = `${m.name} (активно)`;
-      btn.disabled = true;
-      showToast(`Активовано: ${m.name}!`);
-    });
+    btn.disabled = !canAfford;
+    // Якщо не вистачає — робимо сірою (як у апгрейдів)
+    if (!canAfford) {
+      btn.style.background = "#334155";
+      btn.style.opacity = "0.5";
+    } else {
+      btn.style.background = "";
+      btn.style.opacity = "1";
+    }
+  }
+
+  btn.addEventListener("click", () => {
+    if (score < m.cost || m.bought) return;
+    score -= m.cost;
+    m.bought = true;
+    clickMultiplier = m.mult;
+    showToast(`Активовано: ${m.name}!`);
+    updateButton(); // кнопка зникне
+    updateScore();
+    updateStats();
   });
+
+  multipliersContainer.appendChild(btn);
+  
+  // Зберігаємо посилання для оновлення
+  m.button = btn;
+  m.update = updateButton;
+  
+  updateButton(); // початкове оновлення
+});
+
+// Оновлюємо всі кнопки множників при кожному апдейті
+function updateAllButtons() {
+  upgrades.forEach(up => up.update());
+  multipliers.forEach(m => m.update && m.update());
+}
   // === ЄДИНА ПРАВИЛЬНА ФУНКЦІЯ КЛІКУ ===
   function addTime() {
     const baseGain = clickPower; // зарезервовано під майбутні апгрейди кліку
