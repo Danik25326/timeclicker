@@ -73,11 +73,11 @@ window.onload = function () {
       isPlaying = true;
       player.volume = 0.45;
       player.play().catch(() => {});
-      musicBtn.textContent = "Зупинити музику";
+      musicBtn.textContent = "⏸ Зупинити музику";
     } else {
       isPlaying = false;
       player.pause();
-      musicBtn.textContent = "Включити музику";
+      musicBtn.textContent = "▶️ Включити музику";
     }
   });
   prevTrack.onclick = () => { currentTrack = (currentTrack - 1 + tracks.length) % tracks.length; loadTrack(currentTrack); };
@@ -157,12 +157,13 @@ window.onload = function () {
     score -= cost;
     up.level++;
     totalUpgradesBought++;
-    autoRate += (i + 1) * 5 * prestigeMultiplier;  // ВИПРАВЛЕНО: було просто prestigeMultiplier (додавання), а треба множення!
-    showToast(`Куплено: ${up.name} (Lv.${up.level})`);
+    autoRate += (i + 1) * 5 * prestigeMultiplier;
+    showToast(`Куплено: ${up.name} (Lv.${up.level}) ✅`);
     revealNext();
     up.update();
     updateAllButtons();
     updateScore(); updateStats(); updateAchievements();
+    // Анімація заплющення очей — ТІЛЬКИ для "Кліпати очима"
     if (up.name === "Кліпати очима") {
       document.body.classList.add("eye-blink");
       setTimeout(() => document.body.classList.remove("eye-blink"), 1000);
@@ -196,7 +197,7 @@ window.onload = function () {
   });
   // === ЄДИНА ПРАВИЛЬНА ФУНКЦІЯ КЛІКУ ===
   function addTime() {
-    const baseGain = clickPower;                    // зарезервовано під майбутні апгрейди кліку
+    const baseGain = clickPower; // зарезервовано під майбутні апгрейди кліку
     const finalGain = Math.round(baseGain * clickMultiplier * prestigeMultiplier);
 
     score += finalGain;
@@ -214,7 +215,7 @@ window.onload = function () {
     updateAchievements();
   }
 
-  // === СКІНИ ===
+  // === СКІНИ (стрілки працюють на обох годинниках) ===
   const shapes = [{id:"round", name:"Круг"},{id:"square", name:"Квадрат"},{id:"diamond", name:"Ромб"},{id:"oval", name:"Овал"}];
   const clockSkins = [
     {id:"neon-blue", name:"Неон синій", apply:()=>{clock.style.borderColor="#0ea5e9"; clock.style.boxShadow="0 0 50px #0ea5e9, 0 0 100px #0ea5e9";}},
@@ -222,12 +223,36 @@ window.onload = function () {
     {id:"pink", name:"Рожевий", apply:()=>{clock.style.borderColor="#ec4899"; clock.style.boxShadow="0 0 50px #ec4899, 0 0 100px #ec4899";}},
     {id:"black", name:"Чорний", apply:()=>{clock.style.borderColor="#111"; clock.style.boxShadow="0 0 10px #000";}},
   ];
-  const handSkins = [
-    {id:"darkblue", name:"Темно-сині", apply:()=>{ /* твій код без змін */ }},
-    {id:"neon", name:"Неонові", apply:()=>{ /* ... */ }},
-    {id:"pixel", name:"Піксельні", apply:()=>{ /* ... */ }},
-    {id:"chrome", name:"Хром", apply:()=>{ /* ... */ }},
-  ];
+const handSkins = [
+  {id:"darkblue", name:"Темно-сині", apply:()=>{
+    document.querySelectorAll(".hand:not(.second)").forEach(h=>{
+      h.style.background = "#1e3a8a";
+      h.style.boxShadow = "";
+      h.style.animation = "";
+    });
+  }},
+  {id:"neon", name:"Неонові", apply:()=>{
+    document.querySelectorAll(".hand:not(.second)").forEach(h=>{
+      h.style.background = "#0ea5e9";
+      h.style.boxShadow = "0 0 25px #0ea5e9, 0 0 60px #0ea5e9";
+      h.style.animation = "neonPulse 2s ease-in-out infinite alternate";
+    });
+  }},
+  {id:"pixel", name:"Піксельні", apply:()=>{
+    document.querySelectorAll(".hand:not(.second)").forEach(h=>{
+      h.style.background = "linear-gradient(#fff,#aaa)";
+      h.style.boxShadow = "";
+      h.style.animation = "";
+    });
+  }},
+  {id:"chrome", name:"Хром", apply:()=>{
+    document.querySelectorAll(".hand:not(.second)").forEach(h=>{
+      h.style.background = "linear-gradient(90deg,#ddd,#888,#ddd)";
+      h.style.boxShadow = "0 0 15px #fff, 0 0 30px #aaa";
+      h.style.animation = "";
+    });
+  }},
+];
   const effects = [
     {id:"red", name:"Червоний спалах"},
     {id:"blue", name:"Синій вибух"},
@@ -266,7 +291,6 @@ window.onload = function () {
   createSkinGrid("handSkins", handSkins, (id)=>{currentHandSkin=id; applyAllSkins();});
   createSkinGrid("effectSkins", effects, (id)=>{currentEffect=id;});
   applyAllSkins();
-
   // === КОМБО ===
   function handleClickCombo(){
     const now = Date.now();
@@ -285,7 +309,7 @@ window.onload = function () {
     comboTimeout = setTimeout(() => {
       if (currentCombo >= COMBO_THRESHOLD) {
         comboBubble.classList.add("burst");
-        showToast(`Комбо ×${currentCombo}!`);
+        showToast(`Комбо ×${currentCombo}! 🔥`);
         setTimeout(() => comboBubble.classList.remove("show","burst"), 700);
       }
       currentCombo = 0;
@@ -301,7 +325,7 @@ window.onload = function () {
     toastContainer.appendChild(t);
     setTimeout(() => t.remove(), 10000);
   }
-  // === ЕФЕКТ КЛІКУ ===
+  // === КЛІК ===
   function triggerClickEffect(){
     clock.classList.remove("click-effect-red","click-effect-blue","click-effect-glitch","click-effect-blackhole","click-effect-ripple");
     void clock.offsetWidth;
@@ -367,9 +391,9 @@ window.onload = function () {
       a.progressEl.style.width = percent + "%";
       if(percent >= 100 && !a.done){
         a.done = true;
-        a.stateEl.textContent = "Виконано";
+        a.stateEl.textContent = "Виконано ✅";
         a.stateEl.style.color = "#8df299";
-        showToast(`Досягнення: ${a.title}`);
+        showToast(`Досягнення: ${a.title} ✅`);
       } else if(percent < 100){
         a.stateEl.textContent = Math.floor(percent) + "%";
       }
@@ -397,8 +421,8 @@ window.onload = function () {
     document.querySelectorAll(".hour").forEach(h => h.style.transform = `translateX(-50%) rotate(${h*30 + m*0.5}deg)`);
   }
   setInterval(updateClockHands, 1000);
-  updateHands();
-  // === РЕВЕРБ ===
+  updateClockHands(); // ВИПРАВЛЕНО: було updateHands()
+  // === РЕВЕРБ (готовий до фінального апгрейду) ===
   reverbBtn.addEventListener("click", () => {
     if (!confirm("Ти впевнений, що хочеш повернути час назад?")) return;
     reverbOverlay.classList.remove("hidden");
