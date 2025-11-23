@@ -253,84 +253,110 @@ window.onload = function () {
     updateAchievements();
   }
 
-  // === СКІНИ ===
-  const shapes = [{id:"round", name:"Круг"},{id:"square", name:"Квадрат"},{id:"diamond", name:"Ромб"},{id:"oval", name:"Овал"}];
-  const clockSkins = [
-    {id:"neon-blue", name:"Неон синій", apply:()=>{clock.style.borderColor="#0ea5e9"; clock.style.boxShadow="0 0 50px #0ea5e9, 0 0 100px #0ea5e9";}},
-    {id:"purple", name:"Пурпурний", apply:()=>{clock.style.borderColor="#8b5cf6"; clock.style.boxShadow="0 0 50px #8b5cf6, 0 0 100px #8b5cf6";}},
-    {id:"pink", name:"Рожевий", apply:()=>{clock.style.borderColor="#ec4899"; clock.style.boxShadow="0 0 50px #ec4899, 0 0 100px #ec4899";}},
-    {id:"black", name:"Чорний", apply:()=>{clock.style.borderColor="#111"; clock.style.boxShadow="0 0 10px #000";}},
-  ];
-  const handSkins = [
-    {id:"darkblue", name:"Темно-сині", apply:()=>{
-      document.querySelectorAll(".hand:not(.second)").forEach(h=>{
-        h.style.background = "#1e3a8a";
-        h.style.boxShadow = "";
-        h.style.animation = "";
-      });
-    }},
-    {id:"neon", name:"Неонові", apply:()=>{
-      document.querySelectorAll(".hand:not(.second)").forEach(h=>{
-        h.style.background = "#0ea5e9";
-        h.style.boxShadow = "0 0 25px #0ea5e9, 0 0 60px #0ea5e9";
-        h.style.animation = "neonPulse 2s ease-in-out infinite alternate";
-      });
-    }},
-    {id:"pixel", name:"Піксельні", apply:()=>{
-      document.querySelectorAll(".hand:not(.second)").forEach(h=>{
-        h.style.background = "linear-gradient(#fff,#aaa)";
-        h.style.boxShadow = "";
-        h.style.animation = "";
-      });
-    }},
-    {id:"chrome", name:"Хром", apply:()=>{
-      document.querySelectorAll(".hand:not(.second)").forEach(h=>{
-        h.style.background = "linear-gradient(90deg,#ddd,#888,#ddd)";
-        h.style.boxShadow = "0 0 15px #fff, 0 0 30px #aaa";
-        h.style.animation = "";
-      });
-    }},
-  ];
-  const effects = [
-    {id:"red", name:"Червоний спалах"},
-    {id:"blue", name:"Синій вибух"},
-    {id:"glitch", name:"Глітч"},
-    {id:"blackhole", name:"Чорна діра"},
-    {id:"ripple", name:"Хвиля часу"},
-  ];
+// === СКІНИ + ЦІНИ ===
+const handSkins = [
+  {id:"darkblue", name:"Темно-сині",      price: 0, apply:()=>{
+    document.querySelectorAll(".hand:not(.second)").forEach(h=>{
+      h.style.background = "#1e3a8a";
+      h.style.boxShadow = "";
+      h.style.animation = "";
+    });
+  }},
+  {id:"pixel",    name:"Піксельні",       price: 900, apply:()=>{ // 15 хвилин
+    document.querySelectorAll(".hand:not(.second)").forEach(h=>{
+      h.style.background = "linear-gradient(#fff,#aaa)";
+      h.style.boxShadow = "";
+      h.style.animation = "";
+    });
+  }},
+  {id:"neon",     name:"Неонові",         price: 9000, apply:()=>{ // 2.5 години
+    document.querySelectorAll(".hand:not(.second)").forEach(h=>{
+      h.style.background = "#0ea5e9";
+      h.style.boxShadow = "0 0 25px #0ea5e9, 0 0 60px #0ea5e9";
+      h.style.animation = "neonPulse 2s ease-in-out infinite alternate";
+    });
+  }},
+  {id:"chrome",   name:"Хром",            price: 43200, apply:()=>{ // 12 годин
+    document.querySelectorAll(".hand:not(.second)").forEach(h=>{
+      h.style.background = "linear-gradient(90deg,#ddd,#888,#ddd)";
+      h.style.boxShadow = "0 0 15px #fff, 0 0 30px #aaa";
+      h.style.animation = "";
+    });
+  }},
+];
 
-  function createSkinGrid(containerId, list, callback) {
-    const root = document.getElementById(containerId);
-    list.forEach((s, i) => {
-      const el = document.createElement("div");
-      el.className = "skin";
-      el.textContent = s.name;
+// === ФОРМИ ===
+const shapes = [
+  {id:"round",   name:"Круг",     price: 0 },
+  {id:"square",  name:"Квадрат",  price: 28800 },   // 8 годин
+  {id:"diamond", name:"Ромб",     price: 86400 },   // 24 години
+  {id:"oval",    name:"Овал",     price: 172800 },  // 48 годин
+];
+
+// === КОЛЬОРИ ГОДИННИКА ===
+const clockSkins = [
+  {id:"neon-blue", name:"Неон синій", price: 0, apply:()=>{clock.style.borderColor="#0ea5e9"; clock.style.boxShadow="0 0 50px #0ea5e9, 0 0 100px #0ea5e9";}},
+  {id:"purple",    name:"Пурпурний",  price: 64800, apply:()=>{clock.style.borderColor="#8b5cf6"; clock.style.boxShadow="0 0 50px #8b5cf6, 0 0 100px #8b5cf6";}},
+  {id:"pink",      name:"Рожевий",    price: 129600, apply:()=>{clock.style.borderColor="#ec4899"; clock.style.boxShadow="0 0 50px #ec4899, 0 0 100px #ec4899";}},
+  {id:"black",     name:"Чорний",     price: 259200, apply:()=>{clock.style.borderColor="#111"; clock.style.boxShadow="0 0 10px #000";}},
+];
+
+// === ЕФЕКТИ КЛІКУ ===
+const effects = [
+  {id:"red",       name:"Червоний спалах", price: 0 },
+  {id:"blue",      name:"Синій вибух",     price: 21600 },   // 6 годин
+  {id:"glitch",    name:"Глітч",           price: 108000 },  // 30 годин
+  {id:"blackhole", name:"Чорна діра",      price: 360000 },  // 100 годин
+  {id:"ripple",    name:"Хвиля часу",      price: 720000 },  // 200 годин
+];
+  
+function createSkinGrid(containerId, list, type) {
+  const root = document.getElementById(containerId);
+  root.innerHTML = ""; // очищаємо
+  
+  list.forEach(s => {
+    const el = document.createElement("div");
+    el.className = "skin";
+    el.textContent = s.name;
+    
+    if (s.price === 0 || ownedSkins[type].includes(s.id)) {
+      el.classList.add("active");
       el.onclick = () => {
         root.querySelectorAll(".skin").forEach(e => e.classList.remove("active"));
         el.classList.add("active");
-        callback(s.id);
+        
+        if (type === "shapes") currentShape = s.id;
+        if (type === "clockSkins") currentClockSkin = s.id;
+        if (type === "handSkins") currentHandSkin = s.id;
+        if (type === "effects") currentEffect = s.id;
+        
+        applyAllSkins();
+        saveSkins();
       };
-      if (i === 0) el.classList.add("active");
-      root.appendChild(el);
-    });
-  }
+    } else {
+      el.style.opacity = "0.5";
+      el.style.cursor = "not-allowed";
+      el.innerHTML += `<br><small>${formatTime(s.price)}</small>`;
+      el.onclick = () => buySkin(type, s.id, s.price, s.name);
+    }
+    
+    if ((type === "shapes" && s.id === currentShape) ||
+        (type === "clockSkins" && s.id === currentClockSkin) ||
+        (type === "handSkins" && s.id === currentHandSkin) ||
+        (type === "effects" && s.id === currentEffect)) {
+      el.classList.add("active");
+    }
+    
+    root.appendChild(el);
+  });
+}
+  createSkinGrid("shapeSkins", shapes, "shapes");
+  createSkinGrid("clockSkins", clockSkins, "clockSkins");
+  createSkinGrid("handSkins", handSkins, "handSkins");
+  createSkinGrid("effectSkins", effects, "effects");
 
-  function applyAllSkins() {
-    document.querySelectorAll(".clock").forEach(c => {
-      c.className = "clock " + currentShape;
-    });
-    const clockSkin = clockSkins.find(s => s.id === currentClockSkin);
-    if (clockSkin && clockSkin.apply) clockSkin.apply();
-    const handSkin = handSkins.find(s => s.id === currentHandSkin);
-    if (handSkin && handSkin.apply) handSkin.apply();
-  }
-
-  createSkinGrid("shapeSkins", shapes, id => { currentShape = id; applyAllSkins(); });
-  createSkinGrid("clockSkins", clockSkins, id => { currentClockSkin = id; applyAllSkins(); });
-  createSkinGrid("handSkins", handSkins, id => { currentHandSkin = id; applyAllSkins(); });
-  createSkinGrid("effectSkins", effects, id => currentEffect = id);
+  loadSkins(); // завантажуємо збережені скіни при старті
   applyAllSkins();
-
   // === КОМБО ===
   function handleClickCombo() {
     const now = Date.now();
