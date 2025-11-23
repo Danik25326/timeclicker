@@ -551,6 +551,14 @@ window.onload = function () {
     const nextMult = (prestigeMultiplier * 1.2).toFixed(2);
     nextMultiplierEl.textContent = nextMult;
   }
+  // === ЗАПУСК МАГАЗИНУ СКІНІВ (ОБОВ'ЯЗКОВО В КІНЦІ!) ===
+createSkinGrid("shapeSkins", shapes, "shapes");
+createSkinGrid("clockSkins", clockSkins, "clockSkins");
+createSkinGrid("handSkins", handSkins, "handSkins");
+createSkinGrid("effectSkins", effects, "effects");
+
+loadSkins();     // ← завантажуємо збережені скіни
+applyAllSkins(); // ← застосовуємо їх одразу
 
   updateScore(); updateStats(); updateAchievements();
 };
@@ -646,7 +654,18 @@ function buySkin(type, id, price, name) {
   updateScore();
   showToast(`Куплено: ${name} ✅`);
 }
+// === ПРАВИЛЬНА ФУНКЦІЯ ДЛЯ ЗАСТОСУВАННЯ СКІНІВ ===
+function applyAllSkins() {
+  document.querySelectorAll(".clock").forEach(c => {
+    c.className = "clock " + currentShape;
+  });
 
+  const clockSkin = clockSkins.find(s => s.id === currentClockSkin);
+  if (clockSkin && clockSkin.apply) clockSkin.apply();
+
+  const handSkin = handSkins.find(s => s.id === currentHandSkin);
+  if (handSkin && handSkin.apply) handSkin.apply();
+}
 // === УНІВЕРСАЛЬНИЙ МАГАЗИН СКІНІВ ===
 function createSkinGrid(containerId, list, type) {
   const root = document.getElementById(containerId);
