@@ -3,12 +3,13 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>TimesClicker ⏰</title>
+  <title>TimesClicker⏰</title>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css?v=9">
 </head>
 <body>
   <div id="worldTitle" class="editable-title" contenteditable="true">Times Clicker</div>
+
   <div class="top-tabs">
     <button class="tab active" data-tab="tab-upgrades">Апгрейди</button>
     <button class="tab" data-tab="tab-skins">Скіни</button>
@@ -79,15 +80,16 @@
           <button id="reverbBtn" class="reverb-btn">Повернути час назад</button>
         </div>
 
-        <!-- НОВА ВКЛАДКА — МНОЖНИКИ -->
+        <!-- Множники -->
         <div id="tab-multipliers" class="tab-page">
           <h3>Множники кліку</h3>
           <div id="multipliers" class="upgrades-container"></div>
         </div>
       </div> <!-- кінець tab-body -->
-    </div>   <!-- кінець left-panel -->
-  </div>     <!-- кінець container -->
+    </div> <!-- кінець left-panel -->
+  </div> <!-- кінець container -->
 
+  <!-- Права панель -->
   <div class="right-panel">
     <div id="clockWrapper">
       <div id="clickableClock" class="clock round">
@@ -108,7 +110,7 @@
     <p id="score">Часу витрачено: 0 сек</p>
     <div class="music-player">
       <button id="prevTrack" class="music-switch">⬅️</button>
-      <button id="musicBtn" class="phonk-btn">▶️ Включити музику</button>
+      <button id="musicBtn" class="phonk-btn">Включити музику</button>
       <button id="nextTrack" class="music-switch">➡️</button>
     </div>
     <div id="nowPlaying" class="now-playing">Зараз: —</div>
@@ -129,8 +131,10 @@
       <div class="center-dot"></div>
     </div>
   </div>
+
   <div id="timeTunnel" class="time-tunnel"></div>
   <div id="toastContainer"></div>
+
   <script src="script.js?v=9"></script>
 </body>
 </html>
