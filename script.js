@@ -596,7 +596,7 @@ const nextMultiplierEl = document.getElementById("nextMultiplier");
 
 function updateReverbText() {
   const nextMult = (prestigeMultiplier * 1.2).toFixed(2);
-  nextMultiplierEl.textContent = nextMult + "×";
+  nextMultiplierEl.textContent = nextMult;
 }
 
 function updateStats() {
