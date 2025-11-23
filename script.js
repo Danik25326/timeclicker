@@ -526,38 +526,32 @@ const handSkins = [
       else if(!/\sTime$/i.test(t)) worldTitle.textContent = `${t} Time`;
     });
   }
-  // === СЕКРЕТНА ПАНЕЛЬКА ДЛЯ РОЗРОБНИКА (тільки ти її бачиш) ===
+// === ПАНЕЛЬКА ЧІТІВ ДЛЯ РОЗРОБНИКА (лише для тебе, завжди видно) ===
 const devPanel = document.createElement("div");
-devPanel.id = "devPanel";
 devPanel.innerHTML = `
-  <div style="position:fixed;bottom:16px;right:16px;background:#000d;z-index:99999;padding:16px 20px;border-radius:16px;
-              border:3px solid #0ea5e9;box-shadow:0 0 30px #0ea5e9;font-family:Poppins,sans-serif;color:#fff;
-              display:none;backdrop-filter:blur(10px);">
-    <div style="font-weight:700;margin-bottom:10px;color:#0ea5e9;">✦ DEV CHEATS ✦</div>
-    <button onclick="score += 1000000000; clickCloudTotal += 1000000000; updateScore(); showToast('+1 мільярд сек ;)')" 
-            style="margin:4px;padding:8px 14px;background:#ec4899;border:none;border-radius:8px;color:#fff;cursor:pointer;">+1 млрд сек</button>
-    <button onclick="autoRate += 1000000; showToast('Авто +1M/сек')" 
-            style="margin:4px;padding:8px 14px;background:#8b5cf6;border:none;border-radius:8px;color:#fff;cursor:pointer;">+1M авто/сек</button>
-    <button onclick="prestigeMultiplier *= 10; showToast('Prestiж ×10!'); updateStats()" 
-            style="margin:4px;padding:8px 14px;background:#ff006e;border:none;border-radius:8px;color:#fff;cursor:pointer;">×10 престиж</button>
-    <button onclick="document.getElementById('devPanel').style.display='none'" 
-            style="margin:4px;padding:8px 14px;background:#334155;border:none;border-radius:8px;color:#aaa;cursor:pointer;">Закрити</button>
+  <div style="position:fixed;bottom:20px;right:20px;z-index:99999;background:rgba(0,0,0,0.85);
+              backdrop-filter:blur(12px);border:2px solid #0ea5e9;border-radius:16px;
+              padding:14px 18px;box-shadow:0 0 40px #0ea5e9;font-family:Poppins,sans-serif;
+              color:#fff;font-size:14px;">
+    <div style="margin-bottom:8px;color:#0ea5e9;font-weight:700;text-align:center;">DEV TOOLS</div>
+    
+    <button onclick="score += 7200; clickCloudTotal += 7200; updateScore(); updateStats(); showToast('+2 години')" 
+            style="margin:3px 0;padding:10px 16px;width:100%;background:#06b6d4;border:none;border-radius:10px;color:#fff;cursor:pointer;font-weight:600;">
+            +2 години (7200 сек)</button>
+    
+    <button onclick="autoRate += 100; showToast('Авто +100/сек')" 
+            style="margin:3px 0;padding:10px 16px;width:100%;background:#3b82f6;border:none;border-radius:10px;color:#fff;cursor:pointer;">
+            +100 авто/сек</button>
+    
+    <button onclick="prestigeMultiplier *= 2; updateStats(); showToast('Prestiж ×2')" 
+            style="margin:3px 0;padding:10px 16px;width:100%;background:#8b5cf6;border:none;border-radius:10px;color:#fff;cursor:pointer;">
+            ×2 престиж</button>
+    
+    <button onclick="completeReverb(); showToast('Реверб миттєво')" 
+            style="margin:3px 0;padding:10px 16px;width:100%;background:#ec4899;border:none;border-radius:10px;color:#fff;cursor:pointer;font-weight:600;">
+            Реверб (миттєво)</button>
   </div>
 `;
 document.body.appendChild(devPanel);
-
-// Активується секретною комбінацією: 7 швидких кліків по центру годинника
-let devClicks = 0;
-clockWrapper.addEventListener("click", (e) => {
-  if (e.target.closest("#clickableClock") || e.target === clockWrapper) {
-    devClicks++;
-    if (devClicks >= 7) {
-      document.getElementById("devPanel").style.display = "block";
-      devClicks = 0;
-      showToast("Розробник увійшов в режим бога 😈");
-    }
-    setTimeout(() => { if (devClicks > 0) devClicks = 0; }, 1000);
-  }
-});
   updateScore(); updateStats(); updateAchievements();
 };
