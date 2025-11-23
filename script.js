@@ -526,5 +526,99 @@ const handSkins = [
       else if(!/\sTime$/i.test(t)) worldTitle.textContent = `${t} Time`;
     });
   }
+  // === СЕКРЕТНА ПАНЕЛЬКА — відкривається тільки після введення 22092005 ===
+let secretCode = "";
+const magicCode = "22092005";
+
+document.addEventListener("keydown", (e) => {
+  secretCode += e.key;
+  if (secretCode.length > 8) secretCode = secretCode.slice(-8); // не росте вічно
+
+  if (secretCode === magicCode) {
+    secretCode = ""; // скидаємо, щоб не спрацьовувало багато разів
+    showToast("✦ 22.09.2005 — доступ відкрито! ✦");
+    createDevPanel(); // створюємо панельку
+  }
+});
+
+// Створюємо панельку тільки після правильного коду
+function createDevPanel() {
+  if (document.getElementById("ultimateDevPanel")) return; // вже є
+
+  const panel = document.createElement("div");
+  panel.id = "ultimateDevPanel";
+  panel.style.cssText = `
+    position:fixed;bottom:20px;right:20px;z-index:99999;
+    background:rgba(0,0,0,0.92);backdrop-filter:blur(16px);
+    border:3px solid #ff00ff;border-radius:18px;
+    padding:16px 20px;box-shadow:0 0 50px #ff00ff, inset 0 0 30px rgba(255,0,255,0.2);
+    font-family:Poppins,sans-serif;color:#fff;font-size:14px;
+    animation:devPanelAppear 1s ease-out;
+  `;
+
+  panel.innerHTML = `
+    <div style="text-align:center;margin-bottom:12px;color:#ff00ff;font-weight:700;font-size:16px;text-shadow:0 0 15px #ff00ff;">
+      22.09.2005 — РІЖДЕННИЙ ДОСТУП
+    </div>
+  `;
+
+  function addBtn(text, color, action) {
+    const btn = document.createElement("button");
+    btn.textContent = text;
+    btn.style.cssText = `
+      margin:6px 0;padding:12px 18px;width:100%;
+      background:${color};border:none;border-radius:12px;
+      color:#fff;font-weight:700;cursor:pointer;
+      box-shadow:0 0 20px ${color}aa;transition:all 0.25s;
+    `;
+    btn.onmouseover = () => {
+      btn.style.transform = "translateY(-3px)";
+      btn.style.boxShadow = `0 0 30px ${color}`;
+    };
+    btn.onmouseout = () => {
+      btn.style.transform = "";
+      btn.style.boxShadow = `0 0 20px ${color}aa`;
+    };
+    btn.onclick = () => {
+      action();
+      showToast(text + " ✓");
+    };
+    panel.appendChild(btn);
+  }
+
+  addBtn("+2 години", "#06d6d6", () => {
+    score += 7200; clickCloudTotal += 7200; updateScore(); updateStats();
+  });
+
+  addBtn("+100 авто/сек", "#3b82f6", () => {
+    autoRate += 100;
+  });
+
+  addBtn("×2 престиж", "#a855f7", () => {
+    prestigeMultiplier *= 2; updateStats();
+  });
+
+  addBtn("Миттєвий реверб", "#ec4899", () => {
+    completeReverb();
+  });
+
+  addBtn("Закрити панель", "#666", () => {
+    panel.remove();
+    showToast("Панель закрита. Набери ще раз 22092005");
+  });
+
+  document.body.appendChild(panel);
+
+  // Анімація появи
+  const style = document.createElement("style");
+  style.textContent = `
+    @keyframes devPanelAppear {
+      0% { transform: scale(0) rotate(-180deg); opacity:0; }
+      70% { transform: scale(1.1); }
+      100% { transform: scale(1); opacity:1; }
+    }
+  `;
+  document.head.appendChild(style);
+}
   updateScore(); updateStats(); updateAchievements();
 };
