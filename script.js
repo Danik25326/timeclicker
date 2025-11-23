@@ -362,7 +362,7 @@ window.onload = function () {
     t.className = "toast";
     t.textContent = text;
     t.style.fontSize = "18px";
-    t.style.padding = "22" 
+    t.style.padding = "22px 48px";
 
     toastContainer.appendChild(t);
     setTimeout(() => t.remove(), 10000);
