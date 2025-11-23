@@ -311,6 +311,12 @@ window.onload = function () {
     }
     score -= price;
     ownedSkins[type].push(id);
+    if (type === "shapes") currentShape = id;
+    if (type === "clockSkins") currentClockSkin = id;
+    if (type === "handSkins") currentHandSkin = id;
+    if (type === "effects") currentEffect = id;
+    applyAllSkins();
+
     saveSkins();
     updateScore();
     showToast(`Куплено: ${name} ✅`);
@@ -361,13 +367,13 @@ window.onload = function () {
   }
 
   // Створюємо магазини
-  createSkinGrid("shapeSkins", shapes, "shapes");
-  createSkinGrid("clockSkins", clockSkins, "clockSkins");
-  createSkinGrid("handSkins", handSkins, "handSkins");
-  createSkinGrid("effectSkins", effects, "effects");
+    loadSkins();
+    applyAllSkins();
 
-  loadSkins();
-  applyAllSkins();
+    createSkinGrid("shapeSkins", shapes, "shapes");
+    createSkinGrid("clockSkins", clockSkins, "clockSkins");
+    createSkinGrid("handSkins", handSkins, "handSkins");
+    createSkinGrid("effectSkins", effects, "effects");
   // === КОМБО ===
   function handleClickCombo() {
     const now = Date.now();
