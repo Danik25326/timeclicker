@@ -523,101 +523,104 @@ body.eye-blink::before {
   box-shadow: 0 0 12px #00e0ff;
   border-color: #00e0ff;
 }
-/* ====== МОБІЛЬНА ВЕРСІЯ — ФІНАЛЬНА, ЗА ТВОЇМИ ВИМОГАМИ ====== */
+/* ====== ФІНАЛЬНА МОБІЛЬНА ВЕРСІЯ — КОМПАКТНА, ЯК ТИ ХОТІВ ====== */
 body.mobile-version {
-  padding: 0 8px;
+  padding: 0 6px;
+  overflow-x: hidden;
 }
 
 body.mobile-version .container {
-  flex-direction: row !important;
-  gap: 20px !important;
-  margin-top: 100px !important;
-  justify-content: center !important;
-  align-items: flex-start !important;
+  flex-direction: row;
+  gap: 14px;
+  margin-top: 88px;
+  justify-content: center;
+  align-items: flex-start;
 }
 
 body.mobile-version .left-panel {
-  width: 45% !important;
-  max-width: 400px !important;
+  width: 44%;
+  max-width: 380px;
 }
 
 body.mobile-version .right-panel {
-  width: 50% !important;
-  max-width: 420px !important;
+  width: 52%;
+  max-width: 420px;
   display: flex;
   flex-direction: column;
   align-items: center;
 }
 
-/* Годинник — праворуч, не притулений до апгрейдів */
+/* Годинник — менший, праворуч, стрілки в межах */
 body.mobile-version .clock {
-  width: 300px !important;
-  height: 300px !important;
-  margin-top: 20px !important;
+  width: 240px !important;
+  height: 240px !important;
+  margin-top: 10px !important;
 }
+body.mobile-version .hand.hour   { height: 60px !important; }
+body.mobile-version .hand.minute { height: 85px !important; }
+body.mobile-version .hand.second { height: 110px !important; }
 
-/* Стрілки — не виходять за межі */
-body.mobile-version .hand.hour   { height: 70px !important; }
-body.mobile-version .hand.minute { height: 100px !important; }
-body.mobile-version .hand.second { height: 130px !important; }
+/* Бульбашка +0 сек — маленька і праворуч зверху */
+body.mobile-version #clickCloud {
+  position: absolute;
+  right: 8px !important;
+  top: 8px !important;
+  width: 110px !important;
+  padding: 6px 10px !important;
+  font-size: 12px !important;
+}
+body.mobile-version #clickGain { font-size: 15px !important; }
 
-/* Все під годинником — вирівнюємо по центру і трохи правіше */
+/* Текст "Часу витрачено" — маленький і праворуч */
 body.mobile-version #score {
-  font-size: 18px !important;
-  margin: 16px 0 12px !important;
+  font-size: 15px !important;
+  margin: 12px 0 8px !important;
   text-align: center;
 }
 
-body.mobile-version .music-player {
-  gap: 20px !important;
-  justify-content: center;
-}
-
-/* Кнопки prev/next — більші */
+/* Кнопки prev/next — великі, головна — менша */
 body.mobile-version .music-switch {
-  width: 56px !important;
-  height: 56px !important;
+  width: 52px !important;
+  height: 52px !important;
   font-size: 28px !important;
-  padding: 0 !important;
 }
-
-/* Головна кнопка музики — менша */
 body.mobile-version .phonk-btn {
-  padding: 12px 32px !important;
-  font-size: 16px !important;
+  padding: 10px 28px !important;
+  font-size: 15px !important;
 }
 
-/* Текст "Часу витрачено" — менший */
-body.mobile-version #score {
-  font-size: 17px !important;
-}
-
-/* Таби — по 3 в рядок, більші */
+/* ВКЛАДКИ — ПО 3 В РЯДОК, НЕ СПИСОК */
 body.mobile-version .top-tabs {
-  top: 56px !important;
+  top: 52px !important;
+  left: 50% !important;
+  transform: translateX(-50%);
+  width: 96% !important;
   padding: 10px 8px !important;
-  gap: 10px !important;
+  gap: 8px !important;
   flex-wrap: wrap !important;
   justify-content: center !important;
-  overflow: visible !important;
+  background: rgba(15,23,42,0.95);
+  border-radius: 20px;
+  backdrop-filter: blur(10px);
 }
 
 body.mobile-version .tab {
-  min-width: 96px !important;
-  font-size: 13.5px !important;
-  padding: 10px 12px !important;
+  min-width: 88px !important;
+  font-size: 12.5px !important;
+  padding: 9px 10px !important;
+  flex: 1;
 }
 
 /* Назва — трохи праворуч */
 body.mobile-version .editable-title {
-  font-size: 32px !important;
-  left: 55% !important;
-  transform: translateX(-50%) !important;
+  font-size: 30px !important;
+  left: 56% !important;
+  transform: translateX(-50%);
 }
 
-/* Хмаринка +сек — праворуч від годинника */
-body.mobile-version #clickCloud {
-  right: -10px !important;
-  top: 20px !important;
-  width: 140px !important;
+/* Апгрейди — компактніше */
+body.mobile-version .upgrade-btn {
+  padding: 10px 8px !important;
+  font-size: 12.8px !important;
+  min-height: 42px !important;
 }
