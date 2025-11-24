@@ -523,78 +523,99 @@ body.eye-blink::before {
   box-shadow: 0 0 12px #00e0ff;
   border-color: #00e0ff;
 }
-/* ======================== МОБІЛЬНА АДАПТАЦІЯ — просто зжати, без перестановок ======================== */
+/* ======================== МОБІЛЬНА АДАПТАЦІЯ — ПК-ВИГЛЯД, просто стиснуто ======================== */
 @media (max-width: 900px) {
-  body {
-    padding: 10px;
-  }
-
   .container {
-    flex-direction: column;     /* колонки одна під одною */
-    gap: 24px;
-    margin-top: 110px;
+    gap: 16px;
     width: 100%;
-    max-width: 420px;           /* щоб не було дуже широким на телефоні */
-    margin-left: auto;
-    margin-right: auto;
+    max-width: 100%;
+    padding: 0 8px;
+    margin-top: 100px;
   }
 
-  .left-panel,
+  .left-panel {
+    width: 380px;
+    min-width: 320px;
+  }
+
   .right-panel {
-    width: 100%;
-    max-width: none;
+    width: 380px;
+    min-width: 320px;
   }
 
-  /* Годинник трохи менший, але залишається великим */
+  /* Годинник трохи менший */
   .clock {
     width: 300px !important;
     height: 300px !important;
   }
 
-  /* Таби — горизонтальна прокрутка, якщо не влізуть */
-  .top-tabs {
-    top: 60px;
-    overflow-x: auto;
-    white-space: nowrap;
-    padding: 10px;
-    gap: 12px;
-  }
-  .top-tabs::-webkit-scrollbar { display: none; }
-
-  /* Збільшуємо кнопки для пальців */
+  /* Апгрейди/скіни — компактніше */
   .upgrade-btn,
   .skin,
-  .phonk-btn,
-  .music-switch,
-  .reverb-btn {
-    padding: 16px 12px !important;
-    font-size: 15px !important;
-    min-height: 54px;
+  .multiplier-btn {
+    padding: 12px 10px !important;
+    font-size: 14px !important;
+    min-height: 48px;
   }
 
+  .upgrades-container,
+  #multipliers {
+    gap: 10px;
+  }
+
+  /* Таби — прокручуються, менші */
+  .top-tabs {
+    top: 56px;
+    gap: 10px;
+    padding: 10px 8px;
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+  .top-tabs::-webkit-scrollbar { display: none; }
   .tab {
-    min-width: 100px;
-    font-size: 14px;
+    min-width: 86px;
+    font-size: 13px;
+    padding: 10px 14px;
   }
 
+  /* Заголовок */
   .editable-title {
-    font-size: 32px;
-    top: 10px;
+    font-size: 30px;
+    top: 8px;
   }
 
-  #score { font-size: 20px; }
-
-  /* Хмаринка +сек — не залазить на годинник */
+  /* Хмаринка +сек */
   #clickCloud {
-    right: -180px;
-    top: 16px;
-    width: 160px;
-    font-size: 14px;
+    right: -160px;
+    top: 10px;
+    width: 140px;
+    font-size: 13px;
+    padding: 8px;
+  }
+
+  #clickGain { font-size: 16px; }
+
+  /* Музичний плеєр компактніше */
+  .music-player {
+    gap: 12px;
+  }
+  .phonk-btn, .music-switch {
+    padding: 12px 20px !important;
+    font-size: 14px !important;
+  }
+
+  /* Статистика, досягнення — текст менший */
+  .stats-list li,
+  .achievement {
+    font-size: 13px;
   }
 }
 
-/* Для дуже маленьких екранів (iPhone SE тощо) */
-@media (max-width: 380px) {
-  .clock { width: 260px !important; height: 260px !important; }
+/* Для телефонів з шириною < 400px (ти якраз у цій зоні) — ще сильніше стискаємо */
+@media (max-width: 440px) {
+  .left-panel, .right-panel { width: 100%; max-width: 360px; }
+  .clock { width: 270px !important; height: 270px !important; }
+  .upgrade-btn, .skin { font-size: 13.5px !important; padding: 11px 8px !important; }
+  .tab { min-width: 80px; font-size: 12.5px; }
   .editable-title { font-size: 28px; }
 }
