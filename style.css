@@ -738,5 +738,12 @@ body.mobile-version #tab-skins .skins-grid .skin {
 body.mobile-version #tab-skins .skins-grid::-webkit-scrollbar {
     display: none;
 }
+/* ===== ФІКС РОЗМІРУ КНОПКИ МУЗИКИ НА МОБІЛЬНІЙ ВЕРСІЇ ===== */
+body.mobile-version #musicBtn {
+  height: 38px !important;
+  padding: 0 10px !important;
+  font-size: 13px !important;
+  line-height: 1 !important;
+}
 
 
