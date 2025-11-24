@@ -523,92 +523,101 @@ body.eye-blink::before {
   box-shadow: 0 0 12px #00e0ff;
   border-color: #00e0ff;
 }
-/* ====== МОБІЛЬНА ВЕРСІЯ — ПК-ВИГЛЯД, ВСЕ ВЛІЗЛО, НІЧОГО НЕ РУХАЄТЬСЯ ====== */
+/* ====== МОБІЛЬНА ВЕРСІЯ — ФІНАЛЬНА, ЗА ТВОЇМИ ВИМОГАМИ ====== */
 body.mobile-version {
-  padding: 0 !important;
+  padding: 0 8px;
 }
 
 body.mobile-version .container {
-  flex-direction: row !important;     /* залишаємо дві колонки! */
-  gap: 12px !important;
-  margin-top: 90px !important;
-  width: 100% !important;
-  max-width: 100% !important;
-  padding: 0 6px !important;
-  justify-content: center;
-}
-
-body.mobile-version .left-panel,
-body.mobile-version .right-panel {
-  width: 48% !important;
-  min-width: 0 !important;
-  margin: 0 !important;
+  flex-direction: row !important;
+  gap: 20px !important;
+  margin-top: 100px !important;
+  justify-content: center !important;
+  align-items: flex-start !important;
 }
 
 body.mobile-version .left-panel {
-  max-width: 380px !important;
+  width: 45% !important;
+  max-width: 400px !important;
 }
 
 body.mobile-version .right-panel {
-  max-width: 380px !important;
+  width: 50% !important;
+  max-width: 420px !important;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
-/* Годинник — менший, але видно */
+/* Годинник — праворуч, не притулений до апгрейдів */
 body.mobile-version .clock {
-  width: 260px !important;
-  height: 260px !important;
+  width: 300px !important;
+  height: 300px !important;
+  margin-top: 20px !important;
 }
 
-/* Вкладки — всі видно, прокручування немає */
+/* Стрілки — не виходять за межі */
+body.mobile-version .hand.hour   { height: 70px !important; }
+body.mobile-version .hand.minute { height: 100px !important; }
+body.mobile-version .hand.second { height: 130px !important; }
+
+/* Все під годинником — вирівнюємо по центру і трохи правіше */
+body.mobile-version #score {
+  font-size: 18px !important;
+  margin: 16px 0 12px !important;
+  text-align: center;
+}
+
+body.mobile-version .music-player {
+  gap: 20px !important;
+  justify-content: center;
+}
+
+/* Кнопки prev/next — більші */
+body.mobile-version .music-switch {
+  width: 56px !important;
+  height: 56px !important;
+  font-size: 28px !important;
+  padding: 0 !important;
+}
+
+/* Головна кнопка музики — менша */
+body.mobile-version .phonk-btn {
+  padding: 12px 32px !important;
+  font-size: 16px !important;
+}
+
+/* Текст "Часу витрачено" — менший */
+body.mobile-version #score {
+  font-size: 17px !important;
+}
+
+/* Таби — по 3 в рядок, більші */
 body.mobile-version .top-tabs {
-  top: 52px !important;
-  padding: 8px 4px !important;
-  gap: 6px !important;
-  justify-content: center !important;
+  top: 56px !important;
+  padding: 10px 8px !important;
+  gap: 10px !important;
   flex-wrap: wrap !important;
-  height: auto !important;
+  justify-content: center !important;
   overflow: visible !important;
 }
 
 body.mobile-version .tab {
-  min-width: 68px !important;
-  font-size: 11.5px !important;
-  padding: 8px 6px !important;
+  min-width: 96px !important;
+  font-size: 13.5px !important;
+  padding: 10px 12px !important;
 }
 
-/* Апгрейди — стискаємо, щоб усі влізли */
-body.mobile-version .upgrade-btn,
-body.mobile-version .multiplier-btn {
-  padding: 10px 8px !important;
-  font-size: 13px !important;
-  min-height: 44px !important;
-}
-
-body.mobile-version .upgrades-container,
-body.mobile-version #multipliers {
-  gap: 8px !important;
-}
-
-/* Заголовок — трохи нижче */
+/* Назва — трохи праворуч */
 body.mobile-version .editable-title {
-  font-size: 28px !important;
-  top: 8px !important;
+  font-size: 32px !important;
+  left: 55% !important;
+  transform: translateX(-50%) !important;
 }
 
-/* Хмаринка +сек — не залазить */
+/* Хмаринка +сек — праворуч від годинника */
 body.mobile-version #clickCloud {
-  right: -140px !important;
-  top: 8px !important;
-  width: 130px !important;
-  font-size: 12px !important;
-}
-
-/* Музика — компактніше */
-body.mobile-version .music-player {
-  gap: 10px !important;
-}
-body.mobile-version .music-switch,
-body.mobile-version .phonk-btn {
-  padding: 10px 16px !important;
-  font-size: 13px !important;
+  right: -10px !important;
+  top: 20px !important;
+  width: 140px !important;
 }
