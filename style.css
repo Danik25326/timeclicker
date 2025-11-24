@@ -523,7 +523,7 @@ body.eye-blink::before {
   box-shadow: 0 0 12px #00e0ff;
   border-color: #00e0ff;
 }
-/* ====== ФІНАЛЬНА МОБІЛЬНА ВЕРСІЯ — КОМПАКТНА, ЯК ТИ ХОТІВ ====== */
+/* ====== ФІНАЛЬНА МОБІЛЬНА ВЕРСІЯ — ВСЕ ПО ТВОЇХ ВИМОГАХ ====== */
 body.mobile-version {
   padding: 0 6px;
   overflow-x: hidden;
@@ -531,96 +531,114 @@ body.mobile-version {
 
 body.mobile-version .container {
   flex-direction: row;
-  gap: 14px;
-  margin-top: 88px;
+  gap: 16px;
+  margin-top: 92px;
   justify-content: center;
   align-items: flex-start;
 }
 
+/* === ЛІВА ЧАСТИНА (апгрейди) === */
 body.mobile-version .left-panel {
   width: 44%;
-  max-width: 380px;
+  max-width: 360px;
 }
 
+/* Апгрейди — строго по центру під назвою, 3 в рядок */
+body.mobile-version .upgrades-container,
+body.mobile-version #multipliers {
+  display: grid !important;
+  grid-template-columns: 1fr 1fr 1fr !important;
+  gap: 9px !important;
+  justify-items: center;
+}
+
+body.mobile-version .upgrade-btn,
+body.mobile-version .multiplier-btn {
+  width: 100% !important;
+  padding: 11px 6px !important;
+  font-size: 12.4px !important;
+  min-height: 46px !important;
+  text-align: center;
+}
+
+/* === ПРАВА ЧАСТИНА (годинник + усе під ним) === */
 body.mobile-version .right-panel {
   width: 52%;
-  max-width: 420px;
+  max-width: 380px;
   display: flex;
   flex-direction: column;
   align-items: center;
 }
 
-/* Годинник — менший, праворуч, стрілки в межах */
+/* Годинник — ще менший */
 body.mobile-version .clock {
-  width: 240px !important;
-  height: 240px !important;
-  margin-top: 10px !important;
+  width: 210px !important;
+  height: 210px !important;
+  margin-top: 8px !important;
 }
-body.mobile-version .hand.hour   { height: 60px !important; }
-body.mobile-version .hand.minute { height: 85px !important; }
-body.mobile-version .hand.second { height: 110px !important; }
 
-/* Бульбашка +0 сек — маленька і праворуч зверху */
+/* Стрілки — секунда НЕ торкається ободка */
+body.mobile-version .hand.hour   { height: 52px !important; }
+body.mobile-version .hand.minute { height: 76px !important; }
+body.mobile-version .hand.second { height: 96px !important; }
+
+/* Бульбашка +сек — в 2 рази менша */
 body.mobile-version #clickCloud {
-  position: absolute;
-  right: 8px !important;
-  top: 8px !important;
-  width: 110px !important;
-  padding: 6px 10px !important;
-  font-size: 12px !important;
+  right: 4px !important;
+  top: 4px !important;
+  width: 92px !important;
+  padding: 4px 8px !important;
+  font-size: 11px !important;
 }
-body.mobile-version #clickGain { font-size: 15px !important; }
+body.mobile-version #clickGain { font-size: 13px !important; }
+body.mobile-version #totalCloud { font-size: 10px !important; }
 
-/* Текст "Часу витрачено" — маленький і праворуч */
+/* "Часу витрачено" — маленький */
 body.mobile-version #score {
   font-size: 15px !important;
-  margin: 12px 0 8px !important;
-  text-align: center;
+  margin: 10px 0 6px !important;
 }
 
-/* Кнопки prev/next — великі, головна — менша */
+/* Кнопки музики — ідеально за розміром */
+body.mobile-version .music-player {
+  gap: 14px !important;
+}
 body.mobile-version .music-switch {
-  width: 52px !important;
-  height: 52px !important;
-  font-size: 28px !important;
+  width: 48px !important;
+  height: 48px !important;
+  font-size: 26px !important;
+  padding: 0 !important;
 }
 body.mobile-version .phonk-btn {
-  padding: 10px 28px !important;
-  font-size: 15px !important;
+  height: 48px !important;           /* така ж висота, як бокові */
+  padding: 0 26px !important;
+  font-size: 14.5px !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-/* ВКЛАДКИ — ПО 3 В РЯДОК, НЕ СПИСОК */
+/* Вкладки — 3 + 3, чітко по центру */
 body.mobile-version .top-tabs {
   top: 52px !important;
   left: 50% !important;
   transform: translateX(-50%);
   width: 96% !important;
-  padding: 10px 8px !important;
-  gap: 8px !important;
+  padding: 9px 6px !important;
+  gap: 8px 10px !important;
   flex-wrap: wrap !important;
   justify-content: center !important;
-  background: rgba(15,23,42,0.95);
-  border-radius: 20px;
-  backdrop-filter: blur(10px);
 }
-
 body.mobile-version .tab {
-  min-width: 88px !important;
-  font-size: 12.5px !important;
-  padding: 9px 10px !important;
-  flex: 1;
+  flex: 1 1 30% !important;
+  min-width: 82px !important;
+  font-size: 12.8px !important;
+  padding: 9px 8px !important;
 }
 
 /* Назва — трохи праворуч */
 body.mobile-version .editable-title {
   font-size: 30px !important;
-  left: 56% !important;
+  left: 57% !important;
   transform: translateX(-50%);
-}
-
-/* Апгрейди — компактніше */
-body.mobile-version .upgrade-btn {
-  padding: 10px 8px !important;
-  font-size: 12.8px !important;
-  min-height: 42px !important;
 }
