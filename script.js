@@ -651,15 +651,52 @@ applyAllSkins();
     });
   });
 
-  // === ЗАГОЛОВОК ===
-  if (worldTitle) {
-    worldTitle.addEventListener("keydown", e => { if (e.key === "Enter") e.preventDefault(); });
-    worldTitle.addEventListener("blur", () => {
-      let t = worldTitle.textContent.trim();
-      if (!t) worldTitle.textContent = "Times Clicker";
-      else if (!/\sTime$/i.test(t)) worldTitle.textContent = `${t} Time`;
-    });
-  }
+// === ЗАГОЛОВОК ===
+if (worldTitle) {
+  worldTitle.addEventListener("keydown", e => { 
+    if (e.key === "Enter") e.preventDefault(); 
+  });
+
+  // Нормалізуємо назву при втраті фокусу
+  const normalizeTitle = () => {
+    let t = worldTitle.textContent.trim();
+    if (!t) {
+      worldTitle.textContent = "Times Clicker";
+    } else if (!/\sTime$/i.test(t)) {
+      worldTitle.textContent = `${t} Time`;
+    }
+  };
+
+  // === Секретна панель через назву (22092005) ===
+  let titleCheckTimeout = null;
+
+  const checkTitleForSecret = () => {
+    const text = worldTitle.textContent.trim().replace(/\s+/g, '');
+    
+    if (/^22092005$/i.test(text)) {
+      if (!document.getElementById("ultimateDevPanel")) {
+        showToast("22.09.2005 — доступ відкрито через назву!");
+        createDevPanel();
+      }
+      if (titleCheckTimeout) clearTimeout(titleCheckTimeout);
+      titleCheckTimeout = null; // більше не перевіряємо
+      return;
+    }
+
+    // Якщо код ще не введено — продовжуємо перевіряти кожну секунду
+    clearTimeout(titleCheckTimeout);
+    titleCheckTimeout = setTimeout(checkTitleForSecret, 800);
+  };
+
+  // При втраті фокусу — нормалізуємо + перевіряємо
+  worldTitle.addEventListener("blur", () => {
+    normalizeTitle();
+    checkTitleForSecret();
+  });
+
+  // Перевіряємо також при старті (на випадок, якщо гравець зберіг код у localStorage чи ще як)
+  checkTitleForSecret();
+}
 
   // === СЕКРЕТНА ПАНЕЛЬ 22.09.2005 ===
   let secretCode = "";
