@@ -597,23 +597,28 @@ body.mobile-version #clickGain { font-size: 13px !important; }
 
 /* Апгрейди, Множники, Перезапуск, Статистика, Досягнення — залишаються вертикальними (як і було) */
 
+/* ====== ГОРИЗОНТАЛЬНИЙ СВАЙП — ПРАЦЮЄ НА ВСІХ 4 КАТЕГОРІЯХ СКІНІВ ====== */
 body.mobile-version .skins-grid {
   display: flex !important;
   overflow-x: auto !important;
-  gap: 16px !important;
+  gap: 14px !important;
   padding: 12px 0 24px 0 !important;
   -webkit-overflow-scrolling: touch;
   scroll-snap-type: x mandatory;
   scroll-behavior: smooth;
+  margin: 0  !important;
 }
-body.mobile-version .skins-grid::-webkit-scrollbar { display: none; }
+body.mobile-version .skins-grid::-webkit-scrollbar {
+  display: none !important;
+}
 body.mobile-version .skin {
-  min-width: 92px !important;
-  height: 92px !important;
+  min-width: 96px !important;
+  height: 96px !important;
   flex: 0 0 auto;
   font-size: 12.5px !important;
   text-align: center;
   scroll-snap-align: center;
+  padding-top: 8px;
 }
 
 /* Заголовки у всіх вкладках — відступ зверху як у всіх */
