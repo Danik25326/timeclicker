@@ -695,7 +695,6 @@ body.mobile-version .ach-state {
 
 /* Фікс контейнера вкладки Reverb */
 body.mobile-version #tab-reverb {
-  display: block !important;        /* Вимикаємо flex, якщо він є */
   text-align: left !important;      /* Все всередині — ліворуч */
   align-items: flex-start !important;
   justify-content: flex-start !important;
