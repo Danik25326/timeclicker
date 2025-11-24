@@ -571,17 +571,27 @@ applyAllSkins();
   }, 1000);
 
   // === РЕАЛЬНИЙ ГОДИННИК ===
-  function updateClockHands() {
-    const now = new Date();
-    const s = now.getSeconds();
-    const m = now.getMinutes();
-    const h = now.getHours() % 12;
-    document.querySelectorAll(".second").forEach(h => h.style.transform = `translateX(-50%) rotate(${s*6}deg)`);
-    document.querySelectorAll(".minute").forEach(h => h.style.transform = `translateX(-50%) rotate(${m*6 + s*0.1}deg)`);
-    document.querySelectorAll(".hour").forEach(h => h.style.transform = `translateX(-50%) rotate(${h*30 + m*0.5}deg)`);
-  }
-  setInterval(updateClockHands, 1000);
-  updateClockHands();
+function updateClockHands() {
+  // === ГАРАНТОВАНО ЛОКАЛЬНИЙ ЧАС ===
+  const now = new Date();
+  const s = now.getSeconds() + now.getMilliseconds() / 1000;
+  const m = now.getMinutes() + s / 60;
+  const h = (now.getHours() % 12 || 12) + m / 60;   // 12-годинний формат + плавність
+
+  document.querySelectorAll(".second").forEach(hand => 
+    hand.style.transform = `translateX(-50%) rotate(${s * 6}deg)`
+  );
+  document.querySelectorAll(".minute").forEach(hand => 
+    hand.style.transform = `translateX(-50%) rotate(${m * 6}deg)`
+  );
+  document.querySelectorAll(".hour").forEach(hand => 
+    hand.style.transform = `translateX(-50%) rotate(${h * 30}deg)`
+  );
+}
+
+// Оновлюємо плавно кожні 50 мс
+setInterval(updateClockHands, 50);
+updateClockHands();
 
   // === РЕВЕРБ ===
   reverbBtn.addEventListener("click", () => {
