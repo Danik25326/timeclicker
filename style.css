@@ -523,3 +523,102 @@ body.eye-blink::before {
   box-shadow: 0 0 12px #00e0ff;
   border-color: #00e0ff;
 }
+/* ======================== МОБІЛЬНА АДАПТАЦІЯ (вертикальний режим) ======================== */
+@media (max-width: 900px) {
+  .container {
+    flex-direction: column;
+    gap: 30px;
+    margin-top: 140px;
+    width: 95vw;
+  }
+
+  .left-panel,
+  .right-panel {
+    width: 100%;
+    max-width: 500px;
+    margin: 0 auto;
+  }
+
+  /* Годинник стає менший і по центру */
+  .clock {
+    width: 320px !important;
+    height: 320px !important;
+  }
+
+  /* Хмаринка +сек переїжджає під годинник */
+  #clickCloud {
+    position: static;
+    margin: 20px auto;
+    display: block;
+    width: 200px;
+  }
+
+  /* Комбо-бабл теж підлаштовується */
+  #comboBubble {
+    top: -40px;
+    right: auto;
+    left: 50%;
+    transform: translateX(-50%) scale(0);
+  }
+  #comboBubble.show {
+    transform: translateX(-50%) scale(1);
+  }
+
+  /* Таби стають прокручуваними горизонтально */
+  .top-tabs {
+    top: 70px;
+    overflow-x: auto;
+    white-space: nowrap;
+    padding: 12px 10px;
+    gap: 14px;
+    -webkit-overflow-scrolling: touch;
+  }
+  .top-tabs::-webkit-scrollbar { display: none; }
+  .top-tabs { -ms-overflow-style: none; scrollbar-width: none; }
+
+  .tab {
+    min-width: 110px;
+    font-size: 15px;
+  }
+
+  /* Контент вкладок — на всю ширину */
+  .tab-body {
+    min-height: auto;
+  }
+  .upgrades-container,
+  #multipliers,
+  .skins-section,
+  .stats-list,
+  .achievements-grid {
+    padding: 0 10px;
+  }
+
+  /* Скіни — по 3 в ряд */
+  .skins-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  #effectSkins {
+    grid-template-columns: repeat(3, 1fr) !important;
+  }
+
+  /* Трохи більші кнопки для пальців */
+  .upgrade-btn,
+  .skin,
+  .phonk-btn,
+  .music-switch {
+    padding: 16px 18px !important;
+    font-size: 16px;
+  }
+
+  /* Заголовок трохи нижче, щоб не залазив на таби */
+  .editable-title {
+    top: 12px;
+    font-size: 32px;
+  }
+}
+
+/* Додатковий бонус: ще менші екрани (старий iPhone SE тощо) */
+@media (max-width: 380px) {
+  .clock { width: 280px !important; height: 280px !important; }
+  .editable-title { font-size: 28px; }
+}
