@@ -702,7 +702,7 @@ body.mobile-version #tab-reverb {
 
 /* Кнопка Повернути час назад — ПРИТИСНУТА ВЛІВО */
 body.mobile-version #tab-reverb .reverb-btn {
-  margin-left: -2 !important;
+  margin-left: 0 !important;
   margin-right: auto !important;    /* Це гарантує, що її відштовхне вправо */
   display: inline-block !important; /* Щоб нормально працювало text-align */
 }
