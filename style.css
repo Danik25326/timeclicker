@@ -533,12 +533,12 @@ body.mobile-version .editable-title {
   font-size: 28px !important;
   left: 50% !important;
   transform: translateX(-50%) !important;
-  top: 6px !important;
+  top: 2px !important;
 }
 
 /* ВКЛАДКИ */
 body.mobile-version .top-tabs {
-  top: 40px !important;
+  top: 58px !important;
   left: 50% !important;
   transform: translateX(-50%);
   width: 96% !important;
