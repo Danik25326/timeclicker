@@ -536,12 +536,21 @@ body.mobile-version .editable-title {
   top: 8px !important;
 }
 
-/* Вкладки */
+/* ВКЛАДКИ — 3+3, без перекосу */
 body.mobile-version .top-tabs {
-  top: 50px !important;
+  top: 52px !important;
   left: 50% !important;
   transform: translateX(-50%);
   width: 96% !important;
+  padding: 10px 6px !important;
+  gap: 8px 10px !important;
+  flex-wrap: wrap !important;
+  justify-content: center !important;
+}
+body.mobile-version .tab {
+  flex: 1 1 30% !important;
+  min-width: 80px !important;
+  font-size: 13px !important;
 }
 
 /* ЛІВА ПАНЕЛЬ — знову вузька, як на ПК */
