@@ -248,14 +248,42 @@ window.onload = function () {
     updateStats();
     updateAchievements();
   }
-// === НОВИЙ МАГАЗИН СКІНІВ ===
+// === НОВИЙ МАГАЗИН СКІНІВ — ВИПРАВЛЕНИЙ ===
 
-// ДЕФОЛТИ (нічого не зберігається!)
-let currentShape = "round";
-let currentClockSkin = "neon-blue";
-let currentHandSkin = "darkblue";
-let currentEffect = "red";
+// Скіни стрілок
+const handSkins = [
+  {id:"darkblue", name:"Темно-сині", price: 0, apply:()=>{document.querySelectorAll(".hand:not(.second)").forEach(h=>{h.style.background="#1e3a8a";h.style.boxShadow="";h.style.animation="";});}},
+  {id:"pixel",    name:"Піксельні",   price: 900, apply:()=>{document.querySelectorAll(".hand:not(.second)").forEach(h=>{h.style.background="linear-gradient(#fff,#aaa)";h.style.boxShadow="";h.style.animation="";});}},
+  {id:"neon",     name:"Неонові",     price: 9000, apply:()=>{document.querySelectorAll(".hand:not(.second)").forEach(h=>{h.style.background="#0ea5e9";h.style.boxShadow="0 0 25px #0ea5e9, 0 0 60px #0ea5e9";h.style.animation="neonPulse 2s ease-in-out infinite alternate";});}},
+  {id:"chrome",   name:"Хром",        price: 43200, apply:()=>{document.querySelectorAll(".hand:not(.second)").forEach(h=>{h.style.background="linear-gradient(90deg,#ddd,#888,#ddd)";h.style.boxShadow="0 0 15px #fff, 0 0 30px #aaa";h.style.animation="";});}},
+];
 
+// Форма годинника
+const shapes = [
+  {id:"round",   name:"Круг",     price: 0 },
+  {id:"square",  name:"Квадрат",  price: 28800 },
+  {id:"diamond", name:"Ромб",     price: 86400 },
+  {id:"oval",    name:"Овал",     price: 172800 },
+];
+
+// Колір рамки
+const clockSkins = [
+  {id:"neon-blue", name:"Неон синій", price: 0, apply:()=>{clock.style.borderColor="#0ea5e9"; clock.style.boxShadow="0 0 50px #0ea5e9, 0 0 100px #0ea5e9";}},
+  {id:"purple",    name:"Пурпурний",  price: 64800, apply:()=>{clock.style.borderColor="#8b5cf6"; clock.style.boxShadow="0 0 50px #8b5cf6, 0 0 100px #8b5cf6";}},
+  {id:"pink",      name:"Рожевий",    price: 129600, apply:()=>{clock.style.borderColor="#ec4899"; clock.style.boxShadow="0 0 50px #ec4899, 0 0 100px #ec4899";}},
+  {id:"black",     name:"Чорний",     price: 259200, apply:()=>{clock.style.borderColor="#111"; clock.style.boxShadow="0 0 10px #000";}},
+];
+
+// Ефекти кліку
+const effects = [
+  {id:"red",       name:"Червоний спалах", price: 0 },
+  {id:"blue",      name:"Синій вибух",     price: 21600 },
+  {id:"glitch",    name:"Глітч",           price: 108000 },
+  {id:"blackhole", name:"Чорна діра",      price: 360000 },
+  {id:"ripple",    name:"Хвиля часу",      price: 720000 },
+];
+
+// ==== БАЗОВІ СТАНИ (БЕЗ LOCALSTORAGE) ====
 let ownedSkins = {
   shapes: ["round"],
   clockSkins: ["neon-blue"],
@@ -263,87 +291,31 @@ let ownedSkins = {
   effects: ["red"]
 };
 
-// --------------------------------------------
-// СКІНИ
-// --------------------------------------------
+let currentShape = "round";
+let currentClockSkin = "neon-blue";
+let currentHandSkin = "darkblue";
+let currentEffect = "red";
 
-const handSkins = [
-  {id:"darkblue", name:"Темно-сині", price: 0,
-   apply:()=>{ document.querySelectorAll(".hand:not(.second)").forEach(h=>{
-     h.style.background="#1e3a8a"; h.style.boxShadow=""; h.style.animation="";
-   });}},
-  {id:"pixel", name:"Піксельні", price: 900,
-   apply:()=>{ document.querySelectorAll(".hand:not(.second)").forEach(h=>{
-     h.style.background="linear-gradient(#fff,#aaa)"; h.style.boxShadow=""; h.style.animation="";
-   });}},
-  {id:"neon", name:"Неонові", price: 9000,
-   apply:()=>{ document.querySelectorAll(".hand:not(.second)").forEach(h=>{
-     h.style.background="#0ea5e9"; 
-     h.style.boxShadow="0 0 25px #0ea5e9, 0 0 60px #0ea5e9";
-     h.style.animation="neonPulse 2s ease-in-out infinite alternate";
-   });}},
-  {id:"chrome", name:"Хром", price: 43200,
-   apply:()=>{ document.querySelectorAll(".hand:not(.second)").forEach(h=>{
-     h.style.background="linear-gradient(90deg,#ddd,#888,#ddd)";
-     h.style.boxShadow="0 0 15px #fff, 0 0 30px #aaa";
-     h.style.animation="";
-   });}},
-];
-
-const shapes = [
-  {id:"round", name:"Круг", price:0},
-  {id:"square", name:"Квадрат", price:28800},
-  {id:"diamond", name:"Ромб", price:86400},
-  {id:"oval", name:"Овал", price:172800},
-];
-
-const clockSkins = [
-  {id:"neon-blue", name:"Неон синій", price:0,
-   apply:()=>{ clock.style.borderColor="#0ea5e9";
-     clock.style.boxShadow="0 0 50px #0ea5e9, 0 0 100px #0ea5e9";
-   }},
-  {id:"purple", name:"Пурпурний", price:64800,
-   apply:()=>{ clock.style.borderColor="#8b5cf6";
-     clock.style.boxShadow="0 0 50px #8b5cf6, 0 0 100px #8b5cf6";
-   }},
-  {id:"pink", name:"Рожевий", price:129600,
-   apply:()=>{ clock.style.borderColor="#ec4899";
-     clock.style.boxShadow="0 0 50px #ec4899, 0 0 100px #ec4899";
-   }},
-  {id:"black", name:"Чорний", price:259200,
-   apply:()=>{ clock.style.borderColor="#111";
-     clock.style.boxShadow="0 0 10px #000";
-   }},
-];
-
-const effects = [
-  {id:"red", name:"Червоний спалах", price: 0},
-  {id:"blue", name:"Синій вибух", price: 21600},
-  {id:"glitch", name:"Глітч", price: 108000},
-  {id:"blackhole", name:"Чорна діра", price: 360000},
-  {id:"ripple", name:"Хвиля часу", price: 720000}
-];
-
-
-// --------------------------------------------
-// ВІДКЛЮЧЕНО LocalStorage → НІЧОГО НЕ ЗБЕРІГАЄТЬСЯ
-// --------------------------------------------
-function saveSkins() {} // порожньо
-function loadSkins() {} // порожньо
-
-
-// --------------------------------------------
-// ПОКУПКА СКІНА
-// --------------------------------------------
+// === Покупка — ВИПРАВЛЕНА ===
 function buySkin(type, id, price, name) {
+
+  // 🚫 Якщо вже куплено — не купуємо повторно!
+  if (ownedSkins[type].includes(id)) {
+    showToast("Цей скін уже куплено");
+    return;
+  }
+
+  // Перевірка часу
   if (score < price) {
     showToast("Не вистачає часу!");
     return;
   }
 
+  // Купівля
   score -= price;
   ownedSkins[type].push(id);
 
+  // Робимо його активним
   if (type === "shapes") currentShape = id;
   if (type === "clockSkins") currentClockSkin = id;
   if (type === "handSkins") currentHandSkin = id;
@@ -352,28 +324,23 @@ function buySkin(type, id, price, name) {
   applyAllSkins();
   updateScore();
   showToast(`Куплено: ${name} ✅`);
+
+  // Оновити вивід
+  refreshAllSkinGrids();
 }
 
-
-// --------------------------------------------
-// ЗАСТОСУВАННЯ СКІНІВ
-// --------------------------------------------
+// === Застосування скінів ===
 function applyAllSkins() {
-  document.querySelectorAll(".clock").forEach(c =>
-    c.className = "clock " + currentShape
-  );
+  document.querySelector(".clock").className = "clock " + currentShape;
 
-  const cs = clockSkins.find(s => s.id === currentClockSkin);
-  if (cs?.apply) cs.apply();
+  const clockSkin = clockSkins.find(s => s.id === currentClockSkin);
+  if (clockSkin?.apply) clockSkin.apply();
 
-  const hs = handSkins.find(s => s.id === currentHandSkin);
-  if (hs?.apply) hs.apply();
+  const handSkin = handSkins.find(s => s.id === currentHandSkin);
+  if (handSkin?.apply) handSkin.apply();
 }
 
-
-// --------------------------------------------
-// ГЕНЕРАЦІЯ МАГАЗИНУ
-// --------------------------------------------
+// === ГЕНЕРАЦІЯ КНОПОК ===
 function createSkinGrid(containerId, list, type) {
   const root = document.getElementById(containerId);
   root.innerHTML = "";
@@ -390,44 +357,49 @@ function createSkinGrid(containerId, list, type) {
       (type === "handSkins" && s.id === currentHandSkin) ||
       (type === "effects" && s.id === currentEffect);
 
-    // Безкоштовні = одразу доступні
-    if (isOwned) {
+    // 🔵 Якщо НЕ куплено, але грошей вистачає — підсвічуємо
+    if (!isOwned) {
+      el.style.opacity = "0.4";
+
+      if (score >= s.price) {
+        el.style.boxShadow = "0 0 15px #0ff";
+      }
+
+      el.innerHTML += `<br><small style="color:#ff00ff">${formatTime(s.price)}</small>`;
+      el.onclick = () => buySkin(type, s.id, s.price, s.name);
+
+    } else {
+      // Вже куплено
+      el.classList.add("owned");
+
       if (isActive) el.classList.add("active");
 
-      // переключення
       el.onclick = () => {
-        root.querySelectorAll(".skin").forEach(e => e.classList.remove("active"));
-        el.classList.add("active");
-
         if (type === "shapes") currentShape = s.id;
         if (type === "clockSkins") currentClockSkin = s.id;
         if (type === "handSkins") currentHandSkin = s.id;
         if (type === "effects") currentEffect = s.id;
 
         applyAllSkins();
+        refreshAllSkinGrids();
       };
-    } else {
-      // НЕ КУПЛЕНО
-      el.style.opacity = "0.4";
-
-      // Показати ціну
-      el.innerHTML += `<br><small style="color:#0ea5e9">${formatTime(s.price)}</small>`;
-
-      el.onclick = () => buySkin(type, s.id, s.price, s.name);
     }
 
     root.appendChild(el);
   });
 }
-// --------------------------------------------
-// СТВОРЕННЯ МАГАЗИНІВ
-// --------------------------------------------
-createSkinGrid("shapeSkins", shapes, "shapes");
-createSkinGrid("clockSkins", clockSkins, "clockSkins");
-createSkinGrid("handSkins", handSkins, "handSkins");
-createSkinGrid("effectSkins", effects, "effects");
 
+function refreshAllSkinGrids() {
+  createSkinGrid("shapeSkins", shapes, "shapes");
+  createSkinGrid("clockSkins", clockSkins, "clockSkins");
+  createSkinGrid("handSkins", handSkins, "handSkins");
+  createSkinGrid("effectSkins", effects, "effects");
+}
+
+// ПЕРШИЙ ВИКЛИК
+refreshAllSkinGrids();
 applyAllSkins();
+
 
   // === КОМБО ===
   function handleClickCombo() {
