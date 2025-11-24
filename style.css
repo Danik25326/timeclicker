@@ -634,7 +634,7 @@ body.mobile-version .skin {
 /* Заголовки вкладок */
 body.mobile-version .tab-body h3,
 body.mobile-version .skins-section h4 {
-  margin: 20px 0 14px 0 !important;
+  margin: 30px 0 16px 0 !important;   /* повернули нормальний відступ */
   text-align: center;
   font-size: 18px !important;
   color: #bfe9ff;
@@ -700,9 +700,10 @@ body.mobile-version #tab-reverb h3 {
 body.mobile-version #tab-reverb .reverb-btn {
   display: block !important;
   width: fit-content !important;
-  margin: 0 auto !important;        /* чітко по центру панелі */
-  padding: 14px 40px !important;
-  font-size: 16px !important;
+  padding: 12px 32px !important;      /* менша ніж була */
+  font-size: 15.5px !important;
+  margin: 0 auto 0 15px !important;   /* трохи лівіше від центру */
+  border-radius: 50px !important;
 }
 /* Не даємо коротким вкладкам "злипатися" вгору — назва і вкладки завжди на місці */
 body.mobile-version #tab-upgrades,
