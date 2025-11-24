@@ -574,16 +574,13 @@ body.mobile-version .hand.hour   { height: 50px !important; }
 body.mobile-version .hand.minute { height: 74px !important; }
 body.mobile-version .hand.second { height: 88px !important; }
 
-/* Комбо-бульбашка — підвинута ліворуч (як +1 сек) */
+/* Комбо-бульбашка — ще менша */
 body.mobile-version #comboBubble {
-  width: 72px !important;
-  height: 72px !important;
-  right: auto !important;
-  left: 6px !important;
-  top: -20px !important;
+  width: 68px !important;
+  height: 68px !important;
+  right: -6px !important;
+  top: -18px !important;
 }
-body.mobile-version #comboCount { font-size: 28px !important; }
-body.mobile-version #comboText  { font-size: 9.5px !important; }
 
 /* +1 сек — зліва, точно як ти просив */
 body.mobile-version #clickCloud {
