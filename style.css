@@ -523,25 +523,92 @@ body.eye-blink::before {
   box-shadow: 0 0 12px #00e0ff;
   border-color: #00e0ff;
 }
-/* Мобільна версія — вертикальний layout */
-body.mobile-version .container {
-  flex-direction: column;
-  gap: 36px;
-  margin-top: 120px;
-  align-items: center;
+/* ====== МОБІЛЬНА ВЕРСІЯ — ПК-ВИГЛЯД, ВСЕ ВЛІЗЛО, НІЧОГО НЕ РУХАЄТЬСЯ ====== */
+body.mobile-version {
+  padding: 0 !important;
 }
+
+body.mobile-version .container {
+  flex-direction: row !important;     /* залишаємо дві колонки! */
+  gap: 12px !important;
+  margin-top: 90px !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  padding: 0 6px !important;
+  justify-content: center;
+}
+
 body.mobile-version .left-panel,
 body.mobile-version .right-panel {
-  width: 100%;
-  max-width: 480px;
+  width: 48% !important;
+  min-width: 0 !important;
+  margin: 0 !important;
 }
+
+body.mobile-version .left-panel {
+  max-width: 380px !important;
+}
+
+body.mobile-version .right-panel {
+  max-width: 380px !important;
+}
+
+/* Годинник — менший, але видно */
 body.mobile-version .clock {
-  width: 340px !important;
-  height: 340px !important;
+  width: 260px !important;
+  height: 260px !important;
 }
+
+/* Вкладки — всі видно, прокручування немає */
 body.mobile-version .top-tabs {
-  overflow-x: auto;
-  white-space: nowrap;
-  padding: 12px 20px;
+  top: 52px !important;
+  padding: 8px 4px !important;
+  gap: 6px !important;
+  justify-content: center !important;
+  flex-wrap: wrap !important;
+  height: auto !important;
+  overflow: visible !important;
 }
-body.mobile-version .top-tabs::-webkit-scrollbar { display: none; }
+
+body.mobile-version .tab {
+  min-width: 68px !important;
+  font-size: 11.5px !important;
+  padding: 8px 6px !important;
+}
+
+/* Апгрейди — стискаємо, щоб усі влізли */
+body.mobile-version .upgrade-btn,
+body.mobile-version .multiplier-btn {
+  padding: 10px 8px !important;
+  font-size: 13px !important;
+  min-height: 44px !important;
+}
+
+body.mobile-version .upgrades-container,
+body.mobile-version #multipliers {
+  gap: 8px !important;
+}
+
+/* Заголовок — трохи нижче */
+body.mobile-version .editable-title {
+  font-size: 28px !important;
+  top: 8px !important;
+}
+
+/* Хмаринка +сек — не залазить */
+body.mobile-version #clickCloud {
+  right: -140px !important;
+  top: 8px !important;
+  width: 130px !important;
+  font-size: 12px !important;
+}
+
+/* Музика — компактніше */
+body.mobile-version .music-player {
+  gap: 10px !important;
+}
+body.mobile-version .music-switch,
+body.mobile-version .phonk-btn {
+  padding: 10px 16px !important;
+  font-size: 13px !important;
+}
