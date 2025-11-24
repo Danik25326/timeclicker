@@ -693,7 +693,7 @@ body.mobile-version .ach-state {
 }
 /* Кнопка в Перезапуску — трохи лівіше, не по центру */
 body.mobile-version #reverbBtn {
-  margin-left: 20px !important;   /* ← подвинута вліво */
+  margin-left: 40px !important;   /* ← подвинута вліво */
   margin-right: auto !important;
   display: block !important;
 }
