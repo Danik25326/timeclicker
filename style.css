@@ -523,102 +523,78 @@ body.eye-blink::before {
   box-shadow: 0 0 12px #00e0ff;
   border-color: #00e0ff;
 }
-/* ======================== МОБІЛЬНА АДАПТАЦІЯ (вертикальний режим) ======================== */
+/* ======================== МОБІЛЬНА АДАПТАЦІЯ — просто зжати, без перестановок ======================== */
 @media (max-width: 900px) {
+  body {
+    padding: 10px;
+  }
+
   .container {
-    flex-direction: column;
-    gap: 30px;
-    margin-top: 140px;
-    width: 95vw;
+    flex-direction: column;     /* колонки одна під одною */
+    gap: 24px;
+    margin-top: 110px;
+    width: 100%;
+    max-width: 420px;           /* щоб не було дуже широким на телефоні */
+    margin-left: auto;
+    margin-right: auto;
   }
 
   .left-panel,
   .right-panel {
     width: 100%;
-    max-width: 500px;
-    margin: 0 auto;
+    max-width: none;
   }
 
-  /* Годинник стає менший і по центру */
+  /* Годинник трохи менший, але залишається великим */
   .clock {
-    width: 320px !important;
-    height: 320px !important;
+    width: 300px !important;
+    height: 300px !important;
   }
 
-  /* Хмаринка +сек переїжджає під годинник */
-  #clickCloud {
-    position: static;
-    margin: 20px auto;
-    display: block;
-    width: 200px;
-  }
-
-  /* Комбо-бабл теж підлаштовується */
-  #comboBubble {
-    top: -40px;
-    right: auto;
-    left: 50%;
-    transform: translateX(-50%) scale(0);
-  }
-  #comboBubble.show {
-    transform: translateX(-50%) scale(1);
-  }
-
-  /* Таби стають прокручуваними горизонтально */
+  /* Таби — горизонтальна прокрутка, якщо не влізуть */
   .top-tabs {
-    top: 70px;
+    top: 60px;
     overflow-x: auto;
     white-space: nowrap;
-    padding: 12px 10px;
-    gap: 14px;
-    -webkit-overflow-scrolling: touch;
+    padding: 10px;
+    gap: 12px;
   }
   .top-tabs::-webkit-scrollbar { display: none; }
-  .top-tabs { -ms-overflow-style: none; scrollbar-width: none; }
 
-  .tab {
-    min-width: 110px;
-    font-size: 15px;
-  }
-
-  /* Контент вкладок — на всю ширину */
-  .tab-body {
-    min-height: auto;
-  }
-  .upgrades-container,
-  #multipliers,
-  .skins-section,
-  .stats-list,
-  .achievements-grid {
-    padding: 0 10px;
-  }
-
-  /* Скіни — по 3 в ряд */
-  .skins-grid {
-    grid-template-columns: repeat(3, 1fr);
-  }
-  #effectSkins {
-    grid-template-columns: repeat(3, 1fr) !important;
-  }
-
-  /* Трохи більші кнопки для пальців */
+  /* Збільшуємо кнопки для пальців */
   .upgrade-btn,
   .skin,
   .phonk-btn,
-  .music-switch {
-    padding: 16px 18px !important;
-    font-size: 16px;
+  .music-switch,
+  .reverb-btn {
+    padding: 16px 12px !important;
+    font-size: 15px !important;
+    min-height: 54px;
   }
 
-  /* Заголовок трохи нижче, щоб не залазив на таби */
+  .tab {
+    min-width: 100px;
+    font-size: 14px;
+  }
+
   .editable-title {
-    top: 12px;
     font-size: 32px;
+    top: 10px;
+  }
+
+  #score { font-size: 20px; }
+
+  /* Хмаринка +сек — не залазить на годинник */
+  #clickCloud {
+    right: -180px;
+    top: 16px;
+    width: 160px;
+    font-size: 14px;
   }
 }
 
-/* Додатковий бонус: ще менші екрани (старий iPhone SE тощо) */
+/* Для дуже маленьких екранів (iPhone SE тощо) */
 @media (max-width: 380px) {
-  .clock { width: 280px !important; height: 280px !important; }
+  .clock { width: 260px !important; height: 260px !important; }
   .editable-title { font-size: 28px; }
 }
