@@ -644,7 +644,7 @@ body.mobile-version .skins-section h4 {
 /* Кнопки музики */
 body.mobile-version .music-player { gap: 6px !important; }
 body.mobile-version .music-switch { width: 38px !important; height: 38px !important; font-size: 21px !important; }
-body.mobile-version .phonk-btn { height: 38px !important; padding: 0 14px !important; font-size: 13px !important; }
+body.mobile-version .phonk-btn { height: 38px !important; padding: 0 10px !important; font-size: 13px !important; }
 body.mobile-version #score { font-size: 13.5px !important; }
 
 /* Досягнення — красивий вертикальний список */
