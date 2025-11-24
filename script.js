@@ -342,7 +342,7 @@ function applyAllSkins() {
 
 // === ГЕНЕРАЦІЯ КНОПОК ===
 function createSkinGrid(containerId, list, type) {
-  score = Number(score);
+  score = Number(score) || 0; // <-- ГАРАНТІЯ ЧИСЛА
   const root = document.getElementById(containerId);
   root.innerHTML = "";
 
@@ -376,8 +376,8 @@ function createSkinGrid(containerId, list, type) {
       // Не куплено
       el.style.opacity = "0.4";
 
-      // Підсвічування, якщо вистачає часу
-      if (Number(score) >= s.price) {
+      // 🔹 Підсвічування, якщо вистачає часу
+      if (score >= s.price) {
         el.style.opacity = "1";
         el.style.boxShadow = "0 0 15px #0ff";
       }
@@ -390,6 +390,7 @@ function createSkinGrid(containerId, list, type) {
   });
 }
 
+// === ОНОВЛЕННЯ ВИВОДУ ВСІХ SKIN GRID ===
 function refreshAllSkinGrids() {
   createSkinGrid("shapeSkins", shapes, "shapes");
   createSkinGrid("clockSkins", clockSkins, "clockSkins");
@@ -397,10 +398,9 @@ function refreshAllSkinGrids() {
   createSkinGrid("effectSkins", effects, "effects");
 }
 
-// ПЕРШИЙ ВИКЛИК
+// === ПЕРШИЙ ВИКЛИК ===
 refreshAllSkinGrids();
 applyAllSkins();
-
 
   // === КОМБО ===
   function handleClickCombo() {
