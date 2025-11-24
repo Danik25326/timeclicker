@@ -248,7 +248,7 @@ window.onload = function () {
     updateStats();
     updateAchievements();
   }
-// === НОВИЙ МАГАЗИН СКІНІВ — ДИНАМІЧНЕ ПІДСВІЧУВАННЯ ===
+// === НОВИЙ МАГАЗИН СКІНІВ — З ДИНАМІЧНИМ ПІДСВІЧУВАННЯМ ===
 
 // Скіни стрілок
 const handSkins = [
@@ -283,7 +283,7 @@ const effects = [
   {id:"ripple",    name:"Хвиля часу",      price: 720000 },
 ];
 
-// ==== БАЗОВІ СТАНИ (БЕЗ LOCALSTORAGE) ====
+// ==== БАЗОВІ СТАНИ ====
 let ownedSkins = {
   shapes: ["round"],
   clockSkins: ["neon-blue"],
@@ -296,7 +296,7 @@ let currentClockSkin = "neon-blue";
 let currentHandSkin = "darkblue";
 let currentEffect = "red";
 
-// === Покупка — ВИПРАВЛЕНА ===
+// === Покупка ===
 function buySkin(type, id, price, name) {
   if (ownedSkins[type].includes(id)) {
     showToast("Цей скін уже куплено");
@@ -334,7 +334,7 @@ function applyAllSkins() {
   if (handSkin?.apply) handSkin.apply();
 }
 
-// === ГЕНЕРАЦІЯ КНОПОК ===
+// === Генерація кнопок ===
 function createSkinGrid(containerId, list, type) {
   const root = document.getElementById(containerId);
   root.innerHTML = "";
@@ -354,6 +354,7 @@ function createSkinGrid(containerId, list, type) {
     if (isOwned) {
       el.classList.add("owned");
       if (isActive) el.classList.add("active");
+
       el.onclick = () => {
         if (type === "shapes") currentShape = s.id;
         if (type === "clockSkins") currentClockSkin = s.id;
@@ -364,16 +365,11 @@ function createSkinGrid(containerId, list, type) {
         refreshAllSkinGrids();
       };
     } else {
-      // Не куплено
       el.style.opacity = "0.4";
-      el.style.boxShadow = "";
-
-      // Підсвічування, якщо вистачає часу
       if (score >= s.price) {
         el.style.opacity = "1";
         el.style.boxShadow = "0 0 15px #0ff";
       }
-
       el.innerHTML += `<br><small style="color:#ff00ff">${formatTime(s.price)}</small>`;
       el.onclick = () => buySkin(type, s.id, s.price, s.name);
     }
@@ -382,29 +378,7 @@ function createSkinGrid(containerId, list, type) {
   });
 }
 
-// === Функція динамічного оновлення підсвічування ===
-function updateSkinHighlights() {
-  ["shapeSkins","clockSkins","handSkins","effectSkins"].forEach(containerId => {
-    const root = document.getElementById(containerId);
-    if (!root) return;
-
-    Array.from(root.children).forEach(el => {
-      const type = containerId.replace("Skins","");
-      const s = (type === "shape" ? shapes : type === "clock" ? clockSkins : type === "hand" ? handSkins : effects)
-                .find(item => item.name === el.textContent.trim());
-      if (!s || ownedSkins[type+"s"].includes(s.id)) return;
-
-      if (score >= s.price) {
-        el.style.opacity = "1";
-        el.style.boxShadow = "0 0 15px #0ff";
-      } else {
-        el.style.opacity = "0.4";
-        el.style.boxShadow = "";
-      }
-    });
-  });
-}
-
+// === Оновлення всіх грідов ===
 function refreshAllSkinGrids() {
   createSkinGrid("shapeSkins", shapes, "shapes");
   createSkinGrid("clockSkins", clockSkins, "clockSkins");
@@ -412,13 +386,42 @@ function refreshAllSkinGrids() {
   createSkinGrid("effectSkins", effects, "effects");
 }
 
-// === ПЕРШИЙ ВИКЛИК ===
+// === Динамічне підсвічування шкір ===
+function updateSkinHighlights() {
+  const types = [
+    {list: shapes, type: "shapes", containerId: "shapeSkins"},
+    {list: clockSkins, type: "clockSkins", containerId: "clockSkins"},
+    {list: handSkins, type: "handSkins", containerId: "handSkins"},
+    {list: effects, type: "effects", containerId: "effectSkins"},
+  ];
+
+  types.forEach(obj => {
+    const container = document.getElementById(obj.containerId);
+    if (!container) return;
+
+    Array.from(container.children).forEach((el, index) => {
+      const s = obj.list[index];
+      const isOwned = ownedSkins[obj.type].includes(s.id);
+
+      if (!isOwned) {
+        if (score >= s.price) {
+          el.style.opacity = "1";
+          el.style.boxShadow = "0 0 15px #0ff";
+        } else {
+          el.style.opacity = "0.4";
+          el.style.boxShadow = "";
+        }
+      }
+    });
+  });
+}
+
+// === Запускаємо динамічне оновлення кожну секунду ===
+setInterval(updateSkinHighlights, 1000);
+
+// === Перший виклик ===
 refreshAllSkinGrids();
 applyAllSkins();
-
-// === ДИНАМІЧНЕ ПІДСВІЧУВАННЯ ===
-// Викликаємо кожну секунду або після кожного кроку
-setInterval(updateSkinHighlights, 1000);
 
   // === КОМБО ===
   function handleClickCombo() {
