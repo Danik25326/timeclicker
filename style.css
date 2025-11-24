@@ -704,3 +704,10 @@ body.mobile-version #tab-reverb .reverb-btn {
   padding: 14px 40px !important;
   font-size: 16px !important;
 }
+/* Не даємо коротким вкладкам "злипатися" вгору — назва і вкладки завжди на місці */
+body.mobile-version #tab-upgrades,
+body.mobile-version #tab-multipliers,
+body.mobile-version #tab-reverb {
+  min-height: calc(100vh - 140px) !important;   /* завжди вища за екран 
+  padding-bottom: 80px !important;             запас знизу 
+}
