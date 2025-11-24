@@ -248,14 +248,14 @@ window.onload = function () {
     updateStats();
     updateAchievements();
   }
-// === НОВИЙ МАГАЗИН СКІНІВ — З ДИНАМІЧНИМ ПІДСВІЧУВАННЯМ ===
+// === НОВИЙ МАГАЗИН СКІНІВ — З МИТТЄВОЮ ПІДСВІТКОЮ ===
 
 // Скіни стрілок
 const handSkins = [
-  {id:"darkblue", name:"Темно-сині", price: 0, apply:()=>{document.querySelectorAll(".hand:not(.second)").forEach(h=>{h.style.background="#1e3a8a";h.style.boxShadow="";h.style.animation="";});}},
-  {id:"pixel",    name:"Піксельні",   price: 900, apply:()=>{document.querySelectorAll(".hand:not(.second)").forEach(h=>{h.style.background="linear-gradient(#fff,#aaa)";h.style.boxShadow="";h.style.animation="";});}},
-  {id:"neon",     name:"Неонові",     price: 9000, apply:()=>{document.querySelectorAll(".hand:not(.second)").forEach(h=>{h.style.background="#0ea5e9";h.style.boxShadow="0 0 25px #0ea5e9, 0 0 60px #0ea5e9";h.style.animation="neonPulse 2s ease-in-out infinite alternate";});}},
-  {id:"chrome",   name:"Хром",        price: 43200, apply:()=>{document.querySelectorAll(".hand:not(.second)").forEach(h=>{h.style.background="linear-gradient(90deg,#ddd,#888,#ddd)";h.style.boxShadow="0 0 15px #fff, 0 0 30px #aaa";h.style.animation="";});}},
+  {id:"darkblue", name:"Темно-сині", price: 0, apply:()=>{document.querySelectorAll(".hand:not(.second)").forEach(h=>{h.style.background="#1e3a8a"; h.style.boxShadow=""; h.style.animation="";});}},
+  {id:"pixel",    name:"Піксельні",   price: 900, apply:()=>{document.querySelectorAll(".hand:not(.second)").forEach(h=>{h.style.background="linear-gradient(#fff,#aaa)"; h.style.boxShadow=""; h.style.animation="";});}},
+  {id:"neon",     name:"Неонові",     price: 9000, apply:()=>{document.querySelectorAll(".hand:not(.second)").forEach(h=>{h.style.background="#0ea5e9"; h.style.boxShadow="0 0 25px #0ea5e9, 0 0 60px #0ea5e9"; h.style.animation="neonPulse 2s ease-in-out infinite alternate";});}},
+  {id:"chrome",   name:"Хром",        price: 43200, apply:()=>{document.querySelectorAll(".hand:not(.second)").forEach(h=>{h.style.background="linear-gradient(90deg,#ddd,#888,#ddd)"; h.style.boxShadow="0 0 15px #fff, 0 0 30px #aaa"; h.style.animation="";});}},
 ];
 
 // Форма годинника
@@ -283,7 +283,7 @@ const effects = [
   {id:"ripple",    name:"Хвиля часу",      price: 720000 },
 ];
 
-// ==== БАЗОВІ СТАНИ ====
+// ==== БАЗОВІ СТАНИ (БЕЗ LOCALSTORAGE) ====
 let ownedSkins = {
   shapes: ["round"],
   clockSkins: ["neon-blue"],
@@ -321,6 +321,7 @@ function buySkin(type, id, price, name) {
   showToast(`Куплено: ${name} ✅`);
 
   refreshAllSkinGrids();
+  updateSkinHighlights(); // миттєве підсвічування
 }
 
 // === Застосування скінів ===
@@ -370,6 +371,7 @@ function createSkinGrid(containerId, list, type) {
         el.style.opacity = "1";
         el.style.boxShadow = "0 0 15px #0ff";
       }
+
       el.innerHTML += `<br><small style="color:#ff00ff">${formatTime(s.price)}</small>`;
       el.onclick = () => buySkin(type, s.id, s.price, s.name);
     }
@@ -378,48 +380,34 @@ function createSkinGrid(containerId, list, type) {
   });
 }
 
-// === Оновлення всіх грідов ===
-function refreshAllSkinGrids() {
-  createSkinGrid("shapeSkins", shapes, "shapes");
-  createSkinGrid("clockSkins", clockSkins, "clockSkins");
-  createSkinGrid("handSkins", handSkins, "handSkins");
-  createSkinGrid("effectSkins", effects, "effects");
-}
-
-// === Динамічне підсвічування шкір ===
+// === Оновлення підсвічування ===
 function updateSkinHighlights() {
-  const types = [
-    {list: shapes, type: "shapes", containerId: "shapeSkins"},
-    {list: clockSkins, type: "clockSkins", containerId: "clockSkins"},
-    {list: handSkins, type: "handSkins", containerId: "handSkins"},
-    {list: effects, type: "effects", containerId: "effectSkins"},
-  ];
-
-  types.forEach(obj => {
-    const container = document.getElementById(obj.containerId);
-    if (!container) return;
-
-    Array.from(container.children).forEach((el, index) => {
-      const s = obj.list[index];
-      const isOwned = ownedSkins[obj.type].includes(s.id);
-
-      if (!isOwned) {
-        if (score >= s.price) {
-          el.style.opacity = "1";
-          el.style.boxShadow = "0 0 15px #0ff";
-        } else {
-          el.style.opacity = "0.4";
-          el.style.boxShadow = "";
-        }
+  ["shapes","clockSkins","handSkins","effects"].forEach(type => {
+    const list = {shapes, clockSkins, handSkins, effects}[type];
+    list.forEach(s => {
+      const el = document.getElementById(type + "_" + s.id) || document.querySelector(`#${type} .skin:nth-child(${list.indexOf(s)+1})`);
+      if (!el) return;
+      if (!ownedSkins[type].includes(s.id) && score >= s.price) {
+        el.style.opacity = "1";
+        el.style.boxShadow = "0 0 15px #0ff";
+      } else if (!ownedSkins[type].includes(s.id)) {
+        el.style.opacity = "0.4";
+        el.style.boxShadow = "";
       }
     });
   });
 }
 
-// === Запускаємо динамічне оновлення кожну секунду ===
-setInterval(updateSkinHighlights, 1000);
+// === Оновлення всіх сіток ===
+function refreshAllSkinGrids() {
+  createSkinGrid("shapeSkins", shapes, "shapes");
+  createSkinGrid("clockSkins", clockSkins, "clockSkins");
+  createSkinGrid("handSkins", handSkins, "handSkins");
+  createSkinGrid("effectSkins", effects, "effects");
+  updateSkinHighlights();
+}
 
-// === Перший виклик ===
+// === ПЕРШИЙ ВИКЛИК ===
 refreshAllSkinGrids();
 applyAllSkins();
 
