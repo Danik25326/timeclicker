@@ -49,10 +49,6 @@ window.onload = function () {
   const COMBO_THRESHOLD = 5;
   let isReverbActive = false;
   let reverbHoldTimeout = null;
-  let currentShape = "round";
-  let currentClockSkin = "neon-blue";
-  let currentHandSkin = "darkblue";
-  let currentEffect = "red";
   let clickMultiplier = 1;
   const buttons = [];
 
