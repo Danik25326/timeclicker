@@ -691,10 +691,9 @@ body.mobile-version .ach-state {
   font-weight: 700 !important;
   color: #8df299 !important;
 }
-/* Кнопка «Повернути час назад» — по центру лівої панелі */
+/* Кнопка в Перезапуску — трохи лівіше, не по центру */
 body.mobile-version #reverbBtn {
+  margin-left: 20px !important;   /* ← подвинута вліво */
+  margin-right: auto !important;
   display: block !important;
-  margin: 24px auto 0 auto !important;   /* ← це і є центр лівої панелі */
-  width: fit-content !important;
-  padding: 14px 36px !important;
 }
