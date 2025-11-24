@@ -318,6 +318,9 @@ function buySkin(type, id, price, name) {
 
   applyAllSkins();
   updateScore();
+  updateStats();
+  updateAchievements();
+
   showToast(`Куплено: ${name} ✅`);
 
   refreshAllSkinGrids();
@@ -512,6 +515,17 @@ applyAllSkins();
     const achieved = achievementsList.filter(a => a.done).length;
     document.getElementById("achievedCount").textContent = achieved;
     document.getElementById("totalAchievements").textContent = achievementsList.length;
+    document.getElementById("shapeSkinsCount").textContent  = ownedSkins.shapes.length;
+    document.getElementById("clockSkinsCount").textContent  = ownedSkins.clockSkins.length;
+    document.getElementById("handSkinsCount").textContent   = ownedSkins.handSkins.length;
+    document.getElementById("effectSkinsCount").textContent = ownedSkins.effects.length;
+
+    document.getElementById("totalSkins").textContent =
+    ownedSkins.shapes.length +
+    ownedSkins.clockSkins.length +
+    ownedSkins.handSkins.length +
+    ownedSkins.effects.length;
+
 
     updateReverbText();
   }
