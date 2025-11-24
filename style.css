@@ -538,7 +538,7 @@ body.mobile-version .editable-title {
 
 /* ВКЛАДКИ — 3+3 */
 body.mobile-version .top-tabs {
-  top: 52px !important;
+  top: 38px !important;
   left: 50% !important;
   transform: translateX(-50%);
   width: 96% !important;
@@ -562,7 +562,7 @@ body.mobile-version .left-panel {
 /* ПРАВА ПАНЕЛЬ — годинник і кнопки ще ближче до лівої */
 body.mobile-version .right-panel {
   width: 54% !important;
-  padding-left: 0px !important;   /* максимально близько */
+  padding-left: -12px !important;   /* максимально близько */
 }
 
 /* Годинник */
@@ -586,7 +586,7 @@ body.mobile-version #comboText  { font-size: 9px !important; }
 
 /* +1 сек — зліва, точно як ти просив */
 body.mobile-version #clickCloud {
-  left: 4px !important;
+  left: -6px !important;
   right: auto !important;
   top: 6px !important;
   width: 88px !important;
@@ -595,23 +595,21 @@ body.mobile-version #clickCloud {
 }
 body.mobile-version #clickGain { font-size: 13px !important; }
 
-/* Апгрейди, Множники, Перезапуск, Статистика, Досягнення — залишаються вертикальними (як і було) */
-
-/* ====== ГОРИЗОНТАЛЬНИЙ СВАЙП — ПРАЦЮЄ НА ВСІХ 4 КАТЕГОРІЯХ СКІНІВ ====== */
-body.mobile-version .skins-grid {
+/* ====== ГОРИЗОНТАЛЬНИЙ СВАЙП СКІНІВ — ПРАЦЮЄ НА ВСІХ 4 КАТЕГОРІЯХ НАЗАВЖДИ ====== */
+body.mobile-version .skins-section > .skins-grid {   /* ← саме ця строчка — ключ! */
   display: flex !important;
   overflow-x: auto !important;
   gap: 14px !important;
-  padding: 12px 0 24px 0 !important;
+  padding: 10px 0 24px 0 !important;
   -webkit-overflow-scrolling: touch;
   scroll-snap-type: x mandatory;
   scroll-behavior: smooth;
-  margin: 0  !important;
+  margin: 0 !important;
 }
-body.mobile-version .skins-grid::-webkit-scrollbar {
+body.mobile-version .skins-section > .skins-grid::-webkit-scrollbar {
   display: none !important;
 }
-body.mobile-version .skin {
+body.mobile-version .skins-section > .skins-grid .skin {
   min-width: 96px !important;
   height: 96px !important;
   flex: 0 0 auto;
@@ -648,4 +646,28 @@ body.mobile-version .phonk-btn {
 /* Текст "Часу витрачено" — менший */
 body.mobile-version #score {
   font-size: 13.5px !important;
+}
+
+/* ====== ВКЛАДКА "ДОСЯГНЕННЯ" — ТЕПЕР ВЕРТИКАЛЬНИЙ СПИСОК ЯК У МНОЖНИКІВ ====== */
+body.mobile-version .achievement {
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+  background: rgba(15, 23, 42, 0.8) !important;
+  border-radius: 12px !important;
+  padding: 12px 14px !important;
+  margin-bottom: 10px !important;
+  min-height: 68px !important;
+  font-size: 14px !important;
+}
+
+body.mobile-version .ach-progress {
+  height: 6px !important;
+  border-radius: 3px !important;
+}
+
+body.mobile-version .ach-state {
+  font-weight: 700 !important;
+  min-width: 70px !important;
+  text-align: right !important;
 }
