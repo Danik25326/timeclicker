@@ -523,22 +523,22 @@ body.eye-blink::before {
   box-shadow: 0 0 12px #00e0ff;
   border-color: #00e0ff;
 }
-/* ====== ФІНАЛЬНИЙ МОБІЛЬНИЙ CSS — ВСЕ ЗБЕРЕЖЕНО + ВИПРАВЛЕНО ====== */
+/* ====== ФІНАЛЬНИЙ МОБІЛЬНИЙ CSS — ВСЕ ТОЧНО ПО ТВОЇХ ОСТАННІХ СЛОВАХ + ДОСЯГНЕННЯ ВИПРАВЛЕНО ====== */
 body.mobile-version {
   padding: 0 4px;
 }
 
-/* Назва — відступ від верху, щоб вкладки не лізли */
+/* Назва */
 body.mobile-version .editable-title {
   font-size: 28px !important;
   left: 50% !important;
   transform: translateX(-50%) !important;
-  top: 12px !important;     /* трохи нижче, щоб не лізли вкладки */
+  top: 6px !important;
 }
 
-/* ВКЛАДКИ — ідеальний відступ від назви */
+/* ВКЛАДКИ */
 body.mobile-version .top-tabs {
-  top: 48px !important;     /* підняті, але не лізуть на назву */
+  top: 40px !important;
   left: 50% !important;
   transform: translateX(-50%);
   width: 96% !important;
@@ -553,13 +553,11 @@ body.mobile-version .tab {
   font-size: 13px !important;
 }
 
-/* Ліва панель */
+/* Ліва та права панель */
 body.mobile-version .left-panel {
   width: 42% !important;
   max-width: 320px !important;
 }
-
-/* Права панель — годинник максимально близько до лівої */
 body.mobile-version .right-panel {
   width: 54% !important;
   padding-left: -12px !important;
@@ -574,7 +572,7 @@ body.mobile-version .hand.hour   { height: 50px !important; }
 body.mobile-version .hand.minute { height: 74px !important; }
 body.mobile-version .hand.second { height: 88px !important; }
 
-/* Комбо-бульбашка — маленька, праворуч зверху */
+/* Комбо-бульбашка */
 body.mobile-version #comboBubble {
   width: 68px !important;
   height: 68px !important;
@@ -584,10 +582,9 @@ body.mobile-version #comboBubble {
 body.mobile-version #comboCount { font-size: 26px !important; }
 body.mobile-version #comboText  { font-size: 9px !important; }
 
-/* +1 сек — зліва, не залазить на годинник */
+/* +1 сек */
 body.mobile-version #clickCloud {
   left: -6px !important;
-  right: auto !important;
   top: 6px !important;
   width: 88px !important;
   padding: 5px 8px !important;
@@ -595,7 +592,7 @@ body.mobile-version #clickCloud {
 }
 body.mobile-version #clickGain { font-size: 13px !important; }
 
-/* Апгрейди і множники — горизонтальний свайп */
+/* Апгрейди і множники — свайп */
 body.mobile-version .upgrades-container,
 body.mobile-version #multipliers {
   display: flex !important;
@@ -613,7 +610,7 @@ body.mobile-version .multiplier-btn {
   font-size: 12.8px !important;
 }
 
-/* Скіни — горизонтальний свайп у всіх 4 категоріях */
+/* Скіни — горизонтальний свайп */
 body.mobile-version .skins-section > .skins-grid {
   display: flex !important;
   overflow-x: auto !important;
@@ -624,7 +621,7 @@ body.mobile-version .skins-section > .skins-grid {
   scroll-behavior: smooth;
 }
 body.mobile-version .skins-section > .skins-grid::-webkit-scrollbar { display: none; }
-body.mobile-version .skins-section > .skins-grid .skin {
+body.mobile-version .skin {
   min-width: 96px !important;
   height: 96px !important;
   flex: 0 0 auto;
@@ -634,7 +631,7 @@ body.mobile-version .skins-section > .skins-grid .skin {
   padding-top: 8px;
 }
 
-/* Заголовки у всіх вкладках — нормальний відступ */
+/* Заголовки вкладок */
 body.mobile-version .tab-body h3,
 body.mobile-version .skins-section h4 {
   margin: 20px 0 14px 0 !important;
@@ -647,26 +644,50 @@ body.mobile-version .skins-section h4 {
 body.mobile-version .music-player { gap: 6px !important; }
 body.mobile-version .music-switch { width: 38px !important; height: 38px !important; font-size: 21px !important; }
 body.mobile-version .phonk-btn { height: 38px !important; padding: 0 18px !important; font-size: 13px !important; }
-
-/* Текст "Часу витрачено" */
 body.mobile-version #score { font-size: 13.5px !important; }
 
-/* Досягнення — повертаємо звичайний вертикальний список (як було спочатку) */
+/* ДОСТУПНІ — ІДЕАЛЬНИЙ ВЕРТИКАЛЬНИЙ СПИСОК */
+body.mobile-version .achievements-grid {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 12px !important;
+  padding: 0 12px !important;
+}
 body.mobile-version .achievement {
-  display: block !important;
-  background: #0f1724 !important;
+  background: rgba(15, 23, 42, 0.95) !important;
+  border-radius: 14px !important;
   padding: 16px !important;
-  margin-bottom: 14px !important;
-  border-radius: 12px !important;
   text-align: center !important;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.4) !important;
+}
+body.mobile-version .achievement strong {
+  font-size: 15.5px !important;
+  color: #bfe9ff !important;
+  display: block;
+  margin-bottom: 6px !important;
+}
+body.mobile-version .achievement > div:nth-child(2) {
+  font-size: 13px !important;
+  color: #ccc !important;
+  margin-bottom: 10px !important;
 }
 body.mobile-version .ach-progress {
   height: 8px !important;
-  margin-top: 10px !important;
+  background: #334155 !important;
+  border-radius: 4px !important;
+  overflow: hidden !important;
+  margin: 8px 0 !important;
+}
+body.mobile-version .ach-progress::before {
+  content: '';
+  display: block;
+  height: 100%;
+  width: var(--progress, 0%) !important;
+  background: linear-gradient(90deg, #0ea5e9, #8b5cf6) !important;
   border-radius: 4px !important;
 }
 body.mobile-version .ach-state {
-  margin-top: 10px !important;
   font-size: 15px !important;
   font-weight: 700 !important;
+  color: #8df299 !important;
 }
