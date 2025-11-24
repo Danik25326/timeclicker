@@ -562,7 +562,7 @@ body.mobile-version .left-panel {
 /* ПРАВА ПАНЕЛЬ — годинник і кнопки ще ближче до лівої */
 body.mobile-version .right-panel {
   width: 54% !important;
-  padding-left: 0px !important;   /* максимально близько */
+  padding-left: -2px !important;   /* максимально близько */
 }
 
 /* Годинник */
@@ -584,7 +584,7 @@ body.mobile-version #comboBubble {
 
 /* +1 сек — зліва, точно як ти просив */
 body.mobile-version #clickCloud {
-  left: 6px !important;
+  left: 4px !important;
   right: auto !important;
   top: 6px !important;
   width: 88px !important;
@@ -595,20 +595,19 @@ body.mobile-version #clickGain { font-size: 13px !important; }
 
 /* Апгрейди, Множники, Перезапуск, Статистика, Досягнення — залишаються вертикальними (як і було) */
 
-/* СКІНИ — ГОРИЗОНТАЛЬНИЙ СВАЙП, 1 РЯДОК НА КАТЕГОРІЮ */
 body.mobile-version .skins-grid {
   display: flex !important;
   overflow-x: auto !important;
-  gap: 14px !important;
-  padding: 10px 0 20px 0 !important;
+  gap: 16px !important;
+  padding: 12px 0 24px 0 !important;
   -webkit-overflow-scrolling: touch;
   scroll-snap-type: x mandatory;
-  margin-bottom: 10px;
+  scroll-behavior: smooth;
 }
 body.mobile-version .skins-grid::-webkit-scrollbar { display: none; }
 body.mobile-version .skin {
-  min-width: 96px !important;
-  height: 96px !important;
+  min-width: 92px !important;
+  height: 92px !important;
   flex: 0 0 auto;
   font-size: 12.5px !important;
   text-align: center;
@@ -618,7 +617,7 @@ body.mobile-version .skin {
 /* Заголовки у всіх вкладках — відступ зверху як у всіх */
 body.mobile-version .tab-body h3,
 body.mobile-version .skins-section h4 {
-  margin: 22px 0 14px 0 !important;
+  margin: 26px 0 14px 0 !important;
   text-align: center;
   font-size: 18px !important;
   color: #bfe9ff;
