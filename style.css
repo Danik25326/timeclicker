@@ -693,13 +693,19 @@ body.mobile-version .ach-state {
   color: #8df299 !important;
 }
 
-/* Кнопка «Повернути час назад» — максимально вліво */
+/* Фікс контейнера вкладки Reverb */
+body.mobile-version #tab-reverb {
+  display: block !important;        /* Вимикаємо flex, якщо він є */
+  text-align: left !important;      /* Все всередині — ліворуч */
+  align-items: flex-start !important;
+  justify-content: flex-start !important;
+}
+
+/* Кнопка Повернути час назад — ПРИТИСНУТА ВЛІВО */
 body.mobile-version #tab-reverb .reverb-btn {
-  display: block !important;
-  width: fit-content !important;
-  margin: 30px 0 0 8px !important;
-  padding: 14px 36px !important;
-  font-size: 16px !important;
+  margin-left: -5 !important;
+  margin-right: auto !important;    /* Це гарантує, що її відштовхне вправо */
+  display: inline-block !important; /* Щоб нормально працювало text-align */
 }
 
 /* Фікс "злипання" коротких вкладок */
