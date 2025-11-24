@@ -556,13 +556,13 @@ body.mobile-version .tab {
 /* ЛІВА ПАНЕЛЬ */
 body.mobile-version .left-panel {
   width: 42% !important;
-  max-width: 340px !important;
+  max-width: 320px !important;
 }
 
 /* ПРАВА ПАНЕЛЬ — годинник і кнопки ще ближче до лівої */
 body.mobile-version .right-panel {
   width: 54% !important;
-  padding-left: -2px !important;   /* максимально близько */
+  padding-left: 0px !important;   /* максимально близько */
 }
 
 /* Годинник */
@@ -581,6 +581,8 @@ body.mobile-version #comboBubble {
   right: -6px !important;
   top: -18px !important;
 }
+body.mobile-version #comboCount { font-size: 26px !important; }
+body.mobile-version #comboText  { font-size: 9px !important; }
 
 /* +1 сек — зліва, точно як ти просив */
 body.mobile-version #clickCloud {
