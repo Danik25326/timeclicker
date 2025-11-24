@@ -357,21 +357,9 @@ function createSkinGrid(containerId, list, type) {
       (type === "handSkins" && s.id === currentHandSkin) ||
       (type === "effects" && s.id === currentEffect);
 
-    // 🔵 Якщо НЕ куплено, але грошей вистачає — підсвічуємо
-    if (!isOwned) {
-      el.style.opacity = "0.4";
-
-      if (score >= s.price) {
-        el.style.boxShadow = "0 0 15px #0ff";
-      }
-
-      el.innerHTML += `<br><small style="color:#ff00ff">${formatTime(s.price)}</small>`;
-      el.onclick = () => buySkin(type, s.id, s.price, s.name);
-
-    } else {
+    if (isOwned) {
       // Вже куплено
       el.classList.add("owned");
-
       if (isActive) el.classList.add("active");
 
       el.onclick = () => {
@@ -383,6 +371,18 @@ function createSkinGrid(containerId, list, type) {
         applyAllSkins();
         refreshAllSkinGrids();
       };
+    } else {
+      // Не куплено
+      el.style.opacity = "0.4";
+
+      // Підсвічування, якщо вистачає часу
+      if (score >= s.price) {
+        el.style.opacity = "1";
+        el.style.boxShadow = "0 0 15px #0ff";
+      }
+
+      el.innerHTML += `<br><small style="color:#ff00ff">${formatTime(s.price)}</small>`;
+      el.onclick = () => buySkin(type, s.id, s.price, s.name);
     }
 
     root.appendChild(el);
