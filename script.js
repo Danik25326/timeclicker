@@ -248,7 +248,7 @@ window.onload = function () {
     updateStats();
     updateAchievements();
   }
-// === НОВИЙ МАГАЗИН СКІНІВ — ВИПРАВЛЕНИЙ ===
+// === НОВИЙ МАГАЗИН СКІНІВ — ДИНАМІЧНЕ ПІДСВІЧУВАННЯ ===
 
 // Скіни стрілок
 const handSkins = [
@@ -298,24 +298,19 @@ let currentEffect = "red";
 
 // === Покупка — ВИПРАВЛЕНА ===
 function buySkin(type, id, price, name) {
-
-  // 🚫 Якщо вже куплено — не купуємо повторно!
   if (ownedSkins[type].includes(id)) {
     showToast("Цей скін уже куплено");
     return;
   }
 
-  // Перевірка часу
   if (score < price) {
     showToast("Не вистачає часу!");
     return;
   }
 
-  // Купівля
   score -= price;
   ownedSkins[type].push(id);
 
-  // Робимо його активним
   if (type === "shapes") currentShape = id;
   if (type === "clockSkins") currentClockSkin = id;
   if (type === "handSkins") currentHandSkin = id;
@@ -325,7 +320,6 @@ function buySkin(type, id, price, name) {
   updateScore();
   showToast(`Куплено: ${name} ✅`);
 
-  // Оновити вивід
   refreshAllSkinGrids();
 }
 
@@ -342,7 +336,6 @@ function applyAllSkins() {
 
 // === ГЕНЕРАЦІЯ КНОПОК ===
 function createSkinGrid(containerId, list, type) {
-  score = Number(score) || 0; // <-- ГАРАНТІЯ ЧИСЛА
   const root = document.getElementById(containerId);
   root.innerHTML = "";
 
@@ -359,10 +352,8 @@ function createSkinGrid(containerId, list, type) {
       (type === "effects" && s.id === currentEffect);
 
     if (isOwned) {
-      // Вже куплено
       el.classList.add("owned");
       if (isActive) el.classList.add("active");
-
       el.onclick = () => {
         if (type === "shapes") currentShape = s.id;
         if (type === "clockSkins") currentClockSkin = s.id;
@@ -375,8 +366,9 @@ function createSkinGrid(containerId, list, type) {
     } else {
       // Не куплено
       el.style.opacity = "0.4";
+      el.style.boxShadow = "";
 
-      // 🔹 Підсвічування, якщо вистачає часу
+      // Підсвічування, якщо вистачає часу
       if (score >= s.price) {
         el.style.opacity = "1";
         el.style.boxShadow = "0 0 15px #0ff";
@@ -390,7 +382,29 @@ function createSkinGrid(containerId, list, type) {
   });
 }
 
-// === ОНОВЛЕННЯ ВИВОДУ ВСІХ SKIN GRID ===
+// === Функція динамічного оновлення підсвічування ===
+function updateSkinHighlights() {
+  ["shapeSkins","clockSkins","handSkins","effectSkins"].forEach(containerId => {
+    const root = document.getElementById(containerId);
+    if (!root) return;
+
+    Array.from(root.children).forEach(el => {
+      const type = containerId.replace("Skins","");
+      const s = (type === "shape" ? shapes : type === "clock" ? clockSkins : type === "hand" ? handSkins : effects)
+                .find(item => item.name === el.textContent.trim());
+      if (!s || ownedSkins[type+"s"].includes(s.id)) return;
+
+      if (score >= s.price) {
+        el.style.opacity = "1";
+        el.style.boxShadow = "0 0 15px #0ff";
+      } else {
+        el.style.opacity = "0.4";
+        el.style.boxShadow = "";
+      }
+    });
+  });
+}
+
 function refreshAllSkinGrids() {
   createSkinGrid("shapeSkins", shapes, "shapes");
   createSkinGrid("clockSkins", clockSkins, "clockSkins");
@@ -401,6 +415,10 @@ function refreshAllSkinGrids() {
 // === ПЕРШИЙ ВИКЛИК ===
 refreshAllSkinGrids();
 applyAllSkins();
+
+// === ДИНАМІЧНЕ ПІДСВІЧУВАННЯ ===
+// Викликаємо кожну секунду або після кожного кроку
+setInterval(updateSkinHighlights, 1000);
 
   // === КОМБО ===
   function handleClickCombo() {
