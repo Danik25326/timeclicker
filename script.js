@@ -342,6 +342,7 @@ function applyAllSkins() {
 
 // === ГЕНЕРАЦІЯ КНОПОК ===
 function createSkinGrid(containerId, list, type) {
+  score = Number(score);
   const root = document.getElementById(containerId);
   root.innerHTML = "";
 
@@ -376,7 +377,7 @@ function createSkinGrid(containerId, list, type) {
       el.style.opacity = "0.4";
 
       // Підсвічування, якщо вистачає часу
-      if (score >= s.price) {
+      if (Number(score) >= s.price) {
         el.style.opacity = "1";
         el.style.boxShadow = "0 0 15px #0ff";
       }
