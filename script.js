@@ -416,7 +416,7 @@ function updateSkinHighlights() {
   });
 }
 
-// === Запускаємо динамічне оновлення кожну секунду ===
+// === Запускаємо динамічне оновлення кожні 20 разів за секунду ===
 setInterval(updateSkinHighlights, 50);
 
 // === Перший виклик ===
@@ -522,17 +522,79 @@ applyAllSkins();
     if (maxComboEver > maxCombo) maxCombo = maxComboEver;
   }, 1000);
 
-  // === ДОСЯГНЕННЯ ===
-  const achRoot = document.getElementById("achievements");
-  const achievementsList = [
-    {title:"Перший клік", desc:"Зробити перший клік", target:1, get:()=>clickCloudTotal},
-    {title:"100 сек", desc:"Витратити 100 сек", target:100, get:()=>score},
-    {title:"Перша покупка", desc:"Купити перший апгрейд", target:1, get:()=>totalUpgradesBought},
-    {title:"Авто запущено", desc:"Маєш autoRate > 0", target:1, get:()=>autoRate>0?1:0},
-    {title:"Комбо-майстер", desc:"Досягти комбо 10+", target:10, get:()=>maxComboEver},
-    {title:"Стильний", desc:"Змінити будь-який скін", target:1, get:()=>(currentShape!=="round"||currentClockSkin!=="neon-blue")?1:0},
-  ];
+// === ДОСЯГНЕННЯ ===
+const achRoot = document.getElementById("achievements");
+const achievementsList = [
+  { 
+    title: "Перший клік", 
+    desc: "Зробити перший клік", 
+    target: 1, 
+    get: () => clickCloudTotal 
+  },
+  { 
+    title: "100 сек", 
+    desc: "Витратити 100 сек", 
+    target: 100, 
+    get: () => score 
+  },
+  { 
+    title: "Перша покупка", 
+    desc: "Купити перший апгрейд", 
+    target: 1, 
+    get: () => totalUpgradesBought 
+  },
+  { 
+    title: "Авто запущено", 
+    desc: "Маєш autoRate > 0", 
+    target: 1, 
+    get: () => autoRate > 0 ? 1 : 0 
+  },
+  { 
+    title: "Комбо-майстер", 
+    desc: "Досягти комбо 10+", 
+    target: 10, 
+    get: () => maxComboEver 
+  },
 
+  // 🔽 НОВІ ДОСЯГНЕННЯ ПО СКІНАХ 🔽
+  {
+    title: "Майстер форм",
+    desc: "Володіти 3 різними формами годинника",
+    target: 3,
+    get: () => ownedSkins.shapes.length
+  },
+  {
+    title: "Господар рамок",
+    desc: "Володіти 3 різними кольорами рамки",
+    target: 3,
+    get: () => ownedSkins.clockSkins.length
+  },
+  {
+    title: "Колекціонер стрілок",
+    desc: "Володіти 3 різними скінами стрілок",
+    target: 3,
+    get: () => ownedSkins.handSkins.length
+  },
+  {
+    title: "Маг ефектів",
+    desc: "Володіти 3 різними ефектами кліку",
+    target: 3,
+    get: () => ownedSkins.effects.length
+  },
+
+  // Оновлене досягнення "Стильний"
+  { 
+    title: "Стильний", 
+    desc: "Змінити будь-який скін", 
+    target: 1, 
+    get: () => (
+      currentShape     !== "round"     ||
+      currentClockSkin !== "neon-blue" ||
+      currentHandSkin  !== "darkblue"  ||
+      currentEffect    !== "red"
+    ) ? 1 : 0
+  },
+];
   achievementsList.forEach(a => {
     const el = document.createElement("div");
     el.className = "achievement";
