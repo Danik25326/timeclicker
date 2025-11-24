@@ -523,22 +523,22 @@ body.eye-blink::before {
   box-shadow: 0 0 12px #00e0ff;
   border-color: #00e0ff;
 }
-/* ====== ФІНАЛЬНИЙ МОБІЛЬНИЙ CSS — ВСЕ ТОЧНО ПО ТВОЇХ ОСТАННІХ СЛОВАХ ====== */
+/* ====== ФІНАЛЬНИЙ МОБІЛЬНИЙ CSS — ВСЕ ЗБЕРЕЖЕНО + ВИПРАВЛЕНО ====== */
 body.mobile-version {
   padding: 0 4px;
 }
 
-/* Назва */
+/* Назва — відступ від верху, щоб вкладки не лізли */
 body.mobile-version .editable-title {
   font-size: 28px !important;
   left: 50% !important;
   transform: translateX(-50%) !important;
-  top: 8px !important;
+  top: 12px !important;     /* трохи нижче, щоб не лізли вкладки */
 }
 
-/* ВКЛАДКИ — 3+3 */
+/* ВКЛАДКИ — ідеальний відступ від назви */
 body.mobile-version .top-tabs {
-  top: 38px !important;
+  top: 48px !important;     /* підняті, але не лізуть на назву */
   left: 50% !important;
   transform: translateX(-50%);
   width: 96% !important;
@@ -553,16 +553,16 @@ body.mobile-version .tab {
   font-size: 13px !important;
 }
 
-/* ЛІВА ПАНЕЛЬ */
+/* Ліва панель */
 body.mobile-version .left-panel {
   width: 42% !important;
   max-width: 320px !important;
 }
 
-/* ПРАВА ПАНЕЛЬ — годинник і кнопки ще ближче до лівої */
+/* Права панель — годинник максимально близько до лівої */
 body.mobile-version .right-panel {
   width: 54% !important;
-  padding-left: -12px !important;   /* максимально близько */
+  padding-left: -12px !important;
 }
 
 /* Годинник */
@@ -574,7 +574,7 @@ body.mobile-version .hand.hour   { height: 50px !important; }
 body.mobile-version .hand.minute { height: 74px !important; }
 body.mobile-version .hand.second { height: 88px !important; }
 
-/* Комбо-бульбашка — ще менша */
+/* Комбо-бульбашка — маленька, праворуч зверху */
 body.mobile-version #comboBubble {
   width: 68px !important;
   height: 68px !important;
@@ -584,7 +584,7 @@ body.mobile-version #comboBubble {
 body.mobile-version #comboCount { font-size: 26px !important; }
 body.mobile-version #comboText  { font-size: 9px !important; }
 
-/* +1 сек — зліва, точно як ти просив */
+/* +1 сек — зліва, не залазить на годинник */
 body.mobile-version #clickCloud {
   left: -6px !important;
   right: auto !important;
@@ -595,8 +595,26 @@ body.mobile-version #clickCloud {
 }
 body.mobile-version #clickGain { font-size: 13px !important; }
 
-/* ====== ГОРИЗОНТАЛЬНИЙ СВАЙП СКІНІВ — ПРАЦЮЄ НА ВСІХ 4 КАТЕГОРІЯХ НАЗАВЖДИ ====== */
-body.mobile-version .skins-section > .skins-grid {   /* ← саме ця строчка — ключ! */
+/* Апгрейди і множники — горизонтальний свайп */
+body.mobile-version .upgrades-container,
+body.mobile-version #multipliers {
+  display: flex !important;
+  overflow-x: auto !important;
+  gap: 10px !important;
+  padding: 8px 6px 16px 6px !important;
+  -webkit-overflow-scrolling: touch;
+}
+body.mobile-version .upgrades-container::-webkit-scrollbar,
+body.mobile-version #multipliers::-webkit-scrollbar { display: none; }
+body.mobile-version .upgrade-btn,
+body.mobile-version .multiplier-btn {
+  min-width: 104px !important;
+  padding: 12px 6px !important;
+  font-size: 12.8px !important;
+}
+
+/* Скіни — горизонтальний свайп у всіх 4 категоріях */
+body.mobile-version .skins-section > .skins-grid {
   display: flex !important;
   overflow-x: auto !important;
   gap: 14px !important;
@@ -604,11 +622,8 @@ body.mobile-version .skins-section > .skins-grid {   /* ← саме ця стр
   -webkit-overflow-scrolling: touch;
   scroll-snap-type: x mandatory;
   scroll-behavior: smooth;
-  margin: 0 !important;
 }
-body.mobile-version .skins-section > .skins-grid::-webkit-scrollbar {
-  display: none !important;
-}
+body.mobile-version .skins-section > .skins-grid::-webkit-scrollbar { display: none; }
 body.mobile-version .skins-section > .skins-grid .skin {
   min-width: 96px !important;
   height: 96px !important;
@@ -619,55 +634,39 @@ body.mobile-version .skins-section > .skins-grid .skin {
   padding-top: 8px;
 }
 
-/* Заголовки у всіх вкладках — відступ зверху як у всіх */
+/* Заголовки у всіх вкладках — нормальний відступ */
 body.mobile-version .tab-body h3,
 body.mobile-version .skins-section h4 {
-  margin: 26px 0 14px 0 !important;
+  margin: 20px 0 14px 0 !important;
   text-align: center;
   font-size: 18px !important;
   color: #bfe9ff;
 }
 
-/* Кнопки музики — ще ближче */
-body.mobile-version .music-player {
-  gap: 6px !important;
-}
-body.mobile-version .music-switch {
-  width: 38px !important;
-  height: 38px !important;
-  font-size: 21px !important;
-}
-body.mobile-version .phonk-btn {
-  height: 38px !important;
-  padding: 0 18px !important;
-  font-size: 13px !important;
-}
+/* Кнопки музики */
+body.mobile-version .music-player { gap: 6px !important; }
+body.mobile-version .music-switch { width: 38px !important; height: 38px !important; font-size: 21px !important; }
+body.mobile-version .phonk-btn { height: 38px !important; padding: 0 18px !important; font-size: 13px !important; }
 
-/* Текст "Часу витрачено" — менший */
-body.mobile-version #score {
-  font-size: 13.5px !important;
-}
+/* Текст "Часу витрачено" */
+body.mobile-version #score { font-size: 13.5px !important; }
 
-/* ====== ВКЛАДКА "ДОСЯГНЕННЯ" — ТЕПЕР ВЕРТИКАЛЬНИЙ СПИСОК ЯК У МНОЖНИКІВ ====== */
+/* Досягнення — повертаємо звичайний вертикальний список (як було спочатку) */
 body.mobile-version .achievement {
-  display: flex !important;
-  justify-content: space-between !important;
-  align-items: center !important;
-  background: rgba(15, 23, 42, 0.8) !important;
+  display: block !important;
+  background: #0f1724 !important;
+  padding: 16px !important;
+  margin-bottom: 14px !important;
   border-radius: 12px !important;
-  padding: 12px 14px !important;
-  margin-bottom: 10px !important;
-  min-height: 68px !important;
-  font-size: 14px !important;
+  text-align: center !important;
 }
-
 body.mobile-version .ach-progress {
-  height: 6px !important;
-  border-radius: 3px !important;
+  height: 8px !important;
+  margin-top: 10px !important;
+  border-radius: 4px !important;
 }
-
 body.mobile-version .ach-state {
+  margin-top: 10px !important;
+  font-size: 15px !important;
   font-weight: 700 !important;
-  min-width: 70px !important;
-  text-align: right !important;
 }
