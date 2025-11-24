@@ -634,7 +634,7 @@ body.mobile-version .skin {
 /* Заголовки вкладок */
 body.mobile-version .tab-body h3,
 body.mobile-version .skins-section h4 {
-  margin: 30px 0 16px 0 !important;   /* повернули нормальний відступ */
+  margin: 38px !important;   /* повернули нормальний відступ */
   text-align: center;
   font-size: 18px !important;
   color: #bfe9ff;
@@ -691,24 +691,25 @@ body.mobile-version .ach-state {
   font-weight: 700 !important;
   color: #8df299 !important;
 }
-/* Кнопка «Повернути час назад» — точно під заголовком і по центру лівої панелі */
-body.mobile-version #tab-reverb h3 {
-  margin-bottom: 20px !important;   /* відступ від заголовка до кнопки */
-  text-align: center !important;
-}
-
+/* Кнопка «Повернути час назад» — МАКСИМАЛЬНО ВЛІВО, касання лівого краю */
 body.mobile-version #tab-reverb .reverb-btn {
   display: block !important;
   width: fit-content !important;
-  padding: 12px 32px !important;      /* менша ніж була */
-  font-size: 15.5px !important;
-  margin: 0 auto 0 15px !important;   /* трохи лівіше від центру */
+  margin: 30px 0 0 8px !important;     /* 8px від лівого краю — красиво */
+  padding: 14px 36px !important;
+  font-size: 16px !important;
   border-radius: 50px !important;
+}
+
+/* Заголовок — просто по центру, без зайвих відступів */
+body.mobile-version #tab-reverb h3 {
+  margin: 20px 0 10px 0 !important;
+  text-align: center !important;
 }
 /* Не даємо коротким вкладкам "злипатися" вгору — назва і вкладки завжди на місці */
 body.mobile-version #tab-upgrades,
 body.mobile-version #tab-multipliers,
 body.mobile-version #tab-reverb {
-  min-height: calc(100vh - 140px) !important;   /* завжди вища за екран 
-  padding-bottom: 80px !important;             запас знизу 
+  min-height: calc(100vh - 110px) !important;   /* завжди вища за екран */
+  padding-bottom: 100px !important;             
 }
