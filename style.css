@@ -715,3 +715,8 @@ body.mobile-version #tab-reverb {
   min-height: calc(100vh - 110px) !important;
   padding-bottom: 100px !important;
 }
+/* Фікс правильного обертання стрілок */
+body.mobile-version .hand {
+    transform-origin: bottom center !important;
+}
+
