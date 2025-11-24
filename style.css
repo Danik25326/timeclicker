@@ -719,27 +719,25 @@ body.mobile-version #tab-reverb {
 body.mobile-version .hand {
     transform-origin: bottom center !important;
 }
-/* Нормальний горизонтальний скрол для ВСІХ груп скінів */
 body.mobile-version #tab-skins .skins-grid {
     display: flex !important;
     flex-wrap: nowrap !important;
     overflow-x: auto !important;
     overflow-y: hidden !important;
     gap: 14px !important;
-    -webkit-overflow-scrolling: touch;
     scroll-snap-type: x mandatory;
-    padding-bottom: 16px !important;
+    -webkit-overflow-scrolling: touch;
+}
+
+body.mobile-version #tab-skins .skins-grid .skin {
+    flex: 0 0 auto !important;
+    min-width: 110px !important;
+    height: 110px !important;
+    scroll-snap-align: center;
 }
 
 body.mobile-version #tab-skins .skins-grid::-webkit-scrollbar {
     display: none;
 }
 
-/* Кожен айтем скіну у вигляді картки */
-body.mobile-version #tab-skins .skin {
-    flex: 0 0 auto !important;
-    min-width: 110px !important;
-    height: 110px !important;
-    scroll-snap-align: center;
-}
 
