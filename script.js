@@ -242,19 +242,18 @@ function addTime() {
   clickCloudTotal += finalGain;
   if (finalGain > maxPerClick) maxPerClick = finalGain;
 
-// === ОНОВЛЕННЯ БУЛЬБАШКИ: ТІЛЬКИ +СЕК І ДАТА ===
-clickGainEl.textContent = `+${formatTime(finalGain)}`;
+  // === +СЕК ЗВЕРХУ + ДАТА ЗНИЗУ — ВСЕ ПРАЦЮЄ ===
+  clickGainEl.textContent = `+${formatTime(finalGain)}`;
 
-// Оновлюємо дату (без слова "Витрачено")
-let dateEl = document.getElementById("clickCloudDate");
-if (!dateEl) {
-  dateEl = document.createElement("div");
-  dateEl.id = "clickCloudDate";
-  dateEl.style.cssText = "font-size:14px !important;color:#a8d8ff;margin-top:4px;font-weight:600;";
-  clickCloudEl.appendChild(dateEl);
-}
-const now = new Date();
-dateEl.textContent = `${String(now.getDate()).padStart(2,'0')}.${String(now.getMonth()+1).padStart(2,'0')}.${now.getFullYear()}`;
+  let dateEl = document.getElementById("clickCloudDate");
+  if (!dateEl) {
+    dateEl = document.createElement("div");
+    dateEl.id = "clickCloudDate";
+    dateEl.style.cssText = "font-size:14px !important;color:#a8d8ff;margin-top:4px;font-weight:600;";
+    clickCloudEl.appendChild(dateEl);
+  }
+  const now = new Date();
+  dateEl.textContent = `${String(now.getDate()).padStart(2,'0')}.${String(now.getMonth()+1).padStart(2,'0')}.${now.getFullYear()}`;
 
   showFloating(`+${formatTime(finalGain)}`);
   triggerClickEffect();
