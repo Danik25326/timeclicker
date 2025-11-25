@@ -128,8 +128,6 @@ window.onload=function(){
   setInterval(updateClockHands,50); updateClockHands();
 
   // reverb
-document.addEventListener("DOMContentLoaded",
-
     const rFull = document.getElementById("reverbFullScreen");
     const rClocks = document.getElementById("flyingClocks");
     const rBubbles = document.getElementById("statBubbles");
@@ -272,7 +270,6 @@ document.addEventListener("DOMContentLoaded",
         showToast("Зажми та тримай будь-де на екрані 10 секунд!", 10000);
         rFull.classList.remove("hidden");
     };
-})();
   // tabs
   q(".top-tabs .tab").forEach(btn=>btn.addEventListener("click",()=>{ q(".top-tabs .tab").forEach(b=>b.classList.remove("active")); q(".tab-page").forEach(p=>p.classList.remove("active")); btn.classList.add("active"); $(btn.dataset.tab).classList.add("active"); }));
 
