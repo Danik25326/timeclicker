@@ -118,11 +118,31 @@ document.getElementById('chooser').style.display='flex';
 </script>
 <script>
 document.addEventListener("DOMContentLoaded", function() {
-    const rFull = $("reverbFullScreen"),
-          rClocks = $("flyingClocks"),
-          rBubbles = $("statBubbles"),
-          rResult = $("reverbResult"),
-          rText = $("newMultiplierText");
+
+    // --------------------------
+    // РОБОЧИЙ showToast
+    // --------------------------
+    function showToast(text, duration = 3000) {
+        const box = document.createElement("div");
+        box.className = "toast";
+        box.textContent = text;
+        document.getElementById("toastContainer").appendChild(box);
+        setTimeout(() => box.classList.add("show"), 10);
+        setTimeout(() => {
+            box.classList.remove("show");
+            setTimeout(() => box.remove(), 300);
+        }, duration);
+    }
+
+    // --------------------------
+    // Беремо елементи без jQuery
+    // --------------------------
+    const rFull = document.getElementById("reverbFullScreen"),
+          rClocks = document.getElementById("flyingClocks"),
+          rBubbles = document.getElementById("statBubbles"),
+          rResult = document.getElementById("reverbResult"),
+          rText = document.getElementById("newMultiplierText"),
+          rBtn = document.getElementById("reverbBtn");
 
     let rInt, rBub, rHoldTimer, isHolding = false;
 
@@ -190,35 +210,42 @@ document.addEventListener("DOMContentLoaded", function() {
         prestigeMultiplier *= 1.2;
         totalReverbs++;
         score = clickPower = autoRate = totalUpgradesBought = maxPerClick = clickCloudTotal = maxAutoRate = maxCombo = maxComboEver = currentCombo = 0;
+
         upgrades.forEach((u, i) => {
             u.level = 0;
             buttons[i]?.classList.add("hidden");
             u.update();
         });
         buttons[0].classList.remove("hidden");
+
         const f = document.createElement("div");
         f.className = "white-flash";
         document.body.appendChild(f);
+
         setTimeout(() => {
             rText.textContent = `Новий множник: ${prestigeMultiplier.toFixed(2)}×`;
             rResult.classList.remove("hidden");
+
             const exit = e => {
-                if (e.target.closest("#reverbResult") || e.target === rFull) {
-                    rFull.classList.add("hidden");
-                    rResult.classList.add("hidden");
-                    f.remove();
-                    document.removeEventListener("click", exit);
-                    document.removeEventListener("touchstart", exit);
-                    updateScore();
-                    updateStats();
-                    updateAchievements();
-                }
+                rFull.classList.add("hidden");
+                rResult.classList.add("hidden");
+                f.remove();
+                document.removeEventListener("click", exit);
+                document.removeEventListener("touchstart", exit);
+                updateScore();
+                updateStats();
+                updateAchievements();
             };
+
             document.addEventListener("click", exit);
             document.addEventListener("touchstart", exit);
+
         }, 1600);
     }
 
+    // ---------------------
+    // Події
+    // ---------------------
     rFull.addEventListener("mousedown", startReverbHold);
     rFull.addEventListener("touchstart", startReverbHold);
     rFull.addEventListener("mouseup", cancelReverbHold);
@@ -226,7 +253,7 @@ document.addEventListener("DOMContentLoaded", function() {
     rFull.addEventListener("touchend", cancelReverbHold);
     rFull.addEventListener("touchcancel", cancelReverbHold);
 
-    $("reverbBtn").onclick = () => {
+    rBtn.onclick = () => {
         showToast("Зажми та тримай будь-де на екрані 10 секунд!", 10000);
         rFull.classList.remove("hidden");
     };
