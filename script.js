@@ -90,8 +90,30 @@ window.onload=function(){
 
   function buySkin(type,id,price,name){ if(ownedSkins[type].includes(id)){ showToast("Цей скін уже куплено"); return; } if(score<price){ showToast("Не вистачає часу!"); return; } score-=price; ownedSkins[type].push(id); if(type==="shapes") currentShape=id; if(type==="clockSkins") currentClockSkin=id; if(type==="handSkins") currentHandSkin=id; if(type==="effects") currentEffect=id; applyAllSkins(); updateScore(); updateStats(); updateAchievements(); showToast(`Куплено: ${name} ✅`); refreshAllSkinGrids(); }
 
-  function applyAllSkins(){ if(clockFace) clockFace.className="clock "+currentShape; const cs=clockSkins.find(s=>s.id===currentClockSkin); if(cs?.apply) cs.apply(); const hs=handSkins.find(s=>s.id===currentHandSkin); if(hs?.apply) hs.apply(); }
+function applyAllSkins(){
+    if(clockFace) {
+        clockFace.className = "clock " + currentShape;
+        
+        // Додаємо підсвітку, якщо хоч один скін НЕ дефолтний
+        const hasCustomSkin = 
+            currentShape !== "round" ||
+            currentClockSkin !== "neon-blue" ||
+            currentHandSkin !== "darkblue" ||
+            currentEffect !== "red";
 
+        if(hasCustomSkin) {
+            clockFace.classList.add("glowing");
+        } else {
+            clockFace.classList.remove("glowing");
+        }
+    }
+
+    const cs = clockSkins.find(s => s.id === currentClockSkin);
+    if(cs?.apply) cs.apply();
+
+    const hs = handSkins.find(s => s.id === currentHandSkin);
+    if(hs?.apply) hs.apply();
+}
   function createSkinGrid(containerId,list,type){ const root=$(containerId); if(!root) return; root.innerHTML=""; list.forEach(s=>{ const el=document.createElement("div"); el.className="skin"; el.textContent=s.name; const isOwned=ownedSkins[type].includes(s.id); const isActive=(type==="shapes"&&s.id===currentShape)||(type==="clockSkins"&&s.id===currentClockSkin)||(type==="handSkins"&&s.id===currentHandSkin)||(type==="effects"&&s.id===currentEffect); if(isOwned){ el.classList.add("owned"); if(isActive) el.classList.add("active"); el.onclick=()=>{ if(type==="shapes") currentShape=s.id; if(type==="clockSkins") currentClockSkin=s.id; if(type==="handSkins") currentHandSkin=s.id; if(type==="effects") currentEffect=s.id; applyAllSkins(); refreshAllSkinGrids(); }; } else { el.style.opacity="0.4"; if(score>=s.price){ el.style.opacity="1"; el.style.boxShadow="0 0 15px #0ff"; } el.innerHTML+=`<br><small style="color:#ff00ff">${formatTime(s.price)}</small>`; el.onclick=()=>buySkin(type,s.id,s.price,s.name); } root.appendChild(el); }); }
 
   function refreshAllSkinGrids(){ createSkinGrid("shapeSkins",shapes,"shapes"); createSkinGrid("clockSkins",clockSkins,"clockSkins"); createSkinGrid("handSkins",handSkins,"handSkins"); createSkinGrid("effectSkins",effects,"effects"); }
