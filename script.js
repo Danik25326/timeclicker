@@ -240,7 +240,16 @@ window.onload = function () {
     score += finalGain;
     clickCloudTotal += finalGain;
     if (finalGain > maxPerClick) maxPerClick = finalGain;
-    clickGainEl.textContent = `+${formatTime(finalGain)}`;
+
+    // === НОВА БУЛЬБАШКА: +сек зверху, дата знизу ===
+    const now = new Date();
+    const dateStr = `${String(now.getDate()).padStart(2, '0')}.${String(now.getMonth() + 1).padStart(2, '0')}.${now.getFullYear()}`;
+
+    clickCloudEl.innerHTML = `
+      <div id="clickGain" style="font-size:15px; color:#ff006e; font-weight:700;">+${formatTime(finalGain)}</div>
+      <div style="font-size:11.5px; color:#a8d8ff; margin-top:3px;">${dateStr}</div>
+    `;
+
     showFloating(`+${formatTime(finalGain)}`);
     triggerClickEffect();
     handleClickCombo();
