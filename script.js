@@ -1,5 +1,3 @@
-const $ = (id) => document.getElementById(id);
-const q = (sel, root=document) => Array.from(root.querySelectorAll(sel));
 window.onload=function(){
   const $=(id)=>document.getElementById(id);
   const q=(sel,root=document)=>Array.from(root.querySelectorAll(sel));
@@ -128,148 +126,11 @@ window.onload=function(){
   setInterval(updateClockHands,50); updateClockHands();
 
   // reverb
-    const rFull = document.getElementById("reverbFullScreen");
-    const rClocks = document.getElementById("flyingClocks");
-    const rBubbles = document.getElementById("statBubbles");
-    const rResult = document.getElementById("reverbResult");
-    const rText = document.getElementById("newMultiplierText");
-    const btnReverb = document.getElementById("reverbBtn");
-
-    let rInt, rBub, rHoldTimer, isHolding = false;
-
-    function createFlyingClock() {
-        const c = document.createElement("div");
-        c.className = "clone";
-        let s = 80 + Math.random() * 100;
-        c.style.width = c.style.height = s + "px";
-        c.style.left = Math.random() * 100 + "%";
-        c.style.top = Math.random() * 100 + "%";
-        c.style.animationDuration = 4 + Math.random() * 6 + "s";
-        c.style.animationDelay = Math.random() * 0.5 + "s";
-        if (Math.random() > 0.5) c.style.transform = "scaleX(-1)";
-        rClocks.appendChild(c);
-        setTimeout(() => c.remove(), 10000);
-    }
-
-    function createStatBubble() {
-        const b = document.createElement("div");
-        b.className = "stat-bubble";
-        const stats = [
-            () => `Максимальне комбо: ${maxComboEver}`,
-            () => `Витрачено часу: ${formatTime(clickCloudTotal)}`,
-            () => `Ревербів: ${totalReverbs}`,
-            () => `Всього скінів: ${
-                ownedSkins.shapes.length +
-                ownedSkins.clockSkins.length +
-                ownedSkins.handSkins.length +
-                ownedSkins.effects.length
-            }`,
-            () => `Авточас/сек: ${formatTime(autoRate)}`,
-            () => `Макс за клік: ${formatTime(maxPerClick)}`,
-            () => `Досягнень: ${achievementsList.filter(a => a.done).length}/${achievementsList.length}`
-        ];
-        b.textContent = stats[Math.floor(Math.random() * stats.length)]();
-        b.style.left = 10 + Math.random() * 80 + "%";
-        b.style.top = 20 + Math.random() * 60 + "%";
-        rBubbles.appendChild(b);
-        setTimeout(() => b.remove(), 4000);
-    }
-
-    function startReverbHold() {
-        if (isHolding) return;
-        isHolding = true;
-        rFull.classList.remove("hidden");
-        rFull.classList.add("active");
-
-        rClocks.innerHTML = "";
-        rBubbles.innerHTML = "";
-
-        rInt = setInterval(createFlyingClock, 300);
-        rBub = setInterval(createStatBubble, 1200);
-
-        rHoldTimer = setTimeout(() => {
-            completeReverb();
-            isHolding = false;
-        }, 10000);
-    }
-
-    function cancelReverbHold() {
-        if (!isHolding) return;
-        isHolding = false;
-        clearTimeout(rHoldTimer);
-        stopReverb();
-    }
-
-    function stopReverb() {
-        rFull.classList.add("hidden");
-        rFull.classList.remove("active");
-        clearInterval(rInt);
-        clearInterval(rBub);
-        rClocks.innerHTML = "";
-        rBubbles.innerHTML = "";
-    }
-
-    function completeReverb() {
-        stopReverb();
-
-        prestigeMultiplier *= 1.2;
-        totalReverbs++;
-
-        score = clickPower = autoRate = totalUpgradesBought =
-        maxPerClick = clickCloudTotal = maxAutoRate =
-        maxCombo = maxComboEver = currentCombo = 0;
-
-        upgrades.forEach((u, i) => {
-            u.level = 0;
-            buttons[i]?.classList.add("hidden");
-            u.update();
-        });
-
-        buttons[0].classList.remove("hidden");
-
-        const flash = document.createElement("div");
-        flash.className = "white-flash";
-        document.body.appendChild(flash);
-
-        setTimeout(() => {
-            rText.textContent = `Новий множник: ${prestigeMultiplier.toFixed(2)}×`;
-            rResult.classList.remove("hidden");
-
-            const exit = e => {
-                if (e.target.closest("#reverbResult") || e.target === rFull) {
-                    rFull.classList.add("hidden");
-                    rResult.classList.add("hidden");
-                    flash.remove();
-                    document.removeEventListener("click", exit);
-                    document.removeEventListener("touchstart", exit);
-                    updateScore();
-                    updateStats();
-                    updateAchievements();
-                }
-            };
-
-            document.addEventListener("click", exit);
-            document.addEventListener("touchstart", exit);
-
-        }, 1600);
-    }
-
-    // -------------------
-    // EVENTS (Одна секція)
-    // -------------------
-
-    rFull.addEventListener("mousedown", startReverbHold);
-    rFull.addEventListener("touchstart", startReverbHold);
-
-    rFull.addEventListener("mouseup", cancelReverbHold);
-    rFull.addEventListener("mouseleave", cancelReverbHold);
-    rFull.addEventListener("touchend", cancelReverbHold);
-    rFull.addEventListener("touchcancel", cancelReverbHold);
-
-    btnReverb.onclick = () => {
-        showToast("Зажми та тримай будь-де на екрані 10 секунд!", 10000);
-        rFull.classList.remove("hidden");
-    };
+reverbBtn.addEventListener("click",()=>{if(!confirm("Ти впевнений, що хочеш повернути час назад?"))return;reverbOverlay.classList.remove("hidden");timeTunnel.classList.add("active");reverbHint.style.opacity="1";isReverbActive=true;setTimeout(()=>reverbHint.style.opacity="0",3000)});
+const startReverbHold=()=>{if(!isReverbActive)return;reverbHint.style.opacity="0";reverbClock.classList.add("reverb-mode");timeTunnel.classList.add("intense");q("#reverbClock .hand").forEach(h=>{const d=0.8+Math.random()*1.2,t=Math.random()>0.5?1:-1,r=15+Math.random()*25;h.style.animation=`chaosSpin ${d}s linear infinite`;h.style.setProperty("--rand",t*r*360+"deg")});reverbHoldTimeout=setTimeout(completeReverb,10000)};
+const stopReverbHold=()=>{clearTimeout(reverbHoldTimeout);reverbClock.classList.remove("reverb-mode");timeTunnel.classList.remove("intense");q("#reverbClock .hand").forEach(h=>h.style.animation="");reverbClock.style.borderColor="#ff00ff"};
+reverbClock.addEventListener("mousedown",startReverbHold);reverbClock.addEventListener("touchstart",e=>{e.preventDefault();startReverbHold()});reverbClock.addEventListener("mouseup",stopReverbHold);reverbClock.addEventListener("mouseleave",stopReverbHold);reverbClock.addEventListener("touchend",stopReverbHold);
+function completeReverb(){stopReverbHold();prestigeMultiplier*=1.2;totalReverbs++;score=clickPower=autoRate=totalUpgradesBought=maxPerClick=clickCloudTotal=currentCombo=maxCombo=maxAutoRate=maxComboEver=0;upgrades.forEach((u,i)=>{u.level=0;buttons[i]?.classList.add("hidden");u.update()});buttons[0].classList.remove("hidden");timeTunnel.classList.add("reverb-complete");setTimeout(()=>{alert(`Перезапуск завершено! Поточний множник: ${prestigeMultiplier.toFixed(2)}×`);reverbOverlay.classList.add("hidden");timeTunnel.classList.remove("active","intense","reverb-complete");isReverbActive=false},1500);updateScore();updateStats();updateAchievements()}
   // tabs
   q(".top-tabs .tab").forEach(btn=>btn.addEventListener("click",()=>{ q(".top-tabs .tab").forEach(b=>b.classList.remove("active")); q(".tab-page").forEach(p=>p.classList.remove("active")); btn.classList.add("active"); $(btn.dataset.tab).classList.add("active"); }));
 
