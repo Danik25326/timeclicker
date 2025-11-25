@@ -98,6 +98,8 @@
       <audio id="player" preload="auto"></audio>
     </div>
   </div>
+  <div id="toastContainer"></div>
+</div>
     <!-- Новый реверб оверлей -->
 <div id="reverbFullScreen" class="hidden">
   <div id="timeTunnelBG"></div>
@@ -109,9 +111,6 @@
     <p class="clickToContinue">Натисни будь-де, щоб продовжити</p>
   </div>
 </div>
-  <div id="toastContainer"></div>
-</div>
-
 <script src="script.js?v=16"></script>
 <script>
 function startGame(v){document.getElementById('chooser').remove();document.getElementById('game').style.display='';if(v==='mobile')document.body.classList.add('mobile-version')}
