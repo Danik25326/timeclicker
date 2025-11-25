@@ -113,5 +113,16 @@
 function startGame(v){document.getElementById('chooser').remove();document.getElementById('game').style.display='';if(v==='mobile')document.body.classList.add('mobile-version')}
 document.getElementById('chooser').style.display='flex';
 </script>
+  <!-- Новый реверб оверлей -->
+<div id="reverbFullScreen" class="hidden">
+  <div id="timeTunnelBG"></div>
+  <div id="flyingClocks"></div>
+  <div id="statBubbles"></div>
+  <div id="reverbResult" class="hidden">
+    <h1>Перезапуск завершено!</h1>
+    <p id="newMultiplierText">Новий множник: 2.40×</p>
+    <p class="clickToContinue">Натисни будь-де, щоб продовжити</p>
+  </div>
+</div>
 </body>
 </html>
