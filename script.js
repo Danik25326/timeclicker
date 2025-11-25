@@ -1,3 +1,5 @@
+const $ = (id) => document.getElementById(id);
+const q = (sel, root=document) => Array.from(root.querySelectorAll(sel));
 window.onload=function(){
   const $=(id)=>document.getElementById(id);
   const q=(sel,root=document)=>Array.from(root.querySelectorAll(sel));
