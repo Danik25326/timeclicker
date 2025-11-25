@@ -192,7 +192,7 @@ body.mobile-version .clock{width:218px;height:218px}
 body.mobile-version .hand.hour{height:50px}
 body.mobile-version .hand.minute{height:74px}
 body.mobile-version .hand.second{height:88px}
-body.mobile-version #comboBubble{width:68px;height:68px;right:-6px;top:-18px}
+body.mobile-version #comboBubble{width:68px;height:68px;right:-8px;top:-18px}
 body.mobile-version #comboCount{font-size:26px}
 body.mobile-version #comboText{font-size:9px}
 body.mobile-version #clickCloud{left:-8px;top:6px;width:88px;padding:5px 8px;font-size:11px}
