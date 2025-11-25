@@ -126,13 +126,16 @@ window.onload=function(){
   setInterval(updateClockHands,50); updateClockHands();
 
   // reverb
-const rFull=$("reverbFullScreen"),rBG=$("timeTunnelBG"),rClocks=$("flyingClocks"),rBubbles=$("statBubbles"),rResult=$("reverbResult"),rText=$("newMultiplierText");
+const rFull=$("reverbFullScreen"),rClocks=$("flyingClocks"),rBubbles=$("statBubbles"),rResult=$("reverbResult"),rText=$("newMultiplierText");
 let rInt,rBub,rTimer=null;
+function createFlyingClock(){const c=document.createElement("div");c.className="clone";let s=80+Math.random()*100;c.style.width=c.style.height=s+"px";c.style.left=Math.random()*100+"%";c.style.top=Math.random()*100+"%";c.style.animationDuration=4+Math.random()*6+"s";c.style.animationDelay=Math.random()*0.5+"s";if(Math.random()>0.5)c.style.transform="scaleX(-1)";rClocks.appendChild(c);setTimeout(()=>c.remove(),10000)}
+function createStatBubble(){if(!rFull.classList.contains("active"))return;const b=document.createElement("div");b.className="stat-bubble";const stats=[()=>`Максимальне комбо: ${maxComboEver}`,()=>`Витрачено часу: ${formatTime(clickCloudTotal)}`,()=>`Ревербів: ${totalReverbs}`,()=>`Всього скінів: ${ownedSkins.shapes.length+ownedSkins.clockSkins.length+ownedSkins.handSkins.length+ownedSkins.effects.length}`,()=>`Авточас/сек: ${formatTime(autoRate)}`,()=>`Макс за клік: ${formatTime(maxPerClick)}`,()=>`Досягнень: ${achievementsList.filter(a=>a.done).length}/${achievementsList.length}`];b.textContent=stats[Math.floor(Math.random()*stats.length)]();b.style.left=10+Math.random()*80+"%";b.style.top=20+Math.random()*60+"%";rBubbles.appendChild(b);setTimeout(()=>b.remove(),4000)}
 function startHold(){if(rTimer)return;rFull.classList.add("active");rClocks.innerHTML=rBubbles.innerHTML="";rInt=setInterval(createFlyingClock,300);rBub=setInterval(createStatBubble,1200);showToast("Зажми та тримай годинник 10 секунд!",10000);rTimer=setTimeout(completeReverb,10000)}
 function stopHold(){if(!rTimer)return;clearTimeout(rTimer);rTimer=null;clearInterval(rInt);clearInterval(rBub);rFull.classList.remove("active")}
 function completeReverb(){stopHold();prestigeMultiplier*=1.2;totalReverbs++;score=clickPower=autoRate=totalUpgradesBought=maxPerClick=clickCloudTotal=maxAutoRate=maxCombo=maxComboEver=currentCombo=0;upgrades.forEach((u,i)=>{u.level=0;buttons[i]?.classList.add("hidden");u.update()});buttons[0].classList.remove("hidden");const f=document.createElement("div");f.className="white-flash";document.body.appendChild(f);setTimeout(()=>{rText.textContent=`Новий множник: ${prestigeMultiplier.toFixed(2)}×`;rResult.classList.remove("hidden");const exit=()=>{rFull.classList.remove("active");rResult.classList.add("hidden");f.remove();document.removeEventListener("click",exit);document.removeEventListener("touchstart",exit);updateScore();updateStats();updateAchievements()};document.addEventListener("click",exit);document.addEventListener("touchstart",exit)},1600)}
 reverbBtn.onclick=()=>confirm("Ти впевнений, що хочеш повернути час назад?")&&startHold();
-document.addEventListener("mouseup",stopHold);document.addEventListener("touchend",stopHold);  // tabs
+document.addEventListener("mouseup",stopHold);document.addEventListener("touchend",stopHold);
+  // tabs
   q(".top-tabs .tab").forEach(btn=>btn.addEventListener("click",()=>{ q(".top-tabs .tab").forEach(b=>b.classList.remove("active")); q(".tab-page").forEach(p=>p.classList.remove("active")); btn.classList.add("active"); $(btn.dataset.tab).classList.add("active"); }));
 
   // title secret
