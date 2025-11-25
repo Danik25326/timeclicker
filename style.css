@@ -224,8 +224,8 @@ body.eye-blink::before{content:"";position:fixed;inset:0;background:#000;z-index
 .music-switch{background:linear-gradient(90deg,#ec4899,#f43f5e)!important;font-size:24px!important;padding:14px!important}
 
 /* === НОВЫЙ КРУТОЙ РЕВЕРБ === */
-#reverbFullScreen{position:fixed;inset:0;background:#000;z-index:999999;display:flex;align-items:center;justify-content:center;overflow:hidden;opacity:0;pointer-events:none;transition:opacity .4s}
-#reverbFullScreen.active{opacity:1;pointer-events:all}
+#reverbFullScreen{position:fixed;inset:0;background:#000;z-index:999999;display:none; align-items:center;justify-content:center;overflow:hidden;opacity:0;pointer-events:none;transition:opacity .4s}
+#reverbFullScreen.active{display:flex; opacity:1;pointer-events:all}
 #timeTunnelBG{position:absolute;inset:0;background:repeating-conical-gradient(from 0deg at 50% 50%,#8b5cf6 0deg,#ec4899 15deg,#ff006e 30deg,transparent 31deg);animation:tunnelSpin 8s linear infinite;opacity:.8}
 @keyframes tunnelSpin{from{transform:rotate(0deg) scale(1)}to{transform:rotate(360deg) scale(3)}}
 #flyingClocks .clone{position:absolute;width:120px;height:120px;border:8px solid #ff00ff;border-radius:50%;box-shadow:0 0 60px #ff00ff;background:rgba(0,0,0,.4);animation:flyClock linear infinite}
