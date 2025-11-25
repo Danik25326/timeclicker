@@ -96,11 +96,8 @@ window.onload=function(){
 
   function refreshAllSkinGrids(){ createSkinGrid("shapeSkins",shapes,"shapes"); createSkinGrid("clockSkins",clockSkins,"clockSkins"); createSkinGrid("handSkins",handSkins,"handSkins"); createSkinGrid("effectSkins",effects,"effects"); }
   refreshAllSkinGrids(); applyAllSkins();
+  function handleClickCombo(){const COMBO_BREAK_TIME=300;const now=Date.now();if(now-lastClickTime<MAX_CLICK_INTERVAL)currentCombo++;else currentCombo=1;lastClickTime=now;if(currentCombo>maxComboEver)maxComboEver=currentCombo;if(currentCombo>=COMBO_THRESHOLD){comboCount.textContent=currentCombo;comboBubble.classList.add("show");}clearTimeout(comboTimeout);comboTimeout=setTimeout(()=>{if(currentCombo>=COMBO_THRESHOLD){comboBubble.classList.add("burst");showToast(`Комбо ×${currentCombo}! 🔥`);setTimeout(()=>comboBubble.classList.remove("show","burst"),700);}currentCombo=0;},COMBO_BREAK_TIME);}
 
-  // combo
-  function handleClickCombo(){ const now=Date.now(); if(now-lastClickTime<MAX_CLICK_INTERVAL) currentCombo++; else currentCombo=1; lastClickTime=now; if(currentCombo>maxComboEver) maxComboEver=currentCombo; if(currentCombo>=COMBO_THRESHOLD){ comboCount.textContent=currentCombo; comboBubble.classList.add("show"); } clearTimeout(comboTimeout); comboTimeout=setTimeout(()=>{ if(currentCombo>=COMBO_THRESHOLD){ comboBubble.classList.add("burst"); showToast(`Комбо ×${currentCombo}! 🔥`); setTimeout(()=>comboBubble.classList.remove("show","burst"),700); } currentCombo=0; },600); }
-
-  // toast
   function showToast(text){ const t=document.createElement("div"); t.className="toast"; t.textContent=text; t.style.fontSize="18px"; t.style.padding="22px 48px"; toastContainer.appendChild(t); setTimeout(()=>t.remove(),10000); }
 
   // click effect
