@@ -244,17 +244,6 @@ function addTime() {
 
   // === ТІЛЬКИ +СЕК І ДАТА — НІЯКОГО "ВИТРАЧЕНО" ===
   clickGainEl.textContent = `+${formatTime(finalGain)}`;
-
-  let dateEl = document.getElementById("clickCloudDate");
-  if (!dateEl) {
-    dateEl = document.createElement("div");
-    dateEl.id = "clickCloudDate";
-    dateEl.style.cssText = "font-size:14px !important;color:#a8d8ff;margin-top:4px;font-weight:600;";
-    clickCloudEl.appendChild(dateEl);
-  }
-  const now = new Date();
-  dateEl.textContent = `${String(now.getDate()).padStart(2,'0')}.${String(now.getMonth()+1).padStart(2,'0')}.${now.getFullYear()}`;
-
   showFloating(`+${formatTime(finalGain)}`);
   triggerClickEffect();
   handleClickCombo();
