@@ -451,7 +451,7 @@ applyAllSkins();
         setTimeout(() => comboBubble.classList.remove("show","burst"), 700);
       }
       currentCombo = 0;
-    }, 600);
+    }, 300);
   }
 
   // === ТОАСТ ===
@@ -509,7 +509,7 @@ applyAllSkins();
     virtualTimeEl.textContent = formatTime(score);
     totalUpgradesEl.textContent = totalUpgradesBought;
     maxPerClickEl.textContent = formatTime(maxPerClick);
-    prestigeMultEl.textContent = prestigeMultiplier.toFixed(2) + "×";
+    prestigeMultEl.textContent = prestigeMultiplier.toFixed(2);
 
     document.getElementById("maxAutoRate").textContent = formatTime(autoRate);
     document.getElementById("maxCombo").textContent = maxComboEver;
