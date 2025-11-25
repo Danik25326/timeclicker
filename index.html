@@ -2,114 +2,204 @@
 <html lang="uk">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>TimesClicker⏰</title>
+
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css?v=16">
+
 <style>
-#chooser{position:fixed;inset:0;background:radial-gradient(circle at center,#0b1220,#050810);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:50px;z-index:999999;color:#fff;font-family:'Poppins',sans-serif;text-align:center}
-#chooser h1{font-size:52px;text-shadow:0 0 40px #0ea5e9;margin:0}
-.choose-btn{padding:22px 70px;font-size:26px;background:linear-gradient(90deg,#0ea5e9,#3b82f6);border:none;border-radius:50px;color:#fff;cursor:pointer;box-shadow:0 0 50px #0ea5e9;transition:all .3s;font-weight:700}
-.choose-btn:hover{transform:scale(1.12);box-shadow:0 0 80px #0ea5e9}
-@media (max-width:768px){#chooser h1{font-size:38px}.choose-btn{font-size:22px;padding:18px 50px}}
+    #chooser {
+        position: fixed; inset: 0;
+        background: radial-gradient(circle at center,#0b1220,#050810);
+        display: flex; flex-direction: column;
+        align-items: center; justify-content: center;
+        gap: 50px; z-index: 999999;
+        color: #fff; font-family: 'Poppins', sans-serif;
+        text-align: center;
+    }
+    #chooser h1 {
+        font-size: 52px; margin: 0;
+        text-shadow: 0 0 40px #0ea5e9;
+    }
+    .choose-btn {
+        padding: 22px 70px; font-size: 26px;
+        background: linear-gradient(90deg,#0ea5e9,#3b82f6);
+        border: none; border-radius: 50px;
+        color: #fff; cursor: pointer;
+        box-shadow: 0 0 50px #0ea5e9;
+        transition: .3s; font-weight: 700;
+    }
+    .choose-btn:hover {
+        transform: scale(1.12);
+        box-shadow: 0 0 80px #0ea5e9;
+    }
+    @media (max-width:768px) {
+        #chooser h1 { font-size: 38px; }
+        .choose-btn { font-size: 22px; padding: 18px 50px; }
+    }
 </style>
 </head>
+
 <body>
+
+<!-- Екран вибору -->
 <div id="chooser">
-  <h1>Times Clicker</h1>
-  <button class="choose-btn" onclick="startGame('pc')">ПК-версія</button>
-  <button class="choose-btn" onclick="startGame('mobile')">Мобільна версія</button>
+    <h1>Times Clicker</h1>
+    <button class="choose-btn" onclick="startGame('pc')">ПК-версія</button>
+    <button class="choose-btn" onclick="startGame('mobile')">Мобільна версія</button>
 </div>
 
+<!-- Ігровий контент -->
 <div id="game" style="display:none;">
-  <div id="worldTitle" class="editable-title" contenteditable="true">Times Clicker</div>
-  <div class="top-tabs">
-    <button class="tab active" data-tab="tab-upgrades">Апгрейди</button>
-    <button class="tab" data-tab="tab-skins">Скіни</button>
-    <button class="tab" data-tab="tab-stats">Статистика</button>
-    <button class="tab" data-tab="tab-achievements">Досягнення</button>
-    <button class="tab" data-tab="tab-reverb">Перезапуск</button>
-    <button class="tab" data-tab="tab-multipliers">Множники</button>
-  </div>
 
-  <div class="container">
-    <div class="left-panel">
-      <div class="tab-body">
-        <div id="tab-upgrades" class="tab-page active">
-          <h3>Апгрейди</h3><div id="upgrades" class="upgrades-container"></div>
-        </div>
-        <div id="tab-skins" class="tab-page">
-          <h3>Скіни</h3>
-          <div class="skins-section">
-            <h4>Форма годинника</h4><div class="skins-grid" id="shapeSkins"></div>
-            <h4>Колір годинника</h4><div class="skins-grid" id="clockSkins"></div>
-            <h4>Стрілки</h4><div class="skins-grid" id="handSkins"></div>
-            <h4>Ефект кліку</h4><div class="skins-grid" id="effectSkins"></div>
-          </div>
-        </div>
-        <div id="tab-stats" class="tab-page">
-          <h3>Статистика</h3>
-          <ul class="stats-list">
-            <li>Часу витрачено: <span id="cloudTotal">0 сек</span></li>
-            <li>Реальний час у сесії: <span id="realTimePlayed">0 сек</span></li>
-            <li>Віртуально витрачено: <span id="virtualTime">0 сек</span></li>
-            <li>Куплено апгрейдів: <span id="totalUpgrades">0</span></li>
-            <li>Найбільше за клік: <span id="maxPerClick">0 сек</span></li>
-            <li>Найбільше за авто/сек: <span id="maxAutoRate">0 сек</span></li>
-            <li>Найдовше комбо: <span id="maxCombo">0</span> кліків</li>
-            <li>Перезапусків зроблено: <span id="totalReverbs">0</span></li>
-            <li>Поточний множник: <span id="prestigeMult">1.00</span>×</li>
-            <li class="stats-separator">Досягнення: <span id="achievedCount">0</span> / <span id="totalAchievements">6</span></li>
-            <li class="stats-separator">Зібрано скінів:</li>
-            <li>• Форми годинника: <span id="shapeSkinsCount">1</span>/4</li>
-            <li>• Кольори годинника: <span id="clockSkinsCount">1</span>/4</li>
-            <li>• Стрілки: <span id="handSkinsCount">1</span>/4</li>
-            <li>• Ефекти кліку: <span id="effectSkinsCount">1</span>/5</li>
-            <li>Всього скінів: <span id="totalSkins">4</span>/17</li>
-          </ul>
-        </div>
-        <div id="tab-achievements" class="tab-page"><h3>Досягнення</h3><div id="achievements" class="achievements-grid"></div></div>
-        <div id="tab-reverb" class="tab-page"><h3>Перезапуск</h3>
-          <p id="reverbDesc">Повертаючи час назад, ти отримаєш множник <span id="nextMultiplier">1.20</span>× до всіх прибутків.</p>
-          <button id="reverbBtn" class="reverb-btn">Повернути час назад</button>
-        </div>
-        <div id="tab-multipliers" class="tab-page"><h3>Множники кліку</h3><div id="multipliers" class="upgrades-container"></div></div>
-      </div>
+    <div id="worldTitle" class="editable-title" contenteditable="true">Times Clicker</div>
+
+    <div class="top-tabs">
+        <button class="tab active" data-tab="tab-upgrades">Апгрейди</button>
+        <button class="tab" data-tab="tab-skins">Скіни</button>
+        <button class="tab" data-tab="tab-stats">Статистика</button>
+        <button class="tab" data-tab="tab-achievements">Досягнення</button>
+        <button class="tab" data-tab="tab-reverb">Перезапуск</button>
+        <button class="tab" data-tab="tab-multipliers">Множники</button>
     </div>
-    <div id="reverbClock" class="clock round">
-  <div class="hand hour"></div>
-  <div class="hand minute"></div>
-  <div class="hand second"></div>
-  <div class="center-dot"></div>
+
+    <div class="container">
+        <div class="left-panel">
+            <div class="tab-body">
+
+                <!-- Апгрейди -->
+                <div id="tab-upgrades" class="tab-page active">
+                    <h3>Апгрейди</h3>
+                    <div id="upgrades" class="upgrades-container"></div>
+                </div>
+
+                <!-- Скіни -->
+                <div id="tab-skins" class="tab-page">
+                    <h3>Скіни</h3>
+                    <div class="skins-section">
+                        <h4>Форма годинника</h4>
+                        <div class="skins-grid" id="shapeSkins"></div>
+
+                        <h4>Колір годинника</h4>
+                        <div class="skins-grid" id="clockSkins"></div>
+
+                        <h4>Стрілки</h4>
+                        <div class="skins-grid" id="handSkins"></div>
+
+                        <h4>Ефект кліку</h4>
+                        <div class="skins-grid" id="effectSkins"></div>
+                    </div>
+                </div>
+
+                <!-- Статистика -->
+                <div id="tab-stats" class="tab-page">
+                    <h3>Статистика</h3>
+                    <ul class="stats-list">
+                        <li>Реальний час у сесії: <span id="realTimePlayed">0 сек</span></li>
+                        <li>Віртуально витрачено: <span id="virtualTime">0 сек</span></li>
+                        <li>Куплено апгрейдів: <span id="totalUpgrades">0</span></li>
+                        <li>Найбільше за клік: <span id="maxPerClick">0 сек</span></li>
+                        <li>Найбільше авто/сек: <span id="maxAutoRate">0 сек</span></li>
+                        <li>Найдовше комбо: <span id="maxCombo">0</span></li>
+                        <li>Перезапусків: <span id="totalReverbs">0</span></li>
+                        <li>Поточний множник: <span id="prestigeMult">1.00</span>×</li>
+
+                        <li class="stats-separator">Досягнення: <span id="achievedCount">0</span> / <span id="totalAchievements">6</span></li>
+
+                        <li class="stats-separator">Зібрано скінів:</li>
+                        <li>• Форми: <span id="shapeSkinsCount">1</span>/4</li>
+                        <li>• Кольори: <span id="clockSkinsCount">1</span>/4</li>
+                        <li>• Стрілки: <span id="handSkinsCount">1</span>/4</li>
+                        <li>• Ефекти: <span id="effectSkinsCount">1</span>/5</li>
+                        <li>Всього: <span id="totalSkins">4</span>/17</li>
+                    </ul>
+                </div>
+
+                <!-- Досягнення -->
+                <div id="tab-achievements" class="tab-page">
+                    <h3>Досягнення</h3>
+                    <div id="achievements" class="achievements-grid"></div>
+                </div>
+
+                <!-- Перезапуск -->
+                <div id="tab-reverb" class="tab-page">
+                    <h3>Перезапуск</h3>
+                    <p id="reverbDesc">
+                        Повертаючи час назад, ти отримаєш множник
+                        <span id="nextMultiplier">1.20</span>× до всіх прибутків.
+                    </p>
+                    <button id="reverbBtn" class="reverb-btn">Повернути час назад</button>
+                </div>
+
+                <!-- Множники -->
+                <div id="tab-multipliers" class="tab-page">
+                    <h3>Множники кліку</h3>
+                    <div id="multipliers" class="upgrades-container"></div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Права панель -->
+        <div class="right-panel">
+            <div id="clockWrapper">
+                <div id="clickableClock" class="clock round">
+                    <div class="hand hour"></div>
+                    <div class="hand minute"></div>
+                    <div class="hand second"></div>
+                    <div class="center-dot"></div>
+                </div>
+
+                <div id="clickCloud" class="click-cloud">
+                    <div id="clickGain">+0 сек</div>
+                    <div id="currentDate" style="font-size:16px;color:#a8d8ff;font-weight:600;margin-top:4px;">
+                        <script>
+                            document.write(new Date().toLocaleDateString('uk-UA'));
+                        </script>
+                    </div>
+                </div>
+
+                <div id="comboBubble" class="combo-bubble hidden">
+                    <div id="comboCount">0</div>
+                    <div id="comboText">кліків</div>
+                </div>
+            </div>
+
+            <p id="score">Часу витрачено: 0 сек</p>
+
+            <div class="music-player">
+                <button id="prevTrack" class="music-switch">⬅️</button>
+                <button id="musicBtn" class="phonk-btn">▶️ Включити музику</button>
+                <button id="nextTrack" class="music-switch">➡️</button>
+            </div>
+
+            <div id="nowPlaying" class="now-playing">Зараз: —</div>
+            <audio id="player" preload="auto"></audio>
+        </div>
+    </div>
+
+    <!-- Перезапуск анімація -->
+    <div id="reverbOverlay" class="reverb-overlay hidden">
+        <div class="reverb-instruction">Зажми годинник 10 секунд!</div>
+        <div id="reverbHint" class="reverb-hint">Зажми мене!</div>
+        <div id="reverbClock" class="clock round">
+            <div class="hand hour"></div><div class="hand minute"></div><div class="hand second"></div><div class="center-dot"></div>
+        </div>
+    </div>
+
+    <div id="timeTunnel" class="time-tunnel"></div>
+    <div id="toastContainer"></div>
 </div>
 
-    <div class="right-panel">
-      <div id="clockWrapper">
-        <div id="clickableClock" class="clock round"><div class="hand hour"></div><div class="hand minute"></div><div class="hand second"></div><div class="center-dot"></div></div>
-        <div id="clickCloud" class="click-cloud">
-          <div id="clickGain">+0 сек</div>
-          <div id="currentDate" style="font-size:16px;color:#a8d8ff;margin-top:4px;font-weight:600;">
-            <script>document.write(new Date().toLocaleDateString('uk-UA'))</script>
-          </div>
-        </div>
-        <div id="comboBubble" class="combo-bubble hidden"><div id="comboCount">0</div><div id="comboText">кліків</div></div>
-      </div>
-      <p id="score">Часу витрачено: 0 сек</p>
-      <div class="music-player">
-        <button id="prevTrack" class="music-switch">⬅️</button>
-        <button id="musicBtn" class="phonk-btn">▶️ Включити музику</button>
-        <button id="nextTrack" class="music-switch">➡️</button>
-      </div>
-      <div id="nowPlaying" class="now-playing">Зараз: —</div>
-      <audio id="player" preload="auto"></audio>
-    </div>
-  </div>
-  <div id="toastContainer"></div>
-</div>
 <script src="script.js?v=16"></script>
+
 <script>
-function startGame(v){document.getElementById('chooser').remove();document.getElementById('game').style.display='';if(v==='mobile')document.body.classList.add('mobile-version')}
-document.getElementById('chooser').style.display='flex';
+function startGame(v){
+    document.getElementById('chooser').remove();
+    document.getElementById('game').style.display = '';
+    if(v==='mobile') document.body.classList.add('mobile-version');
+}
 </script>
 </body>
 </html>
