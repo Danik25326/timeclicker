@@ -210,8 +210,8 @@ body.mobile-version #tab-skins .skins-grid::-webkit-scrollbar{display:none}
 body.mobile-version #tab-achievements .achievements-grid{display:flex!important;flex-direction:column!important;gap:12px!important;padding:10px 0}
 body.mobile-version #tab-achievements .achievement{width:100%!important;margin:0!important}
 body.mobile-version .music-player{display:flex;gap:6px;justify-content:center}
-body.mobile-version .music-switch,
-body.mobile-version .phonk-btn{margin:0;padding:8px 8px;font-size:14px}
+body.mobile-version .music-switch{margin:0;padding:8px 8px;font-size:12px}
+body.mobile-version .phonk-btn{margin:0;padding:3px 3px;font-size:8px}
 
 
 /* Додані ефекти */
