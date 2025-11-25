@@ -234,34 +234,41 @@ window.onload = function () {
   });
 
   // === КЛІК ===
-function addTime() {
-  const baseGain = clickPower;
-  const finalGain = Math.round(baseGain * clickMultiplier * prestigeMultiplier);
-  score += finalGain;
-  clickCloudTotal += finalGain;
-  if (finalGain > maxPerClick) maxPerClick = finalGain;
+  // === КЛІК ===
+  function addTime() {
+    const baseGain = clickPower;
+    const finalGain = Math.round(baseGain * clickMultiplier * prestigeMultiplier);
+    score += finalGain;
+    clickCloudTotal += finalGain;
+    if (finalGain > maxPerClick) maxPerClick = finalGain;
 
-  // Оновлюємо +сек
-  clickGainEl.textContent = `+${formatTime(finalGain)}`;
+    // === НОВА БУЛЬБАШКА: +сек зверху, дата знизу ===
+    const now = new Date();
+    const dateStr = `${String(now.getDate()).padStart(2, '0')}.${String(now.getMonth() + 1).padStart(2, '0')}.${now.getFullYear()}`;
 
-  // Оновлюємо дату (без innerHTML — клік не ламається!)
-  let dateEl = document.getElementById("clickCloudDate");
-  if (!dateEl) {
-    dateEl = document.createElement("div");
-    dateEl.id = "clickCloudDate";
-    dateEl.style.cssText = "font-size:11.5px;color:#a8d8ff;margin-top:3px;";
-    clickCloudEl.appendChild(dateEl);
-  }
+// Оновлюємо тільки текст, не чіпаючи сам елемент
+document.getElementById("clickGain").textContent = `+${formatTime(finalGain)}`;
+
+const dateEl = document.querySelector("#clickCloud > div:nth-child(2)");
+if (dateEl) {
   const now = new Date();
-  dateEl.textContent = `${String(now.getDate()).padStart(2,'0')}.${String(now.getMonth()+1).padStart(2,'0')}.${now.getFullYear()}`;
-
-  showFloating(`+${formatTime(finalGain)}`);
-  triggerClickEffect();
-  handleClickCombo();
-  updateScore();
-  updateStats();
-  updateAchievements();
+  const dateStr = `${String(now.getDate()).padStart(2, '0')}.${String(now.getMonth() + 1).padStart(2, '0')}.${now.getFullYear()}`;
+  dateEl.textContent = dateStr;
+} else {
+  // якщо другого div ще немає — створюємо
+  const div = document.createElement("div");
+  div.style.cssText = "font-size:11.5px;color:#a8d8ff;margin-top:3px;";
+  const now = new Date();
+  div.textContent = `${String(now.getDate()).padStart(2, '0')}.${String(now.getMonth() + 1).padStart(2, '0')}.${now.getFullYear()}`;
+  clickCloudEl.appendChild(div);
 }
+    showFloating(`+${formatTime(finalGain)}`);
+    triggerClickEffect();
+    handleClickCombo();
+    updateScore();
+    updateStats();
+    updateAchievements();
+  }
 // === НОВИЙ МАГАЗИН СКІНІВ — З ДИНАМІЧНИМ ПІДСВІЧУВАННЯМ ===
 
 // Скіни стрілок
