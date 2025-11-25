@@ -59,7 +59,7 @@ window.onload=function(){
   });
 
   function revealNext(){ const boughtCount = upgrades.filter(u=>u.level>0).length; if(buttons[boughtCount]) buttons[boughtCount].classList.remove("hidden"); }
-  function buyUpgrade(i){ const up=upgrades[i], cost=up.getCost(); if(score<cost) return; score-=cost; up.level++; totalUpgradesBought++; autoRate+=(i+1)*5*prestigeMultiplier; showToast(`Куплено: ${up.name} (Lv.${up.level}) ✅`); revealNext(); up.update(); updateAllButtons(); updateScore(); updateStats(); updateAchievements(); if(up.name==="Кліпати очима"){ document.body.classList.add("eye-blink"); setTimeout(()=>document.body.classList.remove("eye-blink"),1000); } }
+  function buyUpgrade(i){ const up=upgrades[i], cost=up.getCost(); if(score<cost) return; score-=cost; up.level++; totalUpgradesBought++; autoRate+=(i+1)*5*prestigeMultiplier; showToast(`Куплено: ${up.name} (Lv.${up.level}) ✅`); revealNext(); up.update(); updateAllButtons(); updateScore(); updateStats(); updateAchievements(); if(up.name==="Кліпати очима"){document.body.classList.remove("eye-blink");void document.body.offsetWidth;document.body.classList.add("eye-blink");setTimeout(()=>document.body.classList.remove("eye-blink"),1000);} }
   function updateAllButtons(){ upgrades.forEach(u=>u.update()); multipliers.forEach(m=>m.update&&m.update()); }
 
   // multipliers
