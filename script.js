@@ -860,13 +860,12 @@ if (worldTitle) {
     nextMultiplierEl.textContent = nextMult;
   }
   updateScore(); updateStats(); updateAchievements();
-// Дата відображається одразу при відкритті сайту — ТІЛЬКИ ДАТА
-const now = new Date();
-document.getElementById("clickGain").textContent = "+0 сек";
+// Дата і +0 сек при відкритті сайту
+clickGainEl.textContent = "+0 сек";
 let dateEl = document.createElement("div");
 dateEl.id = "clickCloudDate";
 dateEl.style.cssText = "font-size:14px !important;color:#a8d8ff;margin-top:4px;font-weight:600;";
+const now = new Date();
 dateEl.textContent = `${String(now.getDate()).padStart(2,'0')}.${String(now.getMonth()+1).padStart(2,'0')}.${now.getFullYear()}`;
-clickCloudEl.innerHTML = "";          // ← ОЧИЩАЄМО ВСЕ СТАРЕ
 clickCloudEl.appendChild(dateEl);
 };
