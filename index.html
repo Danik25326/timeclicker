@@ -117,12 +117,13 @@ function startGame(v){document.getElementById('chooser').remove();document.getEl
 document.getElementById('chooser').style.display='flex';
 </script>
   <script>
+<script>
 document.addEventListener("DOMContentLoaded", function() {
-    const rFull = $("#reverbFullScreen"),
-          rClocks = $("#flyingClocks"),
-          rBubbles = $("#statBubbles"),
-          rResult = $("#reverbResult"),
-          rText = $("#newMultiplierText");
+    const rFull = $("reverbFullScreen"),
+          rClocks = $("flyingClocks"),
+          rBubbles = $("statBubbles"),
+          rResult = $("reverbResult"),
+          rText = $("newMultiplierText");
 
     let rInt, rBub, rHoldTimer, isHolding = false;
 
@@ -226,7 +227,7 @@ document.addEventListener("DOMContentLoaded", function() {
     rFull.addEventListener("touchend", cancelReverbHold);
     rFull.addEventListener("touchcancel", cancelReverbHold);
 
-    $("#reverbBtn").onclick = () => {
+    $("reverbBtn").onclick = () => {
         showToast("Зажми та тримай будь-де на екрані 10 секунд!", 10000);
         rFull.classList.remove("hidden");
     };
