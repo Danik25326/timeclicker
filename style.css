@@ -212,7 +212,6 @@ body.mobile-version #tab-achievements .achievements-grid{display:flex!important;
 body.mobile-version #tab-achievements .achievement{width:100%!important;margin:0!important}
 body.mobile-version .music-player{display:flex;gap:6px;justify-content:center}
 body.mobile-version .music-switch,
-body.mobile-version .phonk-btn{margin:0;padding:10px 12px;font-size:14px}
 body.mobile-version .phonk-btn{margin:0;padding:8px 8px;font-size:14px}
 
 
