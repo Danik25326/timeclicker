@@ -128,7 +128,7 @@ window.onload=function(){
   // reverb
 const reverbFullScreen=$("reverbFullScreen"),timeTunnelBG=$("timeTunnelBG"),flyingClocks=$("flyingClocks"),statBubbles=$("statBubbles"),reverbResult=$("reverbResult"),newMultiplierText=$("newMultiplierText");
 let reverbInterval,bubbleInterval;
-reverbBtn.onclick=()=>confirm("Ти впевнений, що хочеш повернути час назад?")&&startReverb();
+reverbBtn.onclick=()=>confirm("Ти впевнений, що хочеш повернути час назад?") ? startReverb(): null;
 function startReverb(){reverbOverlay.classList.add("hidden");reverbFullScreen.classList.remove("hidden");setTimeout(()=>reverbFullScreen.classList.add("active"),50);flyingClocks.innerHTML="";statBubbles.innerHTML="";reverbInterval=setInterval(createFlyingClock,300);bubbleInterval=setInterval(createStatBubble,1200);reverbHoldTimeout=setTimeout(completeReverb,10000)}
 function createFlyingClock(){const c=document.createElement("div");c.className="clone";let s=80+Math.random()*100;c.style.width=c.style.height=s+"px";c.style.left=Math.random()*100+"%";c.style.top=Math.random()*100+"%";c.style.animationDuration=4+Math.random()*6+"s";c.style.animationDelay=Math.random()*0.5+"s";if(Math.random()>0.5)c.style.transform="scaleX(-1)";flyingClocks.appendChild(c);setTimeout(()=>c.remove(),10000)}
 const statLines=[()=>`Максимальне комбо: ${maxComboEver}`,()=>`Витрачено часу: ${formatTime(clickCloudTotal)}`,()=>`Ревербів: ${totalReverbs}`,()=>`Всього скінів: ${ownedSkins.shapes.length+ownedSkins.clockSkins.length+ownedSkins.handSkins.length+ownedSkins.effects.length}`,()=>`Авточас/сек: ${formatTime(autoRate)}`,()=>`Макс за клік: ${formatTime(maxPerClick)}`,()=>`Досягнень: ${achievementsList.filter(a=>a.done).length}/${achievementsList.length}`];
