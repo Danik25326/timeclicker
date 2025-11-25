@@ -153,25 +153,6 @@ body{
 @keyframes blackhole{0%{transform:scale(1)}50%{transform:scale(.85)}100%{transform:scale(1)}}
 @keyframes ripple{0%{box-shadow:0 0 50px var(--neon)}100%{box-shadow:0 0 0 160px rgba(14,165,233,0)}}
 
-/* Time tunnel & Reverb */
-.time-tunnel,.reverb-overlay{position:fixed;inset:0;pointer-events:none;opacity:0;transition:opacity .3s;z-index:50}
-.time-tunnel.active,.reverb-overlay:not(.hidden){opacity:1;pointer-events:all}
-.reverb-overlay{display:flex;align-items:center;justify-content:center;flex-direction:column;overflow:hidden;background:#000;z-index:999}
-.reverb-overlay::before{
-  content:"";position:absolute;inset:-100%;
-  background:repeating-conical-gradient(from 0deg at 50% 50%,#8b00ff 0deg,transparent 10deg,transparent 350deg,#8b00ff 360deg);
-  animation:warpTunnel 12s linear infinite;opacity:.7;
-}
-@keyframes warpTunnel{from{transform:rotate(0deg) scale(1)}to{transform:rotate(360deg) scale(2.5)}}
-.reverb-instruction{margin-bottom:60px;font-size:32px;text-shadow:0 0 30px #ff00ff;z-index:10}
-.reverb-hint{position:absolute;top:20%;left:50%;transform:translateX(-50%);background:rgba(255,59,92,.95);color:#fff;padding:20px 40px;border-radius:50px;font-size:28px;font-weight:700;z-index:1001;animation:pulseHint 1.8s infinite}
-@keyframes pulseHint{0%,100%{transform:translateX(-50%) scale(1)}50%{transform:translateX(-50%) scale(1.15)}}
-#reverbClock{width:500px;height:500px;border:18px solid #ff00ff !important;box-shadow:0 0 150px #ff00ff,inset 0 0 100px rgba(255,0,255,.4) !important;cursor:grab;z-index:10}
-#reverbClock.reverb-mode{animation:reverbPulse 1.2s ease-in-out infinite}
-@keyframes reverbPulse{0%,100%{transform:scale(1) rotate(0deg)}50%{transform:scale(1.18) rotate(4deg)}}
-.reverb-chaos .hand{animation:chaosSpin .18s linear infinite}
-@keyframes chaosSpin{from{transform:translateX(-50%) rotate(var(--rand,0deg))}to{transform:translateX(-50%) rotate(calc(var(--rand,0deg)+360deg))}}
-
 /* Кнопка ревербу */
 .reverb-btn{margin-top:30px;padding:14px 32px;background:linear-gradient(90deg,#ff006e,#ff3b5c);border:none;color:white;font-weight:700;font-size:16px;border-radius:14px;cursor:pointer;box-shadow:0 0 30px rgba(255,59,92,.6),0 6px 20px rgba(0,0,0,.4);transition:all .2s ease;text-shadow:0 0 10px rgba(255,255,255,.5)}
 .reverb-btn:hover{transform:translateY(-4px);box-shadow:0 0 50px rgba(255,59,92,.9),0 10px 30px rgba(0,0,0,.5)}
