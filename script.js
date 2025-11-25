@@ -234,29 +234,34 @@ window.onload = function () {
   });
 
   // === КЛІК ===
-  function addTime() {
-    const baseGain = clickPower;
-    const finalGain = Math.round(baseGain * clickMultiplier * prestigeMultiplier);
-    score += finalGain;
-    clickCloudTotal += finalGain;
-    if (finalGain > maxPerClick) maxPerClick = finalGain;
+function addTime() {
+  const baseGain = clickPower;
+  const finalGain = Math.round(baseGain * clickMultiplier * prestigeMultiplier);
+  score += finalGain;
+  clickCloudTotal += finalGain;
+  if (finalGain > maxPerClick) maxPerClick = finalGain;
 
-    // === НОВА БУЛЬБАШКА: +сек зверху, дата знизу ===
-    const now = new Date();
-    const dateStr = `${String(now.getDate()).padStart(2, '0')}.${String(now.getMonth() + 1).padStart(2, '0')}.${now.getFullYear()}`;
+  // Оновлюємо +сек
+  clickGainEl.textContent = `+${formatTime(finalGain)}`;
 
-    clickCloudEl.innerHTML = `
-      <div id="clickGain" style="font-size:15px; color:#ff006e; font-weight:700;">+${formatTime(finalGain)}</div>
-      <div style="font-size:11.5px; color:#a8d8ff; margin-top:3px;">${dateStr}</div>
-    `;
-
-    showFloating(`+${formatTime(finalGain)}`);
-    triggerClickEffect();
-    handleClickCombo();
-    updateScore();
-    updateStats();
-    updateAchievements();
+  // Оновлюємо дату (без innerHTML — клік не ламається!)
+  let dateEl = document.getElementById("clickCloudDate");
+  if (!dateEl) {
+    dateEl = document.createElement("div");
+    dateEl.id = "clickCloudDate";
+    dateEl.style.cssText = "font-size:11.5px;color:#a8d8ff;margin-top:3px;";
+    clickCloudEl.appendChild(dateEl);
   }
+  const now = new Date();
+  dateEl.textContent = `${String(now.getDate()).padStart(2,'0')}.${String(now.getMonth()+1).padStart(2,'0')}.${now.getFullYear()}`;
+
+  showFloating(`+${formatTime(finalGain)}`);
+  triggerClickEffect();
+  handleClickCombo();
+  updateScore();
+  updateStats();
+  updateAchievements();
+}
 // === НОВИЙ МАГАЗИН СКІНІВ — З ДИНАМІЧНИМ ПІДСВІЧУВАННЯМ ===
 
 // Скіни стрілок
