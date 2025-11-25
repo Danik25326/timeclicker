@@ -4,6 +4,7 @@ window.onload = function () {
   const clockWrapper = document.getElementById("clockWrapper");
   const comboBubble = document.getElementById("comboBubble");
   const comboCount = document.getElementById("comboCount");
+  const clickCloudEl = document.getElementById("clickCloud");  
   const musicBtn = document.getElementById("musicBtn");
   const prevTrack = document.getElementById("prevTrack");
   const nextTrack = document.getElementById("nextTrack");
