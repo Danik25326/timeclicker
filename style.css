@@ -235,7 +235,7 @@ body.eye-blink::before{content:"";position:fixed;inset:0;background:#000;z-index
 #effectSkins .skin{width:auto;height:85px;font-size:12px;padding:8px}
 
 /* 4. Кастомний вигляд +1 сек */
-#clickCloud{top:20px;right:-150px;width:170px;padding:10px 16px;background:rgba(15,23,42,.8);border-radius:16px;box-shadow:0 8px 32px rgba(0,0,0,.6);backdrop-filter:blur(8px);z-index:20}
+#clickCloud{top:20px;right:-180px;width:170px;padding:10px 16px;background:rgba(15,23,42,.8);border-radius:16px;box-shadow:0 8px 32px rgba(0,0,0,.6);backdrop-filter:blur(8px);z-index:20}
 #clickGain{font-size:19px;color:#ff006e;text-shadow:0 0 15px #ff006e;margin-bottom:4px}
 
 /* 5. Круті неонові кнопки */
