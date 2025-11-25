@@ -136,9 +136,6 @@ function completeReverb(){stopReverb();prestigeMultiplier*=1.2;totalReverbs++;sc
 reverbBtn.onclick=()=>{if(confirm("Ти впевнений, що хочеш повернути час назад?")){reverbOverlay.classList.remove("hidden");timeTunnel.classList.add("active");reverbHint.style.opacity="1";isReverbActive=true;setTimeout(()=>{reverbHint.style.opacity="0"},3000)}}
 const startHold=e=>{if(!isReverbActive||rTimer)return;e.preventDefault();startReverb()}
 const endHold=()=>{if(isReverbActive)stopReverb();isReverbActive=false;reverbOverlay.classList.add("hidden");timeTunnel.classList.remove("active")}
-reverbClock.addEventListener("mousedown",startHold);reverbClock.addEventListener("touchstart",startHold);
-reverbClock.addEventListener("mouseup",endHold);reverbClock.addEventListener("touchend",endHold);
-reverbClock.addEventListener("mouseleave",endHold);
   // tabs
   q(".top-tabs .tab").forEach(btn=>btn.addEventListener("click",()=>{ q(".top-tabs .tab").forEach(b=>b.classList.remove("active")); q(".tab-page").forEach(p=>p.classList.remove("active")); btn.classList.add("active"); $(btn.dataset.tab).classList.add("active"); }));
 
