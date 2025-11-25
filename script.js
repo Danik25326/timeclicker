@@ -242,7 +242,7 @@ function addTime() {
   clickCloudTotal += finalGain;
   if (finalGain > maxPerClick) maxPerClick = finalGain;
 
-  // === +СЕК ЗВЕРХУ + ДАТА ЗНИЗУ — ВСЕ ПРАЦЮЄ ===
+  // === ТІЛЬКИ +СЕК І ДАТА — НІЯКОГО "ВИТРАЧЕНО" ===
   clickGainEl.textContent = `+${formatTime(finalGain)}`;
 
   let dateEl = document.getElementById("clickCloudDate");
@@ -860,8 +860,9 @@ if (worldTitle) {
     nextMultiplierEl.textContent = nextMult;
   }
   updateScore(); updateStats(); updateAchievements();
-// Дата і +0 сек при відкритті сайту
+// Дата і +0 сек при відкритті — ТІЛЬКИ ДАТА, НІЯКОГО "ВИТРАЧЕНО"
 clickGainEl.textContent = "+0 сек";
+clickCloudEl.innerHTML = "";   // ← очищаємо все старе
 let dateEl = document.createElement("div");
 dateEl.id = "clickCloudDate";
 dateEl.style.cssText = "font-size:14px !important;color:#a8d8ff;margin-top:4px;font-weight:600;";
