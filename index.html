@@ -105,15 +105,7 @@
     <div id="reverbClock" class="clock round"><div class="hand hour"></div><div class="hand minute"></div><div class="hand second"></div><div class="center-dot"></div></div>
   </div>
   <div id="timeTunnel" class="time-tunnel"></div>
-  <div id="toastContainer"></div>
-</div>
-
-<script src="script.js?v=16"></script>
-<script>
-function startGame(v){document.getElementById('chooser').remove();document.getElementById('game').style.display='';if(v==='mobile')document.body.classList.add('mobile-version')}
-document.getElementById('chooser').style.display='flex';
-</script>
-  <!-- Новый реверб оверлей -->
+    <!-- Новый реверб оверлей -->
 <div id="reverbFullScreen" class="hidden">
   <div id="timeTunnelBG"></div>
   <div id="flyingClocks"></div>
@@ -124,5 +116,13 @@ document.getElementById('chooser').style.display='flex';
     <p class="clickToContinue">Натисни будь-де, щоб продовжити</p>
   </div>
 </div>
+  <div id="toastContainer"></div>
+</div>
+
+<script src="script.js?v=16"></script>
+<script>
+function startGame(v){document.getElementById('chooser').remove();document.getElementById('game').style.display='';if(v==='mobile')document.body.classList.add('mobile-version')}
+document.getElementById('chooser').style.display='flex';
+</script>
 </body>
 </html>
