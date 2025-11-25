@@ -242,19 +242,19 @@ function addTime() {
   clickCloudTotal += finalGain;
   if (finalGain > maxPerClick) maxPerClick = finalGain;
 
-  // +сек — великий
-  clickGainEl.textContent = `+${formatTime(finalGain)}`;
+// === ОНОВЛЕННЯ БУЛЬБАШКИ: ТІЛЬКИ +СЕК І ДАТА ===
+clickGainEl.textContent = `+${formatTime(finalGain)}`;
 
-  // Дата — завжди актуальна і більша
-  let dateEl = document.getElementById("clickCloudDate");
-  if (!dateEl) {
-    dateEl = document.createElement("div");
-    dateEl.id = "clickCloudDate";
-    dateEl.style.cssText = "font-size:14px !important;color:#a8d8ff;margin-top:4px;font-weight:600;";
-    clickCloudEl.appendChild(dateEl);
-  }
-  const now = new Date();
-  dateEl.textContent = `${String(now.getDate()).padStart(2,'0')}.${String(now.getMonth()+1).padStart(2,'0')}.${now.getFullYear()}`;
+// Оновлюємо дату (без слова "Витрачено")
+let dateEl = document.getElementById("clickCloudDate");
+if (!dateEl) {
+  dateEl = document.createElement("div");
+  dateEl.id = "clickCloudDate";
+  dateEl.style.cssText = "font-size:14px !important;color:#a8d8ff;margin-top:4px;font-weight:600;";
+  clickCloudEl.appendChild(dateEl);
+}
+const now = new Date();
+dateEl.textContent = `${String(now.getDate()).padStart(2,'0')}.${String(now.getMonth()+1).padStart(2,'0')}.${now.getFullYear()}`;
 
   showFloating(`+${formatTime(finalGain)}`);
   triggerClickEffect();
@@ -861,12 +861,13 @@ if (worldTitle) {
     nextMultiplierEl.textContent = nextMult;
   }
   updateScore(); updateStats(); updateAchievements();
-  // Дата відображається одразу при відкритті сайту
+// Дата відображається одразу при відкритті сайту — ТІЛЬКИ ДАТА
 const now = new Date();
 document.getElementById("clickGain").textContent = "+0 сек";
 let dateEl = document.createElement("div");
 dateEl.id = "clickCloudDate";
 dateEl.style.cssText = "font-size:14px !important;color:#a8d8ff;margin-top:4px;font-weight:600;";
 dateEl.textContent = `${String(now.getDate()).padStart(2,'0')}.${String(now.getMonth()+1).padStart(2,'0')}.${now.getFullYear()}`;
+clickCloudEl.innerHTML = "";          // ← ОЧИЩАЄМО ВСЕ СТАРЕ
 clickCloudEl.appendChild(dateEl);
 };
