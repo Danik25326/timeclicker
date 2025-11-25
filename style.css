@@ -153,6 +153,13 @@ body{
 @keyframes blackhole{0%{transform:scale(1)}50%{transform:scale(.85)}100%{transform:scale(1)}}
 @keyframes ripple{0%{box-shadow:0 0 50px var(--neon)}100%{box-shadow:0 0 0 160px rgba(14,165,233,0)}}
 
+/* Time tunnel & Reverb */ 
+.time-tunnel,.reverb-overlay{position:fixed;inset:0;pointer-events:none;opacity:0;transition:opacity .3s;z-index:50} 
+.time-tunnel.active,.reverb-overlay:not(.hidden){opacity:1;pointer-events:all} 
+.reverb-overlay{display:flex;align-items:center;justify-content:center;flex-direction:column;overflow:hidden;background:#000;z-index:999} 
+.reverb-overlay::before{   content:"";position:absolute;inset:-100%;   background:repeating-conical-gradient(from 0deg at 50% 50%,#8b00ff 0deg,transparent 10deg,transparent 350deg,#8b00ff 360deg);   animation:warpTunnel 12s linear infinite;opacity:.7; } @keyframes warpTunnel{from{transform:rotate(0deg) scale(1)}to{transform:rotate(360deg) scale(2.5)}} 
+.reverb-instruction{margin-bottom:60px;font-size:32px;text-shadow:0 0 30px #ff00ff;z-index:10} .reverb-hint{position:absolute;top:20%;left:50%;transform:translateX(-50%);background:rgba(255,59,92,.95);color:#fff;padding:20px 40px;border-radius:50px;font-size:28px;font-weight:700;z-index:1001;animation:pulseHint 1.8s infinite} @keyframes pulseHint{0%,100%{transform:translateX(-50%) scale(1)}50%{transform:translateX(-50%) scale(1.15)}} #reverbClock{width:500px;height:500px;border:18px solid #ff00ff !important;box-shadow:0 0 150px #ff00ff,inset 0 0 100px rgba(255,0,255,.4) !important;cursor:grab;z-index:10} #reverbClock.reverb-mode{animation:reverbPulse 1.2s ease-in-out infinite} @keyframes reverbPulse{0%,100%{transform:scale(1) rotate(0deg)}50%{transform:scale(1.18) rotate(4deg)}} .reverb-chaos .hand{animation:chaosSpin .18s linear infinite} @keyframes chaosSpin{from{transform:translateX(-50%) rotate(var(--rand,0deg))}to{transform:translateX(-50%) rotate(calc(var(--rand,0deg)+360deg))}}
+
 /* Кнопка ревербу */
 .reverb-btn{margin-top:30px;padding:14px 32px;background:linear-gradient(90deg,#ff006e,#ff3b5c);border:none;color:white;font-weight:700;font-size:16px;border-radius:14px;cursor:pointer;box-shadow:0 0 30px rgba(255,59,92,.6),0 6px 20px rgba(0,0,0,.4);transition:all .2s ease;text-shadow:0 0 10px rgba(255,255,255,.5)}
 .reverb-btn:hover{transform:translateY(-4px);box-shadow:0 0 50px rgba(255,59,92,.9),0 10px 30px rgba(0,0,0,.5)}
@@ -223,18 +230,3 @@ body.eye-blink::before{content:"";position:fixed;inset:0;background:#000;z-index
 #musicBtn:hover{transform:scale(1.1);box-shadow:0 0 60px #0ea5e9,0 0 90px #0ea5e9aa}
 .music-switch{background:linear-gradient(90deg,#ec4899,#f43f5e)!important;font-size:24px!important;padding:14px!important}
 
-/* === НОВЫЙ КРУТОЙ РЕВЕРБ === */
-#reverbFullScreen{position:fixed;inset:0;background:#000;z-index:999999;display:none; align-items:center;justify-content:center;overflow:hidden;opacity:0;pointer-events:none;transition:opacity .4s}
-#reverbFullScreen.active{display:flex; opacity:1;pointer-events:all}
-#timeTunnelBG{position:absolute;inset:0;background:repeating-conical-gradient(from 0deg at 50% 50%,#8b5cf6 0deg,#ec4899 15deg,#ff006e 30deg,transparent 31deg);animation:tunnelSpin 8s linear infinite;opacity:.8}
-@keyframes tunnelSpin{from{transform:rotate(0deg) scale(1)}to{transform:rotate(360deg) scale(3)}}
-#flyingClocks .clone{position:absolute;width:120px;height:120px;border:8px solid #ff00ff;border-radius:50%;box-shadow:0 0 60px #ff00ff;background:rgba(0,0,0,.4);animation:flyClock linear infinite}
-@keyframes flyClock{0%{transform:translate(-50%,-50%) rotate(0deg) scale(0)}100%{transform:translate(-50%,-50%) rotate(720deg) scale(2);opacity:0}}
-.stat-bubble{position:absolute;padding:16px 32px;background:rgba(236,72,153,.3);border:5px solid #ec4899;border-radius:50px;color:#fff;font-size:22px;font-weight:700;text-shadow:0 0 20px #ec4899;backdrop-filter:blur(10px);pointer-events:none;animation:bubblePop 4s ease-out forwards;box-shadow:0 0 50px rgba(236,72,153,.8)}
-@keyframes bubblePop{0%{transform:scale(0) rotate(0)}15%{transform:scale(1.1)}30%{transform:scale(1)}100%{transform:scale(0) translateY(-200px);opacity:0}}
-#reverbResult{text-align:center;color:white;z-index:10}
-#reverbResult h1{font-size:64px;margin:0;text-shadow:0 0 40px #ff00ff}
-#newMultiplierText{font-size:48px;margin:30px 0;color:#8b5cf6}
-.clickToContinue{margin-top:50px;font-size:24px;opacity:.8}
-.white-flash{position:fixed;inset:0;background:white;z-index:9999999;animation:flash 1.5s ease-out forwards}
-@keyframes flash{0%,70%{opacity:0}80%{opacity:1}100%{opacity:0}}
