@@ -861,8 +861,8 @@ if (worldTitle) {
   }
   updateScore(); updateStats(); updateAchievements();
 // Дата і +0 сек при відкритті — ТІЛЬКИ ДАТА, НІЯКОГО "ВИТРАЧЕНО"
-clickGainEl.textContent = "+0 сек";
 clickCloudEl.innerHTML = "";   // ← очищаємо все старе
+clickGainEl.textContent = "+0 сек";
 let dateEl = document.createElement("div");
 dateEl.id = "clickCloudDate";
 dateEl.style.cssText = "font-size:14px !important;color:#a8d8ff;margin-top:4px;font-weight:600;";
