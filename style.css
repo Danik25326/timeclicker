@@ -214,7 +214,7 @@ body.mobile-version #reverbClock.reverb-mode {    width: 218px;       height: 21
 body.mobile-version #reverbClock {    width: 218px;    height: 218px;}
 body.mobile-version #score {    font-size: 14px; /* або будь-який менший розмір, який підходить */}
 body.mobile-version #currentDate {    font-size: 10px;   /* зменшений текст */}
-body.mobile-version #restartMessage {    font-size: 14px;}
+body.mobile-version #restartMessage {    font-size: 8px;}
 body.mobile-version .music-player {
     display: flex;
     gap: 0px;
