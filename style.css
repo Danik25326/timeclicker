@@ -217,7 +217,7 @@ body.mobile-version #currentDate {    font-size: 10px;   /* зменшений �
 body.mobile-version #restartMessage {    font-size: 8px;}
 body.mobile-version .music-player {
     display: flex;
-    gap: 0px;
+    gap: 1px;
     justify-content: center;
     align-items: center;
     flex-wrap: nowrap;
@@ -264,7 +264,13 @@ body.mobile-version .music-player button {
 body.mobile-version .music-player button:active {
     transform: scale(0.85);
 }
-
+body.mobile-version .reverb-instruction {
+    font-size: 16px !important; /* Зменшуємо в 2 рази з 32px */
+    margin-bottom: 30px !important;
+    text-align: center;
+    line-height: 1.3;
+    padding: 0 10px;
+}
 
 /* Додані ефекти */
 /* 1. Моргання очима */
