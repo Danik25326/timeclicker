@@ -226,8 +226,8 @@ body.mobile-version .music-player button{transform:none !important;transition:no
 body.mobile-version .music-player button:active{transform:none !important}
 body.mobile-version .music-player button:hover{transform:none !important;box-shadow:none !important}
 body.mobile-version #musicBtn:hover{transform:none !important;box-shadow:none !important}
-body.mobile-version .reverb-instruction{font-size:16px !important;margin-bottom:30px !important;text-align:center;line-height:1.3;padding:0 10px}
-
+body.mobile-version .reverb-instruction{font-size:20px !important;margin-bottom:30px !important;text-align:center;line-height:1.3;padding:0 10px}
+body.mobile-version .reverb-hint {    padding: 10px 20px !important;    font-size: 14px !important;    top: 10% !important;}
 
 /* Додані ефекти */
 /* 1. Моргання очима */
