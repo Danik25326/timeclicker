@@ -184,8 +184,9 @@ body{
 /* ===== Мобільна версія ===== */
 body.mobile-version{padding:0 4px}
 body.mobile-version .editable-title{font-size:28px !important;top:6px}
-body.mobile-version .top-tabs{top:70px;width:96%;padding:10px 6px;gap:8px 10px;flex-wrap:wrap;justify-content:center}
-body.mobile-version .tab{flex:1 1 30%;min-width:80px;font-size:13px}
+/* ОПУСКАЄМО ВКЛАДКИ НИЖЧЕ */
+body.mobile-version .top-tabs{top:50px;width:96%;padding:8px 4px;gap:4px 6px;flex-wrap:wrap;justify-content:center}
+body.mobile-version .tab{flex:1 1 30%;min-width:75px;font-size:12px;padding:8px 4px}
 body.mobile-version .left-panel{width:42%;max-width:320px;margin-top:20px}
 body.mobile-version .right-panel{width:54%;padding-left:-12px}
 body.mobile-version .clock{width:218px;height:218px}
@@ -215,15 +216,18 @@ body.mobile-version #reverbClock {    width: 218px;    height: 218px;}
 body.mobile-version #score {    font-size: 14px; /* або будь-який менший розмір, який підходить */}
 body.mobile-version #currentDate {    font-size: 10px;   /* зменшений текст */}
 body.mobile-version #restartMessage {    font-size: 8px;}
-body.mobile-version .music-player {    display: flex;    gap: 3px;    justify-content: center;    align-items: center;    flex-wrap: nowrap;    width: 100%;    max-width: 200px;    margin: 0 auto;}
-body.mobile-version .phonk-btn {    padding: 10px 16px !important;    font-size: 14px !important;    min-width: 140px !important;    margin: 0 !important;    flex-shrink: 0;}
-body.mobile-version .music-switch {    padding: 10px 14px !important;    font-size: 16px !important;    min-width: 30px !important;    margin: 0 !important;    flex-shrink: 0;}
-body.mobile-version #musicBtn {    padding: 10px 16px !important;    font-size: 14px !important;    min-width: 100px !important;    white-space: nowrap;}
-body.mobile-version .now-playing {    font-size: 12px;    text-align: center;    margin-top: 8px;}
-/* Додаткові покращення для мобільної версії */
-body.mobile-version .music-player button {    transform: scale(0.9);    transition: all 0.2s ease;}
-body.mobile-version .music-player button:active {    transform: scale(0.85);}
-body.mobile-version .reverb-instruction {    font-size: 16px !important; /* Зменшуємо в 2 рази з 32px */    margin-bottom: 30px !important;    text-align: center;    line-height: 1.3;    padding: 0 10px;}
+/* ЗМЕНШУЄМО ВІДСТАНЬ МІЖ КНОПКАМИ МУЗИКИ ТА ВИМИКАЄМО АНІМАЦІЮ */
+body.mobile-version .music-player{display:flex;gap:2px;justify-content:center;align-items:center;flex-wrap:nowrap;width:100%;max-width:270px;margin:0 auto}
+body.mobile-version .phonk-btn{padding:8px 10px !important;font-size:11px !important;min-width:110px !important;margin:0 !important;flex-shrink:0}
+body.mobile-version .music-switch{padding:8px 8px !important;font-size:12px !important;min-width:35px !important;margin:0 !important;flex-shrink:0}
+body.mobile-version #musicBtn{padding:8px 10px !important;font-size:11px !important;min-width:110px !important;white-space:nowrap}
+body.mobile-version .now-playing{font-size:10px;text-align:center;margin-top:5px}
+body.mobile-version .music-player button{transform:none !important;transition:none !important}
+body.mobile-version .music-player button:active{transform:none !important}
+body.mobile-version .music-player button:hover{transform:none !important;box-shadow:none !important}
+body.mobile-version #musicBtn:hover{transform:none !important;box-shadow:none !important}
+body.mobile-version .reverb-instruction{font-size:16px !important;margin-bottom:30px !important;text-align:center;line-height:1.3;padding:0 10px}
+
 
 /* Додані ефекти */
 /* 1. Моргання очима */
