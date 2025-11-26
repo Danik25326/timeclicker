@@ -178,9 +178,12 @@ window.onload = function () {
     updateScore(); updateStats(); updateAchievements();
 
     if (up.name === "Кліпати очима") {
-      document.body.classList.add("eye-blink");
-      setTimeout(() => document.body.classList.remove("eye-blink"), 300);
+      document.body.classList.remove("eye-blink"); // видаляємо, якщо був
+      void document.body.offsetWidth;              // змушуємо перерахунок стилів (reflow)
+      document.body.classList.add("eye-blink");    // додаємо знову
+      setTimeout(() => document.body.classList.remove("eye-blink"), 1000);
     }
+
   }
 
   function updateAllButtons() {
