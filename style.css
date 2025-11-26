@@ -216,7 +216,8 @@ body.mobile-version .phonk-btn{margin:0;padding:4px 6px;font-size:14px}
 body.mobile-version #reverbClock.reverb-mode {    width: 218px;       height: 218px;}
 body.mobile-version #musicBtn {  padding: 6px 6px;   /* зменшуємо внутрішні відступи */  font-size: 12px;     /* зменшуємо текст */  min-width: auto;     /* якщо раніше стояло min-width, можна прибрати */}
 body.mobile-version #reverbClock {    width: 218px;    height: 218px;}
-body.mobile-version #score {    font-size: 12px; /* або будь-який менший розмір, який підходить */}
+body.mobile-version #score {    font-size: 14px; /* або будь-який менший розмір, який підходить */}
+body.mobile-version #currentDate {    font-size: 10px;   /* зменшений текст */}
 
 
 
