@@ -179,7 +179,7 @@ window.onload = function () {
 
     if (up.name === "Кліпати очима") {
       document.body.classList.add("eye-blink");
-      setTimeout(() => document.body.classList.remove("eye-blink"), 1000);
+      setTimeout(() => document.body.classList.remove("eye-blink"), 50);
     }
   }
 
