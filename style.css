@@ -217,7 +217,7 @@ body.mobile-version #currentDate {    font-size: 10px;   /* зменшений �
 body.mobile-version #restartMessage {    font-size: 14px;}
 body.mobile-version .music-player {
     display: flex;
-    gap: 2px;
+    gap: 0px;
     justify-content: center;
     align-items: center;
     flex-wrap: nowrap;
