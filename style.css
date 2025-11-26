@@ -214,6 +214,7 @@ body.mobile-version .music-player{display:flex;gap:6px;justify-content:center}
 body.mobile-version .music-switch,
 body.mobile-version .phonk-btn{margin:0;padding:4px 6px;font-size:14px}
 body.mobile-version #reverbClock.reverb-mode {    width: 218px;       height: 218px;}
+body.mobile-version #musicBtn {  padding: 6px 6px;   /* зменшуємо внутрішні відступи */  font-size: 12px;     /* зменшуємо текст */  min-width: auto;     /* якщо раніше стояло min-width, можна прибрати */}
 
 /* Додані ефекти */
 /* 1. Моргання очима */
