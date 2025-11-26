@@ -213,7 +213,7 @@ body.mobile-version #tab-achievements .achievement{width:100%!important;margin:0
 body.mobile-version #reverbClock.reverb-mode {    width: 218px;       height: 218px;}
 body.mobile-version #reverbClock {    width: 218px;    height: 218px;}
 body.mobile-version #score {    font-size: 14px; /* або будь-який менший розмір, який підходить */}
-body.mobile-version #currentDate {    font-size: 8px;   /* зменшений текст */}
+body.mobile-version #currentDate {    font-size: 5px;   /* зменшений текст */}
 body.mobile-version #restartMessage {    font-size: 8px;}
 body.mobile-version .music-player{display:flex;gap:2px;justify-content:center;align-items:center;flex-wrap:nowrap;width:100%;max-width:270px;margin:0 auto}
 body.mobile-version .phonk-btn{padding:8px 10px !important;font-size:11px !important;min-width:110px !important;margin:0 !important;flex-shrink:0}
@@ -225,7 +225,7 @@ body.mobile-version .music-player button:active{transform:none !important}
 body.mobile-version .music-player button:hover{transform:none !important;box-shadow:none !important}
 body.mobile-version #musicBtn:hover{transform:none !important;box-shadow:none !important}
 body.mobile-version .reverb-instruction{font-size:20px !important;margin-bottom:30px !important;text-align:center;line-height:1.3;padding:0 10px}
-body.mobile-version .reverb-hint {    padding: 10px 20px !important;    font-size: 14px !important;    top: 10% !important;}
+body.mobile-version .reverb-hint {    padding: 10px 20px !important;    font-size: 14px !important;    top: 40% !important;}
 
 /* Додані ефекти */
 /* 1. Моргання очима */
