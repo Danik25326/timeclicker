@@ -188,7 +188,7 @@ body.mobile-version .top-tabs{top:60px;width:96%;padding:8px 4px;gap:4px 6px;fle
 body.mobile-version .tab{flex:1 1 30%;min-width:75px;font-size:12px;padding:8px 4px}
 body.mobile-version .left-panel{width:42%;max-width:320px;margin-top:20px}
 body.mobile-version .right-panel{width:54%;padding-left:-15px !important; padding-left:0}
-body.mobile-version .clock{width:218px;height:218px}
+body.mobile-version .clock{width:214px;height:214px}
 body.mobile-version .hand.hour{height:50px}
 body.mobile-version .hand.minute{height:74px}
 body.mobile-version .hand.second{height:88px}
@@ -213,7 +213,7 @@ body.mobile-version #tab-achievements .achievement{width:100%!important;margin:0
 body.mobile-version #reverbClock.reverb-mode {    width: 218px;       height: 218px;}
 body.mobile-version #reverbClock {    width: 218px;    height: 218px;}
 body.mobile-version #score {    font-size: 14px; /* або будь-який менший розмір, який підходить */}
-body.mobile-version #currentDate {    font-size: 10px !important;   /* зменшений текст */}
+body.mobile-version #currentDate {    font-size: 11px !important;   /* зменшений текст */}
 body.mobile-version #restartMessage {    font-size: 8px;}
 body.mobile-version .music-player{display:flex;gap:2px;justify-content:center;align-items:center;flex-wrap:nowrap;width:100%;max-width:270px;margin:0 auto}
 body.mobile-version .phonk-btn{padding:8px 10px !important;font-size:11px !important;min-width:110px !important;margin:0 !important;flex-shrink:0}
