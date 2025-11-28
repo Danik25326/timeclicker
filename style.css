@@ -173,8 +173,8 @@ body{
 @keyframes chaosSpin{from{transform:translateX(-50%) rotate(var(--rand,0deg))}to{transform:translateX(-50%) rotate(calc(var(--rand,0deg)+360deg))}}
 
 /* Кнопка ревербу */
-.reverb-btn{margin-top:30px;padding:14px 32px;background:linear-gradient(90deg,#ff006e,#ff3b5c);border:none;color:white;font-weight:700;font-size:16px;border-radius:14px;cursor:pointer;box-shadow:0 0 30px rgba(255,59,92,.6),0 6px 20px rgba(0,0,0,.4);transition:all .2s ease;text-shadow:0 0 10px rgba(255,255,255,.5)}
-.reverb-btn:hover{transform:translateY(-4px);box-shadow:0 0 50px rgba(255,59,92,.9),0 10px 30px rgba(0,0,0,.5)}
+{margin-top:30px;padding:14px 32px;background:linear-gradient(90deg,#ff006e,#ff3b5c);border:none;color:white;font-weight:700;font-size:16px;border-radius:14px;cursor:pointer;box-shadow:0 0 30px rgba(255,59,92,.6),0 6px 20px rgba(0,0,0,.4);transition:all .2s ease;text-shadow:0 0 10px rgba(255,255,255,.5)}
+:hover{transform:translateY(-4px);box-shadow:0 0 50px rgba(255,59,92,.9),0 10px 30px rgba(0,0,0,.5)}
 
 /* Scrollbar */
 .upgrades-container::-webkit-scrollbar{width:10px}
@@ -226,6 +226,9 @@ body.mobile-version .music-player button:hover{transform:none !important;box-sha
 body.mobile-version #musicBtn:hover{transform:none !important;box-shadow:none !important}
 body.mobile-version .reverb-instruction{font-size:20px !important;margin-bottom:30px !important;text-align:center;line-height:1.3;padding:0 10px}
 body.mobile-version .reverb-hint {    padding: 10px 20px !important;    font-size: 14px !important;    top: 38% !important;}
+body.mobile-version .reverb-btn {    padding: 10px 20px !important;    font-size: 14px !important;    margin-top: 15px !important;    width: 90% !important;    max-width: 250px !important;    display: block !important;    margin-left: auto !important;    margin-right: auto !important;}
+body.mobile-version #tab-reverb {    text-align: center !important;}
+
 
 /* Додані ефекти */
 /* 1. Моргання очима */
