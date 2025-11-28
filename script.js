@@ -732,7 +732,6 @@ updateClockHands();
     }, 1500);
     updateScore(); updateStats(); updateAchievements();
   }
-
   // === ТАБИ ===
   document.querySelectorAll(".top-tabs .tab").forEach(btn => {
     btn.addEventListener("click", () => {
