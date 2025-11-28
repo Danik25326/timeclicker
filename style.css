@@ -227,7 +227,6 @@ body.mobile-version #musicBtn:hover{transform:none !important;box-shadow:none !i
 body.mobile-version .reverb-instruction{font-size:20px !important;margin-bottom:30px !important;text-align:center;line-height:1.3;padding:0 10px}
 body.mobile-version .reverb-hint {    padding: 10px 20px !important;    font-size: 14px !important;    top: 38% !important;}
 body.mobile-version .reverb-btn {    padding: 10px 20px !important;    font-size: 14px !important;    margin-top: 15px !important;    width: 90% !important;    max-width: 250px !important;    display: block !important;    margin-left: auto !important;    margin-right: auto !important;}
-body.mobile-version #tab-reverb {    text-align: center !important;}
 
 
 /* Додані ефекти */
