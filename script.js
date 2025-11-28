@@ -91,8 +91,8 @@ function buySkin(t,i,p,n){if(ownedSkins[t].includes(i))return showToast("Цей 
 if(score<p)return showToast("Не вистачає часу!");score-=p;ownedSkins[t].push(i);current[t.slice(0,-1)]=i;
 applyAllSkins();updateScore();updateStats();updateAchievements();showToast(`Куплено: ${n} ✅`);refreshAllSkinGrids();}
 
-function applyAllSkins(){q(".clock").className="clock "+current.shape;
-const c=clockSkins.find(s=>s.id===current.clock);if(c?.a)c.a();const h=handSkins.find(s=>s.id===current.hand);if(h?.a)h.a();}
+function applyAllSkins(){q(".clock").className="clock "+current.shape; const clockEl = id("clickableClock");
+const c=clockSkins.find(s=>s.id===current.clock);if(c?.a)c.a(clockEl);const h=handSkins.find(s=>s.id===current.hand);if(h?.a)h.a();}
 
 function createSkinGrid(ct,ls,t){const r=id(ct);r.innerHTML="";ls.forEach(s=>{const e=d.createElement("div");e.className="skin";
 e.textContent=s.n;const o=ownedSkins[t].includes(s.id),a=current[t.slice(0,-1)]===s.id;
@@ -122,7 +122,7 @@ function showToast(t){const e=d.createElement("div");e.className="toast";e.textC
 e.style.cssText="font-size:18px;padding:22px 48px";toastContainer.appendChild(e);setTimeout(()=>e.remove(),10000);}
 
 // === КЛІК ЕФЕКТ ===
-function triggerClickEffect(){clock.classList.remove("click-effect-red","click-effect-blue","click-effect-glitch","click-effect-blackhole","click-effect-ripple");
+function triggerClickEffect(){const clockEl = id("clickableClock"); clock.classList.remove("click-effect-red","click-effect-blue","click-effect-glitch","click-effect-blackhole","click-effect-ripple");
 void clock.offsetWidth;clock.classList.add("click-effect-"+current.effect);}
 
 clockWrapper.addEventListener("click",e=>{if(e.target.closest("#clickableClock")||e.target===clockWrapper)addTime();});
