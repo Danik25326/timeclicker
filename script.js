@@ -50,8 +50,8 @@ function revealNext(){const c=upgrades.filter(u=>u.l>0).length;if(buttons[c])but
 
 function buyUpgrade(i){const u=upgrades[i],c=u.getC();if(score<c)return;score-=c;u.l++;totalUpgradesBought++;
 autoRate+=(i+1)*5*prestigeMultiplier;showToast(`Куплено: ${u.n} (Lv.${u.l}) ✅`);revealNext();u.up();updateAllButtons();
-updateScore();updateStats();updateAchievements();if(u.n==="Кліпати очима"){document.body.classList.remove("eye-blink");
-void document.body.offsetWidth;document.body.classList.add("eye-blink");setTimeout(()=>document.body.classList.remove("eye-blink"),1000);}}
+updateScore();updateStats();updateAchievements();if(u.n==="Кліпати очима"){d.body.classList.remove("eye-blink");
+void d.body.offsetWidth;d.body.classList.add("eye-blink");setTimeout(()=>d.body.classList.remove("eye-blink"),1000);}}
 
 function updateAllButtons(){upgrades.forEach(u=>u.up());multipliers.forEach(m=>m.up&&m.up());}
 
@@ -87,7 +87,7 @@ effects=[{id:"red",n:"Червоний спалах",p:0},{id:"blue",n:"Сині
 ownedSkins={shapes:["round"],clockSkins:["neon-blue"],handSkins:["darkblue"],effects:["red"]},
 current={shape:"round",clock:"neon-blue",hand:"darkblue",effect:"red"};
 
-function buySkin(t,i,p,n){if(ownedSkins[t].includes(i))return showToast("Цей скін уже куплено");
+function buySkin(t,i,p,n){if(ownedSkins[t].includes(i))return showToast("Цей скін вже куплено");
 if(score<p)return showToast("Не вистачає часу!");score-=p;ownedSkins[t].push(i);current[t.slice(0,-1)]=i;
 applyAllSkins();updateScore();updateStats();updateAchievements();showToast(`Куплено: ${n} ✅`);refreshAllSkinGrids();}
 
@@ -109,7 +109,7 @@ if(!ct)return;Array.from(ct.children).forEach((el,i)=>{const s=obj.l[i],o=ownedS
 if(!o){if(score>=s.p){el.style.opacity="1";el.style.boxShadow="0 0 15px #0ff";}else{el.style.opacity="0.4";el.style.boxShadow="";}}});});}
 
 setInterval(updateSkinHighlights,50);refreshAllSkinGrids();applyAllSkins();
-
+                    
 // === КОМБО ===
 function handleClickCombo(){const n=Date.now();if(n-lastClickTime<MAX_CLICK_INTERVAL)currentCombo++;else currentCombo=1;
 lastClickTime=n;if(currentCombo>maxComboEver)maxComboEver=currentCombo;if(currentCombo>=COMBO_THRESHOLD){
@@ -131,38 +131,50 @@ function showFloating(t){const e=d.createElement("div");e.textContent=t;e.style.
 clockWrapper.appendChild(e);requestAnimationFrame(()=>{e.style.transform="translateX(60px) translateY(-80px)";e.style.opacity="0";});setTimeout(()=>e.remove(),920);}
 
 // === СТАТИСТИКА ===
-function updateScore(){scoreText.textContent=`Часу витрачено: ${formatTime(score)}`;cloudTotalEl.textContent=`${formatTime(clickCloudTotal)}`;updateAllButtons();}
-
-function updateStats(){realTimePlayedEl.textContent=formatTime((Date.now()-sessionStart)/1000);virtualTimeEl.textContent=formatTime(score);
-totalUpgradesEl.textContent=totalUpgradesBought;maxPerClickEl.textContent=formatTime(maxPerClick);prestigeMultEl.textContent=prestigeMultiplier.toFixed(2);
-id("maxAutoRate").textContent=formatTime(autoRate);id("maxCombo").textContent=maxComboEver;id("totalReverbs").textContent=totalReverbs;
-const a=achievementsList.filter(x=>x.d).length;id("achievedCount").textContent=a;id("totalAchievements").textContent=achievementsList.length;
-id("shapeSkinsCount").textContent=ownedSkins.shapes.length;id("clockSkinsCount").textContent=ownedSkins.clockSkins.length;
-id("handSkinsCount").textContent=ownedSkins.handSkins.length;id("effectSkinsCount").textContent=ownedSkins.effects.length;
-id("totalSkins").textContent=ownedSkins.shapes.length+ownedSkins.clockSkins.length+ownedSkins.handSkins.length+ownedSkins.effects.length;
-updateReverbText();}
-
+function updateScore(){scoreText.textContent=`Часу витрачено: ${formatTime(score)}`;cloudTotalEl.textContent=`${formatTime(clickCloudTotal)}`;updateAllButtons();}                    
+function updateStats(){
+    realTimePlayedEl.textContent=formatTime((Date.now()-sessionStart)/1000);
+    virtualTimeEl.textContent=formatTime(score);
+    totalUpgradesEl.textContent=totalUpgradesBought;
+    maxPerClickEl.textContent=formatTime(maxPerClick);
+    prestigeMultEl.textContent=prestigeMultiplier.toFixed(2);
+    id("maxAutoRate").textContent=formatTime(autoRate);
+    id("maxCombo").textContent=maxComboEver;
+    id("totalReverbs").textContent=totalReverbs;
+    
+    // ВИПРАВЛЕНО: використовуємо x.done замість x.d
+    const a=achievementsList.filter(x=>x.done).length;
+    id("achievedCount").textContent=a;
+    id("totalAchievements").textContent=achievementsList.length;
+    
+    id("shapeSkinsCount").textContent=ownedSkins.shapes.length;
+    id("clockSkinsCount").textContent=ownedSkins.clockSkins.length;
+    id("handSkinsCount").textContent=ownedSkins.handSkins.length;
+    id("effectSkinsCount").textContent=ownedSkins.effects.length;
+    id("totalSkins").textContent=ownedSkins.shapes.length+ownedSkins.clockSkins.length+ownedSkins.handSkins.length+ownedSkins.effects.length;
+    updateReverbText();
+}                    
 setInterval(()=>{if(autoRate>maxAutoRate)maxAutoRate=autoRate;if(maxComboEver>maxCombo)maxCombo=maxComboEver;},1000);
-
+                    
 // === ДОСЯГНЕННЯ ===
 const achRoot=id("achievements"),achievementsList=[
-{t:"Перший клік",d:"Зробити перший клік",tg:1,g:()=>clickCloudTotal},
-{t:"100 сек",d:"Витратити 100 сек",tg:100,g:()=>score},
-{t:"Перша покупка",d:"Купити перший апгрейд",tg:1,g:()=>totalUpgradesBought},
-{t:"Авто запущено",d:"Маєш autoRate > 0",tg:1,g:()=>autoRate>0?1:0},
-{t:"Комбо-майстер",d:"Досягти комбо 10+",tg:10,g:()=>maxComboEver},
-{t:"Майстер форм",d:"Володіти 3 формами годинника",tg:3,g:()=>ownedSkins.shapes.length},
-{t:"Господар рамок",d:"Володіти 3 кольорами рамки",tg:3,g:()=>ownedSkins.clockSkins.length},
-{t:"Колекціонер стрілок",d:"Володіти 3 скінами стрілок",tg:3,g:()=>ownedSkins.handSkins.length},
-{t:"Маг ефектів",d:"Володіти 3 ефектами кліку",tg:3,g:()=>ownedSkins.effects.length},
-{t:"Стильний",d:"Змінити будь-який скін",tg:1,g:()=>(current.shape!=="round"||current.clock!=="neon-blue"||current.hand!=="darkblue"||current.effect!=="red")?1:0}];
+{t:"Перший клік",desc:"Зробити перший клік",tg:1,g:()=>clickCloudTotal,done:false},
+{t:"100 сек",desc:"Витратити 100 сек",tg:100,g:()=>score,done:false},
+{t:"Перша покупка",desc:"Купити перший апгрейд",tg:1,g:()=>totalUpgradesBought,done:false},
+{t:"Авто запущено",desc:"Маєш autoRate > 0",tg:1,g:()=>autoRate>0?1:0,done:false},
+{t:"Комбо-майстер",desc:"Досягти комбо 10+",tg:10,g:()=>maxComboEver,done:false},
+{t:"Майстер форм",desc:"Володіти 3 формами годинника",tg:3,g:()=>ownedSkins.shapes.length,done:false},
+{t:"Господар рамок",desc:"Володіти 3 кольорами рамки",tg:3,g:()=>ownedSkins.clockSkins.length,done:false},
+{t:"Колекціонер стрілок",desc:"Володіти 3 скінами стрілок",tg:3,g:()=>ownedSkins.handSkins.length,done:false},
+{t:"Маг ефектів",desc:"Володіти 3 ефектами кліку",tg:3,g:()=>ownedSkins.effects.length,done:false},
+{t:"Стильний",desc:"Змінити будь-який скін",tg:1,g:()=>(current.shape!=="round"||current.clock!=="neon-blue"||current.hand!=="darkblue"||current.effect!=="red")?1:0,done:false}];
 
 achievementsList.forEach(a=>{const e=d.createElement("div");e.className="achievement";
-e.innerHTML=`<strong>${a.t}</strong><div style="font-size:12px;color:#bcd">${a.d}</div><div class="ach-progress"></div><div class="ach-state">0%</div>`;
+e.innerHTML=`<strong>${a.t}</strong><div style="font-size:12px;color:#bcd">${a.desc}</div><div class="ach-progress"></div><div class="ach-state">0%</div>`;
 achRoot.appendChild(e);a.p=e.querySelector(".ach-progress");a.s=e.querySelector(".ach-state");});
 
 function updateAchievements(){achievementsList.forEach(a=>{const v=a.g(),p=Math.min(100,(v/a.tg)*100);
-a.p.style.width=p+"%";if(p>=100&&!a.d){a.d=1;a.s.textContent="Виконано ✅";a.s.style.color="#8df299";showToast(`Досягнення: ${a.t} ✅`);}
+a.p.style.width=p+"%";if(p>=100&&!a.done){a.done=true;a.s.textContent="Виконано ✅";a.s.style.color="#8df299";showToast(`Досягнення: ${a.t} ✅`);}
 else if(p<100)a.s.textContent=Math.floor(p)+"%";});}
 
 // === АВТО ТІК ===
@@ -233,4 +245,4 @@ addBtn("Реверб","#ec4899",()=>completeReverb());addBtn("Закрити","#
 // === ДИНАМІЧНИЙ ТЕКСТ ПЕРЕЗАПУСКУ ===
 const reverbDesc=id("reverbDesc"),nextMultiplierEl=id("nextMultiplier");
 function updateReverbText(){nextMultiplierEl.textContent=(prestigeMultiplier*1.2).toFixed(2);}
-updateScore();updateStats();updateAchievements();};
+updateScore();updateStats();updateAchievements();}
