@@ -75,13 +75,22 @@ handleClickCombo();updateScore();updateStats();updateAchievements();}
                     
 // === СКІНИ ===
 const clockSkins=[{id:"neon-blue",n:"Неон синій",p:0,a:()=>qa('.clock').forEach(c=>{c.style.borderColor="#0ea5e9";c.style.boxShadow="0 0 50px #0ea5e9, 0 0 100px #0ea5e9"})},{id:"purple",n:"Пурпурний",p:64800,a:()=>qa('.clock').forEach(c=>{c.style.borderColor="#8b5cf6";c.style.boxShadow="0 0 50px #8b5cf6, 0 0 100px #8b5cf6"})},{id:"pink",n:"Рожевий",p:129600,a:()=>qa('.clock').forEach(c=>{c.style.borderColor="#ec4899";c.style.boxShadow="0 0 50px #ec4899, 0 0 100px #ec4899"})},{id:"black",n:"Чорний",p:259200,a:()=>qa('.clock').forEach(c=>{c.style.borderColor="#111";c.style.boxShadow="0 0 10px #000"})}],
+shapes=[{id:"round",n:"Круг",p:0},{id:"square",n:"Квадрат",p:28800},{id:"diamond",n:"Ромб",p:86400},{id:"oval",n:"Овал",p:172800}],// === СКІНИ ===
+const clockSkins=[
+{id:"neon-blue",n:"Неон синій",p:0,a:()=>qa('.clock').forEach(c=>{c.style.borderColor="#0ea5e9";c.style.boxShadow="0 0 50px #0ea5e9, 0 0 100px #0ea5e9"})},
+{id:"purple",n:"Пурпурний",p:64800,a:()=>qa('.clock').forEach(c=>{c.style.borderColor="#8b5cf6";c.style.boxShadow="0 0 50px #8b5cf6, 0 0 100px #8b5cf6"})},
+{id:"pink",n:"Рожевий",p:129600,a:()=>qa('.clock').forEach(c=>{c.style.borderColor="#ec4899";c.style.boxShadow="0 0 50px #ec4899, 0 0 100px #ec4899"})},
+{id:"black",n:"Чорний",p:259200,a:()=>qa('.clock').forEach(c=>{c.style.borderColor="#111";c.style.boxShadow="0 0 10px #000"})}],
 shapes=[{id:"round",n:"Круг",p:0},{id:"square",n:"Квадрат",p:28800},{id:"diamond",n:"Ромб",p:86400},{id:"oval",n:"Овал",p:172800}],
-handSkins=[{id:"darkblue",n:"Темно-сині",p:0,a:()=>qa(".hand:not(.second)").forEach(h=>{h.style.background="#1e3a8a";h.style.boxShadow="";h.style.animation=""})},{id:"pixel",n:"Піксельні",p:900,a:()=>qa(".hand:not(.second)").forEach(h=>{h.style.background="linear-gradient(#fff,#aaa)";h.style.boxShadow="";h.style.animation=""})},{id:"neon",n:"Неонові",p:9000,a:()=>qa(".hand:not(.second)").forEach(h=>{h.style.background="#0ea5e9";h.style.boxShadow="0 0 25px #0ea5e9, 0 0 60px #0ea5e9";h.style.animation="neonPulse 2s ease-in-out infinite alternate"})},{id:"chrome",n:"Хром",p:43200,a:()=>qa(".hand:not(.second)").forEach(h=>{h.style.background="linear-gradient(90deg,#ddd,#888,#ddd)";h.style.boxShadow="0 0 15px #fff, 0 0 30px #aaa";h.style.animation=""})}],
+handSkins=[{id:"darkblue",n:"Темно-сині",p:0,a:()=>qa(".hand:not(.second)").forEach(h=>{h.style.background="#1e3a8a";h.style.boxShadow="";h.style.animation=""})},
+{id:"pixel",n:"Піксельні",p:900,a:()=>qa(".hand:not(.second)").forEach(h=>{h.style.background="linear-gradient(#fff,#aaa)";h.style.boxShadow="";h.style.animation=""})},
+{id:"neon",n:"Неонові",p:9000,a:()=>qa(".hand:not(.second)").forEach(h=>{h.style.background="#0ea5e9";h.style.boxShadow="0 0 25px #0ea5e9, 0 0 60px #0ea5e9";h.style.animation="neonPulse 2s ease-in-out infinite alternate"})},
+{id:"chrome",n:"Хром",p:43200,a:()=>qa(".hand:not(.second)").forEach(h=>{h.style.background="linear-gradient(90deg,#ddd,#888,#ddd)";h.style.boxShadow="0 0 15px #fff, 0 0 30px #aaa";h.style.animation=""})}],
 effects=[{id:"red",n:"Червоний спалах",p:0},{id:"blue",n:"Синій вибух",p:21600},{id:"glitch",n:"Глітч",p:108000},{id:"blackhole",n:"Чорна діра",p:360000},{id:"ripple",n:"Хвиля часу",p:720000}],
 ownedSkins={shapes:["round"],clockSkins:["neon-blue"],handSkins:["darkblue"],effects:["red"]},
 currentShape="round",currentClockSkin="neon-blue",currentHandSkin="darkblue",currentEffect="red";
 
-function buySkin(t,i,p,n){if(ownedSkins[t].includes(i))return showToast("Цей скін вже купчено");if(score<p)return showToast("Не вистачає часу!");score-=p;ownedSkins[t].push(i);if(t==="shapes")currentShape=i;if(t==="clockSkins")currentClockSkin=i;if(t==="handSkins")currentHandSkin=i;if(t==="effects")currentEffect=i;applyAllSkins();updateScore();updateStats();updateAchievements();showToast(`Куплено: ${n} ✅`);refreshAllSkinGrids();}
+function buySkin(t,i,p,n){if(ownedSkins[t].includes(i))return showToast("Цей скін вже куплено");if(score<p)return showToast("Не вистачає часу!");score-=p;ownedSkins[t].push(i);if(t==="shapes")currentShape=i;if(t==="clockSkins")currentClockSkin=i;if(t==="handSkins")currentHandSkin=i;if(t==="effects")currentEffect=i;applyAllSkins();updateScore();updateStats();updateAchievements();showToast(`Куплено: ${n} ✅`);refreshAllSkinGrids();}
 
 function applyAllSkins(){qa('.clock').forEach(c=>c.className="clock "+currentShape);clockSkins.find(s=>s.id===currentClockSkin)?.a();handSkins.find(s=>s.id===currentHandSkin)?.a();}
 
@@ -91,8 +100,7 @@ function refreshAllSkinGrids(){createSkinGrid("shapeSkins",shapes,"shapes");crea
 
 function updateSkinHighlights(){[{l:shapes,t:"shapes",c:"shapeSkins"},{l:clockSkins,t:"clockSkins",c:"clockSkins"},{l:handSkins,t:"handSkins",c:"handSkins"},{l:effects,t:"effects",c:"effectSkins"}].forEach(obj=>{const ct=id(obj.c);if(!ct)return;Array.from(ct.children).forEach((el,i)=>{const s=obj.l[i],o=ownedSkins[obj.t].includes(s.id);if(!o){if(score>=s.p){el.style.opacity="1";el.style.boxShadow="0 0 15px #0ff";}else{el.style.opacity="0.4";el.style.boxShadow="";}}});});}
 
-setInterval(updateSkinHighlights,50);refreshAllSkinGrids();applyAllSkins();
-                    
+setInterval(updateSkinHighlights,50);refreshAllSkinGrids();applyAllSkins();                    
 // === КОМБО ===
 function handleClickCombo(){const n=Date.now();if(n-lastClickTime<MAX_CLICK_INTERVAL)currentCombo++;else currentCombo=1;
 lastClickTime=n;if(currentCombo>maxComboEver)maxComboEver=currentCombo;if(currentCombo>=COMBO_THRESHOLD){
