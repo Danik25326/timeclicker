@@ -171,6 +171,11 @@ body{
 @keyframes reverbPulse{0%,100%{transform:scale(1) rotate(0deg)}50%{transform:scale(1.18) rotate(4deg)}}
 .reverb-chaos .hand{animation:chaosSpin .18s linear infinite}
 @keyframes chaosSpin{from{transform:translateX(-50%) rotate(var(--rand,0deg))}to{transform:translateX(-50%) rotate(calc(var(--rand,0deg)+360deg))}}
+@keyframes chaosSpin {  
+  from { transform: translateX(-50%) rotate(0deg); }
+  to { transform: translateX(-50%) rotate(var(--rand-rotation, 360deg)); }
+}
+.reverb-mode .hand {  animation: chaosSpin 1s linear infinite !important;}
 
 /* Кнопка ревербу */
 {margin-top:30px;padding:14px 32px;background:linear-gradient(90deg,#ff006e,#ff3b5c);border:none;color:white;font-weight:700;font-size:16px;border-radius:14px;cursor:pointer;box-shadow:0 0 30px rgba(255,59,92,.6),0 6px 20px rgba(0,0,0,.4);transition:all .2s ease;text-shadow:0 0 10px rgba(255,255,255,.5)}
