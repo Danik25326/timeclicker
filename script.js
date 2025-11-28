@@ -774,7 +774,6 @@ function completeReverb() {
   updateStats(); 
   updateAchievements();
 }
-  }
   // === ТАБИ ===
   document.querySelectorAll(".top-tabs .tab").forEach(btn => {
     btn.addEventListener("click", () => {
