@@ -74,15 +74,16 @@ clickGainEl.textContent=`+${formatTime(g)}`;showFloating(`+${formatTime(g)}`);tr
 handleClickCombo();updateScore();updateStats();updateAchievements();}
 
 // === СКІНИ ===
-const handSkins=[{id:"darkblue",n:"Темно-сині",p:0,a:()=>qa(".hand:not(.second)").forEach(h=>{h.style.background="#1e3a8a";h.style.boxShadow="";h.style.animation=""})},
+const clockSkins=[
+{id:"neon-blue",n:"Неон синій",p:0,a:()=>qa('.clock').forEach(c=>{c.style.borderColor="#0ea5e9";c.style.boxShadow="0 0 50px #0ea5e9, 0 0 100px #0ea5e9"})},
+{id:"purple",n:"Пурпурний",p:64800,a:()=>qa('.clock').forEach(c=>{c.style.borderColor="#8b5cf6";c.style.boxShadow="0 0 50px #8b5cf6, 0 0 100px #8b5cf6"})},
+{id:"pink",n:"Рожевий",p:129600,a:()=>qa('.clock').forEach(c=>{c.style.borderColor="#ec4899";c.style.boxShadow="0 0 50px #ec4899, 0 0 100px #ec4899"})},
+{id:"black",n:"Чорний",p:259200,a:()=>qa('.clock').forEach(c=>{c.style.borderColor="#111";c.style.boxShadow="0 0 10px #000"})}],
+shapes=[{id:"round",n:"Круг",p:0},{id:"square",n:"Квадрат",p:28800},{id:"diamond",n:"Ромб",p:86400},{id:"oval",n:"Овал",p:172800}],
+handSkins=[{id:"darkblue",n:"Темно-сині",p:0,a:()=>qa(".hand:not(.second)").forEach(h=>{h.style.background="#1e3a8a";h.style.boxShadow="";h.style.animation=""})},
 {id:"pixel",n:"Піксельні",p:900,a:()=>qa(".hand:not(.second)").forEach(h=>{h.style.background="linear-gradient(#fff,#aaa)";h.style.boxShadow="";h.style.animation=""})},
 {id:"neon",n:"Неонові",p:9000,a:()=>qa(".hand:not(.second)").forEach(h=>{h.style.background="#0ea5e9";h.style.boxShadow="0 0 25px #0ea5e9, 0 0 60px #0ea5e9";h.style.animation="neonPulse 2s ease-in-out infinite alternate"})},
 {id:"chrome",n:"Хром",p:43200,a:()=>qa(".hand:not(.second)").forEach(h=>{h.style.background="linear-gradient(90deg,#ddd,#888,#ddd)";h.style.boxShadow="0 0 15px #fff, 0 0 30px #aaa";h.style.animation=""})}],
-shapes=[{id:"round",n:"Круг",p:0},{id:"square",n:"Квадрат",p:28800},{id:"diamond",n:"Ромб",p:86400},{id:"oval",n:"Овал",p:172800}],
-clockSkins=[{id:"neon-blue",n:"Неон синій",p:0,a:()=>{clock.style.borderColor="#0ea5e9";clock.style.boxShadow="0 0 50px #0ea5e9, 0 0 100px #0ea5e9"}},
-{id:"purple",n:"Пурпурний",p:64800,a:()=>{clock.style.borderColor="#8b5cf6";clock.style.boxShadow="0 0 50px #8b5cf6, 0 0 100px #8b5cf6"}},
-{id:"pink",n:"Рожевий",p:129600,a:()=>{clock.style.borderColor="#ec4899";clock.style.boxShadow="0 0 50px #ec4899, 0 0 100px #ec4899"}},
-{id:"black",n:"Чорний",p:259200,a:()=>{clock.style.borderColor="#111";clock.style.boxShadow="0 0 10px #000"}}],
 effects=[{id:"red",n:"Червоний спалах",p:0},{id:"blue",n:"Синій вибух",p:21600},{id:"glitch",n:"Глітч",p:108000},{id:"blackhole",n:"Чорна діра",p:360000},{id:"ripple",n:"Хвиля часу",p:720000}],
 ownedSkins={shapes:["round"],clockSkins:["neon-blue"],handSkins:["darkblue"],effects:["red"]},
 current={shape:"round",clock:"neon-blue",hand:"darkblue",effect:"red"};
@@ -91,8 +92,7 @@ function buySkin(t,i,p,n){if(ownedSkins[t].includes(i))return showToast("Цей 
 if(score<p)return showToast("Не вистачає часу!");score-=p;ownedSkins[t].push(i);current[t.slice(0,-1)]=i;
 applyAllSkins();updateScore();updateStats();updateAchievements();showToast(`Куплено: ${n} ✅`);refreshAllSkinGrids();}
 
-function applyAllSkins(){q(".clock").className="clock "+current.shape; const clockEl = id("clickableClock");
-const c=clockSkins.find(s=>s.id===current.clock);if(c?.a)c.a(clockEl);const h=handSkins.find(s=>s.id===current.hand);if(h?.a)h.a();}
+function applyAllSkins(){    qa('.clock').forEach(c=>c.className="clock "+current.shape);    clockSkins.find(s=>s.id===current.clock)?.a();    handSkins.find(s=>s.id===current.hand)?.a();}
 
 function createSkinGrid(ct,ls,t){const r=id(ct);r.innerHTML="";ls.forEach(s=>{const e=d.createElement("div");e.className="skin";
 e.textContent=s.n;const o=ownedSkins[t].includes(s.id),a=current[t.slice(0,-1)]===s.id;
