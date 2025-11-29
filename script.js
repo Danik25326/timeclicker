@@ -71,8 +71,6 @@ multipliersContainer.appendChild(b);m.up=upB;upB();});
 function addTime(){const g=Math.round(clickPower*clickMultiplier*prestigeMultiplier);
 score+=g;clickCloudTotal+=g;if(g>maxPerClick)maxPerClick=g;
 clickGainEl.textContent=`+${formatTime(g)}`;showFloating(`+${formatTime(g)}`);triggerClickEffect();
-handleClickCombo();updateScore();updateStats();updateAchievements();}
-                    
 // === СКІНИ ===
 const clockSkins=[
 {id:"neon-blue",n:"Неон синій",p:0,a:()=>qa('.clock').forEach(c=>{c.style.borderColor="#0ea5e9";c.style.boxShadow="0 0 50px #0ea5e9, 0 0 100px #0ea5e9"})},
