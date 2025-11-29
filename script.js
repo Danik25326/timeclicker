@@ -100,6 +100,18 @@ setInterval(()=>{const g=Math.round(autoRate*prestigeMultiplier);if(g>0){score+=
 function updateClockHands(){
 const n=new Date(),s=n.getSeconds()+n.getMilliseconds()/1000,m=n.getMinutes()+s/60,h=(n.getHours()%12||12)+m/60; qa("#clickableClock .second").forEach(x=>x.style.transform=`translateX(-50%) rotate(${s*6}deg)`);qa("#clickableClock .minute").forEach(x=>x.style.transform=`translateX(-50%) rotate(${m*6}deg)`); qa("#clickableClock .hour").forEach(x=>x.style.transform=`translateX(-50%) rotate(${h*30}deg)`);}
 setInterval(updateClockHands,50);updateClockHands();
+
+  // === СИСТЕМА ЕФЕКТУ ПЕРЕЗАПУСКУ ===
+const restartEffect={active:!1,bubbles:[],stats:[],statsInterval:null,
+init(){const e=document.createElement("div");e.id="restartEffectOverlay";e.style.cssText="position:fixed;top:0;left:0;width:100%;height:100%;z-index:10000;display:none;pointer-events:none;";document.body.appendChild(e)},
+start(){this.active=!0;const e=document.getElementById("restartEffectOverlay");e.style.display="block";this.showBubbles();this.startRandomStats()},
+stop(){this.active=!1;const e=document.getElementById("restartEffectOverlay");e.style.display="none";e.innerHTML="";this.statsInterval&&clearInterval(this.statsInterval)},
+// Бульбашки-годинники
+showBubbles(){const e=document.getElementById("restartEffectOverlay");const t=["#0ea5e9","#8b5cf6","#ec4899","#10b981","#f59e0b"];for(let o=0;o<15;o++){const n=document.createElement("div");const a=t[Math.floor(Math.random()*t.length)];n.style.cssText=`position:absolute;left:${Math.random()*85+5}%;top:${Math.random()*85+5}%;width:${25*Math.random()+25}px;height:${25*Math.random()+25}px;border:2px solid ${a};border-radius:50%;color:white;display:flex;align-items:center;justify-content:center;font-size:10px;background:rgba(14,165,233,0.1);box-shadow:0 0 10px ${a};`;n.textContent=`${Math.random().toString().substr(2,2)}:${Math.random().toString().substr(2,2)}`;e.appendChild(n)}},
+// Випадкові бульбашки статистики
+startRandomStats(){const e=[`Комбо: ${maxComboEver||0}`,`Кліків: ${clickCloudTotal||0}`,`Апгрейдів: ${totalUpgradesBought||0}`,`Рекорд: ${maxPerClick||0}`];this.statsInterval=setInterval(()=>{this.active&&this.createStatBubble(e[Math.floor(Math.random()*e.length)])},600)},
+createStatBubble(e){const t=document.getElementById("restartEffectOverlay"),o=document.createElement("div");o.style.cssText=`position:absolute;left:${Math.random()*70+15}%;bottom:-40px;background:rgba(236,72,153,0.9);color:white;padding:6px 10px;border-radius:15px;font-size:11px;box-shadow:0 0 8px rgba(236,72,153,0.7);animation:floatUp 2.5s ease-in forwards;`;o.textContent=e;t.appendChild(o);setTimeout(()=>o.remove(),2500)}};
+restartEffect.init();
   
 // === РЕВЕРБ СИСТЕМА ===
 reverbBtn.addEventListener("click",()=>{if(!confirm("Ти впевнений, що хочеш повернути час назад? Всі твої апгрейди будуть втрачені, але ти отримаєш множник!"))return;startReverbMode();});
