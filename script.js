@@ -1,6 +1,38 @@
 // === ОСНОВНІ ФУНКЦІЇ ===
 function startGame(v){document.getElementById('chooser').style.display='none';document.getElementById('game').style.display='';if(v==='mobile')document.body.classList.add('mobile-version');else document.body.classList.remove('mobile-version');initGame()}
-function initGame(){const d=document,q=s=>d.querySelector(s),qa=s=>d.querySelectorAll(s),id=s=>d.getElementById(s),clock=id("clickableClock"),clockWrapper=id("clockWrapper"),comboBubble=id("comboBubble"),comboCount=id("comboCount"),clickCloudEl=id("clickCloud"),musicBtn=id("musicBtn"),prevTrack=id("prevTrack"),nextTrack=id("nextTrack"),player=id("player"),scoreText=id("score"),upgradesContainer=id("upgrades"),multipliersContainer=id("multipliers"),clickGainEl=id("clickGain"),cloudTotalEl=id("cloudTotal"),nowPlaying=id("nowPlaying"),realTimePlayedEl=id("realTimePlayed"),virtualTimeEl=id("virtualTime"),totalUpgradesEl=id("totalUpgrades"),maxPerClickEl=id("maxPerClick"),prestigeMultEl=id("prestigeMult"),reverbBtn=id("reverbBtn"),timeTunnel=id("timeTunnel"),worldTitle=id("worldTitle"),toastContainer=id("toastContainer"),reverbOverlay=id("reverbOverlay"),reverbClock=id("reverbClock"),reverbHint=id("reverbHint");
+function initGame(){
+  // === ОПТИМІЗАЦІЯ ДЛЯ МОБІЛЬНИХ (НЕ ВПЛИВАЄ НА ПК) ===
+const m='ontouchstart'in window||navigator.maxTouchPoints>0;if(m){
+// ОНОВЛЕННЯ СТРІЛОК - ЗМЕНШЕНА ЧАСТОТА
+const oh=updateClockHands;let l=0;updateClockHands=()=>{const n=Date.now();if(n-l>100){oh();l=n;}};
+
+// КОМБО СИСТЕМА - АДАПТОВАНА ДЛЯ МОБІЛЬНИХ
+MAX_CLICK_INTERVAL=500;COMBO_THRESHOLD=3;
+
+// АВТО-КЛІКИ - ОПТИМІЗОВАНІ ІНТЕРВАЛИ
+const ai=setInterval(()=>{const g=Math.round(autoRate*prestigeMultiplier);if(g>0){score+=g;clickCloudTotal+=g;if(score%100===0)updateScore();}if(Date.now()%3e3<100){updateStats();updateAchievements();}},1e3);
+
+// СКІНИ - ЗМЕНШЕНА ЧАСТОТА ОНОВЛЕННЯ
+const sui=setInterval(updateSkinHighlights,200);
+
+// ПЛАВАЮЧІ ЧИСЛА - ОБМЕЖЕННЯ КІЛЬКОСТІ
+let f=[];const osf=showFloating;showFloating=t=>{if(f.length>3){const o=f.shift();if(o&&o.parentNode)o.parentNode.removeChild(o);}
+const e=d.createElement("div");e.textContent=t;e.style.cssText="position:absolute;right:10px;top:30px;color:#ffccd1;font-weight:700;opacity:1;transition:all 0.7s ease-out;font-size:14px;";clockWrapper.appendChild(e);f.push(e);
+requestAnimationFrame(()=>{e.style.transform="translateX(40px) translateY(-50px)";e.style.opacity="0";});setTimeout(()=>{if(e.parentNode)e.parentNode.removeChild(e);f=f.filter(i=>i!==e);},700);};
+
+// СПОВІЩЕННЯ - ОБМЕЖЕННЯ КІЛЬКОСТІ
+let tc=0;const ot=showToast;showToast=t=>{if(tc>=2)return;tc++;ot(t);setTimeout(()=>{tc=Math.max(0,tc-1);},3e3);};
+
+// РЕВЕРБ СИСТЕМА - ОПТИМІЗАЦІЯ ОНОВЛЕННЯ
+const or=updateReverbClockHands;let lr=0;updateReverbClockHands=()=>{const n=Date.now();if(n-lr<100){requestAnimationFrame(updateReverbClockHands);return;}lr=n;or();};
+
+// СТАТИСТИКА - ЗМЕНШЕНА ЧАСТОТА ОНОВЛЕННЯ
+const si=setInterval(()=>{if(autoRate>maxAutoRate)maxAutoRate=autoRate;if(maxComboEver>maxCombo)maxCombo=maxComboEver;},2e3);}
+
+// === ОПТИМІЗАЦІЯ ДЛЯ ВСІХ ПРИСТРОЇВ ===
+let ls=0,os=updateScore;updateScore=()=>{const n=Date.now();if(n-ls>200){os();ls=n;}};
+let lst=0,oust=updateStats;updateStats=()=>{const n=Date.now();if(n-lst>500){oust();lst=n;}};
+const d=document,q=s=>d.querySelector(s),qa=s=>d.querySelectorAll(s),id=s=>d.getElementById(s),clock=id("clickableClock"),clockWrapper=id("clockWrapper"),comboBubble=id("comboBubble"),comboCount=id("comboCount"),clickCloudEl=id("clickCloud"),musicBtn=id("musicBtn"),prevTrack=id("prevTrack"),nextTrack=id("nextTrack"),player=id("player"),scoreText=id("score"),upgradesContainer=id("upgrades"),multipliersContainer=id("multipliers"),clickGainEl=id("clickGain"),cloudTotalEl=id("cloudTotal"),nowPlaying=id("nowPlaying"),realTimePlayedEl=id("realTimePlayed"),virtualTimeEl=id("virtualTime"),totalUpgradesEl=id("totalUpgrades"),maxPerClickEl=id("maxPerClick"),prestigeMultEl=id("prestigeMult"),reverbBtn=id("reverbBtn"),timeTunnel=id("timeTunnel"),worldTitle=id("worldTitle"),toastContainer=id("toastContainer"),reverbOverlay=id("reverbOverlay"),reverbClock=id("reverbClock"),reverbHint=id("reverbHint");
 
 // === ОНОВЛЕННЯ ДАТИ ===
 function updateDate(){id("currentDate").textContent=new Date().toLocaleDateString('uk-UA')}
