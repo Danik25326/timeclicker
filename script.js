@@ -67,8 +67,10 @@ setInterval(updateSkinHighlights,50);refreshAllSkinGrids();applyAllSkins();
 setInterval(()=>{const g=Math.round(autoRate*prestigeMultiplier);if(g>0){score+=g;clickCloudTotal+=g;updateScore();}updateStats();updateAchievements();},1000);
 
 // === ГОДИННИК ===
-function updateClockHands(){const n=new Date(),s=n.getSeconds()+n.getMilliseconds()/1000,m=n.getMinutes()+s/60,h=(n.getHours()%12||12)+m/60;qa(".second").forEach(x=>x.style.transform=`translateX(-50%) rotate(${s*6}deg)`);qa(".minute").forEach(x=>x.style.transform=`translateX(-50%) rotate(${m*6}deg)`);qa(".hour").forEach(x=>x.style.transform=`translateX(-50%) rotate(${h*30}deg)`);}setInterval(updateClockHands,50);updateClockHands();
-
+function updateClockHands(){
+const n=new Date(),s=n.getSeconds()+n.getMilliseconds()/1000,m=n.getMinutes()+s/60,h=(n.getHours()%12||12)+m/60; qa("#clickableClock .second").forEach(x=>x.style.transform=`translateX(-50%) rotate(${s*6}deg)`);qa("#clickableClock .minute").forEach(x=>x.style.transform=`translateX(-50%) rotate(${m*6}deg)`); qa("#clickableClock .hour").forEach(x=>x.style.transform=`translateX(-50%) rotate(${h*30}deg)`);}
+setInterval(updateClockHands,50);updateClockHands();
+  
 // === РЕВЕРБ СИСТЕМА ===
 reverbBtn.addEventListener("click",()=>{if(!confirm("Ти впевнений, що хочеш повернути час назад?"))return;startReverbMode();});
 function startReverbMode(){
