@@ -72,37 +72,53 @@ const n=new Date(),s=n.getSeconds()+n.getMilliseconds()/1000,m=n.getMinutes()+s/
 setInterval(updateClockHands,50);updateClockHands();
   
 // === РЕВЕРБ СИСТЕМА ===
-reverbBtn.addEventListener("click",()=>{if(!confirm("Ти впевнений, що хочеш повернути час назад?"))return;startReverbMode();});
+reverbBtn.addEventListener("click",()=>{if(!confirm("Ти впевнений, що хочеш повернути час назад? Всі твої апгрейди будуть втрачені, але ти отримаєш множник!"))return;startReverbMode();});
 function startReverbMode(){
-reverbOverlay.classList.remove("hidden");timeTunnel.classList.add("active");reverbHint.style.opacity="1";isReverbActive=1;
-reverbClock.className=`clock ${current.shape}`;clockSkins.find(s=>s.id===current.clock)?.a();setTimeout(()=>reverbHint.style.opacity="0",3000);
+    reverbOverlay.classList.remove("hidden");timeTunnel.classList.add("active");reverbHint.style.opacity="1";isReverbActive=1;
+    reverbClock.className=`clock ${current.shape}`;clockSkins.find(s=>s.id===current.clock)?.a();handSkins.find(s=>s.id===current.hand)?.a();
+    updateReverbClockHands();setTimeout(()=>reverbHint.style.opacity="0",3000);
 }
-const startReverbHold=e=>{
-if(e.type.includes('touch'))e.preventDefault();if(!isReverbActive)return;
-reverbHint.style.opacity="0";reverbClock.classList.add("reverb-mode","reverb-chaos");timeTunnel.classList.add("intense");
-// ХАОТИЧНЕ ОБЕРТАННЯ КОЖНОЇ СТРІЛКИ
-qa("#reverbClock .hand").forEach(h=>{
-const duration=0.3+Math.random()*1.2; // Випадкова швидкість 0.3-1.5 сек
-const direction=Math.random()>0.5?"normal":"reverse"; // Випадковий напрямок
-h.style.setProperty("--duration",`${duration}s`);h.style.setProperty("--direction",direction);
-});
-reverbHoldTimeout=setTimeout(completeReverb,10000);
+function updateReverbClockHands(){ // ОНОВЛЕННЯ СТРІЛОК РЕВЕРБ ГОДИННИКА
+    if(!isReverbActive)return;const hands=qa("#reverbClock .hand");if(hands.length===0)return;
+    if(reverbClock.classList.contains("reverb-chaos")){requestAnimationFrame(updateReverbClockHands);return;} // ЯКЩО ХАОС - ВИХОДИМО
+    const n=new Date(),s=n.getSeconds()+n.getMilliseconds()/1000,m=n.getMinutes()+s/60,h=(n.getHours()%12||12)+m/60; // НОРМАЛЬНИЙ ЧАС
+    qa("#reverbClock .second").forEach(x=>x.style.transform=`translateX(-50%) rotate(${s*6}deg)`);
+    qa("#reverbClock .minute").forEach(x=>x.style.transform=`translateX(-50%) rotate(${m*6}deg)`);
+    qa("#reverbClock .hour").forEach(x=>x.style.transform=`translateX(-50%) rotate(${h*30}deg)`);
+    requestAnimationFrame(updateReverbClockHands);
+}
+const startReverbHold=e=>{ // ПОЧАТОК УТРИМАННЯ
+    if(e.type.includes('touch'))e.preventDefault();if(!isReverbActive)return;
+    reverbHint.style.opacity="0";reverbClock.classList.add("reverb-mode","reverb-chaos");timeTunnel.classList.add("intense");
+    qa("#reverbClock .hand").forEach((h,index)=>{ // ХАОТИЧНЕ ОБЕРТАННЯ КОЖНОЇ СТРІЛКИ
+        const duration=0.5+Math.random()*2;const direction=Math.random()>0.5?"normal":"reverse"; // ВИПАДКОВА ШВИДКІСТЬ ТА НАПРЯМОК
+        h.style.setProperty("--duration",`${duration}s`);h.style.setProperty("--direction",direction);
+        h.style.animation=`chaosSpin ${duration}s linear infinite ${direction}`;
+    });reverbHoldTimeout=setTimeout(completeReverb,10000);
 };
-const stopReverbHold=e=>{
-if(e&&e.type.includes('touch'))e.preventDefault();clearTimeout(reverbHoldTimeout);if(isReverbActive){
-reverbClock.classList.remove("reverb-mode","reverb-chaos");timeTunnel.classList.remove("intense");
-qa("#reverbClock .hand").forEach(h=>{h.style.removeProperty("--duration");h.style.removeProperty("--direction");});}
+const stopReverbHold=e=>{ // ЗУПИНКА УТРИМАННЯ
+    if(e&&e.type.includes('touch'))e.preventDefault();clearTimeout(reverbHoldTimeout);
+    if(isReverbActive){
+        reverbClock.classList.remove("reverb-mode","reverb-chaos");timeTunnel.classList.remove("intense");
+        qa("#reverbClock .hand").forEach(h=>{h.style.animation="none";h.style.removeProperty("--duration");h.style.removeProperty("--direction");});
+        updateReverbClockHands(); // ПОВЕРТАЄМО ОНОВЛЕННЯ НОРМАЛЬНОГО ЧАСУ
+    }
 };
 reverbClock.addEventListener("mousedown",startReverbHold);reverbClock.addEventListener("touchstart",startReverbHold,{passive:false});
 reverbClock.addEventListener("mouseup",stopReverbHold);reverbClock.addEventListener("mouseleave",stopReverbHold);
 reverbClock.addEventListener("touchend",stopReverbHold);reverbClock.addEventListener("touchcancel",stopReverbHold);
-function completeReverb(){
-stopReverbHold(new Event('manual'));prestigeMultiplier*=1.2;totalReverbs++;score=0;clickPower=1;autoRate=0;totalUpgradesBought=0;maxPerClick=1;clickCloudTotal=0;currentCombo=0;
-upgrades.forEach((u,i)=>{u.l=0;if(buttons[i]){buttons[i].classList.add("hidden");if(i===0)buttons[i].classList.remove("hidden");}u.up();});
-timeTunnel.classList.add("reverb-complete");setTimeout(()=>{alert(`Перезапуск завершено! Множник: ${prestigeMultiplier.toFixed(2)}×`);
-reverbOverlay.classList.add("hidden");timeTunnel.classList.remove("active","intense","reverb-complete");isReverbActive=0;},1500);
-updateScore();updateStats();updateAchievements();}
-
+function completeReverb(){ // ЗАВЕРШЕННЯ РЕВЕРБУ
+    stopReverbHold(new Event('manual'));prestigeMultiplier*=1.2;totalReverbs++;
+    score=0;clickPower=1;autoRate=0;totalUpgradesBought=0;maxPerClick=1;clickCloudTotal=0;currentCombo=0; // СКИДАЄМО ПРОГРЕС
+    upgrades.forEach((u,i)=>{u.l=0;if(buttons[i]){buttons[i].classList.add("hidden");if(i===0)buttons[i].classList.remove("hidden");}u.up();}); // СКИДАЄМО АПГРЕЙДИ
+    multipliers.forEach(m=>{if(m.b){m.b=0;clickMultiplier=1;}m.up&&m.up();}); // СКИДАЄМО МНОЖНИКИ
+    timeTunnel.classList.add("reverb-complete");
+    setTimeout(()=>{
+        alert(`Перезапуск завершено! Твій множник тепер: ${prestigeMultiplier.toFixed(2)}×`);
+        reverbOverlay.classList.add("hidden");timeTunnel.classList.remove("active","intense","reverb-complete");isReverbActive=0;
+        updateScore();updateStats();updateAchievements(); // ОНОВЛЮЄМО ІНТЕРФЕЙС
+    },1500);
+}
 // === СИСТЕМА ВКЛАДОК ===
 qa(".top-tabs .tab").forEach(b=>{b.addEventListener("click",()=>{qa(".top-tabs .tab").forEach(x=>x.classList.remove("active"));qa(".tab-page").forEach(x=>x.classList.remove("active"));b.classList.add("active");id(b.dataset.tab).classList.add("active");});});
 
