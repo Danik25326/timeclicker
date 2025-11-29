@@ -141,11 +141,13 @@ const startReverbHold=e=>{
     });reverbHoldTimeout=setTimeout(completeReverb,10000);
 };
 const stopReverbHold=e=>{
-    if(e&&e.type.includes('touch'))e.preventDefault();clearTimeout(reverbHoldTimeout);
+    if(e&&e.type.includes('touch'))e.preventDefault();
+    if(restartEffect.completionScreen.style.display==="flex")return;
+    clearTimeout(reverbHoldTimeout);
     if(isReverbActive){
         reverbClock.classList.remove("reverb-mode","reverb-chaos");timeTunnel.classList.remove("intense");
         qa("#reverbClock .hand").forEach(e=>{e.style.animation="none";e.style.removeProperty("--duration");e.style.removeProperty("--direction");});
-        updateReverbClockHands();restartEffect.stop(); // ЗУПИНКА ЕФЕКТУ
+        updateReverbClockHands();restartEffect.stop();
     }
 };
 reverbClock.addEventListener("mousedown",startReverbHold);reverbClock.addEventListener("touchstart",startReverbHold,{passive:false});
