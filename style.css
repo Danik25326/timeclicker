@@ -187,6 +187,7 @@ body.mobile-version #reverbClock .hand.minute{height:74px}
 body.mobile-version #reverbClock .hand.second{height:88px}
 /* Центральна точка реверб годинника */
 body.mobile-version #reverbClock .center-dot{width:12px;height:12px}
+body.mobile-version .container {    gap: 15px !important; }
 
 /* ===== СПЕЦІАЛЬНІ ЕФЕКТИ ===== */
 body.eye-blink::before{content:"";position:fixed;inset:0;background:#000;z-index:999999;pointer-events:none;animation:realEyeBlink .5s ease-in-out forwards}
