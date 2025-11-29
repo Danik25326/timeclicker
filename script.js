@@ -108,66 +108,6 @@ function startReverbMode(){
     reverbClock.className=`clock ${current.shape}`;clockSkins.find(s=>s.id===current.clock)?.a();handSkins.find(s=>s.id===current.hand)?.a();
     updateReverbClockHands();setTimeout(()=>reverbHint.style.opacity="0",3000);
 }
-function updateReverbClockHands(){ // ОНОВЛЕННЯ СТРІЛОК РЕВЕРБ ГОДИННИКА
-    if(!isReverbActive)return;const hands=qa("#reverbClock .hand");if(hands.length===0)return;
-    if(reverbClock.classList.contains("reverb-chaos")){requestAnimationFrame(updateReverbClockHands);return;} // ЯКЩО ХАОС - ВИХОДИМО
-    const n=new Date(),s=n.getSeconds()+n.getMilliseconds()/1000,m=n.getMinutes()+s/60,h=(n.getHours()%12||12)+m/60; // НОРМАЛЬНИЙ ЧАС
-    qa("#reverbClock .second").forEach(x=>x.style.transform=`translateX(-50%) rotate(${s*6}deg)`);
-    qa("#reverbClock .minute").forEach(x=>x.style.transform=`translateX(-50%) rotate(${m*6}deg)`);
-    qa("#reverbClock .hour").forEach(x=>x.style.transform=`translateX(-50%) rotate(${h*30}deg)`);
-    requestAnimationFrame(updateReverbClockHands);
-}
-const startReverbHold=e=>{ // ПОЧАТОК УТРИМАННЯ
-    if(e.type.includes('touch'))e.preventDefault();if(!isReverbActive)return;
-    reverbHint.style.opacity="0";reverbClock.classList.add("reverb-mode","reverb-chaos");timeTunnel.classList.add("intense");
-    qa("#reverbClock .hand").forEach((h,index)=>{ // ХАОТИЧНЕ ОБЕРТАННЯ КОЖНОЇ СТРІЛКИ
-        const duration=0.5+Math.random()*2;const direction=Math.random()>0.5?"normal":"reverse"; // ВИПАДКОВА ШВИДКІСТЬ ТА НАПРЯМОК
-        h.style.setProperty("--duration",`${duration}s`);h.style.setProperty("--direction",direction);
-        h.style.animation=`chaosSpin ${duration}s linear infinite ${direction}`;
-    });reverbHoldTimeout=setTimeout(completeReverb,10000);
-};
-const stopReverbHold=e=>{ // ЗУПИНКА УТРИМАННЯ
-    if(e&&e.type.includes('touch'))e.preventDefault();clearTimeout(reverbHoldTimeout);
-    if(isReverbActive){
-        reverbClock.classList.remove("reverb-mode","reverb-chaos");timeTunnel.classList.remove("intense");
-        qa("#reverbClock .hand").forEach(h=>{h.style.animation="none";h.style.removeProperty("--duration");h.style.removeProperty("--direction");});
-        updateReverbClockHands(); // ПОВЕРТАЄМО ОНОВЛЕННЯ НОРМАЛЬНОГО ЧАСУ
-    }
-};
-reverbClock.addEventListener("mousedown",startReverbHold);reverbClock.addEventListener("touchstart",startReverbHold,{passive:false});
-reverbClock.addEventListener("mouseup",stopReverbHold);reverbClock.addEventListener("mouseleave",stopReverbHold);
-reverbClock.addEventListener("touchend",stopReverbHold);reverbClock.addEventListener("touchcancel",stopReverbHold);
-function completeReverb(){ // ЗАВЕРШЕННЯ РЕВЕРБУ
-    stopReverbHold(new Event('manual'));prestigeMultiplier*=1.2;totalReverbs++;
-    score=0;clickPower=1;autoRate=0;totalUpgradesBought=0;maxPerClick=1;clickCloudTotal=0;currentCombo=0; // СКИДАЄМО ПРОГРЕС
-    upgrades.forEach((u,i)=>{u.l=0;if(buttons[i]){buttons[i].classList.add("hidden");if(i===0)buttons[i].classList.remove("hidden");}u.up();}); // СКИДАЄМО АПГРЕЙДИ
-    multipliers.forEach(m=>{if(m.b){m.b=0;clickMultiplier=1;}m.up&&m.up();}); // СКИДАЄМО МНОЖНИКИ
-    timeTunnel.classList.add("reverb-complete");
-    restartEffect.start();
-    setTimeout(()=>{
-        reverbOverlay.classList.add("hidden");timeTunnel.classList.remove("active","intense","reverb-complete");isReverbActive=0;
-        updateScore();updateStats();updateAchievements(); // ОНОВЛЮЄМО ІНТЕРФЕЙС
-    },1500);
-}
-// === СИСТЕМА ЕФЕКТУ ПЕРЕЗАПУСКУ ===
-const restartEffect={active:!1,bubbles:[],stats:[],statsInterval:null,
-init(){const e=document.createElement("div");e.id="restartEffectOverlay";e.style.cssText="position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.8);z-index:9998;display:none;pointer-events:none;";document.body.appendChild(e)},
-start(){this.active=!0;const e=document.getElementById("restartEffectOverlay");e.style.display="block";this.showBubbles();this.startRandomStats()},
-stop(){this.active=!1;const e=document.getElementById("restartEffectOverlay");e.style.display="none";e.innerHTML="";this.statsInterval&&clearInterval(this.statsInterval)},
-// Бульбашки-годинники
-showBubbles(){const e=document.getElementById("restartEffectOverlay");const t=["#0ea5e9","#8b5cf6","#ec4899","#10b981","#f59e0b"];for(let o=0;o<15;o++){const n=document.createElement("div");const a=t[Math.floor(Math.random()*t.length)];n.style.cssText=`position:absolute;left:${Math.random()*85+5}%;top:${Math.random()*85+5}%;width:${25*Math.random()+25}px;height:${25*Math.random()+25}px;border:2px solid ${a};border-radius:50%;color:white;display:flex;align-items:center;justify-content:center;font-size:10px;background:rgba(14,165,233,0.1);box-shadow:0 0 10px ${a};`;n.textContent=`${Math.random().toString().substr(2,2)}:${Math.random().toString().substr(2,2)}`;e.appendChild(n)}},
-// Випадкові бульбашки статистики
-startRandomStats(){const e=[`Комбо: ${maxComboEver||0}`,`Кліків: ${clickCloudTotal||0}`,`Апгрейдів: ${totalUpgradesBought||0}`,`Рекорд: ${maxPerClick||0}`];this.statsInterval=setInterval(()=>{this.active&&this.createStatBubble(e[Math.floor(Math.random()*e.length)])},600)},
-createStatBubble(e){const t=document.getElementById("restartEffectOverlay"),o=document.createElement("div");o.style.cssText=`position:absolute;left:${Math.random()*70+15}%;bottom:-40px;background:rgba(236,72,153,0.9);color:white;padding:6px 10px;border-radius:15px;font-size:11px;box-shadow:0 0 8px rgba(236,72,153,0.7);animation:floatUp 2.5s ease-in forwards;`;o.textContent=e;t.appendChild(o);setTimeout(()=>o.remove(),2500)}};
-restartEffect.init();
-
-// === РЕВЕРБ СИСТЕМА ===
-reverbBtn.addEventListener("click",()=>{if(!confirm("Ти впевнений, що хочеш повернути час назад? Всі твої апгрейди будуть втрачені, але ти отримаєш множник!"))return;startReverbMode();});
-function startReverbMode(){
-    reverbOverlay.classList.remove("hidden");timeTunnel.classList.add("active");reverbHint.style.opacity="1";isReverbActive=1;
-    reverbClock.className=`clock ${current.shape}`;clockSkins.find(s=>s.id===current.clock)?.a();handSkins.find(s=>s.id===current.hand)?.a();
-    updateReverbClockHands();setTimeout(()=>reverbHint.style.opacity="0",3000);
-}
 function updateReverbClockHands(){
     if(!isReverbActive)return;const e=qa("#reverbClock .hand");if(e.length===0)return;
     if(reverbClock.classList.contains("reverb-chaos")){requestAnimationFrame(updateReverbClockHands);return;}
