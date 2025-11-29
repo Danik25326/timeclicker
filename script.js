@@ -149,21 +149,71 @@ function completeReverb(){ // ЗАВЕРШЕННЯ РЕВЕРБУ
         updateScore();updateStats();updateAchievements(); // ОНОВЛЮЄМО ІНТЕРФЕЙС
     },1500);
 }
-  // === СИСТЕМА ЕФЕКТУ ПЕРЕЗАПУСКУ ===
-const restartEffect={active:!1,bubbles:[],stats:[],flash:0,multiplier:1,
-init(){const e=document.createElement("div");e.id="restartEffectOverlay";e.style.cssText="position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.9);z-index:9999;display:none;justify-content:center;align-items:center;flex-direction:column;color:white;font-family:Poppins;text-align:center;";document.body.appendChild(e)},
-start(){this.active=!0;this.flash=0.5;this.stats=[];this.multiplier=this.calculateMultiplier();const e=document.getElementById("restartEffectOverlay");e.style.display="flex";e.innerHTML="";e.style.background="white";setTimeout(()=>{e.style.background="rgba(0,0,0,0.9)";this.showBubbles();this.showCompleteScreen()},500)},
-// Бульбашки-годинники та статистика
-showBubbles(){const e=document.getElementById("restartEffectOverlay");for(let t=0;t<12;t++){const o=document.createElement("div");o.style.cssText=`position:absolute;left:${Math.random()*80+10}%;top:${Math.random()*80+10}%;width:${30*Math.random()+30}px;height:${30*Math.random()+30}px;border:2px solid #0ea5e9;border-radius:50%;color:white;display:flex;align-items:center;justify-content:center;font-size:12px;background:rgba(14,165,233,0.1);`;o.textContent=`${Math.random().toString().substr(2,2)}:${Math.random().toString().substr(2,2)}`;e.appendChild(o)}this.startRandomStats()},
+// === СИСТЕМА ЕФЕКТУ ПЕРЕЗАПУСКУ ===
+const restartEffect={active:!1,bubbles:[],stats:[],statsInterval:null,
+init(){const e=document.createElement("div");e.id="restartEffectOverlay";e.style.cssText="position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.8);z-index:9998;display:none;pointer-events:none;";document.body.appendChild(e)},
+start(){this.active=!0;const e=document.getElementById("restartEffectOverlay");e.style.display="block";this.showBubbles();this.startRandomStats()},
+stop(){this.active=!1;const e=document.getElementById("restartEffectOverlay");e.style.display="none";e.innerHTML="";this.statsInterval&&clearInterval(this.statsInterval)},
+// Бульбашки-годинники
+showBubbles(){const e=document.getElementById("restartEffectOverlay");const t=["#0ea5e9","#8b5cf6","#ec4899","#10b981","#f59e0b"];for(let o=0;o<15;o++){const n=document.createElement("div");const a=t[Math.floor(Math.random()*t.length)];n.style.cssText=`position:absolute;left:${Math.random()*85+5}%;top:${Math.random()*85+5}%;width:${25*Math.random()+25}px;height:${25*Math.random()+25}px;border:2px solid ${a};border-radius:50%;color:white;display:flex;align-items:center;justify-content:center;font-size:10px;background:rgba(14,165,233,0.1);box-shadow:0 0 10px ${a};`;n.textContent=`${Math.random().toString().substr(2,2)}:${Math.random().toString().substr(2,2)}`;e.appendChild(n)}},
 // Випадкові бульбашки статистики
-startRandomStats(){const e=[`Комбо: ${maxComboEver||0}`,`Кліків: ${clickCloudTotal||0}`,`Апгрейдів: ${totalUpgradesBought||0}`,`Рекорд: ${maxPerClick||0}`];setInterval(()=>{this.active&&this.createStatBubble(e[Math.floor(Math.random()*e.length)])},800)},
-createStatBubble(e){const t=document.getElementById("restartEffectOverlay"),o=document.createElement("div");o.style.cssText=`position:absolute;left:${Math.random()*70+15}%;bottom:-50px;background:rgba(236,72,153,0.9);color:white;padding:10px 15px;border-radius:20px;font-size:14px;box-shadow:0 0 10px rgba(236,72,153,0.7);animation:floatUp 3s ease-in forwards;`;o.textContent=e;t.appendChild(o);setTimeout(()=>o.remove(),3e3)},
-// Фінальний екран
-showCompleteScreen(){const e=document.getElementById("restartEffectOverlay"),t=document.createElement("div");t.innerHTML=`<div style="font-size:32px;margin-bottom:20px;text-shadow:0 0 20px #0ea5e9">Ви успішно повернулися в часі!</div><div style="font-size:24px;margin-bottom:20px">Ваш множник: ${this.multiplier.toFixed(2)}×</div><div style="font-size:18px;color:#cfeaff">Натисніть будь-де щоб продовжити</div>`;e.appendChild(t);e.onclick=()=>this.finish()},
-calculateMultiplier(){return(totalReverbs||0)>0?1.2:1.2},
-finish(){this.active=!1;const e=document.getElementById("restartEffectOverlay");e.style.display="none",e.innerHTML="",e.onclick=null}};
+startRandomStats(){const e=[`Комбо: ${maxComboEver||0}`,`Кліків: ${clickCloudTotal||0}`,`Апгрейдів: ${totalUpgradesBought||0}`,`Рекорд: ${maxPerClick||0}`];this.statsInterval=setInterval(()=>{this.active&&this.createStatBubble(e[Math.floor(Math.random()*e.length)])},600)},
+createStatBubble(e){const t=document.getElementById("restartEffectOverlay"),o=document.createElement("div");o.style.cssText=`position:absolute;left:${Math.random()*70+15}%;bottom:-40px;background:rgba(236,72,153,0.9);color:white;padding:6px 10px;border-radius:15px;font-size:11px;box-shadow:0 0 8px rgba(236,72,153,0.7);animation:floatUp 2.5s ease-in forwards;`;o.textContent=e;t.appendChild(o);setTimeout(()=>o.remove(),2500)}};
 restartEffect.init();
-  
+
+// === РЕВЕРБ СИСТЕМА ===
+reverbBtn.addEventListener("click",()=>{if(!confirm("Ти впевнений, що хочеш повернути час назад? Всі твої апгрейди будуть втрачені, але ти отримаєш множник!"))return;startReverbMode();});
+function startReverbMode(){
+    reverbOverlay.classList.remove("hidden");timeTunnel.classList.add("active");reverbHint.style.opacity="1";isReverbActive=1;
+    reverbClock.className=`clock ${current.shape}`;clockSkins.find(s=>s.id===current.clock)?.a();handSkins.find(s=>s.id===current.hand)?.a();
+    updateReverbClockHands();setTimeout(()=>reverbHint.style.opacity="0",3000);
+}
+function updateReverbClockHands(){
+    if(!isReverbActive)return;const e=qa("#reverbClock .hand");if(e.length===0)return;
+    if(reverbClock.classList.contains("reverb-chaos")){requestAnimationFrame(updateReverbClockHands);return;}
+    const t=new Date(),o=t.getSeconds()+t.getMilliseconds()/1000,n=t.getMinutes()+o/60,a=(t.getHours()%12||12)+n/60;
+    qa("#reverbClock .second").forEach(e=>e.style.transform=`translateX(-50%) rotate(${o*6}deg)`);
+    qa("#reverbClock .minute").forEach(e=>e.style.transform=`translateX(-50%) rotate(${n*6}deg)`);
+    qa("#reverbClock .hour").forEach(e=>e.style.transform=`translateX(-50%) rotate(${a*30}deg)`);
+    requestAnimationFrame(updateReverbClockHands);
+}
+const startReverbHold=e=>{
+    if(e.type.includes('touch'))e.preventDefault();if(!isReverbActive)return;
+    reverbHint.style.opacity="0";reverbClock.classList.add("reverb-mode","reverb-chaos");timeTunnel.classList.add("intense");
+    restartEffect.start(); // ЕФЕКТ БУЛЬБАШОК ПІД ЧАС УТРИМАННЯ
+    qa("#reverbClock .hand").forEach((e,t)=>{
+        const o=0.5+2*Math.random(),n=Math.random()>0.5?"normal":"reverse";
+        e.style.setProperty("--duration",`${o}s`);e.style.setProperty("--direction",n);
+        e.style.animation=`chaosSpin ${o}s linear infinite ${n}`;
+    });reverbHoldTimeout=setTimeout(completeReverb,10000);
+};
+const stopReverbHold=e=>{
+    if(e&&e.type.includes('touch'))e.preventDefault();clearTimeout(reverbHoldTimeout);
+    if(isReverbActive){
+        reverbClock.classList.remove("reverb-mode","reverb-chaos");timeTunnel.classList.remove("intense");
+        qa("#reverbClock .hand").forEach(e=>{e.style.animation="none";e.style.removeProperty("--duration");e.style.removeProperty("--direction");});
+        updateReverbClockHands();restartEffect.stop(); // ЗУПИНКА ЕФЕКТУ
+    }
+};
+reverbClock.addEventListener("mousedown",startReverbHold);reverbClock.addEventListener("touchstart",startReverbHold,{passive:false});
+reverbClock.addEventListener("mouseup",stopReverbHold);reverbClock.addEventListener("mouseleave",stopReverbHold);
+reverbClock.addEventListener("touchend",stopReverbHold);reverbClock.addEventListener("touchcancel",stopReverbHold);
+function completeReverb(){
+    stopReverbHold(new Event('manual'));prestigeMultiplier*=1.2;totalReverbs++;
+    score=0;clickPower=1;autoRate=0;totalUpgradesBought=0;maxPerClick=1;clickCloudTotal=0;currentCombo=0;
+    upgrades.forEach((e,t)=>{e.l=0;if(buttons[t]){buttons[t].classList.add("hidden");if(0===t)buttons[t].classList.remove("hidden");}e.up();});
+    multipliers.forEach(e=>{if(e.b){e.b=0;clickMultiplier=1;}e.up&&e.up();});
+    // БІЛА ВСПИШКА ПІСЛЯ 10 СЕКУНД
+    const e=document.createElement("div");e.style.cssText="position:fixed;top:0;left:0;width:100%;height:100%;background:white;z-index:10000;pointer-events:none;";document.body.appendChild(e);
+    setTimeout(()=>{
+        e.remove();timeTunnel.classList.add("reverb-complete");
+        // ТЕКСТ ПЕРЕЗАПУСКУ
+        const t=document.createElement("div");t.style.cssText="position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);z-index:10001;text-align:center;color:white;font-family:Poppins;pointer-events:none;";
+        t.innerHTML=`<div style="font-size:32px;margin-bottom:20px;text-shadow:0 0 20px #0ea5e9">Ви успішно повернулися в часі!</div><div style="font-size:24px;margin-bottom:20px">Ваш множник: ${prestigeMultiplier.toFixed(2)}×</div><div style="font-size:18px;color:#cfeaff">Натисніть будь-де щоб продовжити</div>`;document.body.appendChild(t);
+        const o=()=>{t.remove();e.remove();reverbOverlay.classList.add("hidden");timeTunnel.classList.remove("active","intense","reverb-complete");isReverbActive=0;updateScore();updateStats();updateAchievements();document.removeEventListener('click',o);document.removeEventListener('touchstart',o);};
+        document.addEventListener('click',o);document.addEventListener('touchstart',o);
+    },1000); // ВСПИШКА ТРИВАЄ 1 СЕКУНДУ
+}
 // === СИСТЕМА ВКЛАДОК ===
 qa(".top-tabs .tab").forEach(b=>{b.addEventListener("click",()=>{qa(".top-tabs .tab").forEach(x=>x.classList.remove("active"));qa(".tab-page").forEach(x=>x.classList.remove("active"));b.classList.add("active");id(b.dataset.tab).classList.add("active");});});
 
