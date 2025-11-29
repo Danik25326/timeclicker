@@ -103,13 +103,12 @@ body{font-family:'Poppins',sans-serif;background:radial-gradient(circle at cente
 @keyframes pulseHint{0%,100%{transform:translateX(-50%) scale(1)}50%{transform:translateX(-50%) scale(1.15)}}
 #reverbClock{width:380px;height:380px;border:10px solid #ff00ff !important;box-shadow:0 0 50px #ff00ff,inset 0 0 40px rgba(255,0,255,0.4) !important;cursor:grab;z-index:10}
 
-/* === ОНОВЛЕНА АНІМАЦІЯ РЕВЕРБУ - ХАОТИЧНІ СТРІЛКИ ТА ПУЛЬСАЦІЯ === */
-#reverbClock.reverb-mode{animation:reverbPulse 1.2s ease-in-out infinite !important}
+/* === ОНОВЛЕНА АНІМАЦІЯ РЕВЕРБУ - ХАОТИЧНІ СТРІЛКИ === */
+#reverbClock.reverb-mode{animation:reverbPulse 1.2s ease-in-out infinite!important}
 @keyframes reverbPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.15)}}
-.reverb-chaos .hand{animation:chaosSpin 0.8s linear infinite !important}
-@keyframes chaosSpin{0%{transform:translateX(-50%) rotate(0deg)}25%{transform:translateX(-50%) rotate(90deg)}50%{transform:translateX(-50%) rotate(180deg)}75%{transform:translateX(-50%) rotate(270deg)}100%{transform:translateX(-50%) rotate(360deg)}}
-.clock.round.reverb-mode,.clock.square.reverb-mode,.clock.diamond.reverb-mode,.clock.oval.reverb-mode{animation:reverbPulse 1.2s ease-in-out infinite !important}
-
+.reverb-chaos .hand{animation:chaosSpin var(--duration)s linear infinite!important;animation-direction:var(--direction)!important}
+@keyframes chaosSpin{0%{transform:translateX(-50%)rotate(0deg)}100%{transform:translateX(-50%)rotate(360deg)}}
+.clock.round.reverb-mode,.clock.square.reverb-mode,.clock.diamond.reverb-mode,.clock.oval.reverb-mode{animation:reverbPulse 1.2s ease-in-out infinite!important}
 .reverb-btn{margin-top:30px;padding:14px 32px;background:linear-gradient(90deg,#ff006e,#ff3b5c);border:none;color:white;font-weight:700;font-size:16px;border-radius:14px;cursor:pointer;box-shadow:0 0 30px rgba(255,59,92,.6),0 6px 20px rgba(0,0,0,.4);transition:all .2s ease;text-shadow:0 0 10px rgba(255,255,255,.5)}
 .reverb-btn:hover{transform:translateY(-4px);box-shadow:0 0 50px rgba(255,59,92,.9),0 10px 30px rgba(0,0,0,.5)}
 
