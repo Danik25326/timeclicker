@@ -92,25 +92,43 @@ body{font-family:'Poppins',sans-serif;background:radial-gradient(circle at cente
 @keyframes blackhole{0%{transform:scale(1)}50%{transform:scale(.85)}100%{transform:scale(1)}}
 @keyframes ripple{0%{box-shadow:0 0 50px var(--neon)}100%{box-shadow:0 0 0 160px rgba(14,165,233,0)}}
 
-/* ===== СИСТЕМА ПЕРЕЗАПУСКУ (РЕВЕРБ) ===== */
+/* === ВИПРАВЛЕНА СИСТЕМА ПЕРЕЗАПУСКУ (РЕВЕРБ) === */
 .time-tunnel,.reverb-overlay{position:fixed;inset:0;pointer-events:none;opacity:0;transition:opacity .3s;z-index:50}
 .time-tunnel.active,.reverb-overlay:not(.hidden){opacity:1;pointer-events:all}
 .reverb-overlay{display:flex;align-items:center;justify-content:center;flex-direction:column;overflow:hidden;background:#000;z-index:999}
 .reverb-overlay::before{content:"";position:absolute;inset:-100%;background:repeating-conical-gradient(from 0deg at 50% 50%,#8b00ff 0deg,transparent 10deg,transparent 350deg,#8b00ff 360deg);animation:warpTunnel 12s linear infinite;opacity:.7}
 @keyframes warpTunnel{from{transform:rotate(0deg) scale(1)}to{transform:rotate(360deg) scale(2.5)}}
-.reverb-instruction{margin-bottom:60px;font-size:32px;text-shadow:0 0 30px #ff00ff;z-index:10}
+.reverb-instruction{margin-bottom:60px;font-size:32px;text-shadow:0 0 30px #ff00ff;z-index:10;text-align:center}
 .reverb-hint{position:absolute;top:34%;left:50%;transform:translateX(-50%);background:rgba(255,59,92,.95);color:#fff;padding:20px 40px;border-radius:50px;font-size:28px;font-weight:700;z-index:1001;animation:pulseHint 1.8s infinite}
 @keyframes pulseHint{0%,100%{transform:translateX(-50%) scale(1)}50%{transform:translateX(-50%) scale(1.15)}}
-#reverbClock{width:380px;height:380px;border:10px solid #ff00ff !important;box-shadow:0 0 50px #ff00ff,inset 0 0 40px rgba(255,0,255,0.4) !important;cursor:grab;z-index:10}
+#reverbClock{width:380px;height:380px;border:10px solid #ff00ff!important;box-shadow:0 0 50px #ff00ff,inset 0 0 40px rgba(255,0,255,0.4)!important;cursor:grab;z-index:10}
 
-/* === ОНОВЛЕНА АНІМАЦІЯ РЕВЕРБУ - ХАОТИЧНІ СТРІЛКИ === */
+/* === АНІМАЦІЯ РЕВЕРБУ - ХАОТИЧНІ СТРІЛКИ === */
 #reverbClock.reverb-mode{animation:reverbPulse 1.2s ease-in-out infinite!important}
 @keyframes reverbPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.15)}}
-.reverb-chaos .hand{animation:chaosSpin var(--duration)s linear infinite!important;animation-direction:var(--direction)!important}
+
+/* ХАОТИЧНІ СТРІЛКИ */
+.reverb-chaos .hand{animation:chaosSpin var(--duration,1s) linear infinite!important;animation-direction:var(--direction,normal)!important;transform-origin:bottom center!important}
 @keyframes chaosSpin{0%{transform:translateX(-50%)rotate(0deg)}100%{transform:translateX(-50%)rotate(360deg)}}
+
+/* ІНДИВІДУАЛЬНІ НАЛАШТУВАННЯ СТРІЛОК */
+.reverb-chaos .hour{--duration:1.8s;--direction:normal}
+.reverb-chaos .minute{--duration:0.9s;--direction:reverse}
+.reverb-chaos .second{--duration:0.5s;--direction:normal}
+
+/* ФОРМИ ГОДИННИКА В РЕВЕРБІ */
 .clock.round.reverb-mode,.clock.square.reverb-mode,.clock.diamond.reverb-mode,.clock.oval.reverb-mode{animation:reverbPulse 1.2s ease-in-out infinite!important}
+
+/* КНОПКА РЕВЕРБУ */
 .reverb-btn{margin-top:30px;padding:14px 32px;background:linear-gradient(90deg,#ff006e,#ff3b5c);border:none;color:white;font-weight:700;font-size:16px;border-radius:14px;cursor:pointer;box-shadow:0 0 30px rgba(255,59,92,.6),0 6px 20px rgba(0,0,0,.4);transition:all .2s ease;text-shadow:0 0 10px rgba(255,255,255,.5)}
 .reverb-btn:hover{transform:translateY(-4px);box-shadow:0 0 50px rgba(255,59,92,.9),0 10px 30px rgba(0,0,0,.5)}
+
+/* СТРІЛКИ РЕВЕРБ ГОДИННИКА */
+#reverbClock .hand{position:absolute;bottom:50%;left:50%;transform-origin:bottom center;transform:translateX(-50%)rotate(0deg);border-radius:3px;transition:transform .3s ease}
+#reverbClock .hour{width:10px;height:80px;background:#1e3a8a}
+#reverbClock .minute{width:8px;height:120px;background:#1e40af}
+#reverbClock .second{width:4px;height:150px;background:#ff006e!important;box-shadow:0 0 20px #ff006e,0 0 50px #ff3366!important}
+#reverbClock .center-dot{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:16px;height:16px;background:#ff006e;border-radius:50%;box-shadow:0 0 30px #ff006e;z-index:10}
 
 /* ===== СКРОЛБАРИ ===== */
 .upgrades-container::-webkit-scrollbar{width:10px}
