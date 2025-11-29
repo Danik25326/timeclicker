@@ -101,14 +101,16 @@ function updateClockHands(){
 const n=new Date(),s=n.getSeconds()+n.getMilliseconds()/1000,m=n.getMinutes()+s/60,h=(n.getHours()%12||12)+m/60; qa("#clickableClock .second").forEach(x=>x.style.transform=`translateX(-50%) rotate(${s*6}deg)`);qa("#clickableClock .minute").forEach(x=>x.style.transform=`translateX(-50%) rotate(${m*6}deg)`); qa("#clickableClock .hour").forEach(x=>x.style.transform=`translateX(-50%) rotate(${h*30}deg)`);}
 setInterval(updateClockHands,50);updateClockHands();
 
- // === СИСТЕМА ЕФЕКТУ ПЕРЕЗАПУСКУ (бульбашки як у прикладі) ===
+ // === СИСТЕМА ЕФЕКТУ ПЕРЕЗАПУСКУ ===
 const restartEffect={active:!1,clocksInt:null,bubblesInt:null,
-init(){const e=document.createElement("div");e.id="restartEffectOverlay";e.style.cssText="position:fixed;top:0;left:0;width:100%;height:100%;z-index:10000;display:none;pointer-events:none;";document.body.appendChild(e);this.clocksContainer=document.createElement("div");this.clocksContainer.style.cssText="position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;";this.bubblesContainer=document.createElement("div");this.bubblesContainer.style.cssText="position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;";e.appendChild(this.clocksContainer);e.appendChild(this.bubblesContainer)},
+init(){const e=document.createElement("div");e.id="restartEffectOverlay";e.style.cssText="position:fixed;top:0;left:0;width:100%;height:100%;z-index:10000;display:none;pointer-events:none;background:rgba(0,0,0,0.7);";document.body.appendChild(e);this.clocksContainer=document.createElement("div");this.clocksContainer.style.cssText="position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;";this.bubblesContainer=document.createElement("div");this.bubblesContainer.style.cssText="position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;";e.appendChild(this.clocksContainer);e.appendChild(this.bubblesContainer);
+// ОКРЕМИЙ екран завершення
+this.completionScreen=document.createElement("div");this.completionScreen.id="reverbCompletionScreen";this.completionScreen.style.cssText="position:fixed;top:0;left:0;width:100%;height:100%;background:#000;z-index:10002;display:none;align-items:center;justify-content:center;flex-direction:column;color:white;font-family:Poppins;text-align:center;";this.completionScreen.innerHTML=`<div style="font-size:32px;margin-bottom:20px;text-shadow:0 0 20px #0ea5e9">Ви успішно повернулися в часі!</div><div style="font-size:24px;margin-bottom:20px">Ваш множник: ${prestigeMultiplier.toFixed(2)}×</div><div style="font-size:18px;color:#cfeaff">Натисніть будь-де щоб продовжити</div>`;document.body.appendChild(this.completionScreen);},
 start(){this.active=!0;document.getElementById("restartEffectOverlay").style.display="block";this.clocksContainer.innerHTML="";this.bubblesContainer.innerHTML="";this.clocksInt=setInterval(()=>this.createFlyingClock(),300);this.bubblesInt=setInterval(()=>this.createStatBubble(),1200)},
 stop(){this.active=!1;clearInterval(this.clocksInt);clearInterval(this.bubblesInt);document.getElementById("restartEffectOverlay").style.display="none"},
-// Літаючі годинники
+showCompletionScreen(){reverbOverlay.classList.add("hidden");document.getElementById("restartEffectOverlay").style.display="none";timeTunnel.classList.remove("active","intense");this.completionScreen.style.display="flex";},
+hideCompletionScreen(){this.completionScreen.style.display="none"},
 createFlyingClock(){const e=document.createElement("div");e.className="flying-clock";const t=80+100*Math.random();e.style.width=e.style.height=t+"px";e.style.left=Math.random()*100+"%";e.style.top=Math.random()*100+"%";e.style.animationDuration=4+6*Math.random()+"s";e.style.animationDelay=0.5*Math.random()+"s";Math.random()>0.5&&(e.style.transform="scaleX(-1)");this.clocksContainer.appendChild(e);setTimeout(()=>{e.parentNode&&e.parentNode.removeChild(e)},1e4)},
-// Бульбашки статистики
 createStatBubble(){const e=document.createElement("div");e.className="stat-bubble";const t=[`Максимальне комбо: ${maxComboEver||0}`,`Витрачено часу: ${formatTime(clickCloudTotal)}`,`Ревербів: ${totalReverbs}`,`Всього скінів: ${(ownedSkins.shapes.length+ownedSkins.clockSkins.length+ownedSkins.handSkins.length+ownedSkins.effects.length)||0}`,`Авточас/сек: ${formatTime(autoRate)}`,`Макс за клік: ${formatTime(maxPerClick)}`,`Досягнень: ${(achievementsList.filter(e=>e.done).length)}/${achievementsList.length}`];e.textContent=t[Math.floor(Math.random()*t.length)];e.style.left=10+80*Math.random()+"%";e.style.top=20+60*Math.random()+"%";this.bubblesContainer.appendChild(e);setTimeout(()=>{e.parentNode&&e.parentNode.removeChild(e)},4e3)}};
 restartEffect.init();
   
@@ -150,20 +152,21 @@ reverbClock.addEventListener("mousedown",startReverbHold);reverbClock.addEventLi
 reverbClock.addEventListener("mouseup",stopReverbHold);reverbClock.addEventListener("mouseleave",stopReverbHold);
 reverbClock.addEventListener("touchend",stopReverbHold);reverbClock.addEventListener("touchcancel",stopReverbHold);
 function completeReverb(){
-    stopReverbHold(new Event('manual'));prestigeMultiplier*=1.2;totalReverbs++;
-    score=0;clickPower=1;autoRate=0;totalUpgradesBought=0;maxPerClick=1;clickCloudTotal=0;currentCombo=0;
-    upgrades.forEach((e,t)=>{e.l=0;if(buttons[t]){buttons[t].classList.add("hidden");if(0===t)buttons[t].classList.remove("hidden");}e.up();});
-    multipliers.forEach(e=>{if(e.b){e.b=0;clickMultiplier=1;}e.up&&e.up();});
-    // БІЛА ВСПИШКА ПІСЛЯ 10 СЕКУНД
-    const e=document.createElement("div");e.style.cssText="position:fixed;top:0;left:0;width:100%;height:100%;background:white;z-index:10000;pointer-events:none;";document.body.appendChild(e);
-    setTimeout(()=>{
-        e.remove();timeTunnel.classList.add("reverb-complete");
-        // ТЕКСТ ПЕРЕЗАПУСКУ
-        const t=document.createElement("div");t.style.cssText="position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);z-index:10001;text-align:center;color:white;font-family:Poppins;pointer-events:none;";
-        t.innerHTML=`<div style="font-size:32px;margin-bottom:20px;text-shadow:0 0 20px #0ea5e9">Ви успішно повернулися в часі!</div><div style="font-size:24px;margin-bottom:20px">Ваш множник: ${prestigeMultiplier.toFixed(2)}×</div><div style="font-size:18px;color:#cfeaff">Натисніть будь-де щоб продовжити</div>`;document.body.appendChild(t);
-        const o=()=>{t.remove();e.remove();reverbOverlay.classList.add("hidden");timeTunnel.classList.remove("active","intense","reverb-complete");isReverbActive=0;updateScore();updateStats();updateAchievements();document.removeEventListener('click',o);document.removeEventListener('touchstart',o);};
-        document.addEventListener('click',o);document.addEventListener('touchstart',o);
-    },1000); // ВСПИШКА ТРИВАЄ 1 СЕКУНДУ
+stopReverbHold(new Event('manual'));prestigeMultiplier*=1.2;totalReverbs++;
+score=0;clickPower=1;autoRate=0;totalUpgradesBought=0;maxPerClick=1;clickCloudTotal=0;currentCombo=0;
+upgrades.forEach((e,t)=>{e.l=0;if(buttons[t]){buttons[t].classList.add("hidden");if(0===t)buttons[t].classList.remove("hidden");}e.up();});
+multipliers.forEach(e=>{if(e.b){e.b=0;clickMultiplier=1;}e.up&&e.up();});
+// БІЛА ВСПИШКА
+const e=document.createElement("div");e.style.cssText="position:fixed;top:0;left:0;width:100%;height:100%;background:white;z-index:10001;pointer-events:none;animation:flashFade 1s ease-out forwards;";document.body.appendChild(e);
+if(!document.querySelector('#flashAnimation')){const t=document.createElement('style');t.id='flashAnimation';t.textContent=`@keyframes flashFade{0%{opacity:1;}70%{opacity:1;}100%{opacity:0;}}`;document.head.appendChild(t);}
+setTimeout(()=>{
+e.remove();
+// ПОКАЗУЄМО ОКРЕМИЙ ЕКРАН ЗАВЕРШЕННЯ
+restartEffect.showCompletionScreen();
+const t=restartEffect.completionScreen.querySelector("div:nth-child(2)");t.textContent=`Ваш множник: ${prestigeMultiplier.toFixed(2)}×`;
+const o=()=>{restartEffect.hideCompletionScreen();isReverbActive=0;updateScore();updateStats();updateAchievements();document.removeEventListener('click',o);document.removeEventListener('touchstart',o);};
+document.addEventListener('click',o);document.addEventListener('touchstart',o);
+},1000);
 }
 // === СИСТЕМА ВКЛАДОК ===
 qa(".top-tabs .tab").forEach(b=>{b.addEventListener("click",()=>{qa(".top-tabs .tab").forEach(x=>x.classList.remove("active"));qa(".tab-page").forEach(x=>x.classList.remove("active"));b.classList.add("active");id(b.dataset.tab).classList.add("active");});});
