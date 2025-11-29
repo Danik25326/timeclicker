@@ -6,7 +6,7 @@ let score=0,clickPower=1,autoRate=0,isPlaying=0,currentTrack=0,sessionStart=Date
   // === ОПТИМІЗАЦІЯ ДЛЯ МОБІЛЬНИХ (НЕ ВПЛИВАЄ НА ПК) ===
 const m='ontouchstart'in window||navigator.maxTouchPoints>0;if(m){
 // ОНОВЛЕННЯ СТРІЛОК - ЗМЕНШЕНА ЧАСТОТА
-const oh=updateClockHands;let l=0;updateClockHands=()=>{const n=Date.now();if(n-l>100){oh();l=n;}};
+const oh=updateClockHands;let l=0;updateClockHands=()=>{const n=Date.now();if(n-l>50){oh();l=n;}}; 
 
 // КОМБО СИСТЕМА - АДАПТОВАНА ДЛЯ МОБІЛЬНИХ
 MAX_CLICK_INTERVAL=500;COMBO_THRESHOLD=3;
@@ -26,7 +26,7 @@ requestAnimationFrame(()=>{e.style.transform="translateX(40px) translateY(-50px)
 let tc=0;const ot=showToast;showToast=t=>{if(tc>=2)return;tc++;ot(t);setTimeout(()=>{tc=Math.max(0,tc-1);},3e3);};
 
 // РЕВЕРБ СИСТЕМА - ОПТИМІЗАЦІЯ ОНОВЛЕННЯ
-const or=updateReverbClockHands;let lr=0;updateReverbClockHands=()=>{const n=Date.now();if(n-lr<100){requestAnimationFrame(updateReverbClockHands);return;}lr=n;or();};
+const or=updateReverbClockHands;let lr=0;updateReverbClockHands=()=>{const n=Date.now();if(n-lr<50){requestAnimationFrame(updateReverbClockHands);return;}lr=n;or();};
 
 // СТАТИСТИКА - ЗМЕНШЕНА ЧАСТОТА ОНОВЛЕННЯ
 const si=setInterval(()=>{if(autoRate>maxAutoRate)maxAutoRate=autoRate;if(maxComboEver>maxCombo)maxCombo=maxComboEver;},2e3);}
