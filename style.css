@@ -75,7 +75,7 @@ body{font-family:'Poppins',sans-serif;background:radial-gradient(circle at cente
 .reverb-overlay::before{content:"";position:absolute;inset:-100%;background:repeating-conical-gradient(from 0deg at 50% 50%,#8b00ff 0deg,transparent 10deg,transparent 350deg,#8b00ff 360deg);animation:warpTunnel 12s linear infinite;opacity:.7}
 @keyframes warpTunnel{from{transform:rotate(0deg) scale(1)}to{transform:rotate(360deg) scale(2.5)}}
 .reverb-instruction{margin-bottom:60px;font-size:32px;text-shadow:0 0 30px #ff00ff;z-index:10}
-.reverb-hint{position:absolute;top:38%;left:50%;transform:translateX(-50%);background:rgba(255,59,92,.95);color:#fff;padding:20px 40px;border-radius:50px;font-size:28px;font-weight:700;z-index:1001;animation:pulseHint 1.8s infinite}
+.reverb-hint{position:absolute;top:36%;left:50%;transform:translateX(-50%);background:rgba(255,59,92,.95);color:#fff;padding:20px 40px;border-radius:50px;font-size:28px;font-weight:700;z-index:1001;animation:pulseHint 1.8s infinite}
 @keyframes pulseHint{0%,100%{transform:translateX(-50%) scale(1)}50%{transform:translateX(-50%) scale(1.15)}}
 #reverbClock{width:380px;height:380px;border:10px solid #ff00ff !important;box-shadow:0 0 50px #ff00ff,inset 0 0 40px rgba(255,0,255,0.4) !important;cursor:grab;z-index:10}
 #reverbClock.reverb-mode{animation:reverbPulse 1.2s ease-in-out infinite}
