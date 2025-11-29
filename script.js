@@ -71,11 +71,30 @@ function updateClockHands(){const n=new Date(),s=n.getSeconds()+n.getMillisecond
 
 // === РЕВЕРБ СИСТЕМА ===
 reverbBtn.addEventListener("click",()=>{if(!confirm("Ти впевнений, що хочеш повернути час назад?"))return;startReverbMode();});
-function startReverbMode(){reverbOverlay.classList.remove("hidden");timeTunnel.classList.add("active");reverbHint.style.opacity="1";isReverbActive=1;setTimeout(()=>reverbHint.style.opacity="0",3000);}
-const startReverbHold=e=>{if(e.type.includes('touch'))e.preventDefault();if(!isReverbActive)return;reverbHint.style.opacity="0";reverbClock.classList.add("reverb-mode");timeTunnel.classList.add("intense");qa("#reverbClock .hand").forEach(h=>{const d=0.8+Math.random()*1.2,r=(Math.random()>0.5?1:-1)*(15+Math.random()*25)*360;h.style.animation=`none`;void h.offsetWidth;h.style.animation=`chaosSpin ${d}s linear infinite`;h.style.setProperty('--rand-rotation',`${r}deg`);});reverbHoldTimeout=setTimeout(completeReverb,10000);};
-const stopReverbHold=e=>{if(e&&e.type.includes('touch'))e.preventDefault();clearTimeout(reverbHoldTimeout);if(isReverbActive){reverbClock.classList.remove("reverb-mode");timeTunnel.classList.remove("intense");qa("#reverbClock .hand").forEach(h=>h.style.animation="");}};
-reverbClock.addEventListener("mousedown",startReverbHold);reverbClock.addEventListener("touchstart",startReverbHold,{passive:false});reverbClock.addEventListener("mouseup",stopReverbHold);reverbClock.addEventListener("mouseleave",stopReverbHold);reverbClock.addEventListener("touchend",stopReverbHold);reverbClock.addEventListener("touchcancel",stopReverbHold);
-function completeReverb(){stopReverbHold(new Event('manual'));prestigeMultiplier*=1.2;totalReverbs++;score=0;clickPower=1;autoRate=0;totalUpgradesBought=0;maxPerClick=1;clickCloudTotal=0;currentCombo=0;upgrades.forEach((u,i)=>{u.l=0;if(buttons[i]){buttons[i].classList.add("hidden");if(i===0)buttons[i].classList.remove("hidden");}u.up();});timeTunnel.classList.add("reverb-complete");setTimeout(()=>{alert(`Перезапуск завершено! Множник: ${prestigeMultiplier.toFixed(2)}×`);reverbOverlay.classList.add("hidden");timeTunnel.classList.remove("active","intense","reverb-complete");isReverbActive=0;},1500);updateScore();updateStats();updateAchievements();}
+function startReverbMode(){
+reverbOverlay.classList.remove("hidden");timeTunnel.classList.add("active");reverbHint.style.opacity="1";isReverbActive=1;
+reverbClock.className=`clock ${current.shape}`;clockSkins.find(s=>s.id===current.clock)?.a();setTimeout(()=>reverbHint.style.opacity="0",3000);
+}
+const startReverbHold=e=>{
+if(e.type.includes('touch'))e.preventDefault();if(!isReverbActive)return;
+reverbHint.style.opacity="0";reverbClock.classList.add("reverb-mode","reverb-chaos");timeTunnel.classList.add("intense");
+qa("#reverbClock .hand").forEach(h=>{const d=0.3+Math.random()*0.7,r=Math.random()>0.5?1:-1;h.style.animation=`chaosSpin ${d}s linear infinite`;h.style.animationDirection=r>0?"normal":"reverse";});
+reverbHoldTimeout=setTimeout(completeReverb,10000);
+};
+const stopReverbHold=e=>{
+if(e&&e.type.includes('touch'))e.preventDefault();clearTimeout(reverbHoldTimeout);if(isReverbActive){
+reverbClock.classList.remove("reverb-mode","reverb-chaos");timeTunnel.classList.remove("intense");
+qa("#reverbClock .hand").forEach(h=>{h.style.animation="";h.style.animationDirection="";});}
+};
+reverbClock.addEventListener("mousedown",startReverbHold);reverbClock.addEventListener("touchstart",startReverbHold,{passive:false});
+reverbClock.addEventListener("mouseup",stopReverbHold);reverbClock.addEventListener("mouseleave",stopReverbHold);
+reverbClock.addEventListener("touchend",stopReverbHold);reverbClock.addEventListener("touchcancel",stopReverbHold);
+function completeReverb(){
+stopReverbHold(new Event('manual'));prestigeMultiplier*=1.2;totalReverbs++;score=0;clickPower=1;autoRate=0;totalUpgradesBought=0;maxPerClick=1;clickCloudTotal=0;currentCombo=0;
+upgrades.forEach((u,i)=>{u.l=0;if(buttons[i]){buttons[i].classList.add("hidden");if(i===0)buttons[i].classList.remove("hidden");}u.up();});
+timeTunnel.classList.add("reverb-complete");setTimeout(()=>{alert(`Перезапуск завершено! Множник: ${prestigeMultiplier.toFixed(2)}×`);
+reverbOverlay.classList.add("hidden");timeTunnel.classList.remove("active","intense","reverb-complete");isReverbActive=0;},1500);
+updateScore();updateStats();updateAchievements();}
 
 // === СИСТЕМА ВКЛАДОК ===
 qa(".top-tabs .tab").forEach(b=>{b.addEventListener("click",()=>{qa(".top-tabs .tab").forEach(x=>x.classList.remove("active"));qa(".tab-page").forEach(x=>x.classList.remove("active"));b.classList.add("active");id(b.dataset.tab).classList.add("active");});});
