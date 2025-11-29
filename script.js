@@ -142,8 +142,6 @@ const startReverbHold=e=>{
 };
 const stopReverbHold=e=>{
     if(e&&e.type.includes('touch'))e.preventDefault();
-    if(restartEffect.completionScreen.style.display==="flex")return;
-    if(document.querySelector('#reverbCompletionScreen div'))return;
     clearTimeout(reverbHoldTimeout);
     if(isReverbActive){
         reverbClock.classList.remove("reverb-mode","reverb-chaos");timeTunnel.classList.remove("intense");
