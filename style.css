@@ -157,7 +157,7 @@ body.mobile-version .upgrades-container::-webkit-scrollbar,body.mobile-version #
 body.mobile-version .upgrade-btn,.multiplier-btn{min-width:104px;padding:12px 6px;font-size:12.8px}
 body.mobile-version .skins-section>.skins-grid{display:flex;overflow-x:auto;gap:14px;padding:10px 0 24px;-webkit-overflow-scrolling:touch;scroll-snap-type:x mandatory;scroll-behavior:smooth}
 body.mobile-version .skin{min-width:96px;height:96px;flex:0 0 auto;font-size:12.5px;text-align:center;scroll-snap-align:center;padding-top:8px}
-body.mobile-version .tab-body h3,.skins-section h4{margin:36px 0 16px;font-size:18px;color:#bfe9ff;text-align:center}
+body.mobile-version .tab-body h3,.skins-section h4{margin:20px 0 12px;font-size:18px;color:#bfe9ff;text-align:center}
 body.mobile-version #tab-skins .skins-grid{display:flex!important;flex-wrap:nowrap!important;overflow-x:auto!important;overflow-y:hidden!important;gap:14px!important;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch}
 body.mobile-version #tab-skins .skins-grid .skin{flex:0 0 auto!important;min-width:110px!important;height:110px!important;scroll-snap-align:center}
 body.mobile-version #tab-skins .skins-grid::-webkit-scrollbar{display:none}
