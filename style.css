@@ -180,6 +180,13 @@ body.mobile-version .reverb-instruction{font-size:20px !important;margin-bottom:
 body.mobile-version .reverb-hint{padding:10px 20px !important;font-size:14px !important;top:38% !important}
 body.mobile-version .reverb-btn{padding:10px 20px !important;font-size:14px !important;margin-top:15px !important;width:90% !important;max-width:250px !important;display:block !important;margin-left:auto !important;margin-right:auto !important}
 body.mobile-version #tab-reverb{text-align:center !important}
+/* СТРІЛКИ РЕВЕРБ ГОДИННИКА */
+body.mobile-version #reverbClock .hand.hour{height:50px}
+body.mobile-version #reverbClock .hand.minute{height:74px}
+body.mobile-version #reverbClock .hand.second{height:88px}
+
+/* Центральна точка реверб годинника */
+body.mobile-version #reverbClock .center-dot{width:12px;height:12px}
 
 /* ===== СПЕЦІАЛЬНІ ЕФЕКТИ ===== */
 body.eye-blink::before{content:"";position:fixed;inset:0;background:#000;z-index:999999;pointer-events:none;animation:realEyeBlink .5s ease-in-out forwards}
