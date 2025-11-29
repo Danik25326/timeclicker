@@ -133,7 +133,7 @@ function updateReverbClockHands(){
 const startReverbHold=e=>{
     if(e.type.includes('touch'))e.preventDefault();if(!isReverbActive)return;
     reverbHint.style.opacity="0";reverbClock.classList.add("reverb-mode","reverb-chaos");timeTunnel.classList.add("intense");
-    restartEffect.start(); // ЕФЕКТ БУЛЬБАШОК ПІД ЧАС УТРИМАННЯ
+    restartEffect.start();
     qa("#reverbClock .hand").forEach((e,t)=>{
         const o=0.5+2*Math.random(),n=Math.random()>0.5?"normal":"reverse";
         e.style.setProperty("--duration",`${o}s`);e.style.setProperty("--direction",n);
@@ -143,6 +143,7 @@ const startReverbHold=e=>{
 const stopReverbHold=e=>{
     if(e&&e.type.includes('touch'))e.preventDefault();
     if(restartEffect.completionScreen.style.display==="flex")return;
+    if(document.querySelector('#reverbCompletionScreen div'))return;
     clearTimeout(reverbHoldTimeout);
     if(isReverbActive){
         reverbClock.classList.remove("reverb-mode","reverb-chaos");timeTunnel.classList.remove("intense");
