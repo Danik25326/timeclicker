@@ -143,12 +143,27 @@ function completeReverb(){ // ЗАВЕРШЕННЯ РЕВЕРБУ
     upgrades.forEach((u,i)=>{u.l=0;if(buttons[i]){buttons[i].classList.add("hidden");if(i===0)buttons[i].classList.remove("hidden");}u.up();}); // СКИДАЄМО АПГРЕЙДИ
     multipliers.forEach(m=>{if(m.b){m.b=0;clickMultiplier=1;}m.up&&m.up();}); // СКИДАЄМО МНОЖНИКИ
     timeTunnel.classList.add("reverb-complete");
+    restartEffect.start();
     setTimeout(()=>{
-        alert(`Перезапуск завершено! Твій множник тепер: ${prestigeMultiplier.toFixed(2)}×`);
         reverbOverlay.classList.add("hidden");timeTunnel.classList.remove("active","intense","reverb-complete");isReverbActive=0;
         updateScore();updateStats();updateAchievements(); // ОНОВЛЮЄМО ІНТЕРФЕЙС
     },1500);
 }
+  // === СИСТЕМА ЕФЕКТУ ПЕРЕЗАПУСКУ ===
+const restartEffect={active:!1,bubbles:[],stats:[],flash:0,multiplier:1,
+init(){const e=document.createElement("div");e.id="restartEffectOverlay";e.style.cssText="position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.9);z-index:9999;display:none;justify-content:center;align-items:center;flex-direction:column;color:white;font-family:Poppins;text-align:center;";document.body.appendChild(e)},
+start(){this.active=!0;this.flash=0.5;this.stats=[];this.multiplier=this.calculateMultiplier();const e=document.getElementById("restartEffectOverlay");e.style.display="flex";e.innerHTML="";e.style.background="white";setTimeout(()=>{e.style.background="rgba(0,0,0,0.9)";this.showBubbles();this.showCompleteScreen()},500)},
+// Бульбашки-годинники та статистика
+showBubbles(){const e=document.getElementById("restartEffectOverlay");for(let t=0;t<12;t++){const o=document.createElement("div");o.style.cssText=`position:absolute;left:${Math.random()*80+10}%;top:${Math.random()*80+10}%;width:${30*Math.random()+30}px;height:${30*Math.random()+30}px;border:2px solid #0ea5e9;border-radius:50%;color:white;display:flex;align-items:center;justify-content:center;font-size:12px;background:rgba(14,165,233,0.1);`;o.textContent=`${Math.random().toString().substr(2,2)}:${Math.random().toString().substr(2,2)}`;e.appendChild(o)}this.startRandomStats()},
+// Випадкові бульбашки статистики
+startRandomStats(){const e=[`Комбо: ${maxComboEver||0}`,`Кліків: ${clickCloudTotal||0}`,`Апгрейдів: ${totalUpgradesBought||0}`,`Рекорд: ${maxPerClick||0}`];setInterval(()=>{this.active&&this.createStatBubble(e[Math.floor(Math.random()*e.length)])},800)},
+createStatBubble(e){const t=document.getElementById("restartEffectOverlay"),o=document.createElement("div");o.style.cssText=`position:absolute;left:${Math.random()*70+15}%;bottom:-50px;background:rgba(236,72,153,0.9);color:white;padding:10px 15px;border-radius:20px;font-size:14px;box-shadow:0 0 10px rgba(236,72,153,0.7);animation:floatUp 3s ease-in forwards;`;o.textContent=e;t.appendChild(o);setTimeout(()=>o.remove(),3e3)},
+// Фінальний екран
+showCompleteScreen(){const e=document.getElementById("restartEffectOverlay"),t=document.createElement("div");t.innerHTML=`<div style="font-size:32px;margin-bottom:20px;text-shadow:0 0 20px #0ea5e9">Ви успішно повернулися в часі!</div><div style="font-size:24px;margin-bottom:20px">Ваш множник: ${this.multiplier.toFixed(2)}×</div><div style="font-size:18px;color:#cfeaff">Натисніть будь-де щоб продовжити</div>`;e.appendChild(t);e.onclick=()=>this.finish()},
+calculateMultiplier(){return(totalReverbs||0)>0?1.2:1.2},
+finish(){this.active=!1;const e=document.getElementById("restartEffectOverlay");e.style.display="none",e.innerHTML="",e.onclick=null}};
+restartEffect.init();
+  
 // === СИСТЕМА ВКЛАДОК ===
 qa(".top-tabs .tab").forEach(b=>{b.addEventListener("click",()=>{qa(".top-tabs .tab").forEach(x=>x.classList.remove("active"));qa(".tab-page").forEach(x=>x.classList.remove("active"));b.classList.add("active");id(b.dataset.tab).classList.add("active");});});
 
