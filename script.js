@@ -78,13 +78,18 @@ reverbClock.className=`clock ${current.shape}`;clockSkins.find(s=>s.id===current
 const startReverbHold=e=>{
 if(e.type.includes('touch'))e.preventDefault();if(!isReverbActive)return;
 reverbHint.style.opacity="0";reverbClock.classList.add("reverb-mode","reverb-chaos");timeTunnel.classList.add("intense");
-qa("#reverbClock .hand").forEach(h=>{const d=0.3+Math.random()*0.7,r=Math.random()>0.5?1:-1;h.style.animation=`chaosSpin ${d}s linear infinite`;h.style.animationDirection=r>0?"normal":"reverse";});
+// ХАОТИЧНЕ ОБЕРТАННЯ КОЖНОЇ СТРІЛКИ
+qa("#reverbClock .hand").forEach(h=>{
+const duration=0.3+Math.random()*1.2; // Випадкова швидкість 0.3-1.5 сек
+const direction=Math.random()>0.5?"normal":"reverse"; // Випадковий напрямок
+h.style.setProperty("--duration",`${duration}s`);h.style.setProperty("--direction",direction);
+});
 reverbHoldTimeout=setTimeout(completeReverb,10000);
 };
 const stopReverbHold=e=>{
 if(e&&e.type.includes('touch'))e.preventDefault();clearTimeout(reverbHoldTimeout);if(isReverbActive){
 reverbClock.classList.remove("reverb-mode","reverb-chaos");timeTunnel.classList.remove("intense");
-qa("#reverbClock .hand").forEach(h=>{h.style.animation="";h.style.animationDirection="";});}
+qa("#reverbClock .hand").forEach(h=>{h.style.removeProperty("--duration");h.style.removeProperty("--direction");});}
 };
 reverbClock.addEventListener("mousedown",startReverbHold);reverbClock.addEventListener("touchstart",startReverbHold,{passive:false});
 reverbClock.addEventListener("mouseup",stopReverbHold);reverbClock.addEventListener("mouseleave",stopReverbHold);
