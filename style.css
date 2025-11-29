@@ -187,11 +187,6 @@ body.mobile-version #reverbClock .hand.minute{height:74px}
 body.mobile-version #reverbClock .hand.second{height:88px}
 /* Центральна точка реверб годинника */
 body.mobile-version #reverbClock .center-dot{width:12px;height:12px}
-@media (max-width: 768px) {    .upgrade-btn, .multiplier-btn {        padding: 12px 8px;             font-size: 14px;                margin: 4px 2px;          }
-    #clickableClock {        width: 200px;             height: 200px;    }
-    .skin {        padding: 8px;                  font-size: 12px;    }
-    .mobile-version {        -webkit-touch-callout: none;         -webkit-user-select: none;            user-select: none;    }
-    .mobile-version button {        -webkit-tap-highlight-color: transparent;  }}
 
 /* ===== СПЕЦІАЛЬНІ ЕФЕКТИ ===== */
 body.eye-blink::before{content:"";position:fixed;inset:0;background:#000;z-index:999999;pointer-events:none;animation:realEyeBlink .5s ease-in-out forwards}
