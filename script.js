@@ -1,6 +1,21 @@
 // === ОСНОВНІ ФУНКЦІЇ ===
 function startGame(v){document.getElementById('chooser').style.display='none';document.getElementById('game').style.display='';if(v==='mobile')document.body.classList.add('mobile-version');else document.body.classList.remove('mobile-version');initGame()}
 function initGame(){
+// === ОПТИМІЗАЦІЯ ДЛЯ МОБІЛЬНИХ ===
+const isMobile='ontouchstart'in window||navigator.maxTouchPoints>0;if(isMobile){
+const ouch=updateClockHands;let lcu=0;updateClockHands=()=>{const n=Date.now();if(n-lcu>100){ouch();lcu=n;}}; // ЧАСТОТА ОНОВЛЕННЯ
+MAX_CLICK_INTERVAL=500;COMBO_THRESHOLD=3; // КОМБО ОПТИМІЗАЦІЯ
+const ai=setInterval(()=>{const g=Math.round(autoRate*pm);if(g>0){s+=g;cct+=g;if(s%100===0)us();}if(Date.now()%3e3<100){ust();ua();}},1e3); // АВТО-КЛІКИ
+const sui=setInterval(updateSkinHighlights,200); // СКІНИ
+let fe=[];const osf=showFloating;showFloating=t=>{if(fe.length>3){const o=fe.shift();if(o&&o.parentNode)o.parentNode.removeChild(o);} // ПЛАВАЮЧІ ЧИСЛА
+const e=d.createElement("div");e.textContent=t;e.style.cssText="position:absolute;right:10px;top:30px;color:#ffccd1;font-weight:700;opacity:1;transition:all 0.7s ease-out;font-size:14px;";cw.appendChild(e);fe.push(e);
+requestAnimationFrame(()=>{e.style.transform="translateX(40px) translateY(-50px)";e.style.opacity="0";});setTimeout(()=>{if(e.parentNode){e.parentNode.removeChild(e);fe=fe.filter(i=>i!==e);}},700);};
+let tc=0;const ost=showToast;showToast=t=>{if(tc>=2)return;tc++;ost(t);setTimeout(()=>{tc=Math.max(0,tc-1);},3e3);}; // СПОВІЩЕННЯ
+const ourch=updateReverbClockHands;let lru=0;updateReverbClockHands=()=>{const n=Date.now();if(n-lru<100){requestAnimationFrame(updateReverbClockHands);return;}lru=n;ourch();}; // РЕВЕРБ
+const si=setInterval(()=>{if(ar>mar)mar=ar;if(mce>mc)mc=mce;},2e3);} // СТАТИСТИКА
+// ОПТИМІЗАЦІЯ ДЛЯ ВСІХ ПРИСТРОЇВ
+let lsu=0,ous=updateScore;updateScore=()=>{const n=Date.now();if(n-lsu>200){ous();lsu=n;}}; // SCORE
+let lstu=0,oust=updateStats;updateStats=()=>{const n=Date.now();if(n-lstu>500){oust();lstu=n;}}; // STATS
 const d=document,q=s=>d.querySelector(s),qa=s=>d.querySelectorAll(s),id=s=>d.getElementById(s),clock=id("clickableClock"),clockWrapper=id("clockWrapper"),comboBubble=id("comboBubble"),comboCount=id("comboCount"),clickCloudEl=id("clickCloud"),musicBtn=id("musicBtn"),prevTrack=id("prevTrack"),nextTrack=id("nextTrack"),player=id("player"),scoreText=id("score"),upgradesContainer=id("upgrades"),multipliersContainer=id("multipliers"),clickGainEl=id("clickGain"),cloudTotalEl=id("cloudTotal"),nowPlaying=id("nowPlaying"),realTimePlayedEl=id("realTimePlayed"),virtualTimeEl=id("virtualTime"),totalUpgradesEl=id("totalUpgrades"),maxPerClickEl=id("maxPerClick"),prestigeMultEl=id("prestigeMult"),reverbBtn=id("reverbBtn"),timeTunnel=id("timeTunnel"),worldTitle=id("worldTitle"),toastContainer=id("toastContainer"),reverbOverlay=id("reverbOverlay"),reverbClock=id("reverbClock"),reverbHint=id("reverbHint");
 
 // === ОНОВЛЕННЯ ДАТИ ===
