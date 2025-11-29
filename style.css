@@ -112,6 +112,12 @@ body{font-family:'Poppins',sans-serif;background:radial-gradient(circle at cente
 /* === АНІМАЦІЯ РЕВЕРБУ - ХАОТИЧНІ СТРІЛКИ === */
 #reverbClock.reverb-mode{animation:reverbPulse 1.2s ease-in-out infinite!important}
 @keyframes reverbPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.15)}}
+/* Стилі для окремого екрану завершення ревербу */
+#reverbCompletionScreen {    background: #000 !important;    z-index: 10002 !important;}
+/* Анімація вспишки */
+@keyframes flashFade {    0% { opacity: 1; }    70% { opacity: 1; }    100% { opacity: 0; }}
+/* Забезпечуємо, що початковий екран ревербу прихований після завершення */
+.reverb-overlay.hidden {    display: none !important;}
 
 /* ХАОТИЧНІ СТРІЛКИ */
 .reverb-chaos .hand{animation:chaosSpin var(--duration,1s) linear infinite!important;animation-direction:var(--direction,normal)!important;transform-origin:bottom center!important}
@@ -144,7 +150,6 @@ body{font-family:'Poppins',sans-serif;background:radial-gradient(circle at cente
 /* ===== МОБІЛЬНА ВЕРСІЯ ===== */
 body.mobile-version{overflow-x:auto;}
 body.mobile-version .editable-title{font-size:28px !important;top:6px;white-space:nowrap !important;overflow-x:visible !important;overflow-y:hidden !important; max-width:none !important;text-overflow:unset !important; width:auto !important;min-width:max-content !important;position:absolute;left:50%;transform:translateX(-50%);z-index:30;padding:0 20px;}
-
 body.mobile-version .top-tabs{top:60px;width:96%;padding:8px 4px;gap:4px 6px;flex-wrap:wrap;justify-content:center}
 body.mobile-version .tab{flex:1 1 30%;min-width:75px;font-size:12px;padding:8px 4px}
 body.mobile-version .left-panel{width:42%;max-width:320px;margin-top:20px}
