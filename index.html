@@ -10,8 +10,14 @@
 <link rel="stylesheet" href="style.css?v=17">
 </head>
 <body>
+<!-- === ЕКРАН ВИБОРУ ВЕРСІЇ === -->
 <div id="chooser"><h1>Times Clicker</h1><button class="choose-btn" onclick="startGame('pc')">ПК-версія</button><button class="choose-btn" onclick="startGame('mobile')">Мобільна версія</button></div>
-<div id="game" style="display:none"><div id="worldTitle" class="editable-title" contenteditable="true">Times Clicker</div>
+
+<!-- === ОСНОВНА ГРА === -->
+<div id="game" style="display:none">
+<div id="worldTitle" class="editable-title" contenteditable="true">Times Clicker</div>
+
+<!-- === СИСТЕМА ВКЛАДОК === -->
 <div class="top-tabs">
 <button class="tab active" data-tab="tab-upgrades">Апгрейди</button>
 <button class="tab" data-tab="tab-skins">Скіни</button>
@@ -20,18 +26,20 @@
 <button class="tab" data-tab="tab-reverb">Перезапуск</button>
 <button class="tab" data-tab="tab-multipliers">Множники</button>
 </div>
+
+<!-- === ОСНОВНОЙ КОНТЕЙНЕР === -->
 <div class="container">
 <div class="left-panel">
 <div class="tab-body">
-<div id="tab-upgrades" class="tab-page active"><h3>Апгрейди</h3><div id="upgrades" class="upgrades-container"></div></div>
-<div id="tab-skins" class="tab-page"><h3>Скіни</h3>
+<!-- ВКЛАДКА АПГРЕЙДІВ --><div id="tab-upgrades" class="tab-page active"><h3>Апгрейди</h3><div id="upgrades" class="upgrades-container"></div></div>
+<!-- ВКЛАДКА СКІНІВ --><div id="tab-skins" class="tab-page"><h3>Скіни</h3>
 <div class="skins-section">
 <h4>Форма годинника</h4><div class="skins-grid" id="shapeSkins"></div>
 <h4>Колір годинника</h4><div class="skins-grid" id="clockSkins"></div>
 <h4>Стрілки</h4><div class="skins-grid" id="handSkins"></div>
 <h4>Ефект кліку</h4><div class="skins-grid" id="effectSkins"></div>
 </div></div>
-<div id="tab-stats" class="tab-page"><h3>Статистика</h3>
+<!-- ВКЛАДКА СТАТИСТИКИ --><div id="tab-stats" class="tab-page"><h3>Статистика</h3>
 <ul class="stats-list">
 <li>Часу витрачено: <span id="cloudTotal">0 сек</span></li>
 <li>Реальний час у сесії: <span id="realTimePlayed">0 сек</span></li>
@@ -50,13 +58,15 @@
 <li>• Ефекти кліку: <span id="effectSkinsCount">1</span>/5</li>
 <li>Всього скінів: <span id="totalSkins">4</span>/17</li>
 </ul></div>
-<div id="tab-achievements" class="tab-page"><h3>Досягнення</h3><div id="achievements" class="achievements-grid"></div></div>
-<div id="tab-reverb" class="tab-page"><h3>Перезапуск</h3>
+<!-- ВКЛАДКА ДОСЯГНЕНЬ --><div id="tab-achievements" class="tab-page"><h3>Досягнення</h3><div id="achievements" class="achievements-grid"></div></div>
+<!-- ВКЛАДКА ПЕРЕЗАПУСКУ --><div id="tab-reverb" class="tab-page"><h3>Перезапуск</h3>
 <p id="reverbDesc">Повертаючи час назад, ти отримаєш множник <span id="nextMultiplier">1.20</span>× до всіх прибутків.</p>
 <button id="reverbBtn" class="reverb-btn">Повернути час назад</button>
 </div>
-<div id="tab-multipliers" class="tab-page"><h3>Множники кліку</h3><div id="multipliers" class="upgrades-container"></div></div>
+<!-- ВКЛАДКА МНОЖНИКІВ --><div id="tab-multipliers" class="tab-page"><h3>Множники кліку</h3><div id="multipliers" class="upgrades-container"></div></div>
 </div></div>
+
+<!-- === ПРАВА ПАНЕЛЬ - ГОДИННИК ТА МУЗИКА === -->
 <div class="right-panel">
 <div id="clockWrapper">
 <div id="clickableClock" class="clock round"><div class="hand hour"></div><div class="hand minute"></div><div class="hand second"></div><div class="center-dot"></div></div>
@@ -72,14 +82,20 @@
 <div id="nowPlaying" class="now-playing">Зараз: —</div>
 <audio id="player" preload="auto"></audio>
 </div></div>
+
+<!-- === СИСТЕМА ПЕРЕЗАПУСКУ (РЕВЕРБ) === -->
 <div id="reverbOverlay" class="reverb-overlay hidden">
 <div class="reverb-instruction">Зажми та тримай годинник 10 секунд,<br>щоб повернути час назад!</div>
 <div id="reverbHint" class="reverb-hint">Зажми мене!</div>
 <div id="reverbClock" class="clock round"><div class="hand hour"></div><div class="hand minute"></div><div class="hand second"></div><div class="center-dot"></div></div>
 </div>
 <div id="timeTunnel" class="time-tunnel"></div>
+
+<!-- === КОНТЕЙНЕР СПОВІЩЕНЬ === -->
 <div id="toastContainer"></div>
 </div>
+
+<!-- === ПІДКЛЮЧЕННЯ СКРИПТІВ === -->
 <script src="script.js?v=17"></script>
 <script>window.onload=function(){document.getElementById('chooser').style.display='flex';document.getElementById('game').style.display='none'}</script>
 </body>
