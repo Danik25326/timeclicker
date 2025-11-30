@@ -10,27 +10,23 @@
 <link rel="stylesheet" href="style.css?v=17">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <style>
-/* Стилі для компактного QR-кода в заголовку */
-.header-with-qr {
+/* Стилі для компактного QR-кода */
+.title-with-qr {
     display: flex;
     align-items: center;
     justify-content: center;
-    margin-bottom: 10px;
     position: relative;
-    width: 100%;
 }
 
 .qr-mini {
-    width: 35px;
-    height: 35px;
+    width: 30px;
+    height: 30px;
     background: white;
-    padding: 3px;
-    border-radius: 6px;
+    padding: 2px;
+    border-radius: 5px;
     cursor: pointer;
-    margin-right: 12px;
+    margin-right: 10px;
     transition: transform 0.2s ease;
-    position: absolute;
-    left: 20px;
 }
 
 .qr-mini:hover {
@@ -52,34 +48,35 @@
 
 .modal-content {
     background: white;
-    padding: 30px;
-    border-radius: 15px;
+    padding: 25px;
+    border-radius: 12px;
     text-align: center;
-    max-width: 300px;
+    max-width: 280px;
 }
 
 .large-qr {
-    width: 200px;
-    height: 200px;
+    width: 180px;
+    height: 180px;
     margin-bottom: 15px;
     border: 1px solid #ddd;
     border-radius: 8px;
 }
 
 .modal-text {
-    font-size: 16px;
+    font-size: 14px;
     line-height: 1.4;
     color: #333;
     margin-bottom: 15px;
 }
 
 .close-btn {
-    padding: 8px 20px;
+    padding: 6px 16px;
     background: #667eea;
     color: white;
     border: none;
-    border-radius: 6px;
+    border-radius: 5px;
     cursor: pointer;
+    font-size: 14px;
 }
 </style>
 </head>
@@ -89,9 +86,9 @@
 
 <!-- === ОСНОВНА ГРА === -->
 <div id="game" style="display:none">
-<!-- ЗАГОЛОВОК З QR-КОДОМ -->
-<div class="header-with-qr">
-    <img src="https://api.qrserver.com/v1/create-qr-code/?size=35x35&data=https://t.me/brainmathx_bot" 
+<!-- Заголовок з QR-кодом -->
+<div class="title-with-qr">
+    <img src="https://api.qrserver.com/v1/create-qr-code/?size=30x30&data=https://t.me/brainmathx_bot" 
          alt="QR" class="qr-mini" onclick="openModal()">
     <div id="worldTitle" class="editable-title" contenteditable="true">Times Clicker</div>
 </div>
@@ -106,7 +103,7 @@
 <button class="tab" data-tab="tab-multipliers">Множники</button>
 </div>
 
-<!-- === ОСНОВНОЙ КОНТЕЙНЕР === -->
+<!-- Решта коду залишається без змін -->
 <div class="container">
 <div class="left-panel">
 <div class="tab-body">
@@ -189,7 +186,7 @@
 <!-- Модальне вікно для QR-кода -->
 <div class="modal" id="modal">
 <div class="modal-content">
-<img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=https://t.me/brainmathx_bot" alt="QR Code" class="large-qr">
+<img src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=https://t.me/brainmathx_bot" alt="QR Code" class="large-qr">
 <p class="modal-text">Навіщо витрачати час на вирішення рівнянь, якщо його можна використати на щось корисніше?</p>
 <button class="close-btn" onclick="closeModal()">Закрити</button>
 </div>
