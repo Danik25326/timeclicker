@@ -166,8 +166,6 @@ body.mobile-version .achievements-grid {    contain: layout style paint; /* Із
 body.mobile-version .top-tabs,
 body.mobile-version .click-cloud,
 body.mobile-version #comboBubble {    backdrop-filter: blur(8px);    -webkit-backdrop-filter: blur(8px); /* iOS Safari */    background: rgba(15,23,42,0.95); /* Фолбек якщо backdrop-filter не підтримується */}
-body.mobile-version .upgrades-container,
-body.mobile-version .skins-grid {    touch-action: pan-y; /* Блокує горизонтальний скролл */    -webkit-overflow-scrolling: touch; /* Інерційний скролл iOS */}
 body.mobile-version {    image-rendering: -webkit-optimize-contrast;    image-rendering: crisp-edges;}
 body.mobile-version{overflow-x:auto;}
 body.mobile-version .editable-title{font-size:28px !important;top:6px;white-space:nowrap !important;overflow-x:visible !important;overflow-y:hidden !important; max-width:none !important;text-overflow:unset !important; width:auto !important;min-width:max-content !important;position:absolute;left:50%;transform:translateX(-50%);z-index:30;padding:0 20px;}
