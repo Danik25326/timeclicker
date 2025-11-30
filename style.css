@@ -142,6 +142,14 @@ body{font-family:'Poppins',sans-serif;background:radial-gradient(circle at cente
 #reverbClock .second{width:4px;height:150px;background:#ff006e!important;box-shadow:0 0 20px #ff006e,0 0 50px #ff3366!important}
 #reverbClock .center-dot{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:16px;height:16px;background:#ff006e;border-radius:50%;box-shadow:0 0 30px #ff006e;z-index:10}
 
+/* СТИЛІ ШКАЛИ ПРОГРЕСУ ПЕРЕЗАПУСКУ */
+#prestigeProgressContainer{margin:20px auto;max-width:400px;background:#1e293b;border-radius:15px;padding:15px;border:2px solid #334155}
+.progress-header{display:flex;justify-content:space-between;margin-bottom:8px;color:#cbd5e1;font-size:14px}
+#prestigeProgressText{color:#e2e8f0;font-size:14px;font-weight:bold}
+.progress-bar-bg{background:#334155;border-radius:10px;height:20px;overflow:hidden}
+.progress-bar-fill{height:100%;width:0%;background:linear-gradient(90deg,#ef4444,#f87171);border-radius:10px;transition:width 0.3s ease,background 0.3s ease}
+.progress-footer{margin-top:8px;color:#94a3b8;font-size:12px;text-align:center}
+
 /* ===== СКРОЛБАРИ ===== */
 .upgrades-container::-webkit-scrollbar{width:10px}
 .upgrades-container::-webkit-scrollbar-thumb{background:rgba(255,255,255,.12);border-radius:8px}
