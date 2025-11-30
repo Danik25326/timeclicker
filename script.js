@@ -2,8 +2,7 @@
 function startGame(v){document.getElementById('chooser').style.display='none';document.getElementById('game').style.display='';if(v==='mobile')document.body.classList.add('mobile-version');else document.body.classList.remove('mobile-version');initGame()}
 function initGame(){
   // === ЗМІННІ СТАНУ ===
-let score=0,clickPower=1,autoRate=0,isPlaying=0,currentTrack=0,sessionStart=Date.now(),totalUpgradesBought=0,maxPerClick=1,prestigeMultiplier=1,totalReverbs=0,maxAutoRate=0,maxCombo=0,clickCloudTotal=0,lastClickTime=0,currentCombo=0,maxComboEver=0,comboTimeout=null,MAX_CLICK_INTERVAL=350,COMBO_THRESHOLD=5,isReverbActive=0,reverbHoldTimeout=null,clickMultiplier=1,buttons=[],    prestigeThreshold = 3600,    // Початковий поріг: 1 годинаcurrentPrestigeProgress = 0; // Поточний прогрес
-
+let score=0,clickPower=1,autoRate=0,isPlaying=0,currentTrack=0,sessionStart=Date.now(),totalUpgradesBought=0,maxPerClick=1,prestigeMultiplier=1,totalReverbs=0,maxAutoRate=0,maxCombo=0,clickCloudTotal=0,lastClickTime=0,currentCombo=0,maxComboEver=0,comboTimeout=null,MAX_CLICK_INTERVAL=350,COMBO_THRESHOLD=5,isReverbActive=0,reverbHoldTimeout=null,clickMultiplier=1,buttons=[],prestigeThreshold=3600,currentPrestigeProgress=0;
   // === ОПТИМІЗАЦІЯ ДЛЯ МОБІЛЬНИХ (НЕ ВПЛИВАЄ НА ПК) ===
 const m='ontouchstart'in window||navigator.maxTouchPoints>0;if(m){
 // ОНОВЛЕННЯ СТРІЛОК - ЗМЕНШЕНА ЧАСТОТА
@@ -76,7 +75,7 @@ function showFloating(t){const e=d.createElement("div");e.textContent=t;e.style.
 
 // === ВИПРАВЛЕНА СТАТИСТИКА - БЕЗ ЗАТРИМОК ДЛЯ ПК ===
 function updateScore(){scoreText.textContent=`Часу витрачено: ${formatTime(score)}`;cloudTotalEl.textContent=`${formatTime(clickCloudTotal)}`;updateAllButtons();}                    
-function updateStats(){realTimePlayedEl.textContent=formatTime((Date.now()-sessionStart)/1000);virtualTimeEl.textContent=formatTime(score);totalUpgradesEl.textContent=totalUpgradesBought;maxPerClickEl.textContent=formatTime(maxPerClick);prestigeMultEl.textContent=prestigeMultiplier.toFixed(2);id("maxAutoRate").textContent=formatTime(autoRate);id("maxCombo").textContent=maxComboEver;id("totalReverbs").textContent=totalReverbs;const a=achievementsList.filter(x=>x.done).length;id("achievedCount").textContent=a;id("totalAchievements").textContent=achievementsList.length;id("shapeSkinsCount").textContent=ownedSkins.shapes.length;id("clockSkinsCount").textContent=ownedSkins.clockSkins.length;id("handSkinsCount").textContent=ownedSkins.handSkins.length;id("effectSkinsCount").textContent=ownedSkins.effects.length;id("totalSkins").textContent=ownedSkins.shapes.length+ownedSkins.clockSkins.length+ownedSkins.handSkins.length+ownedSkins.effects.length;updateReverbText(); updatePrestigeProgress(); updateReverbText();}                    
+function updateStats(){realTimePlayedEl.textContent=formatTime((Date.now()-sessionStart)/1000);virtualTimeEl.textContent=formatTime(score);totalUpgradesEl.textContent=totalUpgradesBought;maxPerClickEl.textContent=formatTime(maxPerClick);prestigeMultEl.textContent=prestigeMultiplier.toFixed(2);id("maxAutoRate").textContent=formatTime(autoRate);id("maxCombo").textContent=maxComboEver;id("totalReverbs").textContent=totalReverbs;const a=achievementsList.filter(x=>x.done).length;id("achievedCount").textContent=a;id("totalAchievements").textContent=achievementsList.length;id("shapeSkinsCount").textContent=ownedSkins.shapes.length;id("clockSkinsCount").textContent=ownedSkins.clockSkins.length;id("handSkinsCount").textContent=ownedSkins.handSkins.length;id("effectSkinsCount").textContent=ownedSkins.effects.length;id("totalSkins").textContent=ownedSkins.shapes.length+ownedSkins.clockSkins.length+ownedSkins.handSkins.length+ownedSkins.effects.length;updateReverbText(); updatePrestigeProgress();}                    
 setInterval(()=>{if(autoRate>maxAutoRate)maxAutoRate=autoRate;if(maxComboEver>maxCombo)maxCombo=maxComboEver;},1000);
 
 // === ДОСЯГНЕННЯ ===
@@ -170,18 +169,6 @@ function completeReverb() {
         const o = () => { restartEffect.hideCompletionScreen(); isReverbActive = 0; updateScore(); updateStats(); updateAchievements(); updatePrestigeProgress(); document.removeEventListener('click',o); document.removeEventListener('touchstart',o); };
         document.addEventListener('click',o); document.addEventListener('touchstart',o);
     }, 1000);
-}
-// БІЛА ВСПИШКА
-const e=document.createElement("div");e.style.cssText="position:fixed;top:0;left:0;width:100%;height:100%;background:white;z-index:10001;pointer-events:none;animation:flashFade 1s ease-out forwards;";document.body.appendChild(e);
-if(!document.querySelector('#flashAnimation')){const t=document.createElement('style');t.id='flashAnimation';t.textContent=`@keyframes flashFade{0%{opacity:1;}70%{opacity:1;}100%{opacity:0;}}`;document.head.appendChild(t);}
-setTimeout(()=>{
-e.remove();
-// ПОКАЗУЄМО ОКРЕМИЙ ЕКРАН ЗАВЕРШЕННЯ
-restartEffect.showCompletionScreen();
-const t=restartEffect.completionScreen.querySelector("div:nth-child(2)");t.textContent=`Ваш множник: ${prestigeMultiplier.toFixed(2)}×`;
-const o=()=>{restartEffect.hideCompletionScreen();isReverbActive=0;updateScore();updateStats();updateAchievements();document.removeEventListener('click',o);document.removeEventListener('touchstart',o);};
-document.addEventListener('click',o);document.addEventListener('touchstart',o);
-},1000);
 }
 // === СИСТЕМА ВКЛАДОК ===
 qa(".top-tabs .tab").forEach(b=>{b.addEventListener("click",()=>{qa(".top-tabs .tab").forEach(x=>x.classList.remove("active"));qa(".tab-page").forEach(x=>x.classList.remove("active"));b.classList.add("active");id(b.dataset.tab).classList.add("active");});});
