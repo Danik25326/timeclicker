@@ -1,13 +1,10 @@
 // === ОСНОВНІ ФУНКЦІЇ ===
 function startGame(v){document.getElementById('chooser').style.display='none';document.getElementById('game').style.display='';if(v==='mobile')document.body.classList.add('mobile-version');else document.body.classList.remove('mobile-version');initGame()}
-function initGame(){
-    
+function initGame(){    
 // === ЗМІННІ СТАНУ ===
-let score=0,clickPower=1,autoRate=0,isPlaying=0,currentTrack=0,sessionStart=Date.now(),totalUpgradesBought=0,maxPerClick=1,prestigeMultiplier=1,totalReverbs=0,maxAutoRate=0,maxCombo=0,clickCloudTotal=0,lastClickTime=0,currentCombo=0,maxComboEver=0,comboTimeout=null,MAX_CLICK_INTERVAL=350,COMBO_THRESHOLD=5,isReverbActive=0,reverbHoldTimeout=null,clickMultiplier=1,buttons=[],prestigeThreshold=3600,currentPrestigeProgress=0;
-  
+let score=0,clickPower=1,autoRate=0,isPlaying=0,currentTrack=0,sessionStart=Date.now(),totalUpgradesBought=0,maxPerClick=1,prestigeMultiplier=1,totalReverbs=0,maxAutoRate=0,maxCombo=0,clickCloudTotal=0,lastClickTime=0,currentCombo=0,maxComboEver=0,comboTimeout=null,MAX_CLICK_INTERVAL=350,COMBO_THRESHOLD=5,isReverbActive=0,reverbHoldTimeout=null,clickMultiplier=1,buttons=[],prestigeThreshold=3600,currentPrestigeProgress=0; 
 // === ОПТИМІЗАЦІЯ ДЛЯ МОБІЛЬНИХ (НЕ ВПЛИВАЄ НА ПК) ===
 const m='ontouchstart'in window||navigator.maxTouchPoints>0;if(m){
-
 // ОНОВЛЕННЯ СТРІЛОК - ЗМЕНШЕНА ЧАСТОТА
 const oh=updateClockHands;
 let rafId, lastUpdate=0;
@@ -78,8 +75,10 @@ function addTime(){const g=Math.round(clickPower*clickMultiplier*prestigeMultipl
 function handleClickCombo(){const n=Date.now();if(n-lastClickTime<MAX_CLICK_INTERVAL)currentCombo++;else currentCombo=1;lastClickTime=n;if(currentCombo>maxComboEver)maxComboEver=currentCombo;if(currentCombo>=COMBO_THRESHOLD){comboCount.textContent=currentCombo;comboBubble.classList.add("show");}clearTimeout(comboTimeout);comboTimeout=setTimeout(()=>{if(currentCombo>=COMBO_THRESHOLD){comboBubble.classList.add("burst");showToast(`Комбо ×${currentCombo}! 🔥`);setTimeout(()=>comboBubble.classList.remove("show","burst"),700);}currentCombo=0;},300);}
 function showToast(t){const e=d.createElement("div");e.className="toast";e.textContent=t;e.style.cssText="font-size:18px;padding:22px 48px";toastContainer.appendChild(e);setTimeout(()=>e.remove(),10000);}
 function triggerClickEffect(){clock.classList.remove("click-effect-red","click-effect-blue","click-effect-glitch","click-effect-blackhole","click-effect-ripple");void clock.offsetWidth;clock.classList.add("click-effect-"+current.effect);}
+// ВИПРАВЛЕНИЙ ОБРОБНИК КЛІКІВ - запобігає подвійним клікам
 let lastClick=0;clockWrapper.addEventListener("click",e=>{const now=Date.now();if(now-lastClick<100)return;lastClick=now;if(e.target.closest("#clickableClock")||e.target===clockWrapper)addTime();});
-    
+function showFloating(t){const e=d.createElement("div");e.textContent=t;e.style.cssText="position:absolute;right:20px;top:50px;color:#ffccd1;font-weight:700;opacity:1;transition:all 0.9s ease-out";clockWrapper.appendChild(e);requestAnimationFrame(()=>{e.style.transform="translateX(60px) translateY(-80px)";e.style.opacity="0";});setTimeout(()=>e.remove(),920);}
+
 // === ВИПРАВЛЕНА СТАТИСТИКА - БЕЗ ЗАТРИМОК ДЛЯ ПК ===
 function updateScore(){scoreText.textContent=`Часу витрачено: ${formatTime(score)}`;cloudTotalEl.textContent=`${formatTime(clickCloudTotal)}`;updateAllButtons();}                    
 function updateStats(){realTimePlayedEl.textContent=formatTime((Date.now()-sessionStart)/1000);virtualTimeEl.textContent=formatTime(score);totalUpgradesEl.textContent=totalUpgradesBought;maxPerClickEl.textContent=formatTime(maxPerClick);prestigeMultEl.textContent=prestigeMultiplier.toFixed(2);id("maxAutoRate").textContent=formatTime(autoRate);id("maxCombo").textContent=maxComboEver;id("totalReverbs").textContent=totalReverbs;const a=achievementsList.filter(x=>x.done).length;id("achievedCount").textContent=a;id("totalAchievements").textContent=achievementsList.length;id("shapeSkinsCount").textContent=ownedSkins.shapes.length;id("clockSkinsCount").textContent=ownedSkins.clockSkins.length;id("handSkinsCount").textContent=ownedSkins.handSkins.length;id("effectSkinsCount").textContent=ownedSkins.effects.length;id("totalSkins").textContent=ownedSkins.shapes.length+ownedSkins.clockSkins.length+ownedSkins.handSkins.length+ownedSkins.effects.length;updateReverbText(); updatePrestigeProgress();}                    
