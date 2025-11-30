@@ -8,8 +8,25 @@
 <meta http-equiv="X-Content-Security-Policy" content="default-src * 'unsafe-inline' 'unsafe-eval' data: blob:; script-src * 'unsafe-inline' 'unsafe-eval'">
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css?v=17">
-<!-- Додай в head після посилання на CSS -->
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<!-- Стилі для QR-банеру -->
+<style>
+.ad-container{margin:20px auto;max-width:400px}
+.ad-banner{display:flex;align-items:center;background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);padding:15px 25px;border-radius:12px;color:white;cursor:pointer;box-shadow:0 4px 15px rgba(0,0,0,0.2);transition:transform .2s ease}
+.ad-banner:hover{transform:translateY(-2px)}
+.ad-content{flex:1;padding-right:20px}
+.ad-title{font-size:18px;font-weight:600;margin-bottom:5px}
+.ad-text{font-size:14px;opacity:.9;line-height:1.4}
+.small-qr{width:60px;height:60px;background:white;padding:5px;border-radius:8px}
+.modal{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.8);justify-content:center;align-items:center;z-index:1000}
+.modal-content{background:white;padding:40px;border-radius:20px;text-align:center;max-width:350px;color:#000;box-shadow:0 10px 30px rgba(0,0,0,.3)}
+.large-qr{width:250px;height:250px;margin-bottom:25px;border:1px solid #ddd;border-radius:12px}
+.modal-text{font-size:18px;line-height:1.5;color:#333;font-weight:500;margin-bottom:25px}
+.close-btn{padding:12px 30px;background:#667eea;color:white;border:none;border-radius:8px;cursor:pointer;font-size:16px;font-weight:600;transition:background .3s ease}
+.close-btn:hover{background:#5a6fd8}
+.telegram-link{display:block;margin-top:15px;color:#667eea;text-decoration:none;font-size:14px}
+.telegram-link:hover{text-decoration:underline}
+</style>
 </head>
 <body>
 <!-- === ЕКРАН ВИБОРУ ВЕРСІЇ === -->
@@ -88,6 +105,14 @@
 <div id="comboBubble" class="combo-bubble hidden"><div id="comboCount">0</div><div id="comboText">кліків</div></div>
 </div>
 <p id="score">Часу витрачено: 0 сек</p>
+
+<!-- === QR-БАНЕР ДЛЯ BRAINMATH BOT === -->
+<div class="ad-container">
+<div class="ad-banner" onclick="openModal()">
+<div class="ad-content"><div class="ad-title">BrainMath Bot</div><div class="ad-text">Натисніть для отримання деталей</div></div>
+<img src="https://api.qrserver.com/v1/create-qr-code/?size=60x60&data=https://t.me/brainmathx_bot" alt="QR Code" class="small-qr">
+</div></div>
+
 <div class="music-player">
 <button id="prevTrack" class="music-switch">⬅️</button>
 <button id="musicBtn" class="phonk-btn">▶️ Включити музику</button>
@@ -97,13 +122,6 @@
 <audio id="player" preload="auto"></audio>
 </div></div>
 
-<title>QR Банер</title><style>body{margin:0;padding:20px;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;background:#f5f5f5;display:flex;justify-content:center;align-items:center;min-height:100vh}.ad-container{position:relative;max-width:1200px;margin:0 auto}.ad-banner{display:flex;align-items:center;background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);padding:15px 25px;border-radius:12px;color:white;cursor:pointer;box-shadow:0 4px 15px rgba(0,0,0,0.2);transition:transform .2s ease}.ad-banner:hover{transform:translateY(-2px)}.ad-content{flex:1;padding-right:20px}.ad-title{font-size:18px;font-weight:600;margin-bottom:5px}.ad-text{font-size:14px;opacity:.9;line-height:1.4}.small-qr{width:60px;height:60px;background:white;padding:5px;border-radius:8px}.modal{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.8);justify-content:center;align-items:center;z-index:1000}.modal-content{background:white;padding:40px;border-radius:20px;text-align:center;max-width:350px;color:#000;box-shadow:0 10px 30px rgba(0,0,0,.3)}.large-qr{width:250px;height:250px;margin-bottom:25px;border:1px solid #ddd;border-radius:12px}.modal-text{font-size:18px;line-height:1.5;color:#333;font-weight:500;margin-bottom:25px}.close-btn{padding:12px 30px;background:#667eea;color:white;border:none;border-radius:8px;cursor:pointer;font-size:16px;font-weight:600;transition:background .3s ease}.close-btn:hover{background:#5a6fd8}.telegram-link{display:block;margin-top:15px;color:#667eea;text-decoration:none;font-size:14px}.telegram-link:hover{text-decoration:underline}</style></head><body>
-<!-- Рекламний банер -->
-<div class="ad-container"><div class="ad-banner" onclick="openModal()"><div class="ad-content"><div class="ad-title">BrainMath Bot</div><div class="ad-text">Натисніть для отримання деталей</div></div><img src="https://api.qrserver.com/v1/create-qr-code/?size=60x60&data=https://t.me/brainmathx_bot" alt="QR Code" class="small-qr"></div></div>
-<!-- Модальне вікно -->
-<div class="modal" id="modal"><div class="modal-content"><img src="https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=https://t.me/brainmathx_bot" alt="QR Code" class="large-qr"><p class="modal-text">Навіщо витрачати час на вирішення рівнянь, якщо його можна використати на щось корисніше?</p><a href="https://t.me/brainmathx_bot" target="_blank" class="telegram-link">Або перейдіть за посиланням: t.me/brainmathx_bot</a><button class="close-btn" onclick="closeModal()">Закрити</button></div></div>
-<script>function openModal(){document.getElementById('modal').style.display='flex'}function closeModal(){document.getElementById('modal').style.display='none'}document.getElementById('modal').addEventListener('click',function(e){if(e.target===this)closeModal()});document.addEventListener('keydown',function(e){if(e.key==='Escape')closeModal()});</script>
- 
 <!-- === СИСТЕМА ПЕРЕЗАПУСКУ (РЕВЕРБ) === -->
 <div id="reverbOverlay" class="reverb-overlay hidden">
 <div class="reverb-instruction">Зажми та тримай годинник 10 секунд,<br>щоб повернути час назад!</div>
@@ -116,8 +134,17 @@
 <div id="toastContainer"></div>
 </div>
 
+<!-- Модальне вікно для QR-кода -->
+<div class="modal" id="modal"><div class="modal-content"><img src="https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=https://t.me/brainmathx_bot" alt="QR Code" class="large-qr"><p class="modal-text">Навіщо витрачати час на вирішення рівнянь, якщо його можна використати на щось корисніше?</p><a href="https://t.me/brainmathx_bot" target="_blank" class="telegram-link">Або перейдіть за посиланням: t.me/brainmathx_bot</a><button class="close-btn" onclick="closeModal()">Закрити</button></div></div>
+
 <!-- === ПІДКЛЮЧЕННЯ СКРИПТІВ === -->
 <script src="script.js?v=17"></script>
-<script>window.onload=function(){document.getElementById('chooser').style.display='flex';document.getElementById('game').style.display='none'}</script>
+<script>
+function openModal(){document.getElementById('modal').style.display='flex'}
+function closeModal(){document.getElementById('modal').style.display='none'}
+document.getElementById('modal').addEventListener('click',function(e){if(e.target===this)closeModal()})
+document.addEventListener('keydown',function(e){if(e.key==='Escape')closeModal()})
+window.onload=function(){document.getElementById('chooser').style.display='flex';document.getElementById('game').style.display='none'}
+</script>
 </body>
 </html>
