@@ -3,8 +3,7 @@ function startGame(v){document.getElementById('chooser').style.display='none';do
 function initGame(){    
 // === ЗМІННІ СТАНУ ===
 let score=0,clickPower=1,autoRate=0,isPlaying=0,currentTrack=0,sessionStart=Date.now(),totalUpgradesBought=0,maxPerClick=1,prestigeMultiplier=1,totalReverbs=0,maxAutoRate=0,maxCombo=0,clickCloudTotal=0,lastClickTime=0,currentCombo=0,maxComboEver=0,comboTimeout=null,MAX_CLICK_INTERVAL=350,COMBO_THRESHOLD=5,isReverbActive=0,reverbHoldTimeout=null,clickMultiplier=1,buttons=[],prestigeThreshold=3600,currentPrestigeProgress=0; 
-// === ОПТИМІЗАЦІЯ ДЛЯ МОБІЛЬНИХ (НЕ ВПЛИВАЄ НА ПК) ===
-const m='ontouchstart'in window||navigator.maxTouchPoints>0;if(m){
+
 // ОНОВЛЕННЯ СТРІЛОК - ЗМЕНШЕНА ЧАСТОТА
 const oh=updateClockHands;
 let rafId, lastUpdate=0;
@@ -78,6 +77,11 @@ function triggerClickEffect(){clock.classList.remove("click-effect-red","click-e
 // ВИПРАВЛЕНИЙ ОБРОБНИК КЛІКІВ - запобігає подвійним клікам
 let lastClick=0;clockWrapper.addEventListener("click",e=>{const now=Date.now();if(now-lastClick<100)return;lastClick=now;if(e.target.closest("#clickableClock")||e.target===clockWrapper)addTime();});
 function showFloating(t){const e=d.createElement("div");e.textContent=t;e.style.cssText="position:absolute;right:20px;top:50px;color:#ffccd1;font-weight:700;opacity:1;transition:all 0.9s ease-out";clockWrapper.appendChild(e);requestAnimationFrame(()=>{e.style.transform="translateX(60px) translateY(-80px)";e.style.opacity="0";});setTimeout(()=>e.remove(),920);}
+
+// === ОПТИМІЗАЦІЯ ДЛЯ МОБІЛЬНИХ (НЕ ВПЛИВАЄ НА ПК) ===
+const m='ontouchstart'in window||navigator.maxTouchPoints>0;
+if(m){const originalHandleClickCombo=handleClickCombo;handleClickCombo=function(){const n=Date.now();if(n-lastClickTime<MAX_CLICK_INTERVAL)currentCombo++;else currentCombo=1;lastClickTime=n;if(currentCombo>maxComboEver)maxComboEver=currentCombo;if(currentCombo>=COMBO_THRESHOLD){comboCount.textContent=currentCombo;comboBubble.classList.add("show");}clearTimeout(comboTimeout);comboTimeout=setTimeout(()=>{comboBubble.classList.remove("show","burst");if(currentCombo>=COMBO_THRESHOLD)showToast(`Комбо ×${currentCombo}! 🔥`);currentCombo=0;},300);};
+clockWrapper.removeEventListener("click",handleMobileClick);function handleMobileClick(e){const now=Date.now();if(now-lastClick<100)return;lastClick=now;if(e.target.closest("#clickableClock")||e.target===clockWrapper)addTime();}clockWrapper.addEventListener("click",handleMobileClick,{passive:true});}
 
 // === ВИПРАВЛЕНА СТАТИСТИКА - БЕЗ ЗАТРИМОК ДЛЯ ПК ===
 function updateScore(){scoreText.textContent=`Часу витрачено: ${formatTime(score)}`;cloudTotalEl.textContent=`${formatTime(clickCloudTotal)}`;updateAllButtons();}                    
