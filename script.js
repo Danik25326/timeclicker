@@ -15,7 +15,9 @@ MAX_CLICK_INTERVAL=500;COMBO_THRESHOLD=3;
 const ai=setInterval(()=>{const g=Math.round(autoRate*prestigeMultiplier);if(g>0){score+=g;clickCloudTotal+=g;if(score%100===0)updateScore();}if(Date.now()%3e3<100){updateStats();updateAchievements();}},1e3);
 
 // СКІНИ - ЗМЕНШЕНА ЧАСТОТА ОНОВЛЕННЯ
-const sui=setInterval(updateSkinHighlights,200);
+let skinUpdateTimeout;
+function debouncedUpdateSkins() {    clearTimeout(skinUpdateTimeout);    skinUpdateTimeout = setTimeout(updateSkinHighlights, 150);}
+const sui = setInterval(debouncedUpdateSkins, 50);
 
 // ПЛАВАЮЧІ ЧИСЛА - ОБМЕЖЕННЯ КІЛЬКОСТІ
 let f=[];const osf=showFloating;showFloating=t=>{if(f.length>3){const o=f.shift();if(o&&o.parentNode)o.parentNode.removeChild(o);}
@@ -57,7 +59,7 @@ const upgrades=[{n:"Кліпати очима",c:1,l:0},{n:"Включити т�
 function fib(n){if(n<=1)return n;let a=0,b=1;for(let i=2;i<=n;i++)[a,b]=[b,a+b];return b;}
 upgrades.forEach((u,i)=>{const b=d.createElement("button");b.className="upgrade-btn";if(i>0)b.classList.add("hidden");b.addEventListener("click",()=>buyUpgrade(i));upgradesContainer.appendChild(b);buttons.push(b);u.up=function(){const f=fib(u.l+6),c=Math.floor(u.c*f*(i+1));b.innerHTML=`${u.n} (Lv.${u.l})<span>${formatTime(c)}</span>`;b.disabled=score<c;};u.getC=function(){return Math.floor(u.c*fib(u.l+6)*(i+1));};u.up();});
 function revealNext(){const c=upgrades.filter(u=>u.l>0).length;if(buttons[c])buttons[c].classList.remove("hidden");}
-function buyUpgrade(i){const u=upgrades[i],c=u.getC();if(score<c)return;score-=c;u.l++;totalUpgradesBought++;autoRate+=(i+1)*5*prestigeMultiplier;showToast(`Куплено: ${u.n} (Lv.${u.l}) ✅`);revealNext();u.up();updateAllButtons();updateScore();updateStats();updateAchievements();updatePrestigeProgress();if(u.n==="Кліпати очима"){d.body.classList.remove("eye-blink");void d.body.offsetWidth;d.body.classList.add("eye-blink");setTimeout(()=>d.body.classList.remove("eye-blink"),1000);}}
+function buyUpgrade(i){const u=upgrades[i],c=u.getC();if(score<c)return;score-=c;u.l++;totalUpgradesBought++;autoRate+=(i+1)*5*prestigeMultiplier;showToast(`Куплено: ${u.n} (Lv.${u.l}) ✅`);requestAnimationFrame(() => {    revealNext();u.up();updateAllButtons();updateScore();    updateStats();updateAchievements();updatePrestigeProgress();});if(u.n==="Кліпати очима"){d.body.classList.remove("eye-blink");void d.body.offsetWidth;d.body.classList.add("eye-blink");setTimeout(()=>d.body.classList.remove("eye-blink"),1000);}}
 function updateAllButtons(){upgrades.forEach(u=>u.up());multipliers.forEach(m=>m.up&&m.up());}
 
 // === МНОЖНИКИ КЛІКУ ===
