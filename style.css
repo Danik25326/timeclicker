@@ -158,7 +158,6 @@ body{font-family:'Poppins',sans-serif;background:radial-gradient(circle at cente
 /* ===== МОБІЛЬНА ВЕРСІЯ ===== */
 body.mobile-version .clock,
 body.mobile-version .hand,
-body.mobile-version #comboBubble,
 body.mobile-version .skin {    will-change: transform, opacity;    transform: translateZ(0); /* Апаратне прискорення */}
 body.mobile-version .upgrades-container,
 body.mobile-version .skins-grid,
