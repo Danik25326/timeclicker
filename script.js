@@ -6,7 +6,9 @@ let score=0,clickPower=1,autoRate=0,isPlaying=0,currentTrack=0,sessionStart=Date
   // === ОПТИМІЗАЦІЯ ДЛЯ МОБІЛЬНИХ (НЕ ВПЛИВАЄ НА ПК) ===
 const m='ontouchstart'in window||navigator.maxTouchPoints>0;if(m){
 // ОНОВЛЕННЯ СТРІЛОК - ЗМЕНШЕНА ЧАСТОТА
-const oh=updateClockHands;let l=0;updateClockHands=()=>{const n=Date.now();if(n-l>50){oh();l=n;}}; 
+const oh=updateClockHands;
+let rafId, lastUpdate=0;
+updateClockHands=()=>{    const now=Date.now();    if(now-lastUpdate>=50){        oh();        lastUpdate=now;    }    rafId=requestAnimationFrame(updateClockHands);};
 
 // КОМБО СИСТЕМА - АДАПТОВАНА ДЛЯ МОБІЛЬНИХ
 MAX_CLICK_INTERVAL=500;COMBO_THRESHOLD=3;
@@ -53,6 +55,8 @@ nextTrack.onclick=()=>{currentTrack=(currentTrack+1)%tracks.length;loadTrack(cur
 
 // === ФОРМАТУВАННЯ ЧАСУ ===
 function formatTime(s){s=Math.floor(s);const u=[{name:"століття",v:3153600000},{name:"десятиліття",v:315360000},{name:"рік",v:31536000},{name:"міс",v:2592000},{name:"дн",v:86400},{name:"год",v:3600},{name:"хв",v:60},{name:"сек",v:1}];let r=s,p=[];for(const x of u){const a=Math.floor(r/x.v);if(a>0){p.push(`${a} ${x.name}`);r%=x.v;}}return p.length?p.join(" "):`${s} сек`;}
+let timeCache = {};
+function memoizedFormatTime(s) {    if(timeCache[s]) return timeCache[s];    const result = formatTime(s);    if(Object.keys(timeCache).length > 50) timeCache = {};    return timeCache[s] = result;}
 
 // === АПГРЕЙДИ ===
 const upgrades=[{n:"Кліпати очима",c:1,l:0},{n:"Включити телефон",c:8,l:0},{n:"Гортати стрічку",c:40,l:0},{n:"Мем-тур",c:200,l:0},{n:"Автоперегляд",c:1100,l:0},{n:"Підписка",c:6500,l:0},{n:"Серіал-марафон",c:40000,l:0},{n:"Робота з дедлайном",c:250000,l:0},{n:"Життєвий крінж",c:1600000,l:0},{n:"Discord-марафон",c:10000000,l:0},{n:"Reels до ранку",c:65000000,l:0},{n:"Філософські роздуми",c:400000000,l:0}];
