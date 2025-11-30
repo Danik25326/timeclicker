@@ -12,17 +12,20 @@
 <!-- Спрощені стилі для QR-коду -->
 <style>
 .bare-qr {
-    width: 45px;           /* Трошки менше */
-    height: 45px;          /* Трошки менше */
+    width: 40px;           /* Ще трішки менше */
+    height: 40px;          /* Ще трішки менше */
     cursor: pointer;
-    margin: 5px auto 10px auto; /* Підняти вище - зменшити margin зверху */
-    display: block;
+    position: absolute;    /* Абсолютне позиціонування */
+    top: 15px;            /* Відступ зверху */
+    right: 15px;          /* Відступ справа */
+    z-index: 25;          /* Вище за годинник, нижче за комбо */
     transition: transform 0.2s ease;
-    border: 1px solid #ddd; /* Проста рамка замість градієнта */
+    border: 1px solid #ddd;
     border-radius: 6px;
+    background: white;     /* Білий фон для кращої видимості */
 }
 .bare-qr:hover {
-    transform: scale(1.05); /* Легкий ефект при наведенні */
+    transform: scale(1.05);
 }
 
 /* Решта стилів для модального вікна залишаються незмінними */
@@ -111,11 +114,10 @@
 <div id="clickableClock" class="clock round"><div class="hand hour"></div><div class="hand minute"></div><div class="hand second"></div><div class="center-dot"></div></div>
 <div id="clickCloud" class="click-cloud"><div id="clickGain">+0 сек</div><div id="currentDate"></div></div>
 <div id="comboBubble" class="combo-bubble hidden"><div id="comboCount">0</div><div id="comboText">кліків</div></div>
+<!-- === ПРОСТИЙ QR-КОД У ВЕРХНЬОМУ ПРАВОМУ КУТІ === -->
+<img src="https://api.qrserver.com/v1/create-qr-code/?size=40x40&data=https://t.me/brainmathx_bot" alt="QR Code" class="bare-qr" onclick="openModal()">
 </div>
 <p id="score">Часу витрачено: 0 сек</p>
-
-<!-- === ПРОСТИЙ QR-КОД === -->
-<img src="https://api.qrserver.com/v1/create-qr-code/?size=45x45&data=https://t.me/brainmathx_bot" alt="QR Code" class="bare-qr" onclick="openModal()">
 
 <div class="music-player">
 <button id="prevTrack" class="music-switch">⬅️</button>
@@ -139,7 +141,7 @@
 </div>
 
 <!-- Модальне вікно для QR-кода -->
-<div class="modal" id="modal"><div class="modal-content"><img src="https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=https://t.me/brainmathx_bot" alt="QR Code" class="large-qr"><p class="modal-text">Навіщо витрачати час на вирішення рівнянь, якщо його можна використати на щось корисніше?</p><a href="https://t.me/brainmathx_bot" target="_blank" class="telegram-link">Або перейдіть за посиланням: t.me/brainmathx_bot</a><button class="close-btn" onclick="closeModal()">Закрити</button></div></div>
+<div class="modal" id="modal"><div class="modal-content"><img src="https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=https://t.me/brainmathx_bot" alt="QR Code" class="large-qr"><p class="modal-text">Навіщо витрачати час на вирішення рівнянь, якщo його можна використати на щось корисніше?</p><a href="https://t.me/brainmathx_bot" target="_blank" class="telegram-link">Або перейдіть за посиланням: t.me/brainmathx_bot</a><button class="close-btn" onclick="closeModal()">Закрити</button></div></div>
 
 <!-- === ПІДКЛЮЧЕННЯ СКРИПТІВ === -->
 <script src="script.js?v=17"></script>
