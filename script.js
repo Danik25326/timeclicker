@@ -131,7 +131,7 @@ reverbBtn.addEventListener("click",()=>{if(!confirm("Ти впевнений, щ
 function startReverbMode(){
     reverbOverlay.classList.remove("hidden");timeTunnel.classList.add("active");reverbHint.style.opacity="1";isReverbActive=1;
     reverbClock.className=`clock ${current.shape}`;clockSkins.find(s=>s.id===current.clock)?.a();handSkins.find(s=>s.id===current.hand)?.a();
-    updateReverbClockHands();setTimeout(()=>reverbHint.style.opacity="0",3000);
+    updateReverbClockHands();setTimeout(()=>reverbHint.style.opacity="0",3000);}
 function updateReverbClockHands(){
     if(!isReverbActive)return;const e=qa("#reverbClock .hand");if(e.length===0)return;
     if(reverbClock.classList.contains("reverb-chaos")){requestAnimationFrame(updateReverbClockHands);return;}
