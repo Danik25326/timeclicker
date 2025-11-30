@@ -10,27 +10,26 @@
 <link rel="stylesheet" href="style.css?v=17">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <style>
-/* Стилі для заголовка з QR-кодом */
-.header-section {
+/* СТИЛІ ДЛЯ ЗАГОЛОВКА ТА QR-КОДА */
+.game-header {
     display: flex;
     align-items: center;
     justify-content: center;
-    margin: 15px 0 10px 0;
+    margin: 0 0 5px 0; /* Верхній відступ 0 */
     position: relative;
     width: 100%;
-    min-height: 50px;
 }
 
 .qr-mini {
-    width: 35px;
-    height: 35px;
+    position: absolute;
+    left: 30px;
+    width: 30px;
+    height: 30px;
     background: white;
     padding: 2px;
-    border-radius: 5px;
+    border-radius: 4px;
     cursor: pointer;
     transition: transform 0.2s ease;
-    position: absolute;
-    left: 50px;
 }
 
 .qr-mini:hover {
@@ -38,11 +37,11 @@
 }
 
 #worldTitle {
-    text-align: center;
     margin: 0;
-    /* Назва залишається по центру */
+    text-align: center;
 }
 
+/* МОДАЛЬНЕ ВІКНО */
 .modal {
     display: none;
     position: fixed;
@@ -58,35 +57,35 @@
 
 .modal-content {
     background: white;
-    padding: 25px;
-    border-radius: 12px;
+    padding: 20px;
+    border-radius: 10px;
     text-align: center;
-    max-width: 280px;
+    max-width: 260px;
 }
 
 .large-qr {
-    width: 180px;
-    height: 180px;
-    margin-bottom: 15px;
+    width: 160px;
+    height: 160px;
+    margin-bottom: 12px;
     border: 1px solid #ddd;
-    border-radius: 8px;
+    border-radius: 6px;
 }
 
 .modal-text {
-    font-size: 14px;
-    line-height: 1.4;
+    font-size: 13px;
+    line-height: 1.3;
     color: #333;
-    margin-bottom: 15px;
+    margin-bottom: 12px;
 }
 
 .close-btn {
-    padding: 6px 16px;
+    padding: 5px 14px;
     background: #667eea;
     color: white;
     border: none;
-    border-radius: 5px;
+    border-radius: 4px;
     cursor: pointer;
-    font-size: 14px;
+    font-size: 13px;
 }
 </style>
 </head>
@@ -96,9 +95,9 @@
 
 <!-- === ОСНОВНА ГРА === -->
 <div id="game" style="display:none">
-<!-- ЗАГОЛОВОК З QR-КОДОМ - ФІНАЛЬНА ВЕРСІЯ -->
-<div class="header-section">
-    <img src="https://api.qrserver.com/v1/create-qr-code/?size=35x35&data=https://t.me/brainmathx_bot" 
+<!-- ЗАГОЛОВОК З QR-КОДОМ -->
+<div class="game-header">
+    <img src="https://api.qrserver.com/v1/create-qr-code/?size=30x30&data=https://t.me/brainmathx_bot" 
          alt="QR" class="qr-mini" onclick="openModal()">
     <div id="worldTitle" class="editable-title" contenteditable="true">Times Clicker</div>
 </div>
@@ -113,7 +112,7 @@
 <button class="tab" data-tab="tab-multipliers">Множники</button>
 </div>
 
-<!-- Решта коду залишається без змін -->
+<!-- РЕШТА КОДУ БЕЗ ЗМІН -->
 <div class="container">
 <div class="left-panel">
 <div class="tab-body">
@@ -193,10 +192,10 @@
 <div id="toastContainer"></div>
 </div>
 
-<!-- Модальне вікно для QR-кода -->
+<!-- МОДАЛЬНЕ ВІКНО ДЛЯ QR-КОДА -->
 <div class="modal" id="modal">
 <div class="modal-content">
-<img src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=https://t.me/brainmathx_bot" alt="QR Code" class="large-qr">
+<img src="https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=https://t.me/brainmathx_bot" alt="QR Code" class="large-qr">
 <p class="modal-text">Навіщо витрачати час на вирішення рівнянь, якщо його можна використати на щось корисніше?</p>
 <button class="close-btn" onclick="closeModal()">Закрити</button>
 </div>
