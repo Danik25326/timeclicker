@@ -160,6 +160,9 @@ body.mobile-version .clock,
 body.mobile-version .hand,
 body.mobile-version #comboBubble,
 body.mobile-version .skin {    will-change: transform, opacity;    transform: translateZ(0); /* Апаратне прискорення */}
+body.mobile-version .upgrades-container,
+body.mobile-version .skins-grid,
+body.mobile-version .achievements-grid {    contain: layout style paint; /* Ізолює перерахунок стилів */    content-visibility: auto;}
 body.mobile-version{overflow-x:auto;}
 body.mobile-version .editable-title{font-size:28px !important;top:6px;white-space:nowrap !important;overflow-x:visible !important;overflow-y:hidden !important; max-width:none !important;text-overflow:unset !important; width:auto !important;min-width:max-content !important;position:absolute;left:50%;transform:translateX(-50%);z-index:30;padding:0 20px;}
 body.mobile-version .top-tabs{top:60px;width:96%;padding:8px 4px;gap:4px 6px;flex-wrap:wrap;justify-content:center}
