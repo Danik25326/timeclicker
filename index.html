@@ -15,10 +15,10 @@
     width: 40px;           /* Ще трішки менше */
     height: 40px;          /* Ще трішки менше */
     cursor: pointer;
-    position: absolute;    /* Абсолютне позиціонування */
-    top: 5px;            /* Відступ зверху */
-    right: 15px;          /* Відступ справа */
-    z-index: 25;          /* Вище за годинник, нижче за комбо */
+    position: fixed;    /* ЗМІНА: absolute → fixed */
+    top: 10px;         /* Відстань від верху вікна браузера */
+    right: 20px;       /* Відстань від правого краю */
+    z-index: 1000;     /* Дуже високий z-index */
     transition: transform 0.2s ease;
     border: 1px solid #ddd;
     border-radius: 6px;
