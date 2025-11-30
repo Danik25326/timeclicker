@@ -201,7 +201,7 @@ body.mobile-version .music-player{display:flex;gap:2px;justify-content:center;al
 body.mobile-version .phonk-btn{padding:8px 10px !important;font-size:11px !important;min-width:110px !important;margin:0 !important;flex-shrink:0}
 body.mobile-version .music-switch{padding:8px 8px !important;font-size:12px !important;min-width:35px !important;margin:0 !important;flex-shrink:0}
 body.mobile-version #musicBtn{padding:8px 10px !important;font-size:11px !important;min-width:110px !important;white-space:nowrap}
-body.mobile-version .now-playing{font-size:10px;text-align:center;margin-top:5px}
+body.mobile-version .now-playing{font-size:10px;text-align:center;margin-top:2px}
 body.mobile-version .music-player button{transform:none !important;transition:none !important}
 body.mobile-version .music-player button:active{transform:none !important}
 body.mobile-version .music-player button:hover{transform:none !important;box-shadow:none !important}
@@ -216,7 +216,7 @@ body.mobile-version #reverbClock .hand.minute{height:74px}
 body.mobile-version #reverbClock .hand.second{height:88px}
 /* Центральна точка реверб годинника */
 body.mobile-version #reverbClock .center-dot{width:12px;height:12px}
-body.mobile-version .container {    gap: 20px !important; }
+body.mobile-version .container {    gap: 22px !important; }
 
 /* ===== СПЕЦІАЛЬНІ ЕФЕКТИ ===== */
 body.eye-blink::before{content:"";position:fixed;inset:0;background:#000;z-index:999999;pointer-events:none;animation:realEyeBlink .5s ease-in-out forwards}
