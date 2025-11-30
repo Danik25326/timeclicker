@@ -81,7 +81,7 @@ if(m){// Виправлення комбо для мобільних
 MAX_CLICK_INTERVAL=500;COMBO_THRESHOLD=3; // Для мобільних комбо з 3 кліків
 const o=handleClickCombo;handleClickCombo=function(){const n=Date.now();if(n-lastClickTime<MAX_CLICK_INTERVAL)currentCombo++;else currentCombo=1;lastClickTime=n;if(currentCombo>maxComboEver)maxComboEver=currentCombo;if(currentCombo>=COMBO_THRESHOLD){comboCount.textContent=currentCombo;comboBubble.classList.add("show");}clearTimeout(comboTimeout);comboTimeout=setTimeout(()=>{comboBubble.classList.remove("show","burst");if(currentCombo>=COMBO_THRESHOLD)showToast(`Комбо ×${currentCombo}! 🔥`);currentCombo=0;},300);};
 // Приховуємо бульбашку за замовчуванням на мобільних
-setTimeout(()=>comboBubble.classList.remove("show"),100);}}
+setTimeout(()=>comboBubble.classList.remove("show"),100);}
 
 // === ВИПРАВЛЕНА СТАТИСТИКА - БЕЗ ЗАТРИМОК ДЛЯ ПК ===
 function updateScore(){scoreText.textContent=`Часу витрачено: ${formatTime(score)}`;cloudTotalEl.textContent=`${formatTime(clickCloudTotal)}`;updateAllButtons();}                    
