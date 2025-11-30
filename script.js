@@ -22,7 +22,7 @@ function debouncedUpdateSkins() {    clearTimeout(skinUpdateTimeout);    skinUpd
 const sui = setInterval(debouncedUpdateSkins, 50);
 
 // ПЛАВАЮЧІ ЧИСЛА - ОБМЕЖЕННЯ КІЛЬКОСТІ
-let f=[];const osf=showFloating;showFloating=t=>{if(f.length>3){const o=f.shift();if(o&&o.parentNode)o.parentNode.removeChild(o);}
+let f=[];const osf=showFloating;showFloating=t=>{    if(f.length>=2){ // Зменшено з 3 до 2        f.forEach((o,i)=>{if(i<f.length-1&&o.parentNode)o.parentNode.removeChild(o);});        f=f.slice(-1); // Залишаємо тільки останній    }
 const e=d.createElement("div");e.textContent=t;e.style.cssText="position:absolute;right:10px;top:30px;color:#ffccd1;font-weight:700;opacity:1;transition:all 0.7s ease-out;font-size:14px;";clockWrapper.appendChild(e);f.push(e);
 requestAnimationFrame(()=>{e.style.transform="translateX(40px) translateY(-50px)";e.style.opacity="0";});setTimeout(()=>{if(e.parentNode)e.parentNode.removeChild(e);f=f.filter(i=>i!==e);},700);};
 
@@ -68,7 +68,7 @@ function updateAllButtons(){upgrades.forEach(u=>u.up());multipliers.forEach(m=>m
 
 // === МНОЖНИКИ КЛІКУ ===
 const multipliers=[{n:"Подвійний клік",c:5000,m:2,b:0},{n:"Потрійний клік",c:50000,m:3,b:0},{n:"x10 за клік",c:1000000,m:10,b:0},{n:"x50 за клік",c:20000000,m:50,b:0},{n:"x100 за клік",c:100000000,m:100,b:0}];
-multipliers.forEach(m=>{const b=d.createElement("button");b.className="upgrade-btn multiplier-btn";function upB(){if(m.b){b.remove();return;}const a=score>=m.c;b.innerHTML=`${m.n}<span>${formatTime(m.c)}</span>`;b.disabled=!a;b.style.background=a?"":"#334155";b.style.opacity=a?"1":"0.5";}b.addEventListener("click",()=>{if(score<m.c||m.b)return;score-=m.c;m.b=1;clickMultiplier=m.m;showToast(`Активовано: ${m.n}!`);upB();updateScore();updateStats();});multipliersContainer.appendChild(b);m.up=upB;upB();});
+multipliers.forEach(m=>{const b=d.createElement("button");b.className="upgrade-btn multiplier-btn";function upB(){if(m.b){b.remove();return;}const a=score>=m.c;b.innerHTML=`${m.n}<span>${formatTime(m.c)}</span>`;b.disabled=!a;b.style.background=a?"":"#334155";b.style.opacity=a?"1":"0.5";}b.addEventListener("click",()=>{if(score<m.c||m.b)return;    requestAnimationFrame(()=>{        score-=m.c;m.b=1;clickMultiplier=m.m;        showToast(`Активовано: ${m.n}!`);upB();updateScore();updateStats();    });},{passive:true});multipliersContainer.appendChild(b);m.up=upB;upB();});
 
 // === ВИПРАВЛЕНА СИСТЕМА КЛІКІВ ===
 function addTime(){const g=Math.round(clickPower*clickMultiplier*prestigeMultiplier);score+=g;clickCloudTotal+=g;if(g>maxPerClick)maxPerClick=g;clickGainEl.textContent=`+${formatTime(g)}`;showFloating(`+${formatTime(g)}`);triggerClickEffect();handleClickCombo(); updateScore();updatePrestigeProgress();}
