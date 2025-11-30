@@ -9,9 +9,6 @@ const oh=updateClockHands;
 let rafId, lastUpdate=0;
 updateClockHands=()=>{    const now=Date.now();    if(now-lastUpdate>=50){        oh();        lastUpdate=now;    }    rafId=requestAnimationFrame(updateClockHands);};
 
-// КОМБО СИСТЕМА - АДАПТОВАНА ДЛЯ МОБІЛЬНИХ
-MAX_CLICK_INTERVAL=500;COMBO_THRESHOLD=3;
-
 // АВТО-КЛІКИ - ОПТИМІЗОВАНІ ІНТЕРВАЛИ
 const ai=setInterval(()=>{const g=Math.round(autoRate*prestigeMultiplier);if(g>0){score+=g;clickCloudTotal+=g;if(score%100===0)updateScore();}if(Date.now()%3e3<100){updateStats();updateAchievements();}},1e3);
 
@@ -71,7 +68,7 @@ multipliers.forEach(m=>{const b=d.createElement("button");b.className="upgrade-b
 
 // === ВИПРАВЛЕНА СИСТЕМА КЛІКІВ ===
 function addTime(){const g=Math.round(clickPower*clickMultiplier*prestigeMultiplier);score+=g;clickCloudTotal+=g;if(g>maxPerClick)maxPerClick=g;clickGainEl.textContent=`+${formatTime(g)}`;showFloating(`+${formatTime(g)}`);triggerClickEffect();handleClickCombo(); updateScore();updatePrestigeProgress();}
-function handleClickCombo(){const n=Date.now();if(n-lastClickTime<MAX_CLICK_INTERVAL)currentCombo++;else currentCombo=1;lastClickTime=n;if(currentCombo>maxComboEver)maxComboEver=currentCombo;if(currentCombo>=COMBO_THRESHOLD){comboCount.textContent=currentCombo;comboBubble.classList.add("show");}clearTimeout(comboTimeout);comboTimeout=setTimeout(()=>{if(currentCombo>=COMBO_THRESHOLD){comboBubble.classList.add("burst");showToast(`Комбо ×${currentCombo}! 🔥`);setTimeout(()=>comboBubble.classList.remove("show","burst"),700);}currentCombo=0;},300);}
+function handleClickCombo(){const n=Date.now();if(n-lastClickTime<MAX_CLICK_INTERVAL)currentCombo++;else currentCombo=1;lastClickTime=n;if(currentCombo>maxComboEver)maxComboEver=currentCombo;if(currentCombo>=COMBO_THRESHOLD){comboCount.textContent=currentCombo;comboBubble.classList.add("show");}clearTimeout(comboTimeout);comboTimeout=setTimeout(()=>{comboBubble.classList.remove("show","burst");if(currentCombo>=COMBO_THRESHOLD)showToast(`Комбо ×${currentCombo}! 🔥`);currentCombo=0;},300);}
 function showToast(t){const e=d.createElement("div");e.className="toast";e.textContent=t;e.style.cssText="font-size:18px;padding:22px 48px";toastContainer.appendChild(e);setTimeout(()=>e.remove(),10000);}
 function triggerClickEffect(){clock.classList.remove("click-effect-red","click-effect-blue","click-effect-glitch","click-effect-blackhole","click-effect-ripple");void clock.offsetWidth;clock.classList.add("click-effect-"+current.effect);}
 // ВИПРАВЛЕНИЙ ОБРОБНИК КЛІКІВ - запобігає подвійним клікам
@@ -80,8 +77,11 @@ function showFloating(t){const e=d.createElement("div");e.textContent=t;e.style.
 
 // === ОПТИМІЗАЦІЯ ДЛЯ МОБІЛЬНИХ (НЕ ВПЛИВАЄ НА ПК) ===
 const m='ontouchstart'in window||navigator.maxTouchPoints>0;
-if(m){const originalHandleClickCombo=handleClickCombo;handleClickCombo=function(){const n=Date.now();if(n-lastClickTime<MAX_CLICK_INTERVAL)currentCombo++;else currentCombo=1;lastClickTime=n;if(currentCombo>maxComboEver)maxComboEver=currentCombo;if(currentCombo>=COMBO_THRESHOLD){comboCount.textContent=currentCombo;comboBubble.classList.add("show");}clearTimeout(comboTimeout);comboTimeout=setTimeout(()=>{comboBubble.classList.remove("show","burst");if(currentCombo>=COMBO_THRESHOLD)showToast(`Комбо ×${currentCombo}! 🔥`);currentCombo=0;},300);};
-clockWrapper.removeEventListener("click",handleMobileClick);function handleMobileClick(e){const now=Date.now();if(now-lastClick<100)return;lastClick=now;if(e.target.closest("#clickableClock")||e.target===clockWrapper)addTime();}clockWrapper.addEventListener("click",handleMobileClick,{passive:true});}
+if(m){// Виправлення комбо для мобільних
+MAX_CLICK_INTERVAL=500;COMBO_THRESHOLD=3; // Для мобільних комбо з 3 кліків
+const o=handleClickCombo;handleClickCombo=function(){const n=Date.now();if(n-lastClickTime<MAX_CLICK_INTERVAL)currentCombo++;else currentCombo=1;lastClickTime=n;if(currentCombo>maxComboEver)maxComboEver=currentCombo;if(currentCombo>=COMBO_THRESHOLD){comboCount.textContent=currentCombo;comboBubble.classList.add("show");}clearTimeout(comboTimeout);comboTimeout=setTimeout(()=>{comboBubble.classList.remove("show","burst");if(currentCombo>=COMBO_THRESHOLD)showToast(`Комбо ×${currentCombo}! 🔥`);currentCombo=0;},300);};
+// Приховуємо бульбашку за замовчуванням на мобільних
+setTimeout(()=>comboBubble.classList.remove("show"),100);}}
 
 // === ВИПРАВЛЕНА СТАТИСТИКА - БЕЗ ЗАТРИМОК ДЛЯ ПК ===
 function updateScore(){scoreText.textContent=`Часу витрачено: ${formatTime(score)}`;cloudTotalEl.textContent=`${formatTime(clickCloudTotal)}`;updateAllButtons();}                    
