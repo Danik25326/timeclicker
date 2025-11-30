@@ -172,7 +172,7 @@ body.mobile-version .top-tabs{top:60px;width:96%;padding:8px 4px;gap:4px 6px;fle
 body.mobile-version .tab{flex:1 1 30%;min-width:75px;font-size:12px;padding:8px 4px}
 body.mobile-version .left-panel{width:42%;max-width:320px;margin-top:20px}
 body.mobile-version .right-panel{width:54%;padding-right:8px !important;padding-left:0}
-body.mobile-version .clock{width:208px;height:208px}
+body.mobile-version .clock{width:209px;height:209px}
 body.mobile-version .hand.hour{height:50px}
 body.mobile-version .hand.minute{height:74px}
 body.mobile-version .hand.second{height:88px}
