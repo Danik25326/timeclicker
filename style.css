@@ -7,7 +7,7 @@ body{font-family:'Poppins',sans-serif;background:radial-gradient(circle at cente
 .game-hidden {    display: none;}
 
 /* ===== ЗАГОЛОВКИ ТА КНОПКИ ВИБОРУ ===== */
-.editable-title{position:absolute;top:5px;left:50%;transform:translateX(-50%);font-weight:700;font-size:38px;color:#fff;text-shadow:0 0 20px var(--neon);cursor:text;user-select:text;z-index:30;white-sace:nowrap}
+.editable-title{position:absolute;top:5px;left:50%;transform:translateX(-50%);font-weight:700;font-size:38px;color:#fff;text-shadow:0 0 20px var(--neon);cursor:text;user-select:text;z-index:30;white-space:nowrap}
 #chooser{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:30px;text-align:center;min-height:auto; padding-top: 10px !important; }
 .choose-btn{padding:25px 60px;font-size:28px;background:linear-gradient(90deg,#0ea5e9,#3b82f6);border:none;border-radius:20px;color:white;cursor:pointer;transition:all .3s;box-shadow:0 0 40px rgba(14,165,233,.7);font-weight:700;min-width:280px;text-shadow:0 0 10px rgba(255,255,255,.5)}
 .choose-btn:hover{transform:scale(1.15);box-shadow:0 0 60px rgba(14,165,233,.9)}
