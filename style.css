@@ -3,6 +3,9 @@
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:'Poppins',sans-serif;background:radial-gradient(circle at center,var(--bg1),#050810);color:#fff;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;overflow-x:hidden;line-height:1.6}
 
+/* ===== ПОЧАТКОВІ СТИЛІ ===== */
+.game-hidden {    display: none;}
+
 /* ===== ЗАГОЛОВКИ ТА КНОПКИ ВИБОРУ ===== */
 .editable-title{position:absolute;top:5px;left:50%;transform:translateX(-50%);font-weight:700;font-size:38px;color:#fff;text-shadow:0 0 20px var(--neon);cursor:text;user-select:text;z-index:30;white-sace:nowrap}
 #chooser{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:30px;text-align:center;min-height:auto; padding-top: 10px !important; }
