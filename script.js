@@ -230,7 +230,7 @@ setTimeout(()=>{score+=2500;clickCloudTotal+=2500;showToast("+2500 сек за �
 function hideSeriesMarathon(){if(seriesOverlay){seriesOverlay.remove();}}
 
 // === РОБОТА З ДЕДЛАЙНОМ ===
-let deadlineOverlay=null,deadlineInterval=null,deadlineClicks=0,deadlineTarget=100,deadlineTime=10,deadlineReached=false;
+let deadlineOverlay=null,deadlineInterval=null,deadlineClicks=0,deadlineTarget=50,deadlineTime=10,deadlineReached=false;
 function showDeadlineWork(){
 if(deadlineOverlay){deadlineOverlay.remove();}
 deadlineOverlay=d.createElement('div');deadlineOverlay.id='deadlineOverlay';deadlineOverlay.style.cssText='position:fixed;top:0;left:0;width:100%;height:100%;z-index:9994;background:linear-gradient(135deg,#1a1a2e,#0f3460);display:flex;flex-direction:column;align-items:center;justify-content:center;';
