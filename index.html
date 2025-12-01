@@ -138,7 +138,7 @@ function openModal(){document.getElementById('modal').style.display='flex'}
 function closeModal(){document.getElementById('modal').style.display='none'}
 document.getElementById('modal').addEventListener('click',function(e){if(e.target===this)closeModal()})
 document.addEventListener('keydown',function(e){if(e.key==='Escape')closeModal()})
-window.onload=function(){document.getElementById('chooser').style.display='flex';document.getElementById('game').style.display='none'}
+window.onload=function(){document.getElementById('chooser').style.display='flex';document.getElementById('game').classList.add('game-hidden')}
 </script>
 </body>
 </html>
