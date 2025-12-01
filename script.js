@@ -57,11 +57,11 @@ let timeCache = {};
 function memoizedFormatTime(s) {    if(timeCache[s]) return timeCache[s];    const result = formatTime(s);    if(Object.keys(timeCache).length > 50) timeCache = {};    return timeCache[s] = result;}
 
 // === АПГРЕЙДИ ===
-const upgrades=[{n:"Кліпати очима",c:1,l:0},{n:"Включити телефон",c:8,l:0},{n:"Гортати стрічку",c:40,l:0},{n:"Мем-тур",c:200,l:0},{n:"Автоперегляд",c:1100,l:0},{n:"Підписка",c:6500,l:0},{n:"Серіал-марафон",c:40000,l:0},{n:"Робота з дедлайном",c:250000,l:0},{n:"Життєвий крінж",c:1600000,l:0},{n:"Discord-марафон",c:10000000,l:0},{n:"Reels до ранку",c:65000000,l:0},{n:"Філософські роздуми",c:400000000,l:0}];
+const upgrades=[{n:"Кліпати очима",c:1,l:0},{n:"Увімкнути телефон",c:8,l:0},{n:"Гортати стрічку",c:40,l:0},{n:"Мем-тур",c:200,l:0},{n:"Автоперегляд",c:1100,l:0},{n:"Підписка",c:6500,l:0},{n:"Серіал-марафон",c:40000,l:0},{n:"Робота з дедлайном",c:250000,l:0},{n:"Життєвий крінж",c:1600000,l:0},{n:"Discord-марафон",c:10000000,l:0},{n:"Reels до ранку",c:65000000,l:0},{n:"Філософські роздуми",c:400000000,l:0}];
 function fib(n){if(n<=1)return n;let a=0,b=1;for(let i=2;i<=n;i++)[a,b]=[b,a+b];return b;}
 upgrades.forEach((u,i)=>{const b=d.createElement("button");b.className="upgrade-btn";if(i>0)b.classList.add("hidden");b.addEventListener("click",()=>buyUpgrade(i));upgradesContainer.appendChild(b);buttons.push(b);u.up=function(){const f=fib(u.l+6),c=Math.floor(u.c*f*(i+1));b.innerHTML=`${u.n} (Lv.${u.l})<span>${formatTime(c)}</span>`;b.disabled=score<c;};u.getC=function(){return Math.floor(u.c*fib(u.l+6)*(i+1));};u.up();});
 function revealNext(){const c=upgrades.filter(u=>u.l>0).length;if(buttons[c])buttons[c].classList.remove("hidden");}
-function buyUpgrade(i){const u=upgrades[i],c=u.getC();if(score<c)return;score-=c;u.l++;totalUpgradesBought++;autoRate+=(i+1)*5*prestigeMultiplier;showToast(`Куплено: ${u.n} (Lv.${u.l}) ✅`); if (u.n === "Включити телефон") {    setTimeout(() => {        showPhoneLockScreen();    }, 500);
+function buyUpgrade(i){const u=upgrades[i],c=u.getC();if(score<c)return;score-=c;u.l++;totalUpgradesBought++;autoRate+=(i+1)*5*prestigeMultiplier;showToast(`Куплено: ${u.n} (Lv.${u.l}) ✅`); if (u.n === "Увімкнути телефон") {    setTimeout(() => {        showPhoneLockScreen();    }, 500);
 }requestAnimationFrame(() => {    revealNext();u.up();updateAllButtons();updateScore();    updateStats();updateAchievements();updatePrestigeProgress();});if(u.n==="Кліпати очима"){d.body.classList.remove("eye-blink");void d.body.offsetWidth;d.body.classList.add("eye-blink");setTimeout(()=>d.body.classList.remove("eye-blink"),1000);}}
 function updateAllButtons(){upgrades.forEach(u=>u.up());multipliers.forEach(m=>m.up&&m.up());}
 
