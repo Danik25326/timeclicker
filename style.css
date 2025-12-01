@@ -291,3 +291,9 @@ body.eye-blink::before{content:"";position:fixed;inset:0;background:#000;z-index
 #musicBtn{background:linear-gradient(90deg,#0ea5e9,#3b82f6)!important;padding:16px 36px!important;font-size:16px!important;box-shadow:0 0 35px #0ea5e9}
 #musicBtn:hover{transform:scale(1.1);box-shadow:0 0 60px #0ea5e9,0 0 90px #0ea5e9aa}
 .music-switch{background:linear-gradient(90deg,#ec4899,#f43f5e)!important;font-size:24px!important;padding:14px!important}
+
+/* ===== ДОДАНІ СТИЛІ ===== */
+.stats-list {    list-style: none;    padding: 0;    margin: 0;}
+.stats-list li {    padding: 8px 0;    border-bottom: 1px solid rgba(255,255,255,0.1);    color: #cfeaff;    font-size: 15px;}
+.stats-separator {    margin-top: 15px;    padding-top: 15px;    border-top: 2px solid #334155;    font-weight: bold;    color: #bfe9ff;}
+.combo-bubble.hidden {    display: none;}
