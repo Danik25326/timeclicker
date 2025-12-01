@@ -61,8 +61,8 @@ const upgrades=[{n:"Кліпати очима",c:1,l:0},{n:"Увімкнути �
 function fib(n){if(n<=1)return n;let a=0,b=1;for(let i=2;i<=n;i++)[a,b]=[b,a+b];return b;}
 upgrades.forEach((u,i)=>{const b=d.createElement("button");b.className="upgrade-btn";if(i>0)b.classList.add("hidden");b.addEventListener("click",()=>buyUpgrade(i));upgradesContainer.appendChild(b);buttons.push(b);u.up=function(){const f=fib(u.l+6),c=Math.floor(u.c*f*(i+1));b.innerHTML=`${u.n} (Lv.${u.l})<span>${formatTime(c)}</span>`;b.disabled=score<c;};u.getC=function(){return Math.floor(u.c*fib(u.l+6)*(i+1));};u.up();});
 function revealNext(){const c=upgrades.filter(u=>u.l>0).length;if(buttons[c])buttons[c].classList.remove("hidden");}
-function buyUpgrade(i){const u=upgrades[i],c=u.getC();if(score<c)return;score-=c;u.l++;totalUpgradesBought++;autoRate+=(i+1)*5*prestigeMultiplier;showToast(`Куплено: ${u.n} (Lv.${u.l}) ✅`);if(u.n==="Увімкнути телефон"){setTimeout(()=>{showPhoneLockScreen();},500);}if(u.n==="Гортати стрічку"){setTimeout(()=>{handleNewsFeedUpgrade();},300);}if(u.n==="Мем-тур"){setTimeout(()=>{showMeme();setTimeout(()=>{score+=1000;clickCloudTotal+=1000;showToast("Посмішка за смішний мем! 😂");updateScore();},1500);},300);}requestAnimationFrame(()=>{revealNext();u.up();updateAllButtons();updateScore();updateStats();updateAchievements();updatePrestigeProgress();});if(u.n==="Кліпати очима"){d.body.classList.remove("eye-blink");void d.body.offsetWidth;d.body.classList.add("eye-blink");setTimeout(()=>d.body.classList.remove("eye-blink"),1000);}}
-  function updateAllButtons(){upgrades.forEach(u=>u.up());multipliers.forEach(m=>m.up&&m.up());}
+function buyUpgrade(i){const u=upgrades[i],c=u.getC();if(score<c)return;score-=c;u.l++;totalUpgradesBought++;autoRate+=(i+1)*5*prestigeMultiplier;showToast(`Куплено: ${u.n} (Lv.${u.l}) ✅`);if(u.n==="Увімкнути телефон"){setTimeout(()=>{showPhoneLockScreen();},500);}if(u.n==="Гортати стрічку"){setTimeout(()=>{handleNewsFeedUpgrade();},300);}if(u.n==="Мем-тур"){setTimeout(()=>{showMeme();setTimeout(()=>{score+=1000;clickCloudTotal+=1000;showToast("Посмішка за смішний мем! 😂");updateScore();},1500);},300);}if(u.n==="Автоперегляд"){setTimeout(()=>{showAutoplay();},300);}requestAnimationFrame(()=>{revealNext();u.up();updateAllButtons();updateScore();updateStats();updateAchievements();updatePrestigeProgress();});if(u.n==="Кліпати очима"){d.body.classList.remove("eye-blink");void d.body.offsetWidth;d.body.classList.add("eye-blink");setTimeout(()=>d.body.classList.remove("eye-blink"),1000);}}
+function updateAllButtons(){upgrades.forEach(u=>u.up());multipliers.forEach(m=>m.up&&m.up());}
 
 // === МНОЖНИКИ КЛІКУ ===
 const multipliers=[{n:"Подвійний клік",c:5000,m:2,b:0},{n:"Потрійний клік",c:50000,m:3,b:0},{n:"x10 за клік",c:1000000,m:10,b:0},{n:"x50 за клік",c:20000000,m:50,b:0},{n:"x100 за клік",c:100000000,m:100,b:0}];
@@ -126,39 +126,11 @@ restartEffect.init();
   
 // === РЕВЕРБ СИСТЕМА ===
 reverbBtn.addEventListener("click",()=>{if(!confirm("Ти впевнений, що хочеш повернути час назад? Всі твої апгрейди будуть втрачені, але ти отримаєш множник!"))return;startReverbMode();});
-function startReverbMode(){
-    reverbOverlay.classList.remove("hidden");timeTunnel.classList.add("active");reverbHint.style.opacity="1";isReverbActive=1;
-    reverbClock.className=`clock ${current.shape}`;clockSkins.find(s=>s.id===current.clock)?.a();handSkins.find(s=>s.id===current.hand)?.a();
-    updateReverbClockHands();setTimeout(()=>reverbHint.style.opacity="0",3000);}
-
-function updateReverbClockHands(){
-    if(!isReverbActive)return;const e=qa("#reverbClock .hand");if(e.length===0)return;
-    if(reverbClock.classList.contains("reverb-chaos")){requestAnimationFrame(updateReverbClockHands);return;}
-    const t=new Date(),o=t.getSeconds()+t.getMilliseconds()/1000,n=t.getMinutes()+o/60,a=(t.getHours()%12||12)+n/60;
-    qa("#reverbClock .second").forEach(e=>e.style.transform=`translateX(-50%) rotate(${o*6}deg)`);
-    qa("#reverbClock .minute").forEach(e=>e.style.transform=`translateX(-50%) rotate(${n*6}deg)`);
-    qa("#reverbClock .hour").forEach(e=>e.style.transform=`translateX(-50%) rotate(${a*30}deg)`);
-    requestAnimationFrame(updateReverbClockHands);
-}
-const startReverbHold=e=>{
-    if(e.type.includes('touch'))e.preventDefault();if(!isReverbActive)return;
-    reverbHint.style.opacity="0";reverbClock.classList.add("reverb-mode","reverb-chaos");timeTunnel.classList.add("intense");
-    restartEffect.start();
-    qa("#reverbClock .hand").forEach((e,t)=>{
-        const o=0.5+2*Math.random(),n=Math.random()>0.5?"normal":"reverse";
-        e.style.setProperty("--duration",`${o}s`);e.style.setProperty("--direction",n);
-        e.style.animation=`chaosSpin ${o}s linear infinite ${n}`;
-    });reverbHoldTimeout=setTimeout(completeReverb,10000);
-};
-const stopReverbHold=e=>{
-    if(e&&e.type.includes('touch'))e.preventDefault();
-    clearTimeout(reverbHoldTimeout);
-    if(isReverbActive){
-        reverbClock.classList.remove("reverb-mode","reverb-chaos");timeTunnel.classList.remove("intense");
-        qa("#reverbClock .hand").forEach(e=>{e.style.animation="none";e.style.removeProperty("--duration");e.style.removeProperty("--direction");});
-        updateReverbClockHands();restartEffect.stop();
-    }
-};
+function startReverbMode(){    reverbOverlay.classList.remove("hidden");timeTunnel.classList.add("active");reverbHint.style.opacity="1";isReverbActive=1;    reverbClock.className=`clock ${current.shape}`;clockSkins.find(s=>s.id===current.clock)?.a();handSkins.find(s=>s.id===current.hand)?.a();    updateReverbClockHands();setTimeout(()=>reverbHint.style.opacity="0",3000);}
+function updateReverbClockHands(){    if(!isReverbActive)return;const e=qa("#reverbClock .hand");if(e.length===0)return;    if(reverbClock.classList.contains("reverb-chaos")){requestAnimationFrame(updateReverbClockHands);return;}    const t=new Date(),o=t.getSeconds()+t.getMilliseconds()/1000,n=t.getMinutes()+o/60,a=(t.getHours()%12||12)+n/60;    qa("#reverbClock .second").forEach(e=>e.style.transform=`translateX(-50%) rotate(${o*6}deg)`);    qa("#reverbClock .minute").forEach(e=>e.style.transform=`translateX(-50%) rotate(${n*6}deg)`);    qa("#reverbClock .hour").forEach(e=>e.style.transform=`translateX(-50%) rotate(${a*30}deg)`);    requestAnimationFrame(updateReverbClockHands);}
+const startReverbHold=e=>{    if(e.type.includes('touch'))e.preventDefault();if(!isReverbActive)return;    reverbHint.style.opacity="0";reverbClock.classList.add("reverb-mode","reverb-chaos");timeTunnel.classList.add("intense");    restartEffect.start();
+    qa("#reverbClock .hand").forEach((e,t)=>{        const o=0.5+2*Math.random(),n=Math.random()>0.5?"normal":"reverse";        e.style.setProperty("--duration",`${o}s`);e.style.setProperty("--direction",n);        e.style.animation=`chaosSpin ${o}s linear infinite ${n}`;    });reverbHoldTimeout=setTimeout(completeReverb,10000);};
+const stopReverbHold=e=>{    if(e&&e.type.includes('touch'))e.preventDefault();    clearTimeout(reverbHoldTimeout);    if(isReverbActive){        reverbClock.classList.remove("reverb-mode","reverb-chaos");timeTunnel.classList.remove("intense");        qa("#reverbClock .hand").forEach(e=>{e.style.animation="none";e.style.removeProperty("--duration");e.style.removeProperty("--direction");});        updateReverbClockHands();restartEffect.stop();}};
 reverbClock.addEventListener("mousedown",startReverbHold);reverbClock.addEventListener("touchstart",startReverbHold,{passive:false});
 reverbClock.addEventListener("mouseup",stopReverbHold);reverbClock.addEventListener("mouseleave",stopReverbHold);
 reverbClock.addEventListener("touchend",stopReverbHold);reverbClock.addEventListener("touchcancel",stopReverbHold);
@@ -171,9 +143,8 @@ function completeReverb() {
     const e = document.createElement("div"); e.style.cssText = "position:fixed;top:0;left:0;width:100%;height:100%;background:white;z-index:10001;pointer-events:none;animation:flashFade 1s ease-out forwards;"; document.body.appendChild(e);
     setTimeout(() => { e.remove(); restartEffect.showCompletionScreen(); restartEffect.completionScreen.querySelector("div:nth-child(2)").textContent = `Множник: ${prestigeMultiplier.toFixed(2)}×`; updateReverbText();
         const o = () => { restartEffect.hideCompletionScreen(); isReverbActive = 0; updateScore(); updateStats(); updateAchievements(); updatePrestigeProgress(); document.removeEventListener('click',o); document.removeEventListener('touchstart',o); };
-        document.addEventListener('click',o); document.addEventListener('touchstart',o);
-    }, 1000);
-}
+        document.addEventListener('click',o); document.addEventListener('touchstart',o);    }, 1000);}
+  
 // === СИСТЕМА ВКЛАДОК ===
 qa(".top-tabs .tab").forEach(b=>{b.addEventListener("click",()=>{qa(".top-tabs .tab").forEach(x=>x.classList.remove("active"));qa(".tab-page").forEach(x=>x.classList.remove("active"));b.classList.add("active");id(b.dataset.tab).classList.add("active");});});
 
@@ -221,6 +192,18 @@ memeLoadingEl.style.display='block';memeImageEl.style.display='none';memeOverlay
 isMemeShowing=true;
 memeImageEl.src=memeUrl;}
 function hideMeme(){if(memeOverlay){memeOverlay.style.display='none';}isMemeShowing=false;clearTimeout(currentMemeTimeout);}
-  
+
+// === СИСТЕМА АВТОПЕРЕГЛЯДУ ===
+let autoplayOverlay=null,autoplayTimeout=null,autoplayVideos=[{channel:"Улюбленці",views:"1.2M",time:"0:15",thumbnail:"https://picsum.photos/600/340?random=1"},{channel:"Кулінарія",views:"850K",time:"0:30",thumbnail:"https://picsum.photos/600/340?random=2"},{channel:"Танці",views:"2.5M",time:"0:25",thumbnail:"https://picsum.photos/600/340?random=3"},{channel:"Фітнес",views:"950K",time:"0:45",thumbnail:"https://picsum.photos/600/340?random=4"},{channel:"Природа",views:"3.1M",time:"1:10",thumbnail:"https://picsum.photos/600/340?random=5"},{channel:"Автоогляд",views:"1.8M",time:"0:55",thumbnail:"https://picsum.photos/600/340?random=6"},{channel:"Ігри",views:"2.2M",time:"12:30",thumbnail:"https://picsum.photos/600/340?random=7"},{channel:"Кліпи",views:"4.5M",time:"3:45",thumbnail:"https://picsum.photos/600/340?random=8"}];
+function showAutoplay(){autoplayOverlay=document.createElement('div');autoplayOverlay.id='autoplayOverlay';autoplayOverlay.style.cssText='position:fixed;top:0;left:0;width:100%;height:100%;background:#0f0f0f;z-index:9997;display:flex;flex-direction:column;font-family:Poppins;color:white;';
+const header=document.createElement('div');header.style.cssText='display:flex;align-items:center;padding:15px 20px;border-bottom:1px solid #333;background:#202020;';header.innerHTML='<div style="display:flex;align-items:center;gap:10px;"><div style="width:30px;height:30px;background:#ff0000;border-radius:50%;"></div><span style="font-weight:bold;font-size:20px;">Автоперегляд</span></div>';
+const content=document.createElement('div');content.style.cssText='flex:1;display:flex;align-items:center;justify-content:center;padding:20px;';
+const currentVideo=autoplayVideos[Math.floor(Math.random()*autoplayVideos.length)];content.innerHTML=`<div style="max-width:600px;width:100%;background:#282828;border-radius:15px;overflow:hidden;"><div style="position:relative;"><img src="${currentVideo.thumbnail}" style="width:100%;height:340px;object-fit:cover;"><div style="position:absolute;bottom:10px;right:10px;background:rgba(0,0,0,0.8);padding:5px 10px;border-radius:5px;">${currentVideo.time}</div><div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:70px;height:70px;background:rgba(255,255,255,0.9);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:30px;">▶️</div></div><div style="padding:20px;"><div style="font-size:22px;font-weight:bold;margin-bottom:10px;">${currentVideo.channel}</div><div style="display:flex;justify-content:space-between;color:#aaa;margin-bottom:20px;"><span>${currentVideo.views} переглядів</span><span>${currentVideo.time}</span></div><div style="background:#3ea6ff;color:white;border:none;padding:12px 25px;border-radius:20px;font-weight:bold;cursor:pointer;text-align:center;margin-bottom:20px;">Підписатися</div><div style="display:flex;gap:15px;color:#aaa;justify-content:center;"><div style="text-align:center;"><div style="font-size:24px;">👍</div><div>1.2K</div></div><div style="text-align:center;"><div style="font-size:24px;">👎</div><div>25</div></div><div style="text-align:center;"><div style="font-size:24px;">💬</div><div>348</div></div><div style="text-align:center;"><div style="font-size:24px;">↪️</div><div>Поділитись</div></div></div></div></div>`;
+const sidebar=document.createElement('div');sidebar.style.cssText='width:300px;background:#181818;padding:20px;border-left:1px solid #333;';let recommendations='<div style="font-size:18px;margin-bottom:20px;">Рекомендації:</div>';let shuffled=[...autoplayVideos].filter(v=>v!==currentVideo).sort(()=>0.5-Math.random()).slice(0,4);shuffled.forEach(vid=>{recommendations+=`<div style="display:flex;margin-bottom:15px;background:#282828;border-radius:10px;overflow:hidden;cursor:pointer;"><img src="${vid.thumbnail}" style="width:120px;height:70px;object-fit:cover;"><div style="padding:10px;flex:1;"><div style="font-weight:bold;margin-bottom:5px;">${vid.channel}</div><div style="font-size:13px;color:#aaa;">${vid.views} · ${vid.time}</div></div></div>`;});sidebar.innerHTML=recommendations;
+const container=document.createElement('div');container.style.cssText='display:flex;flex:1;';container.appendChild(content);container.appendChild(sidebar);
+const timer=document.createElement('div');timer.id='autoplayTimer';timer.style.cssText='position:fixed;bottom:20px;left:20px;background:rgba(0,0,0,0.8);color:#3ea6ff;padding:10px 20px;border-radius:10px;font-size:16px;';timer.textContent='Наступне відео через: 5 сек';
+autoplayOverlay.appendChild(header);autoplayOverlay.appendChild(container);autoplayOverlay.appendChild(timer);document.body.appendChild(autoplayOverlay);
+let secondsLeft=5;autoplayTimeout=setInterval(()=>{secondsLeft--;timer.textContent=`Наступне відео через: ${secondsLeft} сек`;if(secondsLeft<=0){clearInterval(autoplayTimeout);hideAutoplay();}},1000);}
+function hideAutoplay(){if(autoplayOverlay){autoplayOverlay.remove();}clearInterval(autoplayTimeout);score+=1500;clickCloudTotal+=1500;showToast("+1500 сек за автоперегляд! 📺");updateScore();}
   // === Динамічний текст Перезапуску ===
 const reverbDesc = id("reverbDesc"), nextMultiplierEl = id("nextMultiplier"); function updateReverbText(){nextMultiplierEl.textContent=(prestigeMultiplier*1.2).toFixed(2);}    setTimeout(() => {updateScore();updateStats();updateAchievements();updateReverbText();}, 100);}
