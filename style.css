@@ -295,5 +295,5 @@ body.eye-blink::before{content:"";position:fixed;inset:0;background:#000;z-index
 /* ===== ДОДАНІ СТИЛІ ===== */
 .stats-list {    list-style: none;    padding: 0;    margin: 0;}
 .stats-list li {    padding: 8px 0;    border-bottom: 1px solid rgba(255,255,255,0.1);    color: #cfeaff;    font-size: 15px;}
-.stats-separator {    margin-top: 15px;    padding-top: 15px;    border-top: 2px solid #334155;    font-weight: bold;    color: #bfe9ff;}
+.stats-separator {    margin-top: 0px;    padding-top: 0px;    border-top: 2px solid #334155;    font-weight: bold;    color: #bfe9ff;}
 .combo-bubble.hidden {    display: none;}
