@@ -9,6 +9,8 @@
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css?v=17">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+</head>
+<body> 
 
 <!-- === ЕКРАН ВИБОРУ ВЕРСІЇ === -->
 <div id="chooser"><h1>Times Clicker</h1><button class="choose-btn" onclick="startGame('pc')">ПК-версія</button><button class="choose-btn" onclick="startGame('mobile')">Мобільна версія</button></div>
@@ -125,7 +127,6 @@
 
 <!-- === КОНТЕЙНЕР СПОВІЩЕНЬ === -->
 <div id="toastContainer"></div>
-</div>
 
 <!-- Модальне вікно для QR-кода -->
 <div class="modal" id="modal"><div class="modal-content"><img src="https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=https://t.me/brainmathx_bot" alt="QR Code" class="large-qr"><p class="modal-text">Навіщо витрачати час на вирішення рівнянь, якщo його можна використати на щось корисніше?</p><a href="https://t.me/brainmathx_bot" target="_blank" class="telegram-link">Або перейдіть за посиланням: t.me/brainmathx_bot</a><button class="close-btn" onclick="closeModal()">Закрити</button></div></div>
