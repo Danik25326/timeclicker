@@ -58,18 +58,20 @@
 <li>• Ефекти кліку: <span id="effectSkinsCount">1</span>/5</li>
 <li>Всього скінів: <span id="totalSkins">4</span>/17</li>
 </ul></div>
-<!-- ВКЛАДКА ДОСЯГНЕНЬ --><div id="tab-achievements" class="tab-page"><h3>Досягнення</h3><div id="achievements" class="achievements-grid"></div></div>
-<!-- ВКЛАДКА ПЕРЕЗАПУСКУ --><div id="tab-reverb" class="tab-page"><h3>Перезапуск</h3>
+<!-- ВКЛАДКА ДОСЯГНЕНЬ -->
+<div id="tab-achievements" class="tab-page"><h3>Досягнення</h3><div id="achievements" class="achievements-grid"></div></div>
+<!-- ВКЛАДКА ПЕРЕЗАПУСКУ -->
+<div id="tab-reverb" class="tab-page"><h3>Перезапуск</h3>
 <p id="reverbDesc">Повертаючи час назад, ти отримаєш множник <span id="nextMultiplier">1.20</span>× до всіх прибутків.</p>
-<div id="prestigeProgressContainer" style="margin: 20px auto; max-width: 400px; background: #1e293b; border-radius: 15px; padding: 15px; border: 2px solid #334155;">
-    <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
-        <span style="color: #cbd5e1; font-size: 14px;">Прогрес перезапуску</span>
-        <span id="prestigeProgressText" style="color: #e2e8f0; font-size: 14px; font-weight: bold;">0 / 1 година</span>
+<div id="prestigeProgressContainer" class="prestige-progress-container">
+    <div class="progress-header">
+        <span class="progress-label">Прогрес перезапуску</span>
+        <span id="prestigeProgressText" class="progress-text">0 / 1 година</span>
     </div>
-    <div style="background: #334155; border-radius: 10px; height: 20px; overflow: hidden;">
-        <div id="prestigeProgressBar" style="height: 100%; width: 0%; background: linear-gradient(90deg, #ef4444, #f87171); border-radius: 10px; transition: width 0.3s ease, background 0.3s ease;"></div>
+    <div class="progress-bar-bg">
+        <div id="prestigeProgressBar" class="progress-bar-fill"></div>
     </div>
-    <div style="margin-top: 8px; color: #94a3b8; font-size: 12px; text-align: center;">
+    <div class="progress-footer">
         Наступний множник: ×1.20
     </div>
 </div>
