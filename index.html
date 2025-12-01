@@ -88,7 +88,6 @@
 <img src="https://api.qrserver.com/v1/create-qr-code/?size=40x40&data=https://t.me/brainmathx_bot" alt="QR Code" class="bare-qr" onclick="openModal()">
 </div>
 <p id="score">Часу витрачено: 0 сек</p>
-
 <div class="music-player">
 <button id="prevTrack" class="music-switch">⬅️</button>
 <button id="musicBtn" class="phonk-btn">▶️ Включити музику</button>
@@ -98,6 +97,19 @@
 <audio id="player" preload="auto"></audio>
 </div></div>
 
+<!-- === ЕКРАН БЛОКУВАННЯ ТЕЛЕФОНУ === -->
+<div id="phoneLockOverlay" class="phone-lock-overlay">
+    <div class="phone-lock-screen" id="phoneLockScreen">
+        <img src="" alt="Lock Screen" class="phone-lock-image" id="phoneLockImage">
+        <div class="swipe-indicator"></div>
+        <div class="swipe-hint" id="swipeHint">Свайпни вгору</div>
+    </div>
+</div>
+<!-- === СПОВІЩЕННЯ ПРО РОЗБЛОКУВАННЯ === -->
+<div id="phoneUnlockNotification" class="phone-unlock-notification">
+    Телефон успішно розблоковано
+</div>
+    
 <!-- === СИСТЕМА ПЕРЕЗАПУСКУ (РЕВЕРБ) === -->
 <div id="reverbOverlay" class="reverb-overlay hidden">
 <div class="reverb-instruction">Зажми та тримай годинник 10 секунд,<br>щоб повернути час назад!</div>
