@@ -3,7 +3,6 @@ function startGame(v){document.getElementById('chooser').style.display='none';do
 function initGame(){    
 // === ЗМІННІ СТАНУ ===
 let score=0,clickPower=1,autoRate=0,isPlaying=0,currentTrack=0,sessionStart=Date.now(),totalUpgradesBought=0,maxPerClick=1,prestigeMultiplier=1,totalReverbs=0,maxAutoRate=0,maxCombo=0,clickCloudTotal=0,lastClickTime=0,currentCombo=0,maxComboEver=0,comboTimeout=null,MAX_CLICK_INTERVAL=350,COMBO_THRESHOLD=5,isReverbActive=0,reverbHoldTimeout=null,clickMultiplier=1,buttons=[],prestigeThreshold=3600,currentPrestigeProgress=0; 
-let phoneLockImages=['photoList/1.jpg','photoList/2.jpg','photoList/3.jpg','photoList/4.jpg','photoList/5.jpg','photoList/6.jpg','photoList/7.jpg','photoList/8.jpg','photoList/9.jpg','photoList/10.jpg'];
 // === ОПТИМІЗАЦІЯ ДЛЯ МОБІЛЬНИХ (НЕ ВПЛИВАЄ НА ПК) ===
 const m='ontouchstart'in window||navigator.maxTouchPoints>0;
 if(m){
