@@ -32,7 +32,7 @@ let tc=0;const ot=showToast;showToast=t=>{if(tc>=2)return;tc++;ot(t);setTimeout(
 const or=updateReverbClockHands;let lr=0;updateReverbClockHands=()=>{const n=Date.now();if(n-lr<50){requestAnimationFrame(updateReverbClockHands);return;}lr=n;or();};
                                                  
 // СТАТИСТИКА - ЗМЕНШЕНА ЧАСТОТА ОНОВЛЕННЯ
-const si=setInterval(()=>{if(autoRate>maxAutoRate)maxAutoRate=autoRate;if(maxComboEver>maxCombo)maxCombo=maxComboEver;},2e3);}
+const si=setInterval(()=>{if(autoRate>maxAutoRate)maxAutoRate=autoRate;if(maxComboEver>maxCombo)maxCombo=maxComboEver;},2e3);
   
 // === ВИПРАВЛЕНА ОПТИМІЗАЦІЯ - ТІЛЬКИ ДЛЯ МОБІЛЬНИХ ===
 const d=document,q=s=>d.querySelector(s),qa=s=>d.querySelectorAll(s),id=s=>d.getElementById(s),clock=id("clickableClock"),clockWrapper=id("clockWrapper"),comboBubble=id("comboBubble"),comboCount=id("comboCount"),clickCloudEl=id("clickCloud"),musicBtn=id("musicBtn"),prevTrack=id("prevTrack"),nextTrack=id("nextTrack"),player=id("player"),scoreText=id("score"),upgradesContainer=id("upgrades"),multipliersContainer=id("multipliers"),clickGainEl=id("clickGain"),cloudTotalEl=id("cloudTotal"),nowPlaying=id("nowPlaying"),realTimePlayedEl=id("realTimePlayed"),virtualTimeEl=id("virtualTime"),totalUpgradesEl=id("totalUpgrades"),maxPerClickEl=id("maxPerClick"),prestigeMultEl=id("prestigeMult"),reverbBtn=id("reverbBtn"),timeTunnel=id("timeTunnel"),worldTitle=id("worldTitle"),toastContainer=id("toastContainer"),reverbOverlay=id("reverbOverlay"),reverbClock=id("reverbClock"),reverbHint=id("reverbHint");
