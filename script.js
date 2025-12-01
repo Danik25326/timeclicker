@@ -202,9 +202,9 @@ function showNewsTicker(){document.getElementById('newsTickerContainer').classLi
 function hideNewsTicker(){document.getElementById('newsTickerContainer').classList.remove('show');newsTickerVisible=false;}
 function handleNewsFeedUpgrade(){addNewsToTicker();showToast('Нова новина в стрічці! 📰');}
 
-// === СИСТЕМА МЕМ-ТУРУ (з підтримкою GIF) ===
-let memeImages=['https://media.giphy.com/media/l0MYt5jPR6QX5pnqM/giphy.gif','https://media.giphy.com/media/3o7abAHdYvZdBNnGZq/giphy.gif','https://media.giphy.com/media/26ufdipQqU2lhNA4g/giphy.gif','https://media.giphy.com/media/11sBLVxNs7v6WA/giphy.gif','https://media.giphy.com/media/jUwpNzg9IcyrK/giphy.gif','https://media.giphy.com/media/l46Cy1rHbQ92uuLXa/giphy.gif','https://media.giphy.com/media/YQitE4YNQNahy/giphy.gif','https://media.giphy.com/media/l3q2K5jinAlChoCLS/giphy.gif','https://media.giphy.com/media/3o7abBbea7eQz6qJp6/giphy.gif','https://media.giphy.com/media/26tknCqiJrBQG6DrC/giphy.gif']; // 10 гіфок
-let memeOverlay=null,memeImageEl=null,currentMemeTimeout=null,memeLoadingEl=null;
+// === СИСТЕМА МЕМ-ТУРУ ===
+let memeImages=['https://media.giphy.com/media/l0MYt5jPR6QX5pnqM/giphy.gif','https://media.giphy.com/media/3o7abAHdYvZdBNnGZq/giphy.gif','https://media.giphy.com/media/26ufdipQqU2lhNA4g/giphy.gif','https://media.giphy.com/media/11sBLVxNs7v6WA/giphy.gif','https://media.giphy.com/media/jUwpNzg9IcyrK/giphy.gif','https://media.giphy.com/media/l46Cy1rHbQ92uuLXa/giphy.gif','https://media.giphy.com/media/YQitE4YNQNahy/giphy.gif','https://media.giphy.com/media/l3q2K5jinAlChoCLS/giphy.gif','https://media.giphy.com/media/3o7abBbea7eQz6qJp6/giphy.gif','https://media.giphy.com/media/26tknCqiJrBQG6DrC/giphy.gif'];
+let memeOverlay=null,memeImageEl=null,currentMemeTimeout=null,memeLoadingEl=null,isMemeShowing=false;
 function initMemeSystem(){memeOverlay=document.createElement('div');memeOverlay.id='memeOverlay';memeOverlay.style.cssText='position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.95);z-index:9998;display:none;align-items:center;justify-content:center;flex-direction:column;';
 memeLoadingEl=document.createElement('div');memeLoadingEl.id='memeLoading';memeLoadingEl.textContent='Завантаження мему...';memeLoadingEl.style.cssText='color:white;font-size:18px;margin-bottom:20px;display:none;';
 memeImageEl=document.createElement('img');memeImageEl.id='memeImage';memeImageEl.style.cssText='max-width:85%;max-height:70%;border-radius:15px;box-shadow:0 0 50px rgba(255,255,255,0.4);object-fit:contain;display:none;';
@@ -212,14 +212,15 @@ const memeText=document.createElement('div');memeText.textContent='Мем-тур
 const closeBtn=document.createElement('button');closeBtn.textContent='Закрити (або чекай 7 сек)';closeBtn.style.cssText='margin-top:25px;padding:10px 25px;background:#ef4444;color:white;border:none;border-radius:10px;font-size:16px;cursor:pointer;font-weight:bold;';closeBtn.onclick=hideMeme;
 memeOverlay.appendChild(memeLoadingEl);memeOverlay.appendChild(memeImageEl);memeOverlay.appendChild(memeText);memeOverlay.appendChild(closeBtn);document.body.appendChild(memeOverlay);
 memeOverlay.addEventListener('click',function(e){if(e.target===memeOverlay)hideMeme();});
-memeImageEl.onload=function(){memeLoadingEl.style.display='none';memeImageEl.style.display='block';};
+memeImageEl.onload=function(){memeLoadingEl.style.display='none';memeImageEl.style.display='block';clearTimeout(currentMemeTimeout);currentMemeTimeout=setTimeout(hideMeme,7000);};
 memeImageEl.onerror=function(){memeLoadingEl.textContent='Помилка завантаження мему :(';setTimeout(hideMeme,2000);};}
 function showMeme(){if(!memeImageEl)initMemeSystem();
+if(isMemeShowing){clearTimeout(currentMemeTimeout);memeOverlay.style.display='none';isMemeShowing=false;}
 const randomIndex=Math.floor(Math.random()*memeImages.length);const memeUrl=memeImages[randomIndex];
 memeLoadingEl.style.display='block';memeImageEl.style.display='none';memeOverlay.style.display='flex';
-memeImageEl.src=memeUrl;
-clearTimeout(currentMemeTimeout);currentMemeTimeout=setTimeout(hideMeme,7000);}
-function hideMeme(){if(memeOverlay){memeOverlay.style.display='none';memeImageEl.src='';}clearTimeout(currentMemeTimeout);}
+isMemeShowing=true;
+memeImageEl.src=memeUrl;}
+function hideMeme(){if(memeOverlay){memeOverlay.style.display='none';}isMemeShowing=false;clearTimeout(currentMemeTimeout);}
   
   // === Динамічний текст Перезапуску ===
 const reverbDesc = id("reverbDesc"), nextMultiplierEl = id("nextMultiplier"); function updateReverbText(){nextMultiplierEl.textContent=(prestigeMultiplier*1.2).toFixed(2);}    setTimeout(() => {updateScore();updateStats();updateAchievements();updateReverbText();}, 100);}
