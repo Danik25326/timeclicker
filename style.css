@@ -15,6 +15,9 @@ body{font-family:'Poppins',sans-serif;background:radial-gradient(circle at cente
 .top-tabs .tab{padding:11px 20px;font-size:14px;min-width:96px;background:transparent;border:none;color:#cfeaff;cursor:pointer;border-radius:50px;transition:all .2s}
 .top-tabs .tab.active{background:var(--neon);color:#000;font-weight:700}
 
+/* ===== QR-код ===== */
+.bare-qr{width:40px;height:40px;cursor:pointer;position:fixed;top:10px;right:20px;z-index:1000;transition:transform .2s ease;border:1px solid #ddd;border-radius:6px;background:white;}
+.bare-qr:hover{transform:scale(1.05);}</style>
 /* ===== ОСНОВНА СТРУКТУРА ===== */
 .container{display:flex;gap:32px;width:min(1350px,95vw);margin-top:100px}
 .left-panel{width:500px;background:var(--glass);border-radius:16px;padding:20px;box-shadow:0 10px 40px rgba(0,0,0,0.7);backdrop-filter:blur(10px)}
