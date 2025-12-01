@@ -159,6 +159,15 @@ body{font-family:'Poppins',sans-serif;background:radial-gradient(circle at cente
 /* Забезпечуємо, що початковий екран ревербу прихований після завершення */
 .reverb-overlay.hidden {    display: none !important;}
 
+/* ===== СТИЛІ ПРОГРЕСУ ПЕРЕЗАПУСКУ ===== */
+.prestige-progress-container {    margin: 20px auto;    max-width: 400px;    background: #1e293b;    border-radius: 15px;    padding: 15px;    border: 2px solid #334155;}
+.progress-header {    display: flex;    justify-content: space-between;    margin-bottom: 8px;}
+.progress-label {    color: #cbd5e1;    font-size: 14px;}
+.progress-text {    color: #e2e8f0;    font-size: 14px;    font-weight: bold;}
+.progress-bar-bg {    background: #334155;    border-radius: 10px;    height: 20px;    overflow: hidden;}
+.progress-bar-fill {    height: 100%;    width: 0%;    background: linear-gradient(90deg, #ef4444, #f87171);    border-radius: 10px;    transition: width 0.3s ease, background 0.3s ease;}
+.progress-footer {    margin-top: 8px;    color: #94a3b8;    font-size: 12px;    text-align: center;}
+
 /* ХАОТИЧНІ СТРІЛКИ */
 .reverb-chaos .hand{animation:chaosSpin var(--duration,1s) linear infinite!important;animation-direction:var(--direction,normal)!important;transform-origin:bottom center!important}
 @keyframes chaosSpin{0%{transform:translateX(-50%)rotate(0deg)}100%{transform:translateX(-50%)rotate(360deg)}}
