@@ -192,7 +192,7 @@ function handleSwipeStart(e){phoneSwipe.isSwiping=true;phoneSwipe.startY=e.clien
 function handleSwipeMove(e){if(!phoneSwipe.isSwiping)return;e.preventDefault();phoneSwipe.endY=e.clientY||e.touches[0].clientY;const deltaY=phoneSwipe.startY-phoneSwipe.endY;if(deltaY>100){handleSuccessfulUnlock();}}
 function handleSwipeEnd(){phoneSwipe.isSwiping=false;}
 function handleSwipeCancel(){phoneSwipe.isSwiping=false;}
-function handleSuccessfulUnlock(){hidePhoneLockScreen();const notification=document.getElementById('phoneUnlockNotification');notification.classList.add('show');setTimeout(()=>{notification.classList.remove('show');},3000);score+=500;clickCloudTotal+=500;showToast('Телефон розблоковано! +500 сек бонусу!');updateScore();}  
+function handleSuccessfulUnlock(){hidePhoneLockScreen();const notification=document.getElementById('phoneUnlockNotification');notification.classList.add('show');setTimeout(()=>{notification.classList.remove('show');},3000);score+=500;clickCloudTotal+=500;updateScore();}
 
   // === Динамічний текст Перезапуску ===
 const reverbDesc=id("reverbDesc"),nextMultiplierEl=id("nextMultiplier");function updateReverbText(){nextMultiplierEl.textContent=(prestigeMultiplier*1.2).toFixed(2);}updateScore();updateStats();updateAchievements();}
