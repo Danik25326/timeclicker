@@ -4,6 +4,7 @@ function initGame(){
 // === ЗМІННІ СТАНУ ===
 let score=0,clickPower=1,autoRate=0,isPlaying=0,currentTrack=0,sessionStart=Date.now(),totalUpgradesBought=0,maxPerClick=1,prestigeMultiplier=1,totalReverbs=0,maxAutoRate=0,maxCombo=0,clickCloudTotal=0,lastClickTime=0,currentCombo=0,maxComboEver=0,comboTimeout=null,MAX_CLICK_INTERVAL=350,COMBO_THRESHOLD=5,isReverbActive=0,reverbHoldTimeout=null,clickMultiplier=1,buttons=[],prestigeThreshold=3600,currentPrestigeProgress=0; 
 const nextMultiplierEl = id("nextMultiplier");
+const reverbDesc = id("reverbDesc");
 // === ОПТИМІЗАЦІЯ ДЛЯ МОБІЛЬНИХ (НЕ ВПЛИВАЄ НА ПК) ===
 const m='ontouchstart'in window||navigator.maxTouchPoints>0;
 if(m){
@@ -204,4 +205,4 @@ function showNewsTicker(){document.getElementById('newsTickerContainer').classLi
 function hideNewsTicker(){document.getElementById('newsTickerContainer').classList.remove('show');newsTickerVisible=false;}
 function handleNewsFeedUpgrade(){addNewsToTicker();showToast('Нова новина в стрічці! 📰');}
   // === Динамічний текст Перезапуску ===
-const reverbDesc=id("reverbDesc"),nextMultiplierEl=id("nextMultiplier");function updateReverbText(){nextMultiplierEl.textContent=(prestigeMultiplier*1.2).toFixed(2);}    setTimeout(() => {updateScore();updateStats();updateAchievements();updateReverbText();}, 100);}
+function updateReverbText(){nextMultiplierEl.textContent=(prestigeMultiplier*1.2).toFixed(2);}    setTimeout(() => {updateScore();updateStats();updateAchievements();updateReverbText();}, 100);}
