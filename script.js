@@ -212,7 +212,7 @@ const sidebar=document.createElement('div');sidebar.style.cssText='width:300px;b
 const container=document.createElement('div');container.style.cssText='display:flex;flex:1;';container.appendChild(content);container.appendChild(sidebar);
 const timer=document.createElement('div');timer.id='autoplayTimer';timer.style.cssText='position:fixed;bottom:20px;left:20px;background:rgba(0,0,0,0.8);color:#3ea6ff;padding:10px 20px;border-radius:10px;font-size:16px;';timer.textContent='Наступне відео через: 5 сек';
 autoplayOverlay.appendChild(header);autoplayOverlay.appendChild(container);autoplayOverlay.appendChild(timer);document.body.appendChild(autoplayOverlay);
-let secondsLeft=5;autoplayTimeout=setInterval(()=>{secondsLeft--;timer.textContent=`Наступне відео через: ${secondsLeft} сек`;if(secondsLeft<=0){clearInterval(autoplayTimeout);hideAutoplay();}},1000);}
+let secondsLeft=5;autoplayTimeout=setInterval(()=>{secondsLeft--;timer.textContent=`Наступне відео через: ${secondsLeft} сек`;if(secondsLeft<=0){clearInterval(autoplayTimeout);hideAutoplay();}},1000);
 function hideAutoplay(){if(autoplayOverlay){autoplayOverlay.remove();}clearInterval(autoplayTimeout);score+=1500;clickCloudTotal+=1500;showToast("+1500 сек за автоперегляд! 📺");updateScore();}
 
 // === СИСТЕМА ПІДПИСКИ (ХРЕСТИК + КНОПКА) ===
@@ -236,4 +236,4 @@ seriesOverlay.appendChild(cb);seriesOverlay.appendChild(vc);d.body.appendChild(s
 setTimeout(()=>{score+=2500;clickCloudTotal+=2500;showToast("+2500 сек за серіал-марафон! 📺");updateScore();},8000);}
 function hideSeriesMarathon(){if(seriesOverlay){seriesOverlay.remove();}}
   // === Динамічний текст Перезапуску ===
-const reverbDesc = id("reverbDesc"), nextMultiplierEl = id("nextMultiplier"); function updateReverbText(){nextMultiplierEl.textContent=(prestigeMultiplier*1.2).toFixed(2);}    setTimeout(() => {updateScore();updateStats();updateAchievements();updateReverbText();}, 100);}
+const reverbDesc = id("reverbDesc"), nextMultiplierEl = id("nextMultiplier"); function updateReverbText(){nextMultiplierEl.textContent=(prestigeMultiplier*1.2).toFixed(2);}   setTimeout(() => {updateScore();updateStats();updateAchievements();updateReverbText();}, 100);}
