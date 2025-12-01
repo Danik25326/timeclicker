@@ -61,8 +61,8 @@ const upgrades=[{n:"Кліпати очима",c:1,l:0},{n:"Увімкнути �
 function fib(n){if(n<=1)return n;let a=0,b=1;for(let i=2;i<=n;i++)[a,b]=[b,a+b];return b;}
 upgrades.forEach((u,i)=>{const b=d.createElement("button");b.className="upgrade-btn";if(i>0)b.classList.add("hidden");b.addEventListener("click",()=>buyUpgrade(i));upgradesContainer.appendChild(b);buttons.push(b);u.up=function(){const f=fib(u.l+6),c=Math.floor(u.c*f*(i+1));b.innerHTML=`${u.n} (Lv.${u.l})<span>${formatTime(c)}</span>`;b.disabled=score<c;};u.getC=function(){return Math.floor(u.c*fib(u.l+6)*(i+1));};u.up();});
 function revealNext(){const c=upgrades.filter(u=>u.l>0).length;if(buttons[c])buttons[c].classList.remove("hidden");}
-function buyUpgrade(i){const u=upgrades[i],c=u.getC();if(score<c)return;score-=c;u.l++;totalUpgradesBought++;autoRate+=(i+1)*5*prestigeMultiplier;showToast(`Куплено: ${u.n} (Lv.${u.l}) ✅`);if(u.n==="Увімкнути телефон"){setTimeout(()=>{showPhoneLockScreen();},500);}if(u.n==="Гортати стрічку"){setTimeout(()=>{handleNewsFeedUpgrade();},300);}requestAnimationFrame(()=>{revealNext();u.up();updateAllButtons();updateScore();updateStats();updateAchievements();updatePrestigeProgress();});if(u.n==="Кліпати очима"){d.body.classList.remove("eye-blink");void d.body.offsetWidth;d.body.classList.add("eye-blink");setTimeout(()=>d.body.classList.remove("eye-blink"),1000);}}
-function updateAllButtons(){upgrades.forEach(u=>u.up());multipliers.forEach(m=>m.up&&m.up());}
+function buyUpgrade(i){const u=upgrades[i],c=u.getC();if(score<c)return;score-=c;u.l++;totalUpgradesBought++;autoRate+=(i+1)*5*prestigeMultiplier;showToast(`Куплено: ${u.n} (Lv.${u.l}) ✅`);if(u.n==="Увімкнути телефон"){setTimeout(()=>{showPhoneLockScreen();},500);}if(u.n==="Гортати стрічку"){setTimeout(()=>{handleNewsFeedUpgrade();},300);}if(u.n==="Мем-тур"){setTimeout(()=>{showMeme();setTimeout(()=>{score+=1000;clickCloudTotal+=1000;showToast("Посмішка за смішний мем! 😂");updateScore();},1500);},300);}requestAnimationFrame(()=>{revealNext();u.up();updateAllButtons();updateScore();updateStats();updateAchievements();updatePrestigeProgress();});if(u.n==="Кліпати очима"){d.body.classList.remove("eye-blink");void d.body.offsetWidth;d.body.classList.add("eye-blink");setTimeout(()=>d.body.classList.remove("eye-blink"),1000);}}
+  function updateAllButtons(){upgrades.forEach(u=>u.up());multipliers.forEach(m=>m.up&&m.up());}
 
 // === МНОЖНИКИ КЛІКУ ===
 const multipliers=[{n:"Подвійний клік",c:5000,m:2,b:0},{n:"Потрійний клік",c:50000,m:3,b:0},{n:"x10 за клік",c:1000000,m:10,b:0},{n:"x50 за клік",c:20000000,m:50,b:0},{n:"x100 за клік",c:100000000,m:100,b:0}];
@@ -202,5 +202,25 @@ async function addNewsToTicker(){try{const news=await fetchRSSNews();if(!news||n
 function showNewsTicker(){document.getElementById('newsTickerContainer').classList.add('show');newsTickerVisible=true;setTimeout(()=>{if(newsTickerVisible)hideNewsTicker();},30000);}
 function hideNewsTicker(){document.getElementById('newsTickerContainer').classList.remove('show');newsTickerVisible=false;}
 function handleNewsFeedUpgrade(){addNewsToTicker();showToast('Нова новина в стрічці! 📰');}
+
+// === СИСТЕМА МЕМ-ТУРУ (з підтримкою GIF) ===
+let memeImages=['https://media.giphy.com/media/l0MYt5jPR6QX5pnqM/giphy.gif','https://media.giphy.com/media/3o7abAHdYvZdBNnGZq/giphy.gif','https://media.giphy.com/media/26ufdipQqU2lhNA4g/giphy.gif','https://media.giphy.com/media/11sBLVxNs7v6WA/giphy.gif','https://media.giphy.com/media/jUwpNzg9IcyrK/giphy.gif','https://media.giphy.com/media/l46Cy1rHbQ92uuLXa/giphy.gif','https://media.giphy.com/media/YQitE4YNQNahy/giphy.gif','https://media.giphy.com/media/l3q2K5jinAlChoCLS/giphy.gif','https://media.giphy.com/media/3o7abBbea7eQz6qJp6/giphy.gif','https://media.giphy.com/media/26tknCqiJrBQG6DrC/giphy.gif']; // 10 гіфок
+let memeOverlay=null,memeImageEl=null,currentMemeTimeout=null,memeLoadingEl=null;
+function initMemeSystem(){memeOverlay=document.createElement('div');memeOverlay.id='memeOverlay';memeOverlay.style.cssText='position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.95);z-index:9998;display:none;align-items:center;justify-content:center;flex-direction:column;';
+memeLoadingEl=document.createElement('div');memeLoadingEl.id='memeLoading';memeLoadingEl.textContent='Завантаження мему...';memeLoadingEl.style.cssText='color:white;font-size:18px;margin-bottom:20px;display:none;';
+memeImageEl=document.createElement('img');memeImageEl.id='memeImage';memeImageEl.style.cssText='max-width:85%;max-height:70%;border-radius:15px;box-shadow:0 0 50px rgba(255,255,255,0.4);object-fit:contain;display:none;';
+const memeText=document.createElement('div');memeText.textContent='Мем-тур активовано!';memeText.style.cssText='color:#ffcc00;font-size:20px;margin-top:20px;text-shadow:0 0 10px #ffcc00;';
+const closeBtn=document.createElement('button');closeBtn.textContent='Закрити (або чекай 7 сек)';closeBtn.style.cssText='margin-top:25px;padding:10px 25px;background:#ef4444;color:white;border:none;border-radius:10px;font-size:16px;cursor:pointer;font-weight:bold;';closeBtn.onclick=hideMeme;
+memeOverlay.appendChild(memeLoadingEl);memeOverlay.appendChild(memeImageEl);memeOverlay.appendChild(memeText);memeOverlay.appendChild(closeBtn);document.body.appendChild(memeOverlay);
+memeOverlay.addEventListener('click',function(e){if(e.target===memeOverlay)hideMeme();});
+memeImageEl.onload=function(){memeLoadingEl.style.display='none';memeImageEl.style.display='block';};
+memeImageEl.onerror=function(){memeLoadingEl.textContent='Помилка завантаження мему :(';setTimeout(hideMeme,2000);};}
+function showMeme(){if(!memeImageEl)initMemeSystem();
+const randomIndex=Math.floor(Math.random()*memeImages.length);const memeUrl=memeImages[randomIndex];
+memeLoadingEl.style.display='block';memeImageEl.style.display='none';memeOverlay.style.display='flex';
+memeImageEl.src=memeUrl;
+clearTimeout(currentMemeTimeout);currentMemeTimeout=setTimeout(hideMeme,7000);}
+function hideMeme(){if(memeOverlay){memeOverlay.style.display='none';memeImageEl.src='';}clearTimeout(currentMemeTimeout);}
+  
   // === Динамічний текст Перезапуску ===
 const reverbDesc = id("reverbDesc"), nextMultiplierEl = id("nextMultiplier"); function updateReverbText(){nextMultiplierEl.textContent=(prestigeMultiplier*1.2).toFixed(2);}    setTimeout(() => {updateScore();updateStats();updateAchievements();updateReverbText();}, 100);}
