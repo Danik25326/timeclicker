@@ -35,6 +35,17 @@
 - LocalStorage для збереження прогресу
 - Частинки (particles) для візуальних ефектів
 
+## 🎪 Цікавий факт
+Ця гра була повністю створена **однією людиною** і використовує сучасні веб-технології.  
+Вона працює навіть **офлайн** — спробуй відключити інтернет!
+
+## 🤝 Хочеш допомогти?
+- 🐛 Знайшов баг? [Створи Issue](https://github.com/Danik25326/timeclicker/issues)
+- 💡 Маєш ідею? [Напиши в Telegram](https://t.me/DanissimoIT)
+- ⭐ Подобається гра? **Постав зірочку** репозиторію! ⭐
+
+## 🌟 Подяка
+Дякую, що цікавишся Time Clicker! Кожна зірочка на GitHub — це мотивація розвивати гру далі.
 ---
 
 ## 🇬🇧 **English Version**
@@ -67,6 +78,17 @@ Play now: https://danik25326.github.io/timeclicker/
 - LocalStorage for game saves
 - Particle effects for visuals
 
+## 🎪 Fun Fact
+This game was **entirely created by one person** and uses modern web technologies.  
+It even works **offline** — try disconnecting your internet!
+
+## 🤝 Want to Help?
+- 🐛 Found a bug? [Create an Issue](https://github.com/Danik25326/timeclicker/issues)
+- 💡 Have an idea? [Message on Telegram](https://t.me/DanissimoIT)
+- ⭐ Like the game? **Star the repository** on GitHub! ⭐
+
+## 🌟 Thank You
+Thank you for your interest in Time Clicker! Every star on GitHub is motivation to keep developing the game.
 ---
 
 ## 📄 Ліцензія / License
