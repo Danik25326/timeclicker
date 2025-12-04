@@ -77,8 +77,16 @@ Copyright © 2025 Danik25326
 ---
 
 ## 🔗 Посилання / Links
-- 🌐 [Жива версія / Live Demo](https://danik25326.github.io/timeclicker/)
-- 💻 [GitHub репозиторій / GitHub Repository](https://github.com/Danik25326/timeclicker)
-- 📊 [Google Search Console](https://search.google.com/search-console)
+### 🌐 Онлайн версія
+- [🕹️ Грати зараз / Play Now](https://danik25326.github.io/timeclicker/)
+
+### 💻 Розробка / Development  
+- [📁 GitHub репозиторій / Repository](https://github.com/Danik25326/timeclicker)
+- [🐛 Повідомити про проблему / Report Bug](https://github.com/Danik25326/timeclicker/issues)
+
+### 📫 Контакти / Contacts
+- **Telegram:** [@DanissimoIT](https://t.me/DanissimoIT)
+- **Email:** [vonavidan@gmail.com](mailto:vonavidan@gmail.com)
+- **GitHub:** [Danik25326](https://github.com/Danik25326)
 
 ---
