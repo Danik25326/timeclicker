@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+Sitemap: https://danik25326.github.io/timeclicker/sitemap.xml
+Disallow: /admin/
