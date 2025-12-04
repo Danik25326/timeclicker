@@ -77,7 +77,7 @@ Copyright © 2025 Danik25326
 ---
 
 ## 🔗 Посилання / Links
-- 🌐 [Жива демо-версія / Live Demo](https://danik25326.github.io/timeclicker/)
+- 🌐 [Жива версія / Live Demo](https://danik25326.github.io/timeclicker/)
 - 💻 [GitHub репозиторій / GitHub Repository](https://github.com/Danik25326/timeclicker)
 - 📊 [Google Search Console](https://search.google.com/search-console)
 
