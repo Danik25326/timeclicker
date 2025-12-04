@@ -3,64 +3,46 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>TimeClicker - Interactive Clicker Game with Visual Effects</title>
-<meta name="description" content="Interactive clicker game with particles, sounds and visual effects. Click and watch the animation! Fun online game for stress relief.">
-<meta name="keywords" content="clicker game, interactive game, online game, time clicker, browser game, stress relief">
-<link rel="canonical" href="https://danik25326.github.io/timeclicker/" />
-
+<title>Times Clicker - Interactive Clicker Game with Visual Effects</title>
+<meta name="description" content="Play Times Clicker - interactive clicker game with particles, sounds and visual effects. Click the clock, earn time, unlock upgrades! Free online browser game.">
+<meta name="keywords" content="clicker game, online game, browser game, time clicker, idle game, incremental">
+<link rel="canonical" href="https://danik25326.github.io/timeclicker/">
 <!-- Open Graph -->
-<meta property="og:title" content="TimeClicker - Interactive Clicker Game with Visual Effects" />
-<meta property="og:description" content="Interactive clicker game with particles, sounds and visual effects. Click and watch the animation!" />
-<meta property="og:image" content="https://danik25326.github.io/timeclicker/og-image.png" />
-<meta property="og:url" content="https://danik25326.github.io/timeclicker/" />
-<meta property="og:type" content="website" />
-<meta property="og:locale" content="uk_UA" />
-
+<meta property="og:title" content="Times Clicker - Interactive Clicker Game">
+<meta property="og:description" content="Click the clock, earn time, unlock upgrades! Amazing visual effects and animations.">
+<meta property="og:url" content="https://danik25326.github.io/timeclicker/">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="uk_UA">
 <!-- Twitter -->
-<meta name="twitter:card" content="summary_large_image" />
-<meta name="twitter:title" content="TimeClicker - Interactive Clicker Game" />
-<meta name="twitter:description" content="Fun clicker game with amazing visual effects" />
-
-<!-- Favicon -->
-<link rel="icon" type="image/x-icon" href="favicon.ico">
-<link rel="apple-touch-icon" href="apple-touch-icon.png">
-
-<!-- Безпека (залишаємо як є) -->
-<meta http-equiv="Content-Security-Policy" content="default-src * 'unsafe-inline' 'unsafe-eval' data: blob:; script-src * 'unsafe-inline' 'unsafe-eval'; style-src * 'unsafe-inline'; font-src * data:; connect-src *; media-src * data: blob:;">
-<meta http-equiv="X-Content-Security-Policy" content="default-src * 'unsafe-inline' 'unsafe-eval' data: blob:; script-src * 'unsafe-inline' 'unsafe-eval'">
-
-<!-- Шрифти -->
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="style.css?v=17">
-
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Times Clicker Game">
+<meta name="twitter:description" content="Free online clicker game with amazing visual effects">
 <!-- JSON-LD -->
 <script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "VideoGame",
-  "name": "TimeClicker",
-  "description": "Interactive clicker game with visual effects and sounds. Fun browser-based stress relief game.",
-  "url": "https://danik25326.github.io/timeclicker/",
-  "applicationCategory": "GameApplication",
-  "operatingSystem": "Any",
-  "author": {
-    "@type": "Person",
-    "name": "Danik"
-  }
-}
+{"@context":"https://schema.org","@type":"VideoGame","name":"Times Clicker","description":"Interactive clicker game with visual effects and sounds","url":"https://danik25326.github.io/timeclicker/","applicationCategory":"GameApplication","operatingSystem":"Any","author":{"@type":"Person","name":"Danik"}}
 </script>
+<!-- Security & Fonts -->
+<meta http-equiv="Content-Security-Policy" content="default-src * 'unsafe-inline' 'unsafe-eval' data: blob:; script-src * 'unsafe-inline' 'unsafe-eval'; style-src * 'unsafe-inline'; font-src * data:; connect-src *; media-src * data: blob:;">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css?v=17">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 </head>
-<body> 
 
-<!-- === ЕКРАН ВИБОРУ ВЕРСІЇ === -->
-<div id="chooser"><h1>Times Clicker</h1><button class="choose-btn" onclick="startGame('pc')">ПК-версія</button><button class="choose-btn" onclick="startGame('mobile')">Мобільна версія</button></div>
+<body>
+<h1 class="visually-hidden">Times Clicker - Interactive Clicker Game</h1>
 
-<!-- === ОСНОВНА ГРА === -->
+<!-- Version Chooser -->
+<div id="chooser">
+<h2>Times Clicker</h2>
+<button class="choose-btn" onclick="startGame('pc')">ПК-версія</button>
+<button class="choose-btn" onclick="startGame('mobile')">Мобільна версія</button>
+</div>
+
+<!-- Main Game -->
 <div id="game" class="game-hidden">
 <div id="worldTitle" class="editable-title" contenteditable="true">Times Clicker</div>
 
-<!-- === СИСТЕМА ВКЛАДОК === -->
+<!-- Tabs -->
 <div class="top-tabs">
 <button class="tab active" data-tab="tab-upgrades">Апгрейди</button>
 <button class="tab" data-tab="tab-skins">Скіни</button>
@@ -70,19 +52,32 @@
 <button class="tab" data-tab="tab-multipliers">Множники</button>
 </div>
 
-<!-- === ОСНОВНОЙ КОНТЕЙНЕР === -->
+<!-- Container -->
 <div class="container">
 <div class="left-panel">
 <div class="tab-body">
-<!-- ВКЛАДКА АПГРЕЙДІВ --><div id="tab-upgrades" class="tab-page active"><h3>Апгрейди</h3><div id="upgrades" class="upgrades-container"></div></div>
-<!-- ВКЛАДКА СКІНІВ --><div id="tab-skins" class="tab-page"><h3>Скіни</h3>
+<!-- Upgrades Tab -->
+<div id="tab-upgrades" class="tab-page active">
+<h3>Апгрейди</h3>
+<div id="upgrades" class="upgrades-container"></div>
+</div>
+<!-- Skins Tab -->
+<div id="tab-skins" class="tab-page">
+<h3>Скіни</h3>
 <div class="skins-section">
-<h4>Форма годинника</h4><div class="skins-grid" id="shapeSkins"></div>
-<h4>Колір годинника</h4><div class="skins-grid" id="clockSkins"></div>
-<h4>Стрілки</h4><div class="skins-grid" id="handSkins"></div>
-<h4>Ефект кліку</h4><div class="skins-grid" id="effectSkins"></div>
-</div></div>
-<!-- ВКЛАДКА СТАТИСТИКИ --><div id="tab-stats" class="tab-page"><h3>Статистика</h3>
+<h4>Форма годинника</h4>
+<div class="skins-grid" id="shapeSkins"></div>
+<h4>Колір годинника</h4>
+<div class="skins-grid" id="clockSkins"></div>
+<h4>Стрілки</h4>
+<div class="skins-grid" id="handSkins"></div>
+<h4>Ефект кліку</h4>
+<div class="skins-grid" id="effectSkins"></div>
+</div>
+</div>
+<!-- Stats Tab -->
+<div id="tab-stats" class="tab-page">
+<h3>Статистика</h3>
 <ul class="stats-list">
 <li>Часу витрачено: <span id="cloudTotal">0 сек</span></li>
 <li>Реальний час у сесії: <span id="realTimePlayed">0 сек</span></li>
@@ -93,86 +88,114 @@
 <li>Найдовше комбо: <span id="maxCombo">0</span> кліків</li>
 <li>Перезапусків зроблено: <span id="totalReverbs">0</span></li>
 <li>Поточний множник: <span id="prestigeMult">1.00</span>×</li>
-<li class="stats-separator">Досягнення: <span id="achievedCount">0</span> / <span id="totalAchievements">6</span></li>
+<li class="stats-separator">Досягнення: <span id="achievedCount">0</span>/<span id="totalAchievements">6</span></li>
 <li class="stats-separator">Зібрано скінів:</li>
 <li>• Форми годинника: <span id="shapeSkinsCount">1</span>/4</li>
 <li>• Кольори годинника: <span id="clockSkinsCount">1</span>/4</li>
 <li>• Стрілки: <span id="handSkinsCount">1</span>/4</li>
 <li>• Ефекти кліку: <span id="effectSkinsCount">1</span>/5</li>
 <li>Всього скінів: <span id="totalSkins">4</span>/17</li>
-</ul></div>
-<!-- ВКЛАДКА ДОСЯГНЕНЬ -->
-<div id="tab-achievements" class="tab-page"><h3>Досягнення</h3><div id="achievements" class="achievements-grid"></div></div>
-<!-- ВКЛАДКА ПЕРЕЗАПУСКУ -->
-<div id="tab-reverb" class="tab-page"><h3>Перезапуск</h3>
+</ul>
+</div>
+<!-- Achievements Tab -->
+<div id="tab-achievements" class="tab-page">
+<h3>Досягнення</h3>
+<div id="achievements" class="achievements-grid"></div>
+</div>
+<!-- Reverb Tab -->
+<div id="tab-reverb" class="tab-page">
+<h3>Перезапуск</h3>
 <p id="reverbDesc">Повертаючи час назад, ти отримаєш множник <span id="nextMultiplier">1.20</span>× до всіх прибутків.</p>
 <div id="prestigeProgressContainer" class="prestige-progress-container">
-    <div class="progress-header">
-        <span class="progress-label">Прогрес перезапуску</span>
-        <span id="prestigeProgressText" class="progress-text">0 / 1 година</span>
-    </div>
-    <div class="progress-bar-bg">
-        <div id="prestigeProgressBar" class="progress-bar-fill"></div>
-    </div>
-    <div class="progress-footer">
-        Наступний множник: ×1.20
-    </div>
+<div class="progress-header">
+<span class="progress-label">Прогрес перезапуску</span>
+<span id="prestigeProgressText" class="progress-text">0/1 година</span>
+</div>
+<div class="progress-bar-bg">
+<div id="prestigeProgressBar" class="progress-bar-fill"></div>
+</div>
+<div class="progress-footer">Наступний множник:×1.20</div>
 </div>
 <button id="reverbBtn" class="reverb-btn">Повернути час назад</button>
 </div>
-<!-- ВКЛАДКА МНОЖНИКІВ --><div id="tab-multipliers" class="tab-page"><h3>Множники кліку</h3><div id="multipliers" class="upgrades-container"></div></div>
-</div></div>
+<!-- Multipliers Tab -->
+<div id="tab-multipliers" class="tab-page">
+<h3>Множники кліку</h3>
+<div id="multipliers" class="upgrades-container"></div>
+</div>
+</div>
+</div>
 
-<!-- === ПРАВА ПАНЕЛЬ - ГОДИННИК ТА МУЗИКА === -->
+<!-- Right Panel -->
 <div class="right-panel">
 <div id="clockWrapper">
-<div id="clickableClock" class="clock round"><div class="hand hour"></div><div class="hand minute"></div><div class="hand second"></div><div class="center-dot"></div></div>
-<div id="clickCloud" class="click-cloud"><div id="clickGain">+0 сек</div><div id="currentDate"></div></div>
-<div id="comboBubble" class="combo-bubble hidden"><div id="comboCount">0</div><div id="comboText">кліків</div></div>
-<!-- === ПРОСТИЙ QR-КОД У ВЕРХНЬОМУ ПРАВОМУ КУТІ === -->
+<div id="clickableClock" class="clock round">
+<div class="hand hour"></div>
+<div class="hand minute"></div>
+<div class="hand second"></div>
+<div class="center-dot"></div>
+</div>
+<div id="clickCloud" class="click-cloud">
+<div id="clickGain">+0 сек</div>
+<div id="currentDate"></div>
+</div>
+<div id="comboBubble" class="combo-bubble hidden">
+<div id="comboCount">0</div>
+<div id="comboText">кліків</div>
+</div>
 <img src="https://api.qrserver.com/v1/create-qr-code/?size=40x40&data=https://t.me/brainmathx_bot" alt="QR Code" class="bare-qr" onclick="openModal()">
 </div>
-<p id="score">Часу витрачено: 0 сек</p>
+<p id="score">Часу витрачено:0 сек</p>
 <div class="music-player">
 <button id="prevTrack" class="music-switch">⬅️</button>
 <button id="musicBtn" class="phonk-btn">▶️ Включити музику</button>
 <button id="nextTrack" class="music-switch">➡️</button>
 </div>
-<div id="nowPlaying" class="now-playing">Зараз: —</div>
+<div id="nowPlaying" class="now-playing">Зараз:—</div>
 <audio id="player" preload="auto"></audio>
-</div></div>
-
-<!-- === ЕКРАН БЛОКУВАННЯ ТЕЛЕФОНУ === -->
-<div id="phoneLockOverlay" class="phone-lock-overlay">
-    <div class="phone-lock-screen" id="phoneLockScreen">
-        <img src="" alt="Lock Screen" class="phone-lock-image" id="phoneLockImage">
-        <div class="swipe-indicator"></div>
-        <div class="swipe-hint" id="swipeHint">Свайпни вгору</div>
-    </div>
 </div>
-<!-- === СПОВІЩЕННЯ ПРО РОЗБЛОКУВАННЯ === -->
-<div id="phoneUnlockNotification" class="phone-unlock-notification">
-    Телефон успішно розблоковано
-</div>    
+</div>
+</div>
 
-<!-- === НОВИННА СТРІЧКА === -->
-<div id="newsTickerContainer" class="news-ticker-container"><div class="news-ticker" id="newsTicker"></div></div>
-    
-<!-- === СИСТЕМА ПЕРЕЗАПУСКУ (РЕВЕРБ) === -->
+<!-- Phone Lock Overlay -->
+<div id="phoneLockOverlay" class="phone-lock-overlay">
+<div class="phone-lock-screen" id="phoneLockScreen">
+<img src="" alt="Lock Screen" class="phone-lock-image" id="phoneLockImage">
+<div class="swipe-indicator"></div>
+<div class="swipe-hint" id="swipeHint">Свайпни вгору</div>
+</div>
+</div>
+<!-- Unlock Notification -->
+<div id="phoneUnlockNotification" class="phone-unlock-notification">Телефон успішно розблоковано</div>
+<!-- News Ticker -->
+<div id="newsTickerContainer" class="news-ticker-container">
+<div class="news-ticker" id="newsTicker"></div>
+</div>
+<!-- Reverb Overlay -->
 <div id="reverbOverlay" class="reverb-overlay hidden">
 <div class="reverb-instruction">Зажми та тримай годинник 10 секунд,<br>щоб повернути час назад!</div>
 <div id="reverbHint" class="reverb-hint">Зажми мене!</div>
-<div id="reverbClock" class="clock round"><div class="hand hour"></div><div class="hand minute"></div><div class="hand second"></div><div class="center-dot"></div></div>
+<div id="reverbClock" class="clock round">
+<div class="hand hour"></div>
+<div class="hand minute"></div>
+<div class="hand second"></div>
+<div class="center-dot"></div>
+</div>
 </div>
 <div id="timeTunnel" class="time-tunnel"></div>
-
-<!-- === КОНТЕЙНЕР СПОВІЩЕНЬ === -->
+<!-- Toast Container -->
 <div id="toastContainer"></div>
+<!-- Modal -->
+<div class="modal" id="modal">
+<div class="modal-content">
+<img src="https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=https://t.me/brainmathx_bot" alt="QR Code" class="large-qr">
+<p class="modal-text">Навіщо витрачати час на вирішення рівнянь, якщо його можна використати на щось корисніше?</p>
+<a href="https://t.me/brainmathx_bot" target="_blank" class="telegram-link">Або перейдіть за посиланням:t.me/brainmathx_bot</a>
+<button class="close-btn" onclick="closeModal()">Закрити</button>
+</div>
+</div>
 
-<!-- Модальне вікно для QR-кода -->
-<div class="modal" id="modal"><div class="modal-content"><img src="https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=https://t.me/brainmathx_bot" alt="QR Code" class="large-qr"><p class="modal-text">Навіщо витрачати час на вирішення рівнянь, якщo його можна використати на щось корисніше?</p><a href="https://t.me/brainmathx_bot" target="_blank" class="telegram-link">Або перейдіть за посиланням: t.me/brainmathx_bot</a><button class="close-btn" onclick="closeModal()">Закрити</button></div></div>
-
-<!-- === ПІДКЛЮЧЕННЯ СКРИПТІВ === -->
+<!-- Scripts -->
 <script src="script.js?v=17"></script>
 <script>
 function openModal(){document.getElementById('modal').style.display='flex'}
@@ -181,5 +204,6 @@ document.getElementById('modal').addEventListener('click',function(e){if(e.targe
 document.addEventListener('keydown',function(e){if(e.key==='Escape')closeModal()})
 window.onload=function(){document.getElementById('chooser').style.display='flex';document.getElementById('game').classList.add('game-hidden')}
 </script>
+<style>.visually-hidden{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}</style>
 </body>
 </html>
