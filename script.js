@@ -1,3 +1,9 @@
+// БЛОКУВАННЯ EVAL ДЛЯ БЕЗПЕКИ
+(function(){'use strict';
+window.eval=()=>{console.warn('eval заблоковано');return null;};
+window.Function=new Proxy(window.Function,{construct(t,a){
+if(a.some(e=>typeof e==='string'&&e.trim())){console.warn('Function заблоковано');return()=>{};}
+return new t(...a);}});})();
 // === ОСНОВНІ ФУНКЦІЇ ===
 function startGame(v){document.getElementById('chooser').style.display='none';document.getElementById('game').classList.remove('game-hidden');if(v==='mobile')document.body.classList.add('mobile-version');else document.body.classList.remove('mobile-version');initGame()}
 function initGame(){    
