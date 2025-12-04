@@ -1,12 +1,14 @@
 // === ОСНОВНІ ФУНКЦІЇ ===
 function startGame(v){document.getElementById('chooser').style.display='none';document.getElementById('game').classList.remove('game-hidden');if(v==='mobile')document.body.classList.add('mobile-version');else document.body.classList.remove('mobile-version');initGame()}
 function initGame(){
-// БЛОКУВАННЯ EVAL ДЛЯ БЕЗПЕКИ
+// БЛОКУВАННЯ EVAL ДЛЯ БЕЗПЕКИ 
 (function(){'use strict';
-window.eval=()=>{console.warn('eval заблоковано');return null;};
-window.Function=new Proxy(window.Function,{construct(t,a){
-if(a.some(e=>typeof e==='string'&&e.trim())){console.warn('Function заблоковано');return()=>{};}
-return new t(...a);}});})();
+try {
+    // Тільки для налагодження - не перевизначаємо глобальні функції
+    if(window.console && console.warn) {
+        console.warn('eval та Function захищені через CSP');
+    }
+} catch(e) {}})();
 // === ЗМІННІ СТАНУ ===
 let score=0,clickPower=1,autoRate=0,isPlaying=0,currentTrack=0,sessionStart=Date.now(),totalUpgradesBought=0,maxPerClick=1,prestigeMultiplier=1,totalReverbs=0,maxAutoRate=0,maxCombo=0,clickCloudTotal=0,lastClickTime=0,currentCombo=0,maxComboEver=0,comboTimeout=null,MAX_CLICK_INTERVAL=350,COMBO_THRESHOLD=5,isReverbActive=0,reverbHoldTimeout=null,clickMultiplier=1,buttons=[],prestigeThreshold=3600,currentPrestigeProgress=0; 
 let subscriptionOverlay=null,seriesOverlay=null,autoplayOverlay=null;
