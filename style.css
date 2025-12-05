@@ -304,6 +304,25 @@ body.eye-blink::before{content:"";position:fixed;inset:0;background:#000;z-index
 * {-webkit-touch-callout: none;-webkit-user-select: none;-khtml-user-select: none;-moz-user-select: none;-ms-user-select: none;user-select: none;}
 input, textarea {-webkit-user-select: text;-khtml-user-select: text;-moz-user-select: text;-ms-user-select: text;user-select: text;}
 
-/* Додати в CSS файл */
-.settings-container{padding:20px;color:#fff;}.setting-item{margin-bottom:20px;display:flex;align-items:center;gap:15px;}.setting-item label{width:200px;font-weight:bold;}.setting-item input[type="range"]{flex:1;max-width:200px;}.setting-buttons{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:30px;}.save-btn,.export-btn,.import-btn,.reset-btn{padding:12px;border:none;border-radius:8px;color:white;font-weight:bold;cursor:pointer;transition:transform 0.2s;}.save-btn{background:#10b981;}.export-btn{background:#3b82f6;}.import-btn{background:#8b5cf6;}.reset-btn{background:#ef4444;}.save-btn:hover,.export-btn:hover,.import-btn:hover,.reset-btn:hover{transform:translateY(-2px);}.save-status{margin-top:10px;padding:10px;border-radius:5px;text-align:center;}.export-import-area{width:100%;height:150px;margin-top:20px;padding:10px;background:#1e293b;color:#fff;border:1px solid #475569;border-radius:5px;resize:vertical;font-family:monospace;}
+/* === СТИЛІ ДЛЯ ВКЛАДКИ НАЛАШТУВАНЬ === */
+.settings-container{padding:20px;color:#fff;max-width:100%;overflow-y:auto;height:calc(100vh - 200px);}
+.setting-item{margin-bottom:20px;display:flex;align-items:center;gap:15px;flex-wrap:wrap;}
+.setting-item label{width:200px;font-weight:bold;color:#cbd5e1;}
+.setting-item input[type="range"]{flex:1;max-width:200px;height:6px;background:#334155;border-radius:3px;outline:none;}
+.setting-item input[type="checkbox"]{width:20px;height:20px;cursor:pointer;}
+.setting-buttons{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:30px;}
+.save-btn,.export-btn,.import-btn,.reset-btn{padding:12px;border:none;border-radius:8px;color:white;font-weight:bold;cursor:pointer;transition:transform 0.2s;font-size:14px;}
+.save-btn{background:#10b981;}
+.export-btn{background:#3b82f6;}
+.import-btn{background:#8b5cf6;}
+.reset-btn{background:#ef4444;}
+.save-btn:hover,.export-btn:hover,.import-btn:hover,.reset-btn:hover{transform:translateY(-2px);}
+.save-status{margin-top:10px;padding:10px;border-radius:5px;text-align:center;font-size:14px;}
+.save-status.success{background:#10b981;color:white;}
+.save-status.error{background:#ef4444;color:white;}
+.export-import-area{width:100%;height:120px;margin-top:20px;padding:10px;background:#1e293b;color:#fff;border:1px solid #475569;border-radius:5px;resize:vertical;font-family:monospace;font-size:12px;}
+.export-import-area:focus{outline:none;border-color:#0ea5e9;}
+
+/* === СТИЛЬ БЕЗ АНІМАЦІЙ === */
 .no-animations *{animation:none!important;transition:none!important;}
+.no-animations .toast{opacity:0.9;}
