@@ -96,7 +96,11 @@ setTimeout(() => {
     }
 }, 500);
 // === ЗМІННІ СТАНУ ===
-let score=0,clickPower=1,autoRate=0,isPlaying=0,currentTrack=0,sessionStart=Date.now(),totalUpgradesBought=0,maxPerClick=1,prestigeMultiplier=1,totalReverbs=0,maxAutoRate=0,maxCombo=0,clickCloudTotal=0,lastClickTime=0,currentCombo=0,maxComboEver=0,comboTimeout=null,MAX_CLICK_INTERVAL=350,COMBO_THRESHOLD=5,isReverbActive=0,reverbHoldTimeout=null,clickMultiplier=1,buttons=[],prestigeThreshold=3600,currentPrestigeProgress=0; 
+let score=0,clickPower=1,autoRate=0,totalUpgradesBought=0,maxPerClick=1,prestigeMultiplier=1,totalReverbs=0,maxAutoRate=0,maxComboEver=0,clickCloudTotal=0,prestigeThreshold=3600,currentPrestigeProgress=0,clickMultiplier=1;
+let upgrades=[],multipliers=[],achievementsList=[];
+let ownedSkins={shapes:["round"],clockSkins:["neon-blue"],handSkins:["darkblue"],effects:["red"]};
+let current={shape:"round",clock:"neon-blue",hand:"darkblue",effect:"red"};
+let buttons=[];
 let subscriptionOverlay=null,seriesOverlay=null,autoplayOverlay=null;
 
 // === ПЕРЕВІРКА ІНІЦІАЛІЗАЦІЇ НАЛАШТУВАНЬ ===
