@@ -173,7 +173,6 @@ function applyState(){
     if(typeof updatePrestigeProgress === 'function'){
         updatePrestigeProgress();
     }
-}
     
     // Оновлення інтерфейсу
     updateAllButtons();
