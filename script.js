@@ -96,6 +96,7 @@ setTimeout(() => {
     }
 }, 500);
 // === ЗМІННІ СТАНУ ===
+let score=0,clickPower=1,autoRate=0,totalUpgradesBought=0,maxPerClick=1,prestigeMultiplier=1,totalReverbs=0,maxAutoRate=0,maxComboEver=0,clickCloudTotal=0,prestigeThreshold=3600,currentPrestigeProgress=0,clickMultiplier=1;
 let upgrades=[],multipliers=[],achievementsList=[];
 let ownedSkins={shapes:["round"],clockSkins:["neon-blue"],handSkins:["darkblue"],effects:["red"]};
 let current={shape:"round",clock:"neon-blue",hand:"darkblue",effect:"red"};
