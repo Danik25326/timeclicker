@@ -1,3 +1,404 @@
+// === СИСТЕМА ЗБЕРЕЖЕННЯ ДАНИХ ===
+
+// Об'єкт для всіх даних гри
+let gameData = {
+  // Основні дані
+  score: 0,
+  clickPower: 1,
+  autoRate: 0,
+  clickMultiplier: 1,
+  prestigeMultiplier: 1,
+  totalUpgradesBought: 0,
+  totalReverbs: 0,
+  clickCloudTotal: 0,
+  
+  // Налаштування
+  volume: 50,
+  reverseHands: false,
+  animationsEnabled: true,
+  
+  // Апгрейди
+  upgrades: [],
+  multipliers: [],
+  
+  // Скіни
+  ownedSkins: { shapes: [], clockSkins: [], handSkins: [], effects: [] },
+  currentSkins: { shape: 'round', clock: 'neon-blue', hand: 'darkblue', effect: 'red' },
+  
+  // Досягнення
+  achievements: [],
+  
+  // Статистика
+  maxPerClick: 1,
+  maxAutoRate: 0,
+  maxComboEver: 0,
+  sessionStart: Date.now(),
+  
+  // Версія збереження
+  version: 1
+};
+
+// Функція збереження гри
+function saveGame() {
+  // Оновлюємо gameData з поточного стану
+  updateGameData();
+  
+  // Додаємо timestamp
+  gameData.lastSave = Date.now();
+  
+  // Зберігаємо в LocalStorage
+  localStorage.setItem('timeClickerSave', JSON.stringify(gameData));
+  
+  // Показуємо сповіщення
+  showToast('Гра збережена! ✅');
+}
+
+// Функція оновлення gameData
+function updateGameData() {
+  gameData.score = score;
+  gameData.clickPower = clickPower;
+  gameData.autoRate = autoRate;
+  gameData.clickMultiplier = clickMultiplier;
+  gameData.prestigeMultiplier = prestigeMultiplier;
+  gameData.totalUpgradesBought = totalUpgradesBought;
+  gameData.totalReverbs = totalReverbs;
+  gameData.clickCloudTotal = clickCloudTotal;
+  gameData.maxPerClick = maxPerClick;
+  gameData.maxAutoRate = maxAutoRate;
+  gameData.maxComboEver = maxComboEver;
+  
+  // Зберігаємо апгрейди
+  gameData.upgrades = upgrades.map(u => ({ name: u.n, level: u.l }));
+  gameData.multipliers = multipliers.map(m => ({ name: m.n, bought: m.b }));
+  
+  // Зберігаємо досягнення
+  gameData.achievements = achievementsList.map(a => ({ 
+    title: a.t, 
+    done: a.done 
+  }));
+}
+
+// Функція завантаження гри
+function loadGame() {
+  const savedData = localStorage.getItem('timeClickerSave');
+  
+  if (savedData) {
+    try {
+      gameData = JSON.parse(savedData);
+      
+      // Відновлюємо основний стан
+      score = gameData.score || 0;
+      clickPower = gameData.clickPower || 1;
+      autoRate = gameData.autoRate || 0;
+      clickMultiplier = gameData.clickMultiplier || 1;
+      prestigeMultiplier = gameData.prestigeMultiplier || 1;
+      totalUpgradesBought = gameData.totalUpgradesBought || 0;
+      totalReverbs = gameData.totalReverbs || 0;
+      clickCloudTotal = gameData.clickCloudTotal || 0;
+      maxPerClick = gameData.maxPerClick || 1;
+      maxAutoRate = gameData.maxAutoRate || 0;
+      maxComboEver = gameData.maxComboEver || 0;
+      
+      // Відновлюємо налаштування
+      const volumeSlider = id('volumeSlider');
+      const volumeValue = id('volumeValue');
+      const reverseToggle = id('reverseHandsToggle');
+      const animToggle = id('animationsToggle');
+      
+      if (volumeSlider && volumeValue) {
+        volumeSlider.value = gameData.volume || 50;
+        volumeValue.textContent = gameData.volume || 50;
+        player.volume = (gameData.volume || 50) / 100;
+      }
+      
+      if (reverseToggle) {
+        reverseToggle.checked = gameData.reverseHands || false;
+        updateClockDirection();
+      }
+      
+      if (animToggle) {
+        animToggle.checked = gameData.animationsEnabled !== false;
+        toggleAnimations(gameData.animationsEnabled !== false);
+      }
+      
+      // Відновлюємо апгрейди
+      if (gameData.upgrades) {
+        gameData.upgrades.forEach((savedUpgrade, index) => {
+          if (upgrades[index]) {
+            upgrades[index].l = savedUpgrade.level || 0;
+          }
+        });
+      }
+      
+      // Відновлюємо множники
+      if (gameData.multipliers) {
+        gameData.multipliers.forEach((savedMultiplier, index) => {
+          if (multipliers[index]) {
+            multipliers[index].b = savedMultiplier.bought || 0;
+            if (savedMultiplier.bought) {
+              clickMultiplier = multipliers[index].m;
+            }
+          }
+        });
+      }
+      
+      // Відновлюємо скіни
+      if (gameData.ownedSkins) {
+        ownedSkins = gameData.ownedSkins;
+      }
+      
+      if (gameData.currentSkins) {
+        current = gameData.currentSkins;
+        applyAllSkins();
+      }
+      
+      // Відновлюємо досягнення
+      if (gameData.achievements) {
+        gameData.achievements.forEach((savedAchievement, index) => {
+          if (achievementsList[index]) {
+            achievementsList[index].done = savedAchievement.done || false;
+          }
+        });
+      }
+      
+      // Оновлюємо UI
+      updateAllButtons();
+      updateScore();
+      updateStats();
+      updateAchievements();
+      refreshAllSkinGrids();
+      
+      showToast('Гра завантажена! 📂');
+      
+    } catch (e) {
+      console.error('Помилка завантаження:', e);
+      showToast('Помилка завантаження збереження');
+    }
+  }
+}
+
+// Функція скидання гри
+function resetGame() {
+  if (confirm('Ви впевнені? Це скине всю вашу прогрес і НЕ МОЖНА БУДЕ ПОВЕРНУТИ!')) {
+    localStorage.removeItem('timeClickerSave');
+    location.reload();
+  }
+}
+
+// Автозбереження кожну хвилину
+setInterval(saveGame, 60000);
+
+// Збереження при закритті вікна
+window.addEventListener('beforeunload', saveGame);
+
+// Функція експорту даних
+function exportGame() {
+  updateGameData();
+  
+  // Конвертуємо в JSON та base64
+  const jsonData = JSON.stringify(gameData);
+  const base64Data = btoa(encodeURIComponent(jsonData));
+  
+  // Показуємо модальне вікно з кодом
+  const modal = id('saveModal');
+  const textarea = id('saveDataText');
+  const title = id('modalTitle');
+  
+  modal.classList.remove('hidden');
+  title.textContent = 'Експорт збереження';
+  textarea.value = base64Data;
+  textarea.readOnly = true;
+  
+  // Налаштовуємо кнопки
+  id('copyBtn').onclick = () => {
+    textarea.select();
+    document.execCommand('copy');
+    showToast('Код скопійовано в буфер обміну! 📋');
+  };
+  
+  id('loadBtn').style.display = 'none';
+  id('copyBtn').style.display = 'block';
+}
+
+// Функція імпорту даних
+function importGame() {
+  const modal = id('saveModal');
+  const textarea = id('saveDataText');
+  const title = id('modalTitle');
+  
+  modal.classList.remove('hidden');
+  title.textContent = 'Імпорт збереження';
+  textarea.value = '';
+  textarea.readOnly = false;
+  textarea.placeholder = 'Вставте сюди код збереження...';
+  
+  // Налаштовуємо кнопки
+  id('loadBtn').onclick = () => {
+    const base64Data = textarea.value.trim();
+    
+    if (!base64Data) {
+      showToast('Введіть код збереження!');
+      return;
+    }
+    
+    try {
+      // Декодуємо з base64
+      const jsonData = decodeURIComponent(atob(base64Data));
+      const importedData = JSON.parse(jsonData);
+      
+      // Перевіряємо версію
+      if (!importedData.version) {
+        showToast('Невірний формат збереження!');
+        return;
+      }
+      
+      // Зберігаємо імпортовані дані
+      localStorage.setItem('timeClickerSave', jsonData);
+      
+      // Перезавантажуємо гру
+      loadGame();
+      
+      // Закриваємо модальне вікно
+      modal.classList.add('hidden');
+      
+      showToast('Збереження імпортовано успішно! ✅');
+      
+    } catch (e) {
+      console.error('Помилка імпорту:', e);
+      showToast('Помилка: невірний код збереження!');
+    }
+  };
+  
+  id('loadBtn').style.display = 'block';
+  id('copyBtn').style.display = 'none';
+}
+
+// Функція для короткого експорту (як у Cookie Clicker)
+function exportCompressed() {
+  updateGameData();
+  
+  // Створюємо компактний об'єкт
+  const compactData = {
+    s: gameData.score, // score
+    cp: gameData.clickPower, // clickPower
+    ar: gameData.autoRate, // autoRate
+    cm: gameData.clickMultiplier, // clickMultiplier
+    pm: gameData.prestigeMultiplier, // prestigeMultiplier
+    up: gameData.upgrades.map(u => u.level), // upgrades levels
+    mp: gameData.multipliers.map(m => m.bought ? 1 : 0), // multipliers bought
+    sk: { // skins
+      o: gameData.ownedSkins,
+      c: gameData.currentSkins
+    },
+    v: 1 // version
+  };
+  
+  const jsonData = JSON.stringify(compactData);
+  const compressed = LZString.compressToBase64(jsonData);
+  
+  // Показуємо користувачу
+  const modal = id('saveModal');
+  const textarea = id('saveDataText');
+  
+  modal.classList.remove('hidden');
+  textarea.value = compressed;
+  textarea.readOnly = true;
+  
+  showToast('Стиснений код згенеровано! 🔗');
+}
+
+// Обробники налаштувань
+function setupSettings() {
+  // Гучність
+  const volumeSlider = id('volumeSlider');
+  const volumeValue = id('volumeValue');
+  
+  if (volumeSlider && volumeValue) {
+    volumeSlider.addEventListener('input', function() {
+      const value = this.value;
+      volumeValue.textContent = value;
+      player.volume = value / 100;
+      gameData.volume = parseInt(value);
+      saveGame();
+    });
+  }
+  
+  // Обернені стрілки
+  const reverseToggle = id('reverseHandsToggle');
+  if (reverseToggle) {
+    reverseToggle.addEventListener('change', function() {
+      gameData.reverseHands = this.checked;
+      updateClockDirection();
+      saveGame();
+    });
+  }
+  
+  // Анімації
+  const animToggle = id('animationsToggle');
+  if (animToggle) {
+    animToggle.addEventListener('change', function() {
+      gameData.animationsEnabled = this.checked;
+      toggleAnimations(this.checked);
+      saveGame();
+    });
+  }
+  
+  // Кнопки
+  id('saveBtn')?.addEventListener('click', saveGame);
+  id('exportBtn')?.addEventListener('click', exportGame);
+  id('importBtn')?.addEventListener('click', importGame);
+  id('resetBtn')?.addEventListener('click', resetGame);
+  id('closeModalBtn')?.addEventListener('click', () => {
+    id('saveModal').classList.add('hidden');
+  });
+  
+  // Закриття модального вікна при кліку на тло
+  id('saveModal')?.addEventListener('click', (e) => {
+    if (e.target === id('saveModal')) {
+      id('saveModal').classList.add('hidden');
+    }
+  });
+}
+
+// Функція оновлення напрямку стрілок
+function updateClockDirection() {
+  const clocks = qa('.clock');
+  const hands = qa('.hand');
+  
+  if (gameData.reverseHands) {
+    clocks.forEach(clock => clock.classList.add('reverse'));
+    hands.forEach(hand => hand.classList.add('reverse'));
+  } else {
+    clocks.forEach(clock => clock.classList.remove('reverse'));
+    hands.forEach(hand => hand.classList.remove('reverse'));
+  }
+  
+  // Додаємо CSS для обернених стрілок
+  if (!document.getElementById('reverseHandsStyle')) {
+    const style = d.createElement('style');
+    style.id = 'reverseHandsStyle';
+    style.textContent = `
+      .clock.reverse .hand { transform-origin: 50% 100% !important; }
+      .clock.reverse .hour { animation: reverseHour 43200s linear infinite !important; }
+      .clock.reverse .minute { animation: reverseMinute 3600s linear infinite !important; }
+      .clock.reverse .second { animation: reverseSecond 60s linear infinite !important; }
+      
+      @keyframes reverseHour { from { transform: translateX(-50%) rotate(360deg); } to { transform: translateX(-50%) rotate(0deg); } }
+      @keyframes reverseMinute { from { transform: translateX(-50%) rotate(360deg); } to { transform: translateX(-50%) rotate(0deg); } }
+      @keyframes reverseSecond { from { transform: translateX(-50%) rotate(360deg); } to { transform: translateX(-50%) rotate(0deg); } }
+    `;
+    d.head.appendChild(style);
+  }
+}
+
+// Функція увімкнення/вимкнення анімацій
+function toggleAnimations(enabled) {
+  if (enabled) {
+    d.body.classList.remove('animations-disabled');
+  } else {
+    d.body.classList.add('animations-disabled');
+  }
+}
 // === ОСНОВНІ ФУНКЦІЇ ===
 function startGame(v){document.getElementById('chooser').style.display='none';document.getElementById('game').classList.remove('game-hidden');if(v==='mobile')document.body.classList.add('mobile-version');else document.body.classList.remove('mobile-version');initGame()}
 function initGame(){
@@ -305,4 +706,4 @@ function hidePhilosophy(){if(philosophyOverlay){philosophyOverlay.remove();score
 window.hideCringe = function(){if(cringeOverlay){cringeOverlay.remove();score+=3000;clickCloudTotal+=3000;showToast("+3000 сек за життєвий досвід! 😅");updateScore();}};
 window.hidePhilosophy = function(){if(philosophyOverlay){philosophyOverlay.remove();score+=6000;clickCloudTotal+=6000;showToast("+6000 сек за філософські роздуми! 📚");updateScore();}};  
 // === Динамічний текст Перезапуску ===
-function updateReverbText(){    if(nextMultiplierEl) nextMultiplierEl.textContent = (prestigeMultiplier*1.2).toFixed(2);     if(reverbDesc) reverbDesc.textContent = `Потрібно для перезапуску: ${formatTime(prestigeThreshold)}`;}   setTimeout(() => {updateScore();updateStats();updateAchievements();updateReverbText();}, 100);}
+function updateReverbText(){    if(nextMultiplierEl) nextMultiplierEl.textContent = (prestigeMultiplier*1.2).toFixed(2);     if(reverbDesc) reverbDesc.textContent = `Потрібно для перезапуску: ${formatTime(prestigeThreshold)}`;}   setTimeout(() => {updateScore();updateStats();updateAchievements();updateReverbText();}, 100); setupSettings(); loadGame();}
