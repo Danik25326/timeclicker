@@ -1,230 +1,12 @@
-// === СИСТЕМА ЗБЕРЕЖЕННЯ ===
-let gameState={v:'1.1',s:0,p:1,a:0,u:0,m:1,pm:1,tr:0,ma:0,mc:0,cct:0,up:[],ml:[],ach:[],sk:{s:['round'],c:['neon-blue'],h:['darkblue'],e:['red']},cs:{s:'round',c:'neon-blue',h:'darkblue',e:'red'},pt:3600,cpp:0,cm:1,rev:false,anim:true,vol:45}; //s=score,p=clickPower,a=autoRate,u=totalUpgradesBought,m=maxPerClick,pm=prestigeMultiplier,tr=totalReverbs,ma=maxAutoRate,mc=maxComboEver,cct=clickCloudTotal,up=upgrades,ml=multipliers,ach=achievements,sk=ownedSkins,cs=currentSkins,pt=prestigeThreshold,cpp=currentPrestigeProgress,cm=clickMultiplier,rev=reverseHands,anim=animationsEnabled,vol=volume
-function saveGame(){updateState();localStorage.setItem('timeClickerSave',JSON.stringify(gameState));showSaveStatus('✅ Збережено!','success');}
-function loadGame(){let s=localStorage.getItem('timeClickerSave');if(s){try{let l=JSON.parse(s);gameState={...gameState,...l};applyState();return true;}catch(e){console.error('Помилка завантаження:',e);}}return false;}
-function updateState(){
-    try {
-        gameState.s = score || 0;
-        gameState.p = clickPower || 1;
-        gameState.a = autoRate || 0;
-        gameState.u = totalUpgradesBought || 0;
-        gameState.m = maxPerClick || 1;
-        gameState.pm = prestigeMultiplier || 1;
-        gameState.tr = totalReverbs || 0;
-        gameState.ma = maxAutoRate || 0;
-        gameState.mc = maxComboEver || 0;
-        gameState.cct = clickCloudTotal || 0;
-        gameState.pt = prestigeThreshold || 3600;
-        gameState.cpp = currentPrestigeProgress || 0;
-        gameState.cm = clickMultiplier || 1;
-        gameState.up = upgrades.map(u=>({n:u.n,l:u.l || 0}));
-        gameState.ml = multipliers.map(m=>({n:m.n,b:m.b || 0}));
-        gameState.ach = achievementsList.map(a=>({t:a.t,d:a.done || false}));
-        gameState.sk = {...ownedSkins};
-        gameState.cs = {...current};
-    } catch (error) {
-        console.error('Помилка в updateState:', error);
-    }
-}function applyState(){score=gameState.s;clickPower=gameState.p;autoRate=gameState.a;totalUpgradesBought=gameState.u;maxPerClick=gameState.m;prestigeMultiplier=gameState.pm;totalReverbs=gameState.tr;maxAutoRate=gameState.ma;maxComboEver=gameState.mc;clickCloudTotal=gameState.cct;prestigeThreshold=gameState.pt;currentPrestigeProgress=gameState.cpp;clickMultiplier=gameState.cm;gameState.up.forEach((s,i)=>{if(upgrades[i]&&upgrades[i].n===s.n)upgrades[i].l=s.l;});gameState.ml.forEach((s,i)=>{if(multipliers[i]&&multipliers[i].n===s.n)multipliers[i].b=s.b;});gameState.ach.forEach((s,i)=>{if(achievementsList[i]&&achievementsList[i].t===s.t)achievementsList[i].done=s.d;});ownedSkins.s=gameState.sk.s||['round'];ownedSkins.c=gameState.sk.c||['neon-blue'];ownedSkins.h=gameState.sk.h||['darkblue'];ownedSkins.e=gameState.sk.e||['red'];current.s=gameState.cs.s||'round';current.c=gameState.cs.c||'neon-blue';current.h=gameState.cs.h||'darkblue';current.e=gameState.cs.e||'red';player.volume=(gameState.vol||45)/100;   // Ініціалізуємо налаштування після застосування стану
-    setTimeout(() => {
-        const volumeSlider = document.getElementById('volumeSlider');
-        const volumeValue = document.getElementById('volumeValue');
-        const reverseHands = document.getElementById('reverseHands');
-        const disableAnimations = document.getElementById('disableAnimations');
-
-        if(volumeSlider) volumeSlider.value = gameState.vol || 45;
-        if(volumeValue) volumeValue.textContent = (gameState.vol || 45) + '%';
-        if(reverseHands) reverseHands.checked = gameState.rev || false;
-        if(disableAnimations) disableAnimations.checked = !(gameState.anim !== false);}, 100);document.getElementById('volumeSlider').value=gameState.vol||45;document.getElementById('volumeValue').textContent=(gameState.vol||45)+'%';reverseClockHands=gameState.rev||false;document.getElementById('reverseHands').checked=reverseClockHands;animationsEnabled=gameState.anim!==false;document.getElementById('disableAnimations').checked=!animationsEnabled;updateAllButtons();refreshAllSkinGrids();applyAllSkins();updateScore();updateStats();updateAchievements();updatePrestigeProgress();}
-function showSaveStatus(msg,type){let el=document.getElementById('saveStatus');if(el){el.textContent=msg;el.className='save-status '+(type||'info');setTimeout(()=>{el.textContent='';el.className='save-status';},3000);}}
-
-// === ЕКСПОРТ/ІМПОРТ ===
-function exportData(){
-    try {
-        updateState();
-        let data = btoa(JSON.stringify(gameState));
-        let area = document.getElementById('exportImportArea');
-        
-        // Створюємо тимчасовий textarea для копіювання
-        const tempTextArea = document.createElement('textarea');
-        tempTextArea.value = data;
-        tempTextArea.style.position = 'fixed';
-        tempTextArea.style.left = '-9999px';
-        tempTextArea.style.top = '-9999px';
-        document.body.appendChild(tempTextArea);
-        
-        tempTextArea.select();
-        tempTextArea.setSelectionRange(0, 99999); // Для мобільних
-        
-        try {
-            const successful = document.execCommand('copy');
-            if (successful) {
-                showSaveStatus('📤 Дані скопійовано в буфер! Вставте їх в поле імпорту для збереження.', 'success');
-                
-                // Показати дані в полі для зручності
-                if (area) {
-                    area.value = data;
-                    area.style.display = 'block';
-                    area.focus();
-                    area.select();
-                }
-            } else {
-                showSaveStatus('❌ Не вдалося скопіювати. Скопіюйте текст вручну.', 'error');
-                if (area) {
-                    area.value = data;
-                    area.style.display = 'block';
-                    area.focus();
-                    area.select();
-                }
-            }
-        } catch (err) {
-            // fallback для сучасних браузерів
-            navigator.clipboard.writeText(data).then(() => {
-                showSaveStatus('📤 Дані скопійовано в буфер!', 'success');
-            }).catch(() => {
-                showSaveStatus('❌ Помилка копіювання. Скопіюйте вручну:', 'error');
-                if (area) {
-                    area.value = data;
-                    area.style.display = 'block';
-                    area.focus();
-                    area.select();
-                }
-            });
-        }
-        
-        document.body.removeChild(tempTextArea);
-    } catch (error) {
-        console.error('Помилка експорту:', error);
-        showSaveStatus('❌ Помилка експорту даних', 'error');
-    }
-}function importData(){let area=document.getElementById('exportImportArea');if(!area.value.trim()){showSaveStatus('❌ Вставте дані для імпорту','error');return;}try{let imported=JSON.parse(atob(area.value));if(confirm('Це перезапише поточний прогрес. Продовжити?')){gameState={...gameState,...imported};applyState();saveGame();showSaveStatus('📥 Дані імпортовано!','success');}}catch(e){showSaveStatus('❌ Помилка: невірний формат даних','error');}}
-function resetProgress(){if(confirm('Видалити весь прогрес? Це незворотньо!')){localStorage.removeItem('timeClickerSave');location.reload();}}
-
-// === ОНОВЛЕНА ФУНКЦІЯ ГОДИННИКА (З ОБЕРНЕНИМИ СТРІЛКАМИ) ===
-let reverseClockHands=false,animationsEnabled=true;
-function updateClockHands(){
-let n=new Date(),s=n.getSeconds()+n.getMilliseconds()/1000,m=n.getMinutes()+s/60,h=(n.getHours()%12||12)+m/60;
-if(reverseClockHands){s=60-s;m=60-m;h=12-h;if(h<=0)h+=12;}
-qa("#clickableClock .second").forEach(x=>x.style.transform=`translateX(-50%) rotate(${s*6}deg)`);
-qa("#clickableClock .minute").forEach(x=>x.style.transform=`translateX(-50%) rotate(${m*6}deg)`);
-qa("#clickableClock .hour").forEach(x=>x.style.transform=`translateX(-50%) rotate(${h*30}deg)`);
-}
-
-// === НАЛАШТУВАННЯ ГУЧНОСТІ ===
-document.getElementById('volumeSlider').addEventListener('input',function(){
-let v=this.value;
-document.getElementById('volumeValue').textContent=v+'%';
-player.volume=v/100;
-gameState.vol=v;
-saveGame();
-});
-
-// === ПЕРЕМИКАЧІ ===
-document.getElementById('reverseHands').addEventListener('change',function(){
-reverseClockHands=this.checked;
-gameState.rev=reverseClockHands;
-saveGame();
-});
-document.getElementById('disableAnimations').addEventListener('change',function(){
-animationsEnabled=!this.checked;
-document.body.classList.toggle('no-animations',!animationsEnabled);
-gameState.anim=animationsEnabled;
-saveGame();
-});
-
-// === АВТОЗБЕРЕЖЕННЯ ===
-setInterval(saveGame,30000);
-window.addEventListener('beforeunload',saveGame);
-
 // === ОСНОВНІ ФУНКЦІЇ ===
-function startGame(v){document.getElementById('chooser').style.display='none';document.getElementById('game').classList.remove('game-hidden');if(v==='mobile')document.body.classList.add('mobile-version');else document.body.classList.remove('mobile-version'); // Спочатку завантажити стан
-    const loaded = loadGame();   // Якщо не завантажило, ініціалізувати нову гру
-    if (!loaded) {
-        // Ініціалізація значень за замовчуванням
-        score = 0;
-        clickPower = 1;
-        autoRate = 0;
-        // ... інші значення за замовчуванням
-    }
-     loadGame();initGame();}
+function startGame(v){document.getElementById('chooser').style.display='none';document.getElementById('game').classList.remove('game-hidden');if(v==='mobile')document.body.classList.add('mobile-version');else document.body.classList.remove('mobile-version');initGame()}
 function initGame(){
-// === ІНІЦІАЛІЗАЦІЯ НАЛАШТУВАНЬ ===
-setTimeout(() => {
-    const volumeSlider = document.getElementById('volumeSlider');
-    const volumeValue = document.getElementById('volumeValue');
-    const reverseHands = document.getElementById('reverseHands');
-    const disableAnimations = document.getElementById('disableAnimations');
-
-    if(volumeSlider && volumeValue){
-        volumeSlider.addEventListener('input',function(){
-            let v=this.value;
-            volumeValue.textContent=v+'%';
-            player.volume=v/100;
-            gameState.vol=v;
-            saveGame();
-        });
-    }
-
-    if(reverseHands){
-        reverseHands.addEventListener('change',function(){
-            reverseClockHands=this.checked;
-            gameState.rev=reverseClockHands;
-            saveGame();
-        });
-    }
-
-    if(disableAnimations){
-        disableAnimations.addEventListener('change',function(){
-            animationsEnabled=!this.checked;
-            document.body.classList.toggle('no-animations',!animationsEnabled);
-            gameState.anim=animationsEnabled;
-            saveGame();
-        });
-    }
-}, 500);
+// БЛОКУВАННЯ EVAL ДЛЯ БЕЗПЕКИ
+(function(){'use strict';
+})();
 // === ЗМІННІ СТАНУ ===
-let score=0,clickPower=1,autoRate=0,totalUpgradesBought=0,maxPerClick=1,prestigeMultiplier=1,totalReverbs=0,maxAutoRate=0,maxComboEver=0,clickCloudTotal=0,prestigeThreshold=3600,currentPrestigeProgress=0,clickMultiplier=1;
-let upgrades=[],multipliers=[],achievementsList=[];
-let ownedSkins={shapes:["round"],clockSkins:["neon-blue"],handSkins:["darkblue"],effects:["red"]};
-let current={shape:"round",clock:"neon-blue",hand:"darkblue",effect:"red"};
-let buttons=[];
+let score=0,clickPower=1,autoRate=0,isPlaying=0,currentTrack=0,sessionStart=Date.now(),totalUpgradesBought=0,maxPerClick=1,prestigeMultiplier=1,totalReverbs=0,maxAutoRate=0,maxCombo=0,clickCloudTotal=0,lastClickTime=0,currentCombo=0,maxComboEver=0,comboTimeout=null,MAX_CLICK_INTERVAL=350,COMBO_THRESHOLD=5,isReverbActive=0,reverbHoldTimeout=null,clickMultiplier=1,buttons=[],prestigeThreshold=3600,currentPrestigeProgress=0; 
 let subscriptionOverlay=null,seriesOverlay=null,autoplayOverlay=null;
-
-// === ПЕРЕВІРКА ІНІЦІАЛІЗАЦІЇ НАЛАШТУВАНЬ ===
-function initSettingsElements(){
-    if(!document.getElementById('volumeSlider')){
-        console.warn('Елементи налаштувань не знайдені, ініціалізація...');
-        setTimeout(initSettingsElements, 100);
-        return;
-    }
-
-    const volumeSlider = document.getElementById('volumeSlider');
-    const volumeValue = document.getElementById('volumeValue');
-    const reverseHands = document.getElementById('reverseHands');
-    const disableAnimations = document.getElementById('disableAnimations');
-
-    // Встановлюємо початкові значення
-    if(volumeSlider && volumeValue){
-        volumeSlider.value = gameState.vol || 45;
-        volumeValue.textContent = (gameState.vol || 45) + '%';
-        player.volume = (gameState.vol || 45) / 100;
-    }
-
-    if(reverseHands){
-        reverseHands.checked = gameState.rev || false;
-        reverseClockHands = gameState.rev || false;
-    }
-
-    if(disableAnimations){
-        disableAnimations.checked = !(gameState.anim !== false);
-        animationsEnabled = gameState.anim !== false;
-        document.body.classList.toggle('no-animations', !animationsEnabled);
-    }
-}
-
-// Викликаємо після завантаження
-setTimeout(initSettingsElements, 1000);
-
 // === ОПТИМІЗАЦІЯ ДЛЯ МОБІЛЬНИХ (НЕ ВПЛИВАЄ НА ПК) ===
 const m='ontouchstart'in window||navigator.maxTouchPoints>0;
 if(m){
@@ -284,7 +66,7 @@ const upgrades=[{n:"Кліпати очима",c:1,l:0},{n:"Увімкнути �
 function fib(n){if(n<=1)return n;let a=0,b=1;for(let i=2;i<=n;i++)[a,b]=[b,a+b];return b;}
 upgrades.forEach((u,i)=>{const b=d.createElement("button");b.className="upgrade-btn";if(i>0)b.classList.add("hidden");b.addEventListener("click",()=>buyUpgrade(i));upgradesContainer.appendChild(b);buttons.push(b);u.up=function(){const f=fib(u.l+6),c=Math.floor(u.c*f*(i+1));b.innerHTML=`${u.n} (Lv.${u.l})<span>${formatTime(c)}</span>`;b.disabled=score<c;};u.getC=function(){return Math.floor(u.c*fib(u.l+6)*(i+1));};u.up();});
 function revealNext(){const c=upgrades.filter(u=>u.l>0).length;if(buttons[c])buttons[c].classList.remove("hidden");}
-function buyUpgrade(i){const u=upgrades[i],c=u.getC();if(score<c)return;score-=c;u.l++;totalUpgradesBought++;autoRate+=(i+1)*5*prestigeMultiplier;setTimeout(saveGame,100);showToast(`Куплено: ${u.n} (Lv.${u.l}) ✅`);if(u.n==="Увімкнути телефон"){setTimeout(()=>{showPhoneLockScreen();},500);}if(u.n==="Гортати стрічку"){setTimeout(()=>{handleNewsFeedUpgrade();},300);}if(u.n==="Мем-тур"){setTimeout(()=>{showMeme();setTimeout(()=>{score+=1000;clickCloudTotal+=1000;showToast("Посмішка за смішний мем! 😂");updateScore();},1500);},300);}if(u.n==="Автоперегляд"){setTimeout(()=>{showAutoplay();},300);}if(u.n==="Підписка"){setTimeout(()=>{showSubscription();},300);}if(u.n==="Серіал-марафон"){setTimeout(()=>{showSeriesMarathon();},300);}if(u.n==="Робота з дедлайном"){setTimeout(()=>{showDeadlineWork();},300);}if(u.n==="Життєвий крінж"){setTimeout(()=>{showCringe();},300);}if(u.n==="Discord-марафон"){setTimeout(()=>{showDiscord();},300);}if(u.n==="Reels до ранку"){setTimeout(()=>{showReels();},300);}if(u.n==="Філософські роздуми"){setTimeout(()=>{showPhilosophy();},300);} requestAnimationFrame(()=>{revealNext();u.up();updateAllButtons();updateScore();updateStats();updateAchievements();updatePrestigeProgress();});if(u.n==="Кліпати очима"){d.body.classList.remove("eye-blink");void d.body.offsetWidth;d.body.classList.add("eye-blink");setTimeout(()=>d.body.classList.remove("eye-blink"),1000);}}
+function buyUpgrade(i){const u=upgrades[i],c=u.getC();if(score<c)return;score-=c;u.l++;totalUpgradesBought++;autoRate+=(i+1)*5*prestigeMultiplier;showToast(`Куплено: ${u.n} (Lv.${u.l}) ✅`);if(u.n==="Увімкнути телефон"){setTimeout(()=>{showPhoneLockScreen();},500);}if(u.n==="Гортати стрічку"){setTimeout(()=>{handleNewsFeedUpgrade();},300);}if(u.n==="Мем-тур"){setTimeout(()=>{showMeme();setTimeout(()=>{score+=1000;clickCloudTotal+=1000;showToast("Посмішка за смішний мем! 😂");updateScore();},1500);},300);}if(u.n==="Автоперегляд"){setTimeout(()=>{showAutoplay();},300);}if(u.n==="Підписка"){setTimeout(()=>{showSubscription();},300);}if(u.n==="Серіал-марафон"){setTimeout(()=>{showSeriesMarathon();},300);}if(u.n==="Робота з дедлайном"){setTimeout(()=>{showDeadlineWork();},300);}if(u.n==="Життєвий крінж"){setTimeout(()=>{showCringe();},300);}if(u.n==="Discord-марафон"){setTimeout(()=>{showDiscord();},300);}if(u.n==="Reels до ранку"){setTimeout(()=>{showReels();},300);}if(u.n==="Філософські роздуми"){setTimeout(()=>{showPhilosophy();},300);} requestAnimationFrame(()=>{revealNext();u.up();updateAllButtons();updateScore();updateStats();updateAchievements();updatePrestigeProgress();});if(u.n==="Кліпати очима"){d.body.classList.remove("eye-blink");void d.body.offsetWidth;d.body.classList.add("eye-blink");setTimeout(()=>d.body.classList.remove("eye-blink"),1000);}}
 function updateAllButtons(){upgrades.forEach(u=>u.up());multipliers.forEach(m=>m.up&&m.up());}
 
 // === МНОЖНИКИ КЛІКУ ===
@@ -311,15 +93,15 @@ achievementsList.forEach(a=>{const e=d.createElement("div");e.className="achieve
 function updateAchievements(){achievementsList.forEach(a=>{const v=a.g(),p=Math.min(100,(v/a.tg)*100);a.p.style.width=p+"%";if(p>=100&&!a.done){a.done=true;a.s.textContent="Виконано ✅";a.s.style.color="#8df299";showToast(`Досягнення: ${a.t} ✅`);}else if(p<100)a.s.textContent=Math.floor(p)+"%";});}
 // === СИСТЕМА ПЕРЕЗАПУСКУ З ПРОГРЕСОМ ===
 function updatePrestigeProgress() { currentPrestigeProgress = score; const pB = id('prestigeProgressBar'), pT = id('prestigeProgressText'), pP = Math.min(100, (currentPrestigeProgress / prestigeThreshold) * 100);
-    if(pB) { pB.style.width = pP + '%'; pB.style.background = pP >= 100 ? 'linear-gradient(90deg, #10b981, #34d399)' : pP >= 50 ? 'linear-gradient(90deg, #f59e0b, #fbbf24)' : 'linear-gradient(90deg, #ef4444, #f87171)'; }
-    if(pT) pT.textContent = `${formatTime(currentPrestigeProgress)} / ${formatTime(prestigeThreshold)}`; updateReverbButtonState(); }
+if(pB) { pB.style.width = pP + '%'; pB.style.background = pP >= 100 ? 'linear-gradient(90deg, #10b981, #34d399)' : pP >= 50 ? 'linear-gradient(90deg, #f59e0b, #fbbf24)' : 'linear-gradient(90deg, #ef4444, #f87171)'; }
+if(pT) pT.textContent = `${formatTime(currentPrestigeProgress)} / ${formatTime(prestigeThreshold)}`; updateReverbButtonState(); }
 function updateReverbButtonState() { const c = currentPrestigeProgress >= prestigeThreshold;
-    reverbBtn.disabled = !c; reverbBtn.style.opacity = c ? '1' : '0.6'; reverbBtn.style.cursor = c ? 'pointer' : 'not-allowed'; reverbBtn.style.background = c ? 'linear-gradient(90deg, #10b981, #34d399)' : 'linear-gradient(90deg, #6b7280, #9ca3af)'; }
+reverbBtn.disabled = !c; reverbBtn.style.opacity = c ? '1' : '0.6'; reverbBtn.style.cursor = c ? 'pointer' : 'not-allowed'; reverbBtn.style.background = c ? 'linear-gradient(90deg, #10b981, #34d399)' : 'linear-gradient(90deg, #6b7280, #9ca3af)'; }
 function updateReverbText() { nextMultiplierEl.textContent = (prestigeMultiplier * 1.2).toFixed(2); const rD = id('reverbDesc'); if(rD) rD.textContent = `Потрібно для перезапуску: ${formatTime(prestigeThreshold)}`;}
 
 // === СКІНИ ===
 const clockSkins=[{id:"neon-blue",n:"Неон синій",p:0,a:()=>qa('.clock').forEach(c=>{c.style.borderColor="#0ea5e9";c.style.boxShadow="0 0 50px #0ea5e9, 0 0 100px #0ea5e9"})},{id:"purple",n:"Пурпурний",p:64800,a:()=>qa('.clock').forEach(c=>{c.style.borderColor="#8b5cf6";c.style.boxShadow="0 0 50px #8b5cf6, 0 0 100px #8b5cf6"})},{id:"pink",n:"Рожевий",p:129600,a:()=>qa('.clock').forEach(c=>{c.style.borderColor="#ec4899";c.style.boxShadow="0 0 50px #ec4899, 0 0 100px #ec4899"})},{id:"black",n:"Чорний",p:259200,a:()=>qa('.clock').forEach(c=>{c.style.borderColor="#111";c.style.boxShadow="0 0 10px #000"})}],shapes=[{id:"round",n:"Круг",p:0},{id:"square",n:"Квадрат",p:28800},{id:"diamond",n:"Ромб",p:86400},{id:"oval",n:"Овал",p:172800}],handSkins=[{id:"darkblue",n:"Темно-сині",p:0,a:()=>qa(".hand:not(.second)").forEach(h=>{h.style.background="#1e3a8a";h.style.boxShadow="";h.style.animation="none"})},{id:"pixel",n:"Піксельні",p:900,a:()=>qa(".hand:not(.second)").forEach(h=>{h.style.background="linear-gradient(#fff,#aaa)";h.style.boxShadow="";h.style.animation="none"})},{id:"neon",n:"Неонові",p:9000,a:()=>qa(".hand:not(.second)").forEach(h=>{h.style.background="#0ea5e9";h.style.boxShadow="0 0 25px #0ea5e9, 0 0 60px #0ea5e9";h.style.animation="neonPulse 2s ease-in-out infinite alternate"})},{id:"chrome",n:"Хром",p:43200,a:()=>qa(".hand:not(.second)").forEach(h=>{h.style.background="linear-gradient(90deg,#ddd,#888,#ddd)";h.style.boxShadow="0 0 15px #fff, 0 0 30px #aaa";h.style.animation="none"})}],effects=[{id:"red",n:"Червоний спалах",p:0},{id:"blue",n:"Синій вибух",p:21600},{id:"glitch",n:"Глітч",p:108000},{id:"blackhole",n:"Чорна діра",p:360000},{id:"ripple",n:"Хвиля часу",p:720000}],ownedSkins={shapes:["round"],clockSkins:["neon-blue"],handSkins:["darkblue"],effects:["red"]},current={shape:"round",clock:"neon-blue",hand:"darkblue",effect:"red"};
-function buySkin(t,i,p,n){if(ownedSkins[t].includes(i)){current[t==="shapes"?"shape":t==="clockSkins"?"clock":t==="handSkins"?"hand":"effect"]=i;applyAllSkins();refreshAllSkinGrids();setTimeout(saveGame,100);return showToast("Скін застосовано! ✅")}if(score<p)return showToast("Не вистачає часу!");score-=p;ownedSkins[t].push(i);current[t==="shapes"?"shape":t==="clockSkins"?"clock":t==="handSkins"?"hand":"effect"]=i;applyAllSkins();updateScore();updateStats();updateAchievements(); updatePrestigeProgress(); setTimeout(saveGame,100); showToast(`Куплено: ${n} ✅`);refreshAllSkinGrids()}
+function buySkin(t,i,p,n){if(ownedSkins[t].includes(i)){current[t==="shapes"?"shape":t==="clockSkins"?"clock":t==="handSkins"?"hand":"effect"]=i;applyAllSkins();refreshAllSkinGrids();return showToast("Скін застосовано! ✅")}if(score<p)return showToast("Не вистачає часу!");score-=p;ownedSkins[t].push(i);current[t==="shapes"?"shape":t==="clockSkins"?"clock":t==="handSkins"?"hand":"effect"]=i;applyAllSkins();updateScore();updateStats();updateAchievements(); updatePrestigeProgress(); showToast(`Куплено: ${n} ✅`);refreshAllSkinGrids()}
 function applyAllSkins(){qa('.clock').forEach(c=>c.className="clock "+current.shape);clockSkins.find(s=>s.id===current.clock)?.a();handSkins.find(s=>s.id===current.hand)?.a()}
 function createSkinGrid(ct,ls,t){const r=id(ct);r.innerHTML="";ls.forEach(s=>{const e=d.createElement("div");e.className="skin";e.textContent=s.n;const o=ownedSkins[t].includes(s.id);const a=current[t==="shapes"?"shape":t==="clockSkins"?"clock":t==="handSkins"?"hand":"effect"]===s.id;if(o){e.classList.add("owned");if(a)e.classList.add("active");e.onclick=()=>{current[t==="shapes"?"shape":t==="clockSkins"?"clock":t==="handSkins"?"hand":"effect"]=s.id;applyAllSkins();refreshAllSkinGrids();showToast("Скін застосовано! ✅")}}else{e.style.opacity="0.4";if(score>=s.p){e.style.opacity="1";e.style.boxShadow="0 0 15px #0ff"}e.innerHTML+=`<br><small style="color:#ff00ff">${formatTime(s.p)}</small>`;e.onclick=()=>buySkin(t,s.id,s.p,s.n)}r.appendChild(e)})}
 function refreshAllSkinGrids(){createSkinGrid("shapeSkins",shapes,"shapes");createSkinGrid("clockSkins",clockSkins,"clockSkins");createSkinGrid("handSkins",handSkins,"handSkins");createSkinGrid("effectSkins",effects,"effects")}
@@ -352,21 +134,21 @@ reverbBtn.addEventListener("click",()=>{if(!confirm("Ти впевнений, щ
 function startReverbMode(){    reverbOverlay.classList.remove("hidden");timeTunnel.classList.add("active");reverbHint.style.opacity="1";isReverbActive=1;    reverbClock.className=`clock ${current.shape}`;clockSkins.find(s=>s.id===current.clock)?.a();handSkins.find(s=>s.id===current.hand)?.a();    updateReverbClockHands();setTimeout(()=>reverbHint.style.opacity="0",3000);}
 function updateReverbClockHands(){    if(!isReverbActive)return;const e=qa("#reverbClock .hand");if(e.length===0)return;    if(reverbClock.classList.contains("reverb-chaos")){requestAnimationFrame(updateReverbClockHands);return;}    const t=new Date(),o=t.getSeconds()+t.getMilliseconds()/1000,n=t.getMinutes()+o/60,a=(t.getHours()%12||12)+n/60;    qa("#reverbClock .second").forEach(e=>e.style.transform=`translateX(-50%) rotate(${o*6}deg)`);    qa("#reverbClock .minute").forEach(e=>e.style.transform=`translateX(-50%) rotate(${n*6}deg)`);    qa("#reverbClock .hour").forEach(e=>e.style.transform=`translateX(-50%) rotate(${a*30}deg)`);    requestAnimationFrame(updateReverbClockHands);}
 const startReverbHold=e=>{    if(e.type.includes('touch'))e.preventDefault();if(!isReverbActive)return;    reverbHint.style.opacity="0";reverbClock.classList.add("reverb-mode","reverb-chaos");timeTunnel.classList.add("intense");    restartEffect.start();
-    qa("#reverbClock .hand").forEach((e,t)=>{        const o=0.5+2*Math.random(),n=Math.random()>0.5?"normal":"reverse";        e.style.setProperty("--duration",`${o}s`);e.style.setProperty("--direction",n);        e.style.animation=`chaosSpin ${o}s linear infinite ${n}`;    });reverbHoldTimeout=setTimeout(completeReverb,10000);};
+qa("#reverbClock .hand").forEach((e,t)=>{        const o=0.5+2*Math.random(),n=Math.random()>0.5?"normal":"reverse";        e.style.setProperty("--duration",`${o}s`);e.style.setProperty("--direction",n);        e.style.animation=`chaosSpin ${o}s linear infinite ${n}`;    });reverbHoldTimeout=setTimeout(completeReverb,10000);};
 const stopReverbHold=e=>{    if(e&&e.type.includes('touch'))e.preventDefault();    clearTimeout(reverbHoldTimeout);    if(isReverbActive){        reverbClock.classList.remove("reverb-mode","reverb-chaos");timeTunnel.classList.remove("intense");        qa("#reverbClock .hand").forEach(e=>{e.style.animation="none";e.style.removeProperty("--duration");e.style.removeProperty("--direction");});        updateReverbClockHands();restartEffect.stop();}};
 reverbClock.addEventListener("mousedown",startReverbHold);reverbClock.addEventListener("touchstart",startReverbHold,{passive:false});
 reverbClock.addEventListener("mouseup",stopReverbHold);reverbClock.addEventListener("mouseleave",stopReverbHold);
 reverbClock.addEventListener("touchend",stopReverbHold);reverbClock.addEventListener("touchcancel",stopReverbHold);
 function completeReverb() {
-    if (currentPrestigeProgress < prestigeThreshold) { showToast(`Потрібно ще ${formatTime(prestigeThreshold - currentPrestigeProgress)}!`); return; }
-    stopReverbHold(new Event('manual')); prestigeThreshold += 7200; prestigeMultiplier *= 1.2; totalReverbs++;
-    currentPrestigeProgress = score = clickCloudTotal = currentCombo = 0; clickPower = maxPerClick = 1; autoRate = totalUpgradesBought = 0;
-    upgrades.forEach((e,t) => { e.l = 0; if(buttons[t]) buttons[t].classList[t?"add":"remove"]("hidden"); e.up(); });
-    multipliers.forEach(e => { if(e.b) { e.b = 0; clickMultiplier = 1; } e.up?.(); });
-    const e = document.createElement("div"); e.style.cssText = "position:fixed;top:0;left:0;width:100%;height:100%;background:white;z-index:10001;pointer-events:none;animation:flashFade 1s ease-out forwards;"; document.body.appendChild(e);
-    setTimeout(() => { e.remove(); restartEffect.showCompletionScreen(); restartEffect.completionScreen.querySelector("div:nth-child(2)").textContent = `Множник: ${prestigeMultiplier.toFixed(2)}×`; updateReverbText();
-        const o = () => { restartEffect.hideCompletionScreen(); isReverbActive = 0; updateScore(); updateStats(); updateAchievements(); updatePrestigeProgress(); document.removeEventListener('click',o); document.removeEventListener('touchstart',o); };
-        document.addEventListener('click',o); document.addEventListener('touchstart',o);    }, 1000);}
+if (currentPrestigeProgress < prestigeThreshold) { showToast(`Потрібно ще ${formatTime(prestigeThreshold - currentPrestigeProgress)}!`); return; }
+stopReverbHold(new Event('manual')); prestigeThreshold += 7200; prestigeMultiplier *= 1.2; totalReverbs++;
+currentPrestigeProgress = score = clickCloudTotal = currentCombo = 0; clickPower = maxPerClick = 1; autoRate = totalUpgradesBought = 0;
+upgrades.forEach((e,t) => { e.l = 0; if(buttons[t]) buttons[t].classList[t?"add":"remove"]("hidden"); e.up(); });
+multipliers.forEach(e => { if(e.b) { e.b = 0; clickMultiplier = 1; } e.up?.(); });
+const e = document.createElement("div"); e.style.cssText = "position:fixed;top:0;left:0;width:100%;height:100%;background:white;z-index:10001;pointer-events:none;animation:flashFade 1s ease-out forwards;"; document.body.appendChild(e);
+setTimeout(() => { e.remove(); restartEffect.showCompletionScreen(); restartEffect.completionScreen.querySelector("div:nth-child(2)").textContent = `Множник: ${prestigeMultiplier.toFixed(2)}×`; updateReverbText();
+const o = () => { restartEffect.hideCompletionScreen(); isReverbActive = 0; updateScore(); updateStats(); updateAchievements(); updatePrestigeProgress(); document.removeEventListener('click',o); document.removeEventListener('touchstart',o); };
+document.addEventListener('click',o); document.addEventListener('touchstart',o);    }, 1000);}
 
 // === СИСТЕМА ВКЛАДОК ===
 qa(".top-tabs .tab").forEach(b=>{b.addEventListener("click",()=>{qa(".top-tabs .tab").forEach(x=>x.classList.remove("active"));qa(".tab-page").forEach(x=>x.classList.remove("active"));b.classList.add("active");id(b.dataset.tab).classList.add("active");});});
