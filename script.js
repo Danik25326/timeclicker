@@ -137,16 +137,16 @@ setInterval(saveGame,30000);
 window.addEventListener('beforeunload',saveGame);
 
 // === ОСНОВНІ ФУНКЦІЇ ===
-function startGame(v){document.getElementById('chooser').style.display='none';document.getElementById('game').classList.remove('game-hidden');if(v==='mobile')document.body.classList.add('mobile-version');// Спочатку завантажити стан
-    const loaded = loadGame();
-    
-    // Якщо не завантажило, ініціалізувати нову гру
+function startGame(v){document.getElementById('chooser').style.display='none';document.getElementById('game').classList.remove('game-hidden');if(v==='mobile')document.body.classList.add('mobile-version');else document.body.classList.remove('mobile-version'); // Спочатку завантажити стан
+    const loaded = loadGame();   // Якщо не завантажило, ініціалізувати нову гру
     if (!loaded) {
         // Ініціалізація значень за замовчуванням
         score = 0;
         clickPower = 1;
-        autoRate = 0;else document.body.classList.remove('mobile-version'); loadGame();
-initGame();}
+        autoRate = 0;
+        // ... інші значення за замовчуванням
+    }
+     loadGame();initGame();}
 function initGame(){
 // === ІНІЦІАЛІЗАЦІЯ НАЛАШТУВАНЬ ===
 setTimeout(() => {
