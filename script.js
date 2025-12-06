@@ -58,8 +58,7 @@ setInterval(saveGame,30000);
 window.addEventListener('beforeunload',saveGame);
 
 // === ОСНОВНІ ФУНКЦІЇ ===
-function startGame(v){document.getElementById('chooser').style.display='none';document.getElementById('game').classList.remove('game-hidden');if(v==='mobile')document.body.classList.add('mobile-version');else document.body.classList.remove('mobile-version'); loadGame();
-initGame();}
+function startGame(v){document.getElementById('chooser').style.display='none';document.getElementById('game').classList.remove('game-hidden');if(v==='mobile')document.body.classList.add('mobile-version');else document.body.classList.remove('mobile-version'); loadGame();initGame();initSettingsElements();}
 function initGame(){
 // === ІНІЦІАЛІЗАЦІЯ НАЛАШТУВАНЬ ===
 setTimeout(() => {
@@ -104,37 +103,12 @@ let buttons=[];
 let subscriptionOverlay=null,seriesOverlay=null,autoplayOverlay=null;
 
 // === ПЕРЕВІРКА ІНІЦІАЛІЗАЦІЇ НАЛАШТУВАНЬ ===
-function initSettingsElements(){
-    if(!document.getElementById('volumeSlider')){
-        console.warn('Елементи налаштувань не знайдені, ініціалізація...');
-        setTimeout(initSettingsElements, 100);
-        return;
-    }
-
-    const volumeSlider = document.getElementById('volumeSlider');
-    const volumeValue = document.getElementById('volumeValue');
-    const reverseHands = document.getElementById('reverseHands');
-    const disableAnimations = document.getElementById('disableAnimations');
-
+function initSettingsElements(){    if(!document.getElementById('volumeSlider')){        console.warn('Елементи налаштувань не знайдені, ініціалізація...');        setTimeout(initSettingsElements, 100);        return;    }
+    const volumeSlider = document.getElementById('volumeSlider');    const volumeValue = document.getElementById('volumeValue');    const reverseHands = document.getElementById('reverseHands');    const disableAnimations = document.getElementById('disableAnimations');
     // Встановлюємо початкові значення
-    if(volumeSlider && volumeValue){
-        volumeSlider.value = gameState.vol || 45;
-        volumeValue.textContent = (gameState.vol || 45) + '%';
-        player.volume = (gameState.vol || 45) / 100;
-    }
-
-    if(reverseHands){
-        reverseHands.checked = gameState.rev || false;
-        reverseClockHands = gameState.rev || false;
-    }
-
-    if(disableAnimations){
-        disableAnimations.checked = !(gameState.anim !== false);
-        animationsEnabled = gameState.anim !== false;
-        document.body.classList.toggle('no-animations', !animationsEnabled);
-    }
-}
-
+    if(volumeSlider && volumeValue){        volumeSlider.value = gameState.vol || 45;        volumeValue.textContent = (gameState.vol || 45) + '%';        player.volume = (gameState.vol || 45) / 100;    }
+    if(reverseHands){        reverseHands.checked = gameState.rev || false;        reverseClockHands = gameState.rev || false;    }
+    if(disableAnimations){        disableAnimations.checked = !(gameState.anim !== false);        animationsEnabled = gameState.anim !== false;        document.body.classList.toggle('no-animations', !animationsEnabled);    }}
 // Викликаємо після завантаження
 setTimeout(initSettingsElements, 1000);
 
@@ -193,7 +167,7 @@ let timeCache = {};
 function memoizedFormatTime(s) {    if(timeCache[s]) return timeCache[s];    const result = formatTime(s);    if(Object.keys(timeCache).length > 50) timeCache = {};    return timeCache[s] = result;}
 
 // === АПГРЕЙДИ ===
-const upgrades=[{n:"Кліпати очима",c:1,l:0},{n:"Увімкнути телефон",c:8,l:0},{n:"Гортати стрічку",c:40,l:0},{n:"Мем-тур",c:200,l:0},{n:"Автоперегляд",c:1100,l:0},{n:"Підписка",c:6500,l:0},{n:"Серіал-марафон",c:40000,l:0},{n:"Робота з дедлайном",c:250000,l:0},{n:"Життєвий крінж",c:1600000,l:0},{n:"Discord-марафон",c:10000000,l:0},{n:"Reels до ранку",c:65000000,l:0},{n:"Філософські роздуми",c:400000000,l:0}];
+upgrades=[{n:"Кліпати очима",c:1,l:0},{n:"Увімкнути телефон",c:8,l:0},{n:"Гортати стрічку",c:40,l:0},{n:"Мем-тур",c:200,l:0},{n:"Автоперегляд",c:1100,l:0},{n:"Підписка",c:6500,l:0},{n:"Серіал-марафон",c:40000,l:0},{n:"Робота з дедлайном",c:250000,l:0},{n:"Життєвий крінж",c:1600000,l:0},{n:"Discord-марафон",c:10000000,l:0},{n:"Reels до ранку",c:65000000,l:0},{n:"Філософські роздуми",c:400000000,l:0}];
 function fib(n){if(n<=1)return n;let a=0,b=1;for(let i=2;i<=n;i++)[a,b]=[b,a+b];return b;}
 upgrades.forEach((u,i)=>{const b=d.createElement("button");b.className="upgrade-btn";if(i>0)b.classList.add("hidden");b.addEventListener("click",()=>buyUpgrade(i));upgradesContainer.appendChild(b);buttons.push(b);u.up=function(){const f=fib(u.l+6),c=Math.floor(u.c*f*(i+1));b.innerHTML=`${u.n} (Lv.${u.l})<span>${formatTime(c)}</span>`;b.disabled=score<c;};u.getC=function(){return Math.floor(u.c*fib(u.l+6)*(i+1));};u.up();});
 function revealNext(){const c=upgrades.filter(u=>u.l>0).length;if(buttons[c])buttons[c].classList.remove("hidden");}
