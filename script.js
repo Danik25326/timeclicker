@@ -52,8 +52,32 @@ updateAllButtons();
 function showSaveStatus(msg,type){let el=document.getElementById('saveStatus');if(el){el.textContent=msg;el.className='save-status '+(type||'info');setTimeout(()=>{el.textContent='';el.className='save-status';},3000);}}
 
 // === ЕКСПОРТ/ІМПОРТ ===
-function exportData(){updateState();let data=btoa(JSON.stringify(gameState));let area=document.getElementById('exportImportArea');area.value=data;area.select();document.execCommand('copy');showSaveStatus('📤 Дані скопійовано в буфер!','success');}
-function importData(){let area=document.getElementById('exportImportArea');if(!area.value.trim()){showSaveStatus('❌ Вставте дані для імпорту','error');return;}try{let imported=JSON.parse(atob(area.value));if(confirm('Це перезапише поточний прогрес. Продовжити?')){gameState={...gameState,...imported};applyState();saveGame();showSaveStatus('📥 Дані імпортовано!','success');}}catch(e){showSaveStatus('❌ Помилка: невірний формат даних','error');}}
+function exportData(){
+    updateState();
+    // Використовуй encodeURIComponent для українських символів
+    let data = btoa(encodeURIComponent(JSON.stringify(gameState)));
+    let area=document.getElementById('exportImportArea');
+    area.value=data;
+    area.select();
+    document.execCommand('copy');
+    showSaveStatus('📤 Дані скопійовано в буфер!','success');
+}
+function importData(){
+    let area=document.getElementById('exportImportArea');
+    if(!area.value.trim()){showSaveStatus('❌ Вставте дані для імпорту','error');return;}
+    try{
+        // Декодуємо через decodeURIComponent
+        let imported=JSON.parse(decodeURIComponent(atob(area.value)));
+        if(confirm('Це перезапише поточний прогрес. Продовжити?')){
+            gameState={...gameState,...imported};
+            applyState();
+            saveGame();
+            showSaveStatus('📥 Дані імпортовано!','success');
+        }
+    }catch(e){
+        showSaveStatus('❌ Помилка: невірний формат даних','error');
+    }
+}
 function resetProgress(){if(confirm('Видалити весь прогрес? Це незворотньо!')){localStorage.removeItem('timeClickerSave');location.reload();}}
 
 // === ОНОВЛЕНА ФУНКЦІЯ ГОДИННИКА (З ОБЕРНЕНИМИ СТРІЛКАМИ) ===
@@ -92,9 +116,10 @@ setInterval(saveGame,30000);
 window.addEventListener('beforeunload',saveGame);
 
 // === ОСНОВНІ ФУНКЦІЇ ===
-function startGame(v){document.getElementById('chooser').style.display='none';document.getElementById('game').classList.remove('game-hidden');if(v==='mobile')document.body.classList.add('mobile-version');else document.body.classList.remove('mobile-version'); loadGame();initGame();initSettingsElements();}
+function startGame(v){document.getElementById('chooser').style.display='none';document.getElementById('game').classList.remove('game-hidden');if(v==='mobile')document.body.classList.add('mobile-version');else document.body.classList.remove('mobile-version'); loadGame(); initGame();}
 function initGame(){
 initSettings();
+function updateAllButtons(){upgrades.forEach(u=>u.up());multipliers.forEach(m=>m.up&&m.up());}
 // === ІНІЦІАЛІЗАЦІЯ НАЛАШТУВАНЬ ===
 setTimeout(() => {
     const volumeSlider = document.getElementById('volumeSlider');
@@ -201,7 +226,6 @@ function fib(n){if(n<=1)return n;let a=0,b=1;for(let i=2;i<=n;i++)[a,b]=[b,a+b];
 upgrades.forEach((u,i)=>{const b=d.createElement("button");b.className="upgrade-btn";if(i>0)b.classList.add("hidden");b.addEventListener("click",()=>buyUpgrade(i));upgradesContainer.appendChild(b);buttons.push(b);u.up=function(){const f=fib(u.l+6),c=Math.floor(u.c*f*(i+1));b.innerHTML=`${u.n} (Lv.${u.l})<span>${formatTime(c)}</span>`;b.disabled=score<c;};u.getC=function(){return Math.floor(u.c*fib(u.l+6)*(i+1));};u.up();});
 function revealNext(){const c=upgrades.filter(u=>u.l>0).length;if(buttons[c])buttons[c].classList.remove("hidden");}
 function buyUpgrade(i){const u=upgrades[i],c=u.getC();if(score<c)return;score-=c;u.l++;totalUpgradesBought++;autoRate+=(i+1)*5*prestigeMultiplier;setTimeout(saveGame,100);showToast(`Куплено: ${u.n} (Lv.${u.l}) ✅`);if(u.n==="Увімкнути телефон"){setTimeout(()=>{showPhoneLockScreen();},500);}if(u.n==="Гортати стрічку"){setTimeout(()=>{handleNewsFeedUpgrade();},300);}if(u.n==="Мем-тур"){setTimeout(()=>{showMeme();setTimeout(()=>{score+=1000;clickCloudTotal+=1000;showToast("Посмішка за смішний мем! 😂");updateScore();},1500);},300);}if(u.n==="Автоперегляд"){setTimeout(()=>{showAutoplay();},300);}if(u.n==="Підписка"){setTimeout(()=>{showSubscription();},300);}if(u.n==="Серіал-марафон"){setTimeout(()=>{showSeriesMarathon();},300);}if(u.n==="Робота з дедлайном"){setTimeout(()=>{showDeadlineWork();},300);}if(u.n==="Життєвий крінж"){setTimeout(()=>{showCringe();},300);}if(u.n==="Discord-марафон"){setTimeout(()=>{showDiscord();},300);}if(u.n==="Reels до ранку"){setTimeout(()=>{showReels();},300);}if(u.n==="Філософські роздуми"){setTimeout(()=>{showPhilosophy();},300);} requestAnimationFrame(()=>{revealNext();u.up();updateAllButtons();updateScore();updateStats();updateAchievements();updatePrestigeProgress();});if(u.n==="Кліпати очима"){d.body.classList.remove("eye-blink");void d.body.offsetWidth;d.body.classList.add("eye-blink");setTimeout(()=>d.body.classList.remove("eye-blink"),1000);}}
-function updateAllButtons(){upgrades.forEach(u=>u.up());multipliers.forEach(m=>m.up&&m.up());}
 
 // === МНОЖНИКИ КЛІКУ ===
 multipliers=[{n:"Подвійний клік",c:5000,m:2,b:0},{n:"Потрійний клік",c:50000,m:3,b:0},{n:"x10 за клік",c:1000000,m:10,b:0},{n:"x50 за клік",c:20000000,m:50,b:0},{n:"x100 за клік",c:100000000,m:100,b:0}];
