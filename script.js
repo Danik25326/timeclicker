@@ -12,6 +12,7 @@ let lastClickTime=0,currentCombo=0,comboTimeout;
 const MAX_CLICK_INTERVAL=1000,COMBO_THRESHOLD=3;
 let subscriptionOverlay=null,seriesOverlay=null,autoplayOverlay=null;
 let reverseClockHands=false,animationsEnabled=true;
+function updateAllButtons(){upgrades.forEach(u=>u.up());multipliers.forEach(m=>m.up&&m.up());}
 //s=score,p=clickPower,a=autoRate,u=totalUpgradesBought,m=maxPerClick,pm=prestigeMultiplier,tr=totalReverbs,ma=maxAutoRate,mc=maxComboEver,cct=clickCloudTotal,up=upgrades,ml=multipliers,ach=achievements,sk=ownedSkins,cs=currentSkins,pt=prestigeThreshold,cpp=currentPrestigeProgress,cm=clickMultiplier,rev=reverseHands,anim=animationsEnabled,vol=volume
 //s=score,p=clickPower,a=autoRate,u=totalUpgradesBought,m=maxPerClick,pm=prestigeMultiplier,tr=totalReverbs,ma=maxAutoRate,mc=maxComboEver,cct=clickCloudTotal,up=upgrades,ml=multipliers,ach=achievements,sk=ownedSkins,cs=currentSkins,pt=prestigeThreshold,cpp=currentPrestigeProgress,cm=clickMultiplier,rev=reverseHands,anim=animationsEnabled,vol=volume
 function saveGame(){updateState();localStorage.setItem('timeClickerSave',JSON.stringify(gameState));showSaveStatus('✅ Збережено!','success');}
@@ -119,7 +120,6 @@ window.addEventListener('beforeunload',saveGame);
 function startGame(v){document.getElementById('chooser').style.display='none';document.getElementById('game').classList.remove('game-hidden');if(v==='mobile')document.body.classList.add('mobile-version');else document.body.classList.remove('mobile-version'); loadGame(); initGame();}
 function initGame(){
 initSettings();
-function updateAllButtons(){upgrades.forEach(u=>u.up());multipliers.forEach(m=>m.up&&m.up());}
 // === ІНІЦІАЛІЗАЦІЯ НАЛАШТУВАНЬ ===
 setTimeout(() => {
     const volumeSlider = document.getElementById('volumeSlider');
