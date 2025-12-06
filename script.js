@@ -1,9 +1,41 @@
 // === СИСТЕМА ЗБЕРЕЖЕННЯ ДАНИХ ===
 
-// Додайте цей код на початку script.js
-window.id = function(s) { return document.getElementById(s); };
-window.q = function(s) { return document.querySelector(s); };
-window.qa = function(s) { return document.querySelectorAll(s); };
+// === ГЛОБАЛЬНІ DOM-ФУНКЦІЇ ТА ЗМІННІ ===
+window.id = s => document.getElementById(s);
+window.q = s => document.querySelector(s);
+window.qa = s => document.querySelectorAll(s);
+const d = document;
+
+// Глобальні змінні для збереження
+let gameData = {
+  score: 0,
+  clickPower: 1,
+  autoRate: 0,
+  clickMultiplier: 1,
+  prestigeMultiplier: 1,
+  totalUpgradesBought: 0,
+  totalReverbs: 0,
+  clickCloudTotal: 0,
+  volume: 50,
+  reverseHands: false,
+  animationsEnabled: true,
+  upgrades: [],
+  multipliers: [],
+  ownedSkins: { shapes: [], clockSkins: [], handSkins: [], effects: [] },
+  currentSkins: { shape: 'round', clock: 'neon-blue', hand: 'darkblue', effect: 'red' },
+  achievements: [],
+  maxPerClick: 1,
+  maxAutoRate: 0,
+  maxComboEver: 0,
+  version: 1
+};
+
+// Глобальні масиви (оголосити, але заповнити в initGame)
+let upgrades = [];
+let multipliers = [];
+let achievementsList = [];
+let ownedSkins = { shapes: [], clockSkins: [], handSkins: [], effects: [] };
+let current = { shape: 'round', clock: 'neon-blue', hand: 'darkblue', effect: 'red' };
 
 // Об'єкт для всіх даних гри
 let gameData = {
@@ -58,8 +90,8 @@ function saveGame() {
   showToast('Гра збережена! ✅');
 }
 
-// Функція оновлення gameData
 function updateGameData() {
+  // Переконайтеся, що всі змінні доступні
   gameData.score = score;
   gameData.clickPower = clickPower;
   gameData.autoRate = autoRate;
@@ -72,15 +104,23 @@ function updateGameData() {
   gameData.maxAutoRate = maxAutoRate;
   gameData.maxComboEver = maxComboEver;
   
-  // Зберігаємо апгрейди
-  gameData.upgrades = upgrades.map(u => ({ name: u.n, level: u.l }));
-  gameData.multipliers = multipliers.map(m => ({ name: m.n, bought: m.b }));
+  // Зберігаємо апгрейди (перевіряємо, чи це масив)
+  if (Array.isArray(upgrades)) {
+    gameData.upgrades = upgrades.map(u => ({ name: u.n, level: u.l }));
+  }
+  
+  // Зберігаємо множники
+  if (Array.isArray(multipliers)) {
+    gameData.multipliers = multipliers.map(m => ({ name: m.n, bought: m.b }));
+  }
   
   // Зберігаємо досягнення
-  gameData.achievements = achievementsList.map(a => ({ 
-    title: a.t, 
-    done: a.done 
-  }));
+  if (Array.isArray(achievementsList)) {
+    gameData.achievements = achievementsList.map(a => ({ 
+      title: a.t, 
+      done: a.done 
+    }));
+  }
 }
 
 // Функція завантаження гри
@@ -367,8 +407,8 @@ function setupSettings() {
 
 // Функція оновлення напрямку стрілок
 function updateClockDirection() {
-  const clocks = qa('.clock');
-  const hands = qa('.hand');
+  const clocks = document.querySelectorAll('.clock');
+  const hands = document.querySelectorAll('.hand');
   
   if (gameData.reverseHands) {
     clocks.forEach(clock => clock.classList.add('reverse'));
@@ -380,7 +420,7 @@ function updateClockDirection() {
   
   // Додаємо CSS для обернених стрілок
   if (!document.getElementById('reverseHandsStyle')) {
-    const style = d.createElement('style');
+    const style = document.createElement('style');
     style.id = 'reverseHandsStyle';
     style.textContent = `
       .clock.reverse .hand { transform-origin: 50% 100% !important; }
@@ -392,17 +432,26 @@ function updateClockDirection() {
       @keyframes reverseMinute { from { transform: translateX(-50%) rotate(360deg); } to { transform: translateX(-50%) rotate(0deg); } }
       @keyframes reverseSecond { from { transform: translateX(-50%) rotate(360deg); } to { transform: translateX(-50%) rotate(0deg); } }
     `;
-    d.head.appendChild(style);
+    document.head.appendChild(style);
   }
 }
 
 // Функція увімкнення/вимкнення анімацій
 function toggleAnimations(enabled) {
   if (enabled) {
-    d.body.classList.remove('animations-disabled');
+    document.body.classList.remove('animations-disabled');
   } else {
-    d.body.classList.add('animations-disabled');
+    document.body.classList.add('animations-disabled');
   }
+}
+// Винесіть цю функцію з initGame() і поставте після глобальних оголошень:
+function showToast(t) {
+  const e = document.createElement("div");
+  e.className = "toast";
+  e.textContent = t;
+  e.style.cssText = "font-size:18px;padding:22px 48px";
+  toastContainer.appendChild(e);
+  setTimeout(() => e.remove(), 10000);
 }
 // === ОСНОВНІ ФУНКЦІЇ ===
 function startGame(v){document.getElementById('chooser').style.display='none';document.getElementById('game').classList.remove('game-hidden');if(v==='mobile')document.body.classList.add('mobile-version');else document.body.classList.remove('mobile-version');initGame()}
@@ -472,6 +521,14 @@ const si=setInterval(()=>{if(autoRate>maxAutoRate)maxAutoRate=autoRate;if(maxCom
   const reverbDesc = id("reverbDesc");
   const nextMultiplierEl = id("nextMultiplier");
 
+  if (upgrades.length === 0) {
+    upgrades = [{n:"Кліпати очима",c:1,l:0}, /* ... */];
+  }
+  
+  if (multipliers.length === 0) {
+    multipliers = [{n:"Подвійний клік",c:5000,m:2,b:0}, /* ... */];
+  }
+
 // === ОНОВЛЕННЯ ДАТИ ===
 function updateDate(){id("currentDate").textContent=new Date().toLocaleDateString('uk-UA')}
 updateDate();setInterval(updateDate,60000);
@@ -507,7 +564,6 @@ multipliers.forEach(m=>{const b=d.createElement("button");b.className="upgrade-b
 // === ВИПРАВЛЕНА СИСТЕМА КЛІКІВ ===
 function addTime(){const g=Math.round(clickPower*clickMultiplier*prestigeMultiplier);score+=g;clickCloudTotal+=g;if(g>maxPerClick)maxPerClick=g;clickGainEl.textContent=`+${formatTime(g)}`;showFloating(`+${formatTime(g)}`);triggerClickEffect();handleClickCombo(); updateScore();updatePrestigeProgress();}
 function handleClickCombo(){const n=Date.now();if(n-lastClickTime<MAX_CLICK_INTERVAL)currentCombo++;else currentCombo=1;lastClickTime=n;if(currentCombo>maxComboEver)maxComboEver=currentCombo;if(currentCombo>=COMBO_THRESHOLD){comboCount.textContent=currentCombo;comboBubble.classList.add("show");}clearTimeout(comboTimeout);comboTimeout=setTimeout(()=>{if(currentCombo>=COMBO_THRESHOLD){comboBubble.classList.add("burst");showToast(`Комбо ×${currentCombo}! 🔥`);setTimeout(()=>comboBubble.classList.remove("show","burst"),700);}currentCombo=0;},300);}
-function showToast(t){const e=d.createElement("div");e.className="toast";e.textContent=t;e.style.cssText="font-size:18px;padding:22px 48px";toastContainer.appendChild(e);setTimeout(()=>e.remove(),10000);}
 function triggerClickEffect(){clock.classList.remove("click-effect-red","click-effect-blue","click-effect-glitch","click-effect-blackhole","click-effect-ripple");void clock.offsetWidth;clock.classList.add("click-effect-"+current.effect);}
 // ВИПРАВЛЕНИЙ ОБРОБНИК КЛІКІВ - запобігає подвійним клікам
 let lastClick=0;clockWrapper.addEventListener("click",e=>{const now=Date.now();if(now-lastClick<100)return;lastClick=now;if(e.target.closest("#clickableClock")||e.target===clockWrapper)addTime();});
