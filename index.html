@@ -72,6 +72,7 @@
 <button class="tab" data-tab="tab-achievements">Досягнення</button>
 <button class="tab" data-tab="tab-reverb">Перезапуск</button>
 <button class="tab" data-tab="tab-multipliers">Множники</button>
+<button class="tab" data-tab="tab-settings">Налаштування</button>
 </div>
 
 <!-- Container -->
@@ -144,6 +145,55 @@
 <div id="tab-multipliers" class="tab-page">
 <h3>Множники кліку</h3>
 <div id="multipliers" class="upgrades-container"></div>
+</div>
+<div id="tab-settings" class="tab-page">
+  <h3>Налаштування</h3>
+  <div class="settings-container">
+    <!-- Гучність -->
+    <div class="setting-item">
+      <label for="volumeSlider">Гучність: <span id="volumeValue">50</span>%</label>
+      <input type="range" id="volumeSlider" min="0" max="100" value="50" class="settings-slider">
+    </div>
+    
+    <!-- Обернені стрілки -->
+    <div class="setting-item">
+      <label class="toggle-switch">
+        <input type="checkbox" id="reverseHandsToggle">
+        <span class="toggle-slider"></span>
+        <span class="toggle-label">Обернені стрілки</span>
+      </label>
+    </div>
+    
+    <!-- Анімації -->
+    <div class="setting-item">
+      <label class="toggle-switch">
+        <input type="checkbox" id="animationsToggle" checked>
+        <span class="toggle-slider"></span>
+        <span class="toggle-label">Анімації</span>
+      </label>
+    </div>
+    
+    <!-- Кнопки -->
+    <div class="settings-buttons">
+      <button id="saveBtn" class="settings-btn">💾 Зберегти</button>
+      <button id="exportBtn" class="settings-btn">📤 Експорт</button>
+      <button id="importBtn" class="settings-btn">📥 Імпорт</button>
+      <button id="resetBtn" class="settings-btn">🗑️ Скинути</button>
+    </div>
+    
+    <!-- Модальне вікно для імпорту/експорту -->
+    <div id="saveModal" class="save-modal hidden">
+      <div class="save-modal-content">
+        <h4 id="modalTitle">Експорт збереження</h4>
+        <textarea id="saveDataText" rows="6" placeholder="Вставте сюди код збереження..."></textarea>
+        <div class="modal-buttons">
+          <button id="copyBtn" class="modal-btn">📋 Копіювати</button>
+          <button id="loadBtn" class="modal-btn">✅ Завантажити</button>
+          <button id="closeModalBtn" class="modal-btn">❌ Закрити</button>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
 </div>
 </div>
