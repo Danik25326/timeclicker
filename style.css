@@ -65,4 +65,67 @@ body.eye-blink::before{content:"";position:fixed;inset:0;background:#000;z-index
 /* ===== НАЛАШТУВАННЯ ===== */
 .settings-container{padding:20px;color:#fff;max-width:100%;overflow-y:auto;height:calc(100vh - 200px)}.setting-item{margin-bottom:20px;display:flex;align-items:center;gap:15px;flex-wrap:wrap}.setting-item label{width:200px;font-weight:bold;color:#cbd5e1}.setting-item input[type="range"]{flex:1;max-width:200px;height:6px;background:#334155;border-radius:3px;outline:none}.setting-item input[type="checkbox"]{width:20px;height:20px;cursor:pointer}.setting-buttons{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:30px}.save-btn,.export-btn,.import-btn,.reset-btn{padding:12px;border:none;border-radius:8px;color:#fff;font-weight:bold;cursor:pointer;transition:transform 0.2s;font-size:14px}.save-btn{background:#10b981}.export-btn{background:#3b82f6}.import-btn{background:#8b5cf6}.reset-btn{background:#ef4444}.save-btn:hover,.export-btn:hover,.import-btn:hover,.reset-btn:hover{transform:translateY(-2px)}.save-status{margin-top:10px;padding:10px;border-radius:5px;text-align:center;font-size:14px}.save-status.success{background:#10b981;color:#fff}.save-status.error{background:#ef4444;color:#fff}.export-import-area{width:100%;height:120px;margin-top:20px;padding:10px;background:#1e293b;color:#fff;border:1px solid #475569;border-radius:5px;resize:vertical;font-family:monospace;font-size:12px}.export-import-area:focus{outline:none;border-color:#0ea5e9}
 /* ===== СТИЛЬ БЕЗ АНІМАЦІЙ ===== */
-.no-animations *{animation:none;transition:none}.no-animations .toast{opacity:0.9}
+.no-animations .upgrade-btn,
+.no-animations .multiplier-btn,
+.no-animations .skin,
+.no-animations button:not(.tab):not(.top-tabs),
+.no-animations #musicBtn,
+.no-animations #prevTrack,
+.no-animations #nextTrack,
+.no-animations #comboBubble,
+.no-animations .clock.click-effect-red,
+.no-animations .clock.click-effect-blue,
+.no-animations .clock.click-effect-glitch,
+.no-animations .clock.click-effect-blackhole,
+.no-animations .clock.click-effect-ripple,
+.no-animations .floating-number,
+.no-animations .toast {
+    animation: none !important;
+    transition: none !important;
+    transform: none !important;
+}
+
+/* Специфічні для бульбашки комбо */
+.no-animations #comboBubble {
+    opacity: 0 !important;
+}
+
+/* Для ефектів кліку */
+.no-animations .click-effect-red,
+.no-animations .click-effect-blue,
+.no-animations .click-effect-glitch,
+.no-animations .click-effect-blackhole,
+.no-animations .click-effect-ripple {
+    animation: none !important;
+}
+
+/* Для плаваючих чисел */
+.no-animations .floating-number {
+    opacity: 0 !important;
+}
+
+/* Для кнопок при наведенні */
+.no-animations .upgrade-btn:hover,
+.no-animations .multiplier-btn:hover,
+.no-animations .skin:hover,
+.no-animations button:not(.tab):hover,
+.no-animations #musicBtn:hover,
+.no-animations #prevTrack:hover,
+.no-animations #nextTrack:hover {
+    transform: none !important;
+    box-shadow: none !important;
+}
+
+/* Для тостів */
+.no-animations .toast {
+    opacity: 0.9 !important;
+}
+
+/* ВАЖЛИВО: не чіпаємо вкладки! */
+.no-animations .tab,
+.no-animations .top-tabs,
+.no-animations .tab-page {
+    animation: inherit !important;
+    transition: inherit !important;
+    transform: inherit !important;
+}
