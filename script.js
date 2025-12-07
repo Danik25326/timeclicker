@@ -434,7 +434,7 @@ function hidePhilosophy(){if(philosophyOverlay){philosophyOverlay.remove();score
 
 // === ГЛОБАЛЬНІ ФУНКЦІЇ ДЛЯ ОВЕРЛЕЇВ ===
 window.hideCringe = function(){if(cringeOverlay){cringeOverlay.remove();score+=3000;clickCloudTotal+=3000;showToast("+3000 сек за життєвий досвід! 😅");updateScore();}};
-window.hidePhilosophy = function(){if(philosophyOverlay){philosophyOverlay.remove();score+=6000;clickCloudTotal+=6000;showToast("+6000 сек за філософські роздуми! 📚");updateScore();}};  
+window.hidePhilosophy = function(){if(philosophyOverlay){philosophyOverlay.remove();score+=6000;clickCloudTotal+=6000;showToast("+6000 сек за філософські роздуми! 📚");updateScore();}};}
 
 // === ЄДИНА ФУНКЦІЯ ІНІЦІАЛІЗАЦІЇ НАЛАШТУВАНЬ ===
 function initSettings() {
