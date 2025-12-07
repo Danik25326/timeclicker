@@ -1,149 +1,393 @@
-// === СИСТЕМА ЗБЕРЕЖЕННЯ ===
-let gameState={v:'1.1',s:0,p:1,a:0,u:0,m:1,pm:1,tr:0,ma:0,mc:0,cct:0,up:[],ml:[],ach:[],sk:{s:['round'],c:['neon-blue'],h:['darkblue'],e:['red']},cs:{s:'round',c:'neon-blue',h:'darkblue',e:'red'},pt:3600,cpp:0,cm:1,rev:false,anim:true,vol:45};
-let sessionStart=Date.now();
+// === ГЛОБАЛЬНІ ЗМІННІ ===
+let score = 0, clickPower = 1, autoRate = 0, isPlaying = 0, currentTrack = 0;
+let sessionStart = Date.now(), totalUpgradesBought = 0, maxPerClick = 1;
+let prestigeMultiplier = 1, totalReverbs = 0, maxAutoRate = 0, maxCombo = 0;
+let clickCloudTotal = 0, lastClickTime = 0, currentCombo = 0, maxComboEver = 0;
+let comboTimeout = null, isReverbActive = 0, reverbHoldTimeout = null, clickMultiplier = 1;
+let buttons = [], prestigeThreshold = 3600, currentPrestigeProgress = 0;
+let subscriptionOverlay = null, seriesOverlay = null, autoplayOverlay = null;
 
-// === ГЛОБАЛЬНІ ЗМІННІ ГРИ ===
-let score=0,clickPower=1,autoRate=0,totalUpgradesBought=0,maxPerClick=1,prestigeMultiplier=1,totalReverbs=0,maxAutoRate=0,maxComboEver=0,clickCloudTotal=0,prestigeThreshold=3600,currentPrestigeProgress=0,clickMultiplier=1;
-let upgrades=[],multipliers=[];
-let ownedSkins={shapes:["round"],clockSkins:["neon-blue"],handSkins:["darkblue"],effects:["red"]};
-let current={shape:"round",clock:"neon-blue",hand:"darkblue",effect:"red"};
-let buttons=[];
-let lastClickTime=0,currentCombo=0,comboTimeout;
-const MAX_CLICK_INTERVAL=1000,COMBO_THRESHOLD=3;
-let subscriptionOverlay=null,seriesOverlay=null,autoplayOverlay=null;
-let reverseClockHands=false,animationsEnabled=true;
+// === DOM-допоміжні ===
+const d = document, q = s => d.querySelector(s), qa = s => d.querySelectorAll(s), id = s => d.getElementById(s);
 
-// === DOM-допоміжні функції ===
-const d=document,q=s=>d.querySelector(s),qa=s=>d.querySelectorAll(s),id=s=>d.getElementById(s);
-
-// === DOM-змінні (ініціалізуються пізніше) ===
-let clock,clockWrapper,comboBubble,comboCount,clickCloudEl,musicBtn,prevTrack,nextTrack,player,scoreText,upgradesContainer,multipliersContainer,clickGainEl,cloudTotalEl,nowPlaying,realTimePlayedEl,virtualTimeEl,totalUpgradesEl,maxPerClickEl,prestigeMultEl,reverbBtn,timeTunnel,worldTitle,toastContainer,reverbOverlay,reverbClock,reverbHint,reverbDesc,nextMultiplierEl;
-
-// === ФУНКЦІЇ ДЛЯ ОНОВЛЕННЯ ІНТЕРФЕЙСУ (ОГОЛОШЕНІ ПОЧАТКУ) ===
-function updateAllButtons(){upgrades.forEach(u=>u.up());multipliers.forEach(m=>m.up&&m.up());}
-function updateScore(){scoreText.textContent=`Часу витрачено: ${formatTime(score)}`;cloudTotalEl.textContent=`${formatTime(clickCloudTotal)}`;updateAllButtons();}
-function updateStats(){realTimePlayedEl.textContent=formatTime((Date.now()-sessionStart)/1000);virtualTimeEl.textContent=formatTime(score);totalUpgradesEl.textContent=totalUpgradesBought;maxPerClickEl.textContent=formatTime(maxPerClick);prestigeMultEl.textContent=prestigeMultiplier.toFixed(2);id("maxAutoRate").textContent=formatTime(autoRate);id("maxCombo").textContent=maxComboEver;id("totalReverbs").textContent=totalReverbs;const a=achievementsList.filter(x=>x.done).length;id("achievedCount").textContent=a;id("totalAchievements").textContent=achievementsList.length;id("shapeSkinsCount").textContent=ownedSkins.shapes.length;id("clockSkinsCount").textContent=ownedSkins.clockSkins.length;id("handSkinsCount").textContent=ownedSkins.handSkins.length;id("effectSkinsCount").textContent=ownedSkins.effects.length;id("totalSkins").textContent=ownedSkins.shapes.length+ownedSkins.clockSkins.length+ownedSkins.handSkins.length+ownedSkins.effects.length;updateReverbText();updatePrestigeProgress();}
-function updatePrestigeProgress(){currentPrestigeProgress=score;const pB=id('prestigeProgressBar'),pT=id('prestigeProgressText'),pP=Math.min(100,(currentPrestigeProgress/prestigeThreshold)*100);if(pB){pB.style.width=pP+'%';pB.style.background=pP>=100?'linear-gradient(90deg, #10b981, #34d399)':pP>=50?'linear-gradient(90deg, #f59e0b, #fbbf24)':'linear-gradient(90deg, #ef4444, #f87171)';}if(pT)pT.textContent=`${formatTime(currentPrestigeProgress)} / ${formatTime(prestigeThreshold)}`;updateReverbButtonState();}
-function updateReverbButtonState(){const c=currentPrestigeProgress>=prestigeThreshold;reverbBtn.disabled=!c;reverbBtn.style.opacity=c?'1':'0.6';reverbBtn.style.cursor=c?'pointer':'not-allowed';reverbBtn.style.background=c?'linear-gradient(90deg, #10b981, #34d399)':'linear-gradient(90deg, #6b7280, #9ca3af)';}
-function updateReverbText(){nextMultiplierEl.textContent=(prestigeMultiplier*1.2).toFixed(2);const rD=id('reverbDesc');if(rD)rD.textContent=`Потрібно для перезапуску: ${formatTime(prestigeThreshold)}`;}
-function showToast(t){const e=d.createElement("div");e.className="toast";e.textContent=t;e.style.cssText="font-size:18px;padding:22px 48px";toastContainer.appendChild(e);setTimeout(()=>e.remove(),10000);}
-function showSaveStatus(msg,type){let el=id('saveStatus');if(el){el.textContent=msg;el.className='save-status '+(type||'info');setTimeout(()=>{el.textContent='';el.className='save-status';},3000);}}
-function showFloating(t){const e=d.createElement("div");e.textContent=t;e.style.cssText="position:absolute;right:20px;top:50px;color:#ffccd1;font-weight:700;opacity:1;transition:all 0.9s ease-out";clockWrapper.appendChild(e);requestAnimationFrame(()=>{e.style.transform="translateX(60px) translateY(-80px)";e.style.opacity="0";});setTimeout(()=>e.remove(),920);}
+// === СИСТЕМА СКІНІВ ===
+const clockSkins = [
+    {id:"neon-blue",n:"Неон синій",p:0,a:()=>qa('.clock').forEach(c=>{c.style.borderColor="#0ea5e9";c.style.boxShadow="0 0 50px #0ea5e9, 0 0 100px #0ea5e9"})},
+    {id:"purple",n:"Пурпурний",p:64800,a:()=>qa('.clock').forEach(c=>{c.style.borderColor="#8b5cf6";c.style.boxShadow="0 0 50px #8b5cf6, 0 0 100px #8b5cf6"})},
+    {id:"pink",n:"Рожевий",p:129600,a:()=>qa('.clock').forEach(c=>{c.style.borderColor="#ec4899";c.style.boxShadow="0 0 50px #ec4899, 0 0 100px #ec4899"})},
+    {id:"black",n:"Чорний",p:259200,a:()=>qa('.clock').forEach(c=>{c.style.borderColor="#111";c.style.boxShadow="0 0 10px #000"})}
+];
+const shapes = [
+    {id:"round",n:"Круг",p:0},{id:"square",n:"Квадрат",p:28800},
+    {id:"diamond",n:"Ромб",p:86400},{id:"oval",n:"Овал",p:172800}
+];
+const handSkins = [
+    {id:"darkblue",n:"Темно-сині",p:0,a:()=>qa(".hand:not(.second)").forEach(h=>{h.style.background="#1e3a8a";h.style.boxShadow="";h.style.animation="none"})},
+    {id:"pixel",n:"Піксельні",p:900,a:()=>qa(".hand:not(.second)").forEach(h=>{h.style.background="linear-gradient(#fff,#aaa)";h.style.boxShadow="";h.style.animation="none"})},
+    {id:"neon",n:"Неонові",p:9000,a:()=>qa(".hand:not(.second)").forEach(h=>{h.style.background="#0ea5e9";h.style.boxShadow="0 0 25px #0ea5e9, 0 0 60px #0ea5e9";h.style.animation="neonPulse 2s ease-in-out infinite alternate"})},
+    {id:"chrome",n:"Хром",p:43200,a:()=>qa(".hand:not(.second)").forEach(h=>{h.style.background="linear-gradient(90deg,#ddd,#888,#ddd)";h.style.boxShadow="0 0 15px #fff, 0 0 30px #aaa";h.style.animation="none"})}
+];
+const effects = [
+    {id:"red",n:"Червоний спалах",p:0},{id:"blue",n:"Синій вибух",p:21600},
+    {id:"glitch",n:"Глітч",p:108000},{id:"blackhole",n:"Чорна діра",p:360000},
+    {id:"ripple",n:"Хвиля часу",p:720000}
+];
+let ownedSkins = {shapes:["round"],clockSkins:["neon-blue"],handSkins:["darkblue"],effects:["red"]};
+let current = {shape:"round",clock:"neon-blue",hand:"darkblue",effect:"red"};
 
 // === ФОРМАТУВАННЯ ЧАСУ ===
-function formatTime(s){s=Math.floor(s);const u=[{name:"тисячоліття",v:31536000000},{name:"століття",v:3153600000},{name:"десятиліття",v:315360000},{name:"рік",v:31536000},{name:"міс",v:2592000},{name:"дн",v:86400},{name:"год",v:3600},{name:"хв",v:60},{name:"сек",v:1}];let r=s,p=[];for(const x of u){const a=Math.floor(r/x.v);if(a>0){p.push(`${a} ${x.name}`);r%=x.v;}}return p.length?p.join(" "):`${s} сек`;}
-let timeCache={};
-function memoizedFormatTime(s){if(timeCache[s])return timeCache[s];const result=formatTime(s);if(Object.keys(timeCache).length>50)timeCache={};return timeCache[s]=result;}
-
-// === СКІНИ ===
-const clockSkins=[{id:"neon-blue",n:"Неон синій",p:0,a:()=>qa('.clock').forEach(c=>{c.style.borderColor="#0ea5e9";c.style.boxShadow="0 0 50px #0ea5e9, 0 0 100px #0ea5e9"})},{id:"purple",n:"Пурпурний",p:64800,a:()=>qa('.clock').forEach(c=>{c.style.borderColor="#8b5cf6";c.style.boxShadow="0 0 50px #8b5cf6, 0 0 100px #8b5cf6"})},{id:"pink",n:"Рожевий",p:129600,a:()=>qa('.clock').forEach(c=>{c.style.borderColor="#ec4899";c.style.boxShadow="0 0 50px #ec4899, 0 0 100px #ec4899"})},{id:"black",n:"Чорний",p:259200,a:()=>qa('.clock').forEach(c=>{c.style.borderColor="#111";c.style.boxShadow="0 0 10px #000"})}],shapes=[{id:"round",n:"Круг",p:0},{id:"square",n:"Квадрат",p:28800},{id:"diamond",n:"Ромб",p:86400},{id:"oval",n:"Овал",p:172800}],handSkins=[{id:"darkblue",n:"Темно-сині",p:0,a:()=>qa(".hand:not(.second)").forEach(h=>{h.style.background="#1e3a8a";h.style.boxShadow="";h.style.animation="none"})},{id:"pixel",n:"Піксельні",p:900,a:()=>qa(".hand:not(.second)").forEach(h=>{h.style.background="linear-gradient(#fff,#aaa)";h.style.boxShadow="";h.style.animation="none"})},{id:"neon",n:"Неонові",p:9000,a:()=>qa(".hand:not(.second)").forEach(h=>{h.style.background="#0ea5e9";h.style.boxShadow="0 0 25px #0ea5e9, 0 0 60px #0ea5e9";h.style.animation="neonPulse 2s ease-in-out infinite alternate"})},{id:"chrome",n:"Хром",p:43200,a:()=>qa(".hand:not(.second)").forEach(h=>{h.style.background="linear-gradient(90deg,#ddd,#888,#ddd)";h.style.boxShadow="0 0 15px #fff, 0 0 30px #aaa";h.style.animation="none"})}],effects=[{id:"red",n:"Червоний спалах",p:0},{id:"blue",n:"Синій вибух",p:21600},{id:"glitch",n:"Глітч",p:108000},{id:"blackhole",n:"Чорна діра",p:360000},{id:"ripple",n:"Хвиля часу",p:720000}];
-function buySkin(t,i,p,n){if(ownedSkins[t].includes(i)){current[t==="shapes"?"shape":t==="clockSkins"?"clock":t==="handSkins"?"hand":"effect"]=i;applyAllSkins();refreshAllSkinGrids();setTimeout(saveGame,100);return showToast("Скін застосовано! ✅")}if(score<p)return showToast("Не вистачає часу!");score-=p;ownedSkins[t].push(i);current[t==="shapes"?"shape":t==="clockSkins"?"clock":t==="handSkins"?"hand":"effect"]=i;applyAllSkins();updateScore();updateStats();updateAchievements();updatePrestigeProgress();setTimeout(saveGame,100);showToast(`Куплено: ${n} ✅`);refreshAllSkinGrids()}
-function applyAllSkins(){qa('.clock').forEach(c=>c.className="clock "+current.shape);clockSkins.find(s=>s.id===current.clock)?.a();handSkins.find(s=>s.id===current.hand)?.a()}
-function createSkinGrid(ct,ls,t){const r=id(ct);r.innerHTML="";ls.forEach(s=>{const e=d.createElement("div");e.className="skin";e.textContent=s.n;const o=ownedSkins[t].includes(s.id);const a=current[t==="shapes"?"shape":t==="clockSkins"?"clock":t==="handSkins"?"hand":"effect"]===s.id;if(o){e.classList.add("owned");if(a)e.classList.add("active");e.onclick=()=>{current[t==="shapes"?"shape":t==="clockSkins"?"clock":t==="handSkins"?"hand":"effect"]=s.id;applyAllSkins();refreshAllSkinGrids();showToast("Скін застосовано! ✅")}}else{e.style.opacity="0.4";if(score>=s.p){e.style.opacity="1";e.style.boxShadow="0 0 15px #0ff"}e.innerHTML+=`<br><small style="color:#ff00ff">${formatTime(s.p)}</small>`;e.onclick=()=>buySkin(t,s.id,s.p,s.n)}r.appendChild(e)})}
-function refreshAllSkinGrids(){createSkinGrid("shapeSkins",shapes,"shapes");createSkinGrid("clockSkins",clockSkins,"clockSkins");createSkinGrid("handSkins",handSkins,"handSkins");createSkinGrid("effectSkins",effects,"effects")}
-function updateSkinHighlights(){[{l:shapes,t:"shapes",c:"shapeSkins"},{l:clockSkins,t:"clockSkins",c:"clockSkins"},{l:handSkins,t:"handSkins",c:"handSkins"},{l:effects,t:"effects",c:"effectSkins"}].forEach(obj=>{const ct=id(obj.c);if(!ct)return;Array.from(ct.children).forEach((el,i)=>{const s=obj.l[i],o=ownedSkins[obj.t].includes(s.id);if(!o){if(score>=s.p){el.style.opacity="1";el.style.boxShadow="0 0 15px #0ff"}else{el.style.opacity="0.4";el.style.boxShadow=""}el.innerHTML=s.n+`<br><small style="color:#ff00ff">${formatTime(s.p)}</small>`}else{el.style.opacity="1";el.style.boxShadow="";el.innerHTML=s.n}})})}
-
-// === СИСТЕМА ЗБЕРЕЖЕННЯ ===
-function saveGame(){updateState();localStorage.setItem('timeClickerSave',JSON.stringify(gameState));showSaveStatus('✅ Збережено!','success');}
-function loadGame(){let s=localStorage.getItem('timeClickerSave');if(s){try{let l=JSON.parse(s);gameState={...gameState,...l};applyState();return true;}catch(e){console.error('Помилка завантаження:',e);}}return false;}
-function updateState(){gameState.s=score;gameState.p=clickPower;gameState.a=autoRate;gameState.u=totalUpgradesBought;gameState.m=maxPerClick;gameState.pm=prestigeMultiplier;gameState.tr=totalReverbs;gameState.ma=maxAutoRate;gameState.mc=maxComboEver;gameState.cct=clickCloudTotal;gameState.pt=prestigeThreshold;gameState.cpp=currentPrestigeProgress;gameState.cm=clickMultiplier;gameState.up=upgrades.map(u=>({n:u.n,l:u.l}));gameState.ml=multipliers.map(m=>({n:m.n,b:m.b}));gameState.ach=achievementsList.map(a=>({t:a.t,d:a.done}));gameState.sk={...ownedSkins};gameState.cs={...current};}
-function applyState(){score=gameState.s;clickPower=gameState.p;autoRate=gameState.a;totalUpgradesBought=gameState.u;maxPerClick=gameState.m;prestigeMultiplier=gameState.pm;totalReverbs=gameState.tr;maxAutoRate=gameState.ma;maxComboEver=gameState.mc;clickCloudTotal=gameState.cct;prestigeThreshold=gameState.pt;currentPrestigeProgress=gameState.cpp;clickMultiplier=gameState.cm;gameState.up.forEach((s,i)=>{if(upgrades[i]&&upgrades[i].n===s.n)upgrades[i].l=s.l;});gameState.ml.forEach((s,i)=>{if(multipliers[i]&&multipliers[i].n===s.n)multipliers[i].b=s.b;});gameState.ach.forEach((s,i)=>{if(achievementsList[i]&&achievementsList[i].t===s.t)achievementsList[i].done=s.d;});ownedSkins.s=gameState.sk.s||['round'];ownedSkins.c=gameState.sk.c||['neon-blue'];ownedSkins.h=gameState.sk.h||['darkblue'];ownedSkins.e=gameState.sk.e||['red'];current.s=gameState.cs.s||'round';current.c=gameState.cs.c||'neon-blue';current.h=gameState.cs.h||'darkblue';current.e=gameState.cs.e||'red';updateAllButtons();refreshAllSkinGrids();applyAllSkins();updateScore();updateStats();updateAchievements();updatePrestigeProgress();}
-
-// === ЕКСПОРТ/ІМПОРТ ===
-function exportData(){updateState();let data=btoa(encodeURIComponent(JSON.stringify(gameState)));let area=id('exportImportArea');area.value=data;area.select();document.execCommand('copy');showSaveStatus('📤 Дані скопійовано в буфер!','success');}
-function importData(){let area=id('exportImportArea');if(!area.value.trim()){showSaveStatus('❌ Вставте дані для імпорту','error');return;}try{let imported=JSON.parse(decodeURIComponent(atob(area.value)));if(confirm('Це перезапише поточний прогрес. Продовжити?')){gameState={...gameState,...imported};applyState();saveGame();showSaveStatus('📥 Дані імпортовано!','success');}}catch(e){showSaveStatus('❌ Помилка: невірний формат даних','error');}}
-function resetProgress(){if(confirm('Видалити весь прогрес? Це незворотньо!')){localStorage.removeItem('timeClickerSave');location.reload();}}
-
-// === ГОДИННИК ===
-function updateClockHands(){const n=new Date();let s=n.getSeconds()+n.getMilliseconds()/1000;let m=n.getMinutes()+s/60;let h=(n.getHours()%12||12)+m/60;if(reverseClockHands){s=60-s;m=60-m;h=12-h;if(h<=0)h+=12;}qa("#clickableClock .second").forEach(x=>x.style.transform=`translateX(-50%) rotate(${s*6}deg)`);qa("#clickableClock .minute").forEach(x=>x.style.transform=`translateX(-50%) rotate(${m*6}deg)`);qa("#clickableClock .hour").forEach(x=>x.style.transform=`translateX(-50%) rotate(${h*30}deg)`);}
-
-// === ДОСЯГНЕННЯ ===
-let achievementsList=[];
-const achRoot=id("achievements");
-function initAchievements(){
-    achievementsList=[
-        {t:"Перший клік",desc:"Зробити перший клік",tg:1,g:()=>clickCloudTotal,done:false},
-        {t:"100 сек",desc:"Витратити 100 сек",tg:100,g:()=>score,done:false},
-        {t:"Перша покупка",desc:"Купити перший апгрейд",tg:1,g:()=>totalUpgradesBought,done:false},
-        {t:"Авто запущено",desc:"Витрачаєш час автоматично",tg:1,g:()=>autoRate>0?1:0,done:false},
-        {t:"Комбо-майстер",desc:"Досягти комбо 10+",tg:10,g:()=>maxComboEver,done:false},
-        {t:"Майстер форм",desc:"Володіти 3 формами годинника",tg:3,g:()=>ownedSkins.shapes.length,done:false},
-        {t:"Господар рамок",desc:"Володіти 3 кольорами рамки",tg:3,g:()=>ownedSkins.clockSkins.length,done:false},
-        {t:"Колекціонер стрілок",desc:"Володіти 3 скінами стрілок",tg:3,g:()=>ownedSkins.handSkins.length,done:false},
-        {t:"Маг ефектів",desc:"Володіти 3 ефектами кліку",tg:3,g:()=>ownedSkins.effects.length,done:false},
-        {t:"Стильний",desc:"Змінити будь-який скін",tg:1,g:()=>(current.shape!=="round"||current.clock!=="neon-blue"||current.hand!=="darkblue"||current.effect!=="red")?1:0,done:false}
+function formatTime(s){
+    s = Math.floor(s);
+    const u = [
+        {name:"тисячоліття",v:31536000000},{name:"століття",v:3153600000},
+        {name:"десятиліття",v:315360000},{name:"рік",v:31536000},
+        {name:"міс",v:2592000},{name:"дн",v:86400},
+        {name:"год",v:3600},{name:"хв",v:60},{name:"сек",v:1}
     ];
-    if(!achRoot) return;
-    achievementsList.forEach(a=>{
-        const e=d.createElement("div");
-        e.className="achievement";
-        e.innerHTML=`<strong>${a.t}</strong><div style="font-size:12px;color:#bcd">${a.desc}</div><div class="ach-progress"></div><div class="ach-state">0%</div>`;
-        achRoot.appendChild(e);
-        a.p=e.querySelector(".ach-progress");
-        a.s=e.querySelector(".ach-state");
-    });
+    let r = s, p = [];
+    for(const x of u){
+        const a = Math.floor(r/x.v);
+        if(a > 0){p.push(`${a} ${x.name}`);r %= x.v;}
+    }
+    return p.length ? p.join(" ") : `${s} сек`;
 }
-function updateAchievements(){
-    if(!achievementsList.length) return;
-    achievementsList.forEach(a=>{
-        const v=a.g(),p=Math.min(100,(v/a.tg)*100);
-        if(a.p) a.p.style.width=p+"%";
-        if(p>=100&&!a.done){
-            a.done=true;
-            if(a.s) a.s.textContent="Виконано ✅";
-            if(a.s) a.s.style.color="#8df299";
-            showToast(`Досягнення: ${a.t} ✅`);
-        }else if(p<100 && a.s){
-            a.s.textContent=Math.floor(p)+"%";
+
+// === ОСНОВНІ ФУНКЦІЇ ГРИ ===
+function startGame(v){
+    id('chooser').style.display = 'none';
+    id('game').classList.remove('game-hidden');
+    if(v === 'mobile') d.body.classList.add('mobile-version');
+    else d.body.classList.remove('mobile-version');
+    initGame();
+}
+
+function initGame(){
+    // === БЛОКУВАННЯ EVAL ДЛЯ БЕЗПЕКИ ===
+    (function(){'use strict';})();
+    
+    // === ОПТИМІЗАЦІЯ ДЛЯ МОБІЛЬНИХ ===
+    const m = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+    if(m) applyMobileOptimizations();
+    
+    // === ІНІЦІАЛІЗАЦІЯ DOM-ЕЛЕМЕНТІВ ===
+    initializeDOMElements();
+    
+    // === ІНІЦІАЛІЗАЦІЯ СИСТЕМ ===
+    initializeSystems();
+    
+    // === ЗАПУСК ІНТЕРВАЛІВ ===
+    startIntervals();
+    
+    // === ПЕРШОПОЧАТКОВЕ ОНОВЛЕННЯ ===
+    setTimeout(()=>{
+        updateScore();updateStats();updateAchievements();updateReverbText();
+        refreshAllSkinGrids();applyAllSkins();
+    },100);
+}
+
+function applyMobileOptimizations(){
+    // ОНОВЛЕННЯ СТРІЛОК - ЗМЕНШЕНА ЧАСТОТА
+    const oh = updateClockHands;
+    let rafId, lastUpdate = 0;
+    updateClockHands = () => {
+        const now = Date.now();
+        if(now - lastUpdate >= 50){
+            oh();
+            lastUpdate = now;
+        }
+        rafId = requestAnimationFrame(updateClockHands);
+    };
+    
+    // ПЛАВАЮЧІ ЧИСЛА - ОБМЕЖЕННЯ КІЛЬКОСТІ
+    let f = [];
+    const osf = showFloating;
+    showFloating = t => {
+        if(f.length >= 2){
+            f.forEach((o,i)=>{if(i < f.length-1 && o.parentNode) o.parentNode.removeChild(o);});
+            f = f.slice(-1);
+        }
+        const e = d.createElement("div");
+        e.textContent = t;
+        e.style.cssText = "position:absolute;right:10px;top:30px;color:#ffccd1;font-weight:700;opacity:1;transition:all 0.7s ease-out;font-size:14px;";
+        clockWrapper.appendChild(e);
+        f.push(e);
+        requestAnimationFrame(()=>{
+            e.style.transform = "translateX(40px) translateY(-50px)";
+            e.style.opacity = "0";
+        });
+        setTimeout(()=>{
+            if(e.parentNode) e.parentNode.removeChild(e);
+            f = f.filter(i=>i !== e);
+        },700);
+    };
+    
+    // СПОВІЩЕННЯ - ОБМЕЖЕННЯ КІЛЬКОСТІ
+    let tc = 0;
+    const ot = showToast;
+    showToast = t => {
+        if(tc >= 2) return;
+        tc++;
+        ot(t);
+        setTimeout(()=>{tc = Math.max(0,tc-1);},3000);
+    };
+}
+
+// === ІНІЦІАЛІЗАЦІЯ DOM-ЕЛЕМЕНТІВ ===
+let clock, clockWrapper, comboBubble, comboCount, clickCloudEl, musicBtn, prevTrack, nextTrack;
+let player, scoreText, upgradesContainer, multipliersContainer, clickGainEl, cloudTotalEl;
+let nowPlaying, realTimePlayedEl, virtualTimeEl, totalUpgradesEl, maxPerClickEl, prestigeMultEl;
+let reverbBtn, timeTunnel, worldTitle, toastContainer, reverbOverlay, reverbClock;
+let reverbHint, reverbDesc, nextMultiplierEl;
+
+function initializeDOMElements(){
+    clock = id("clickableClock");
+    clockWrapper = id("clockWrapper");
+    comboBubble = id("comboBubble");
+    comboCount = id("comboCount");
+    clickCloudEl = id("clickCloud");
+    musicBtn = id("musicBtn");
+    prevTrack = id("prevTrack");
+    nextTrack = id("nextTrack");
+    player = id("player");
+    scoreText = id("score");
+    upgradesContainer = id("upgrades");
+    multipliersContainer = id("multipliers");
+    clickGainEl = id("clickGain");
+    cloudTotalEl = id("cloudTotal");
+    nowPlaying = id("nowPlaying");
+    realTimePlayedEl = id("realTimePlayed");
+    virtualTimeEl = id("virtualTime");
+    totalUpgradesEl = id("totalUpgrades");
+    maxPerClickEl = id("maxPerClick");
+    prestigeMultEl = id("prestigeMult");
+    reverbBtn = id("reverbBtn");
+    timeTunnel = id("timeTunnel");
+    worldTitle = id("worldTitle");
+    toastContainer = id("toastContainer");
+    reverbOverlay = id("reverbOverlay");
+    reverbClock = id("reverbClock");
+    reverbHint = id("reverbHint");
+    reverbDesc = id("reverbDesc");
+    nextMultiplierEl = id("nextMultiplier");
+}
+
+// === ІНІЦІАЛІЗАЦІЯ СИСТЕМ ===
+function initializeSystems(){
+    initDate();
+    initMusic();
+    initUpgrades();
+    initMultipliers();
+    initAchievements();
+    initSkins();
+    initReverbSystem();
+    initTabs();
+    initSecretSystem();
+    initClickHandler();
+}
+
+function initDate(){
+    function updateDate(){id("currentDate").textContent = new Date().toLocaleDateString('uk-UA');}
+    updateDate(); setInterval(updateDate,60000);
+}
+
+function initMusic(){
+    const trackNames = ["Фонк №1","Фонк №2","Фонк №3","Фонк №4","Фонк №5","Фонк №6","Фонк №7"];
+    const tracks = [
+        "asphalt-menace.mp3","digital-overdrive.mp3","drift-phonk-phonk-music-2-434611.mp3",
+        "drift-phonk-phonk-music-432222.mp3","phonk-music-409064 (2).mp3",
+        "phonk-music-phonk-2025-432208.mp3","pixel-drift.mp3"
+    ].map(x=>`musicList/${x}`);
+    
+    function loadTrack(i){
+        player.src = tracks[i];
+        nowPlaying.textContent = `Зараз: ${trackNames[i]}`;
+        if(isPlaying) player.play();
+    }
+    
+    loadTrack(0);
+    player.addEventListener("ended",()=>{
+        currentTrack = (currentTrack + 1) % tracks.length;
+        loadTrack(currentTrack);
+    });
+    
+    musicBtn.addEventListener("click",()=>{
+        if(!isPlaying){
+            isPlaying = 1;
+            player.volume = 0.45;
+            player.play().catch(()=>{});
+            musicBtn.textContent = "⏸ Зупинити музику";
+        } else {
+            isPlaying = 0;
+            player.pause();
+            musicBtn.textContent = "▶️ Включити музику";
         }
     });
+    
+    prevTrack.onclick = () => {
+        currentTrack = (currentTrack - 1 + tracks.length) % tracks.length;
+        loadTrack(currentTrack);
+    };
+    
+    nextTrack.onclick = () => {
+        currentTrack = (currentTrack + 1) % tracks.length;
+        loadTrack(currentTrack);
+    };
 }
 
-// === АПГРЕЙДИ ===
+// === СИСТЕМА КЛІКІВ ===
+function initClickHandler(){
+    let lastClick = 0;
+    clockWrapper.addEventListener("click", e => {
+        const now = Date.now();
+        if(now - lastClick < 100) return;
+        lastClick = now;
+        if(e.target.closest("#clickableClock") || e.target === clockWrapper) addTime();
+    });
+}
+
+function addTime(){
+    const g = Math.round(clickPower * clickMultiplier * prestigeMultiplier);
+    score += g;
+    clickCloudTotal += g;
+    if(g > maxPerClick) maxPerClick = g;
+    clickGainEl.textContent = `+${formatTime(g)}`;
+    showFloating(`+${formatTime(g)}`);
+    triggerClickEffect();
+    handleClickCombo();
+    updateScore();
+    updatePrestigeProgress();
+}
+
+function handleClickCombo(){
+    const MAX_CLICK_INTERVAL = 350, COMBO_THRESHOLD = 5;
+    const n = Date.now();
+    if(n - lastClickTime < MAX_CLICK_INTERVAL) currentCombo++;
+    else currentCombo = 1;
+    lastClickTime = n;
+    if(currentCombo > maxComboEver) maxComboEver = currentCombo;
+    if(currentCombo >= COMBO_THRESHOLD){
+        comboCount.textContent = currentCombo;
+        comboBubble.classList.add("show");
+    }
+    clearTimeout(comboTimeout);
+    comboTimeout = setTimeout(()=>{
+        if(currentCombo >= COMBO_THRESHOLD){
+            comboBubble.classList.add("burst");
+            showToast(`Комбо ×${currentCombo}! 🔥`);
+            setTimeout(()=>comboBubble.classList.remove("show","burst"),700);
+        }
+        currentCombo = 0;
+    },300);
+}
+
+function triggerClickEffect(){
+    clock.classList.remove("click-effect-red","click-effect-blue","click-effect-glitch","click-effect-blackhole","click-effect-ripple");
+    void clock.offsetWidth;
+    clock.classList.add("click-effect-"+current.effect);
+}
+
+// === СИСТЕМА АПГРЕЙДІВ ===
+const upgrades = [
+    {n:"Кліпати очима",c:1,l:0},{n:"Увімкнути телефон",c:8,l:0},
+    {n:"Гортати стрічку",c:40,l:0},{n:"Мем-тур",c:200,l:0},
+    {n:"Автоперегляд",c:1100,l:0},{n:"Підписка",c:6500,l:0},
+    {n:"Серіал-марафон",c:40000,l:0},{n:"Робота з дедлайном",c:250000,l:0},
+    {n:"Життєвий крінж",c:1600000,l:0},{n:"Discord-марафон",c:10000000,l:0},
+    {n:"Reels до ранку",c:65000000,l:0},{n:"Філософські роздуми",c:400000000,l:0}
+];
+
+function fib(n){
+    if(n <= 1) return n;
+    let a = 0, b = 1;
+    for(let i = 2; i <= n; i++) [a,b] = [b,a+b];
+    return b;
+}
+
 function initUpgrades(){
-    upgrades=[
-        {n:"Кліпати очима",c:1,l:0},
-        {n:"Увімкнути телефон",c:8,l:0},
-        {n:"Гортати стрічку",c:40,l:0},
-        {n:"Мем-тур",c:200,l:0},
-        {n:"Автоперегляд",c:1100,l:0},
-        {n:"Підписка",c:6500,l:0},
-        {n:"Серіал-марафон",c:40000,l:0},
-        {n:"Робота з дедлайном",c:250000,l:0},
-        {n:"Життєвий крінж",c:1600000,l:0},
-        {n:"Discord-марафон",c:10000000,l:0},
-        {n:"Reels до ранку",c:65000000,l:0},
-        {n:"Філософські роздуми",c:400000000,l:0}
-    ];
-    
-    function fib(n){if(n<=1)return n;let a=0,b=1;for(let i=2;i<=n;i++)[a,b]=[b,a+b];return b;}
-    
     upgrades.forEach((u,i)=>{
-        const b=d.createElement("button");
-        b.className="upgrade-btn";
-        if(i>0)b.classList.add("hidden");
+        const b = d.createElement("button");
+        b.className = "upgrade-btn";
+        if(i > 0) b.classList.add("hidden");
         b.addEventListener("click",()=>buyUpgrade(i));
-        if(upgradesContainer) upgradesContainer.appendChild(b);
+        upgradesContainer.appendChild(b);
         buttons.push(b);
-        u.up=function(){
-            const f=fib(u.l+6),c=Math.floor(u.c*f*(i+1));
-            b.innerHTML=`${u.n} (Lv.${u.l})<span>${formatTime(c)}</span>`;
-            b.disabled=score<c;
+        
+        u.up = function(){
+            const f = fib(u.l + 6), c = Math.floor(u.c * f * (i+1));
+            b.innerHTML = `${u.n} (Lv.${u.l})<span>${formatTime(c)}</span>`;
+            b.disabled = score < c;
         };
-        u.getC=function(){return Math.floor(u.c*fib(u.l+6)*(i+1));};
+        
+        u.getC = function(){return Math.floor(u.c * fib(u.l + 6) * (i+1));};
         u.up();
     });
 }
-function revealNext(){const c=upgrades.filter(u=>u.l>0).length;if(buttons[c])buttons[c].classList.remove("hidden");}
+
+function revealNext(){
+    const c = upgrades.filter(u=>u.l > 0).length;
+    if(buttons[c]) buttons[c].classList.remove("hidden");
+}
+
 function buyUpgrade(i){
-    const u=upgrades[i],c=u.getC();
-    if(score<c)return;
-    score-=c;
+    const u = upgrades[i], c = u.getC();
+    if(score < c) return;
+    score -= c;
     u.l++;
     totalUpgradesBought++;
-    autoRate+=(i+1)*5*prestigeMultiplier;
-    setTimeout(saveGame,100);
+    autoRate += (i+1) * 5 * prestigeMultiplier;
     showToast(`Куплено: ${u.n} (Lv.${u.l}) ✅`);
+    
+    // Спеціальні ефекти для апгрейдів
+    switch(u.n){
+        case "Кліпати очима":
+            d.body.classList.remove("eye-blink");
+            void d.body.offsetWidth;
+            d.body.classList.add("eye-blink");
+            setTimeout(()=>d.body.classList.remove("eye-blink"),1000);
+            break;
+        case "Увімкнути телефон":
+            setTimeout(()=>showPhoneLockScreen(),500);
+            break;
+        case "Гортати стрічку":
+            setTimeout(()=>handleNewsFeedUpgrade(),300);
+            break;
+        case "Мем-тур":
+            setTimeout(()=>{
+                showMeme();
+                setTimeout(()=>{
+                    score += 1000;
+                    clickCloudTotal += 1000;
+                    showToast("Посмішка за смішний мем! 😂");
+                    updateScore();
+                },1500);
+            },300);
+            break;
+        case "Автоперегляд":
+            setTimeout(()=>showAutoplay(),300);
+            break;
+        case "Підписка":
+            setTimeout(()=>showSubscription(),300);
+            break;
+        case "Серіал-марафон":
+            setTimeout(()=>showSeriesMarathon(),300);
+            break;
+        case "Робота з дедлайном":
+            setTimeout(()=>showDeadlineWork(),300);
+            break;
+        case "Життєвий крінж":
+            setTimeout(()=>showCringe(),300);
+            break;
+        case "Discord-марафон":
+            setTimeout(()=>showDiscord(),300);
+            break;
+        case "Reels до ранку":
+            setTimeout(()=>showReels(),300);
+            break;
+        case "Філософські роздуми":
+            setTimeout(()=>showPhilosophy(),300);
+            break;
+    }
+    
     requestAnimationFrame(()=>{
         revealNext();
         u.up();
@@ -155,524 +399,1558 @@ function buyUpgrade(i){
     });
 }
 
+function updateAllButtons(){
+    upgrades.forEach(u=>u.up());
+    multipliers.forEach(m=>m.up && m.up());
+}
+
 // === МНОЖНИКИ КЛІКУ ===
+const multipliers = [
+    {n:"Подвійний клік",c:5000,m:2,b:0},
+    {n:"Потрійний клік",c:50000,m:3,b:0},
+    {n:"x10 за клік",c:1000000,m:10,b:0},
+    {n:"x50 за клік",c:20000000,m:50,b:0},
+    {n:"x100 за клік",c:100000000,m:100,b:0}
+];
+
 function initMultipliers(){
-    multipliers=[
-        {n:"Подвійний клік",c:5000,m:2,b:0},
-        {n:"Потрійний клік",c:50000,m:3,b:0},
-        {n:"x10 за клік",c:1000000,m:10,b:0},
-        {n:"x50 за клік",c:20000000,m:50,b:0},
-        {n:"x100 за клік",c:100000000,m:100,b:0}
-    ];
-    
     multipliers.forEach(m=>{
-        const b=d.createElement("button");
-        b.className="upgrade-btn multiplier-btn";
+        const b = d.createElement("button");
+        b.className = "upgrade-btn multiplier-btn";
+        
         function upB(){
             if(m.b){b.remove();return;}
-            const a=score>=m.c;
-            b.innerHTML=`${m.n}<span>${formatTime(m.c)}</span>`;
-            b.disabled=!a;
-            b.style.background=a?"":"#334155";
-            b.style.opacity=a?"1":"0.5";
+            const a = score >= m.c;
+            b.innerHTML = `${m.n}<span>${formatTime(m.c)}</span>`;
+            b.disabled = !a;
+            b.style.background = a ? "" : "#334155";
+            b.style.opacity = a ? "1" : "0.5";
         }
+        
         b.addEventListener("click",()=>{
-            if(score<m.c||m.b)return;
+            if(score < m.c || m.b) return;
             requestAnimationFrame(()=>{
-                score-=m.c;
-                m.b=1;
-                clickMultiplier=m.m;
+                score -= m.c;
+                m.b = 1;
+                clickMultiplier = m.m;
                 showToast(`Активовано: ${m.n}!`);
                 upB();
                 updateScore();
                 updateStats();
             });
-        });
-        if(multipliersContainer) multipliersContainer.appendChild(b);
-        m.up=upB;
+        },{passive:true});
+        
+        multipliersContainer.appendChild(b);
+        m.up = upB;
         upB();
     });
 }
 
-// === СИСТЕМА КЛІКІВ ===
-function addTime(){
-    const g=Math.round(clickPower*clickMultiplier*prestigeMultiplier);
-    score+=g;
-    clickCloudTotal+=g;
-    if(g>maxPerClick)maxPerClick=g;
-    clickGainEl.textContent=`+${formatTime(g)}`;
-    showFloating(`+${formatTime(g)}`);
-    triggerClickEffect();
-    handleClickCombo();
-    updateScore();
+// === СИСТЕМА ОНОВЛЕННЯ ІНТЕРФЕЙСУ ===
+function updateScore(){
+    scoreText.textContent = `Часу витрачено: ${formatTime(score)}`;
+    cloudTotalEl.textContent = `${formatTime(clickCloudTotal)}`;
+    updateAllButtons();
+}
+
+function updateStats(){
+    realTimePlayedEl.textContent = formatTime((Date.now() - sessionStart) / 1000);
+    virtualTimeEl.textContent = formatTime(score);
+    totalUpgradesEl.textContent = totalUpgradesBought;
+    maxPerClickEl.textContent = formatTime(maxPerClick);
+    prestigeMultEl.textContent = prestigeMultiplier.toFixed(2);
+    id("maxAutoRate").textContent = formatTime(autoRate);
+    id("maxCombo").textContent = maxComboEver;
+    id("totalReverbs").textContent = totalReverbs;
+    
+    const a = achievementsList.filter(x=>x.done).length;
+    id("achievedCount").textContent = a;
+    id("totalAchievements").textContent = achievementsList.length;
+    
+    id("shapeSkinsCount").textContent = ownedSkins.shapes.length;
+    id("clockSkinsCount").textContent = ownedSkins.clockSkins.length;
+    id("handSkinsCount").textContent = ownedSkins.handSkins.length;
+    id("effectSkinsCount").textContent = ownedSkins.effects.length;
+    id("totalSkins").textContent = ownedSkins.shapes.length + ownedSkins.clockSkins.length + 
+                                  ownedSkins.handSkins.length + ownedSkins.effects.length;
+    
+    updateReverbText();
     updatePrestigeProgress();
 }
-function handleClickCombo(){
-    const n=Date.now();
-    if(n-lastClickTime<MAX_CLICK_INTERVAL)currentCombo++;
-    else currentCombo=1;
-    lastClickTime=n;
-    if(currentCombo>maxComboEver)maxComboEver=currentCombo;
-    if(currentCombo>=COMBO_THRESHOLD){
-        comboCount.textContent=currentCombo;
-        comboBubble.classList.add("show");
-    }
-    clearTimeout(comboTimeout);
-    comboTimeout=setTimeout(()=>{
-        if(currentCombo>=COMBO_THRESHOLD){
-            comboBubble.classList.add("burst");
-            showToast(`Комбо ×${currentCombo}! 🔥`);
-            setTimeout(()=>comboBubble.classList.remove("show","burst"),700);
-        }
-        currentCombo=0;
-    },300);
-}
-function triggerClickEffect(){
-    clock.classList.remove("click-effect-red","click-effect-blue","click-effect-glitch","click-effect-blackhole","click-effect-ripple");
-    void clock.offsetWidth;
-    clock.classList.add("click-effect-"+current.effect);
-}
-let lastClick=0;
-function setupClockClick(){
-    clockWrapper.addEventListener("click",e=>{
-        const now=Date.now();
-        if(now-lastClick<100)return;
-        lastClick=now;
-        if(e.target.closest("#clickableClock")||e.target===clockWrapper)addTime();
+
+// === ДОСЯГНЕННЯ ===
+let achievementsList = [];
+function initAchievements(){
+    achievementsList = [
+        {t:"Перший клік",desc:"Зробити перший клік",tg:1,g:()=>clickCloudTotal,done:false},
+        {t:"100 сек",desc:"Витратити 100 сек",tg:100,g:()=>score,done:false},
+        {t:"Перша покупка",desc:"Купити перший апгрейд",tg:1,g:()=>totalUpgradesBought,done:false},
+        {t:"Авто запущено",desc:"Витрачаєш час автоматично",tg:1,g:()=>autoRate>0?1:0,done:false},
+        {t:"Комбо-майстер",desc:"Досягти комбо 10+",tg:10,g:()=>maxComboEver,done:false},
+        {t:"Майстер форм",desc:"Володіти 3 формами годинника",tg:3,g:()=>ownedSkins.shapes.length,done:false},
+        {t:"Господар рамок",desc:"Володіти 3 кольорами рамки",tg:3,g:()=>ownedSkins.clockSkins.length,done:false},
+        {t:"Колекціонер стрілок",desc:"Володіти 3 скінами стрілок",tg:3,g:()=>ownedSkins.handSkins.length,done:false},
+        {t:"Маг ефектів",desc:"Володіти 3 ефектами кліку",tg:3,g:()=>ownedSkins.effects.length,done:false},
+        {t:"Стильний",desc:"Змінити будь-який скін",tg:1,g:()=>(current.shape!=="round"||current.clock!=="neon-blue"||current.hand!=="darkblue"||current.effect!=="red")?1:0,done:false}
+    ];
+    
+    const achRoot = id("achievements");
+    achievementsList.forEach(a=>{
+        const e = d.createElement("div");
+        e.className = "achievement";
+        e.innerHTML = `<strong>${a.t}</strong><div style="font-size:12px;color:#bcd">${a.desc}</div><div class="ach-progress"></div><div class="ach-state">0%</div>`;
+        achRoot.appendChild(e);
+        a.p = e.querySelector(".ach-progress");
+        a.s = e.querySelector(".ach-state");
     });
 }
 
-// === ОСНОВНІ ФУНКЦІЇ ===
-function startGame(v){
-    id('chooser').style.display='none';
-    id('game').classList.remove('game-hidden');
-    if(v==='mobile')d.body.classList.add('mobile-version');
-    else d.body.classList.remove('mobile-version');
-    loadGame();
-    initGame();
+function updateAchievements(){
+    achievementsList.forEach(a=>{
+        const v = a.g(), p = Math.min(100,(v/a.tg)*100);
+        a.p.style.width = p + "%";
+        if(p >= 100 && !a.done){
+            a.done = true;
+            a.s.textContent = "Виконано ✅";
+            a.s.style.color = "#8df299";
+            showToast(`Досягнення: ${a.t} ✅`);
+        } else if(p < 100) a.s.textContent = Math.floor(p) + "%";
+    });
 }
-function initGame(){
-    // Ініціалізація DOM-елементів
-    clock=id('clickableClock');
-    clockWrapper=q('.clock-wrapper');
-    comboBubble=q('.combo-bubble');
-    comboCount=q('.combo-count');
-    clickCloudEl=id('clickCloudTotal');
-    musicBtn=id('musicBtn');
-    prevTrack=id('prevTrack');
-    nextTrack=id('nextTrack');
-    player=id('player')||q('audio');
-    scoreText=id('scoreText');
-    upgradesContainer=id('upgradesContainer');
-    multipliersContainer=id('multipliersContainer');
-    clickGainEl=id('clickGain');
-    cloudTotalEl=id('cloudTotal');
-    nowPlaying=id('nowPlaying');
-    realTimePlayedEl=id('realTimePlayed');
-    virtualTimeEl=id('virtualTime');
-    totalUpgradesEl=id('totalUpgrades');
-    maxPerClickEl=id('maxPerClick');
-    prestigeMultEl=id('prestigeMult');
-    reverbBtn=id('reverbBtn');
-    timeTunnel=id('timeTunnel');
-    worldTitle=id('worldTitle');
-    toastContainer=id('toastContainer');
-    reverbOverlay=id('reverbOverlay');
-    reverbClock=id('reverbClock');
-    reverbHint=id('reverbHint');
-    reverbDesc=id('reverbDesc');
-    nextMultiplierEl=id('nextMultiplier');
+
+// === СИСТЕМА СКІНІВ ===
+function initSkins(){
+    refreshAllSkinGrids();
+    applyAllSkins();
+}
+
+function buySkin(t,i,p,n){
+    if(ownedSkins[t].includes(i)){
+        current[t==="shapes"?"shape":t==="clockSkins"?"clock":t==="handSkins"?"hand":"effect"] = i;
+        applyAllSkins();
+        refreshAllSkinGrids();
+        return showToast("Скін застосовано! ✅");
+    }
+    if(score < p) return showToast("Не вистачає часу!");
+    score -= p;
+    ownedSkins[t].push(i);
+    current[t==="shapes"?"shape":t==="clockSkins"?"clock":t==="handSkins"?"hand":"effect"] = i;
+    applyAllSkins();
+    updateScore();
+    updateStats();
+    updateAchievements();
+    updatePrestigeProgress();
+    showToast(`Куплено: ${n} ✅`);
+    refreshAllSkinGrids();
+}
+
+function applyAllSkins(){
+    qa('.clock').forEach(c=>c.className = "clock " + current.shape);
+    clockSkins.find(s=>s.id === current.clock)?.a();
+    handSkins.find(s=>s.id === current.hand)?.a();
+}
+
+function createSkinGrid(ct,ls,t){
+    const r = id(ct);
+    r.innerHTML = "";
+    ls.forEach(s=>{
+        const e = d.createElement("div");
+        e.className = "skin";
+        e.textContent = s.n;
+        const o = ownedSkins[t].includes(s.id);
+        const a = current[t==="shapes"?"shape":t==="clockSkins"?"clock":t==="handSkins"?"hand":"effect"] === s.id;
+        if(o){
+            e.classList.add("owned");
+            if(a) e.classList.add("active");
+            e.onclick = ()=>{
+                current[t==="shapes"?"shape":t==="clockSkins"?"clock":t==="handSkins"?"hand":"effect"] = s.id;
+                applyAllSkins();
+                refreshAllSkinGrids();
+                showToast("Скін застосовано! ✅");
+            }
+        } else {
+            e.style.opacity = "0.4";
+            if(score >= s.p){
+                e.style.opacity = "1";
+                e.style.boxShadow = "0 0 15px #0ff";
+            }
+            e.innerHTML += `<br><small style="color:#ff00ff">${formatTime(s.p)}</small>`;
+            e.onclick = () => buySkin(t,s.id,s.p,s.n);
+        }
+        r.appendChild(e);
+    });
+}
+
+function refreshAllSkinGrids(){
+    createSkinGrid("shapeSkins",shapes,"shapes");
+    createSkinGrid("clockSkins",clockSkins,"clockSkins");
+    createSkinGrid("handSkins",handSkins,"handSkins");
+    createSkinGrid("effectSkins",effects,"effects");
+}
+
+function updateSkinHighlights(){
+    [
+        {l:shapes,t:"shapes",c:"shapeSkins"},
+        {l:clockSkins,t:"clockSkins",c:"clockSkins"},
+        {l:handSkins,t:"handSkins",c:"handSkins"},
+        {l:effects,t:"effects",c:"effectSkins"}
+    ].forEach(obj=>{
+        const ct = id(obj.c);
+        if(!ct) return;
+        Array.from(ct.children).forEach((el,i)=>{
+            const s = obj.l[i], o = ownedSkins[obj.t].includes(s.id);
+            if(!o){
+                if(score >= s.p){
+                    el.style.opacity = "1";
+                    el.style.boxShadow = "0 0 15px #0ff";
+                } else {
+                    el.style.opacity = "0.4";
+                    el.style.boxShadow = "";
+                }
+                el.innerHTML = s.n + `<br><small style="color:#ff00ff">${formatTime(s.p)}</small>`;
+            } else {
+                el.style.opacity = "1";
+                el.style.boxShadow = "";
+                el.innerHTML = s.n;
+            }
+        });
+    });
+}
+
+// === ГОДИННИК ===
+function updateClockHands(){
+    const n = new Date();
+    const s = n.getSeconds() + n.getMilliseconds()/1000;
+    const m = n.getMinutes() + s/60;
+    const h = (n.getHours() % 12 || 12) + m/60;
+    qa("#clickableClock .second").forEach(x=>x.style.transform = `translateX(-50%) rotate(${s*6}deg)`);
+    qa("#clickableClock .minute").forEach(x=>x.style.transform = `translateX(-50%) rotate(${m*6}deg)`);
+    qa("#clickableClock .hour").forEach(x=>x.style.transform = `translateX(-50%) rotate(${h*30}deg)`);
+}
+
+// === СИСТЕМА ПЕРЕЗАПУСКУ ===
+function updatePrestigeProgress(){
+    currentPrestigeProgress = score;
+    const pB = id('prestigeProgressBar'), pT = id('prestigeProgressText');
+    const pP = Math.min(100,(currentPrestigeProgress/prestigeThreshold)*100);
+    if(pB){
+        pB.style.width = pP + '%';
+        pB.style.background = pP >= 100 ? 'linear-gradient(90deg, #10b981, #34d399)' :
+                               pP >= 50 ? 'linear-gradient(90deg, #f59e0b, #fbbf24)' :
+                               'linear-gradient(90deg, #ef4444, #f87171)';
+    }
+    if(pT) pT.textContent = `${formatTime(currentPrestigeProgress)} / ${formatTime(prestigeThreshold)}`;
+    updateReverbButtonState();
+}
+
+function updateReverbButtonState(){
+    const c = currentPrestigeProgress >= prestigeThreshold;
+    reverbBtn.disabled = !c;
+    reverbBtn.style.opacity = c ? '1' : '0.6';
+    reverbBtn.style.cursor = c ? 'pointer' : 'not-allowed';
+    reverbBtn.style.background = c ? 'linear-gradient(90deg, #10b981, #34d399)' : 'linear-gradient(90deg, #6b7280, #9ca3af)';
+}
+
+function updateReverbText(){
+    if(nextMultiplierEl) nextMultiplierEl.textContent = (prestigeMultiplier * 1.2).toFixed(2);
+    if(reverbDesc) reverbDesc.textContent = `Потрібно для перезапуску: ${formatTime(prestigeThreshold)}`;
+}
+
+// === СИСТЕМА ЕФЕКТУ ПЕРЕЗАПУСКУ ===
+const restartEffect = {
+    active: false,
+    clocksInt: null,
+    bubblesInt: null,
+    clocksContainer: null,
+    bubblesContainer: null,
+    completionScreen: null,
     
-    // Ініціалізація систем
-    initAchievements();
-    initUpgrades();
-    initMultipliers();
-    setupClockClick();
+    init(){
+        const e = d.createElement("div");
+        e.id = "restartEffectOverlay";
+        e.style.cssText = "position:fixed;top:0;left:0;width:100%;height:100%;z-index:10000;display:none;pointer-events:none;background:transparent;";
+        d.body.appendChild(e);
+        
+        this.clocksContainer = d.createElement("div");
+        this.clocksContainer.style.cssText = "position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;";
+        
+        this.bubblesContainer = d.createElement("div");
+        this.bubblesContainer.style.cssText = "position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;";
+        
+        e.appendChild(this.clocksContainer);
+        e.appendChild(this.bubblesContainer);
+        
+        // Екран завершення
+        this.completionScreen = d.createElement("div");
+        this.completionScreen.id = "reverbCompletionScreen";
+        this.completionScreen.style.cssText = "position:fixed;top:0;left:0;width:100%;height:100%;background:#000;z-index:10002;display:none;align-items:center;justify-content:center;flex-direction:column;color:white;font-family:Poppins;text-align:center;";
+        this.completionScreen.innerHTML = `
+            <div style="font-size:32px;margin-bottom:20px;text-shadow:0 0 20px #0ea5e9">Ви успішно повернулися в часі!</div>
+            <div style="font-size:24px;margin-bottom:20px">Ваш множник: ${prestigeMultiplier.toFixed(2)}×</div>
+            <div style="font-size:18px;color:#cfeaff">Натисніть будь-де щоб продовжити</div>
+        `;
+        d.body.appendChild(this.completionScreen);
+    },
     
-    // Ініціалізація музики
-    const trackNames=["Фонк №1","Фонк №2","Фонк №3","Фонк №4","Фонк №5","Фонк №6","Фонк №7"];
-    const tracks=["asphalt-menace.mp3","digital-overdrive.mp3","drift-phonk-phonk-music-2-434611.mp3","drift-phonk-phonk-music-432222.mp3","phonk-music-409064 (2).mp3","phonk-music-phonk-2025-432208.mp3","pixel-drift.mp3"].map(x=>`musicList/${x}`);
-    let currentTrack=0,isPlaying=0;
-    function loadTrack(i){player.src=tracks[i];nowPlaying.textContent=`Зараз: ${trackNames[i]}`;if(isPlaying)player.play();}
-    loadTrack(0);
-    player.addEventListener("ended",()=>{currentTrack=(currentTrack+1)%tracks.length;loadTrack(currentTrack);});
-    musicBtn.addEventListener("click",()=>{
-        if(!isPlaying){
-            isPlaying=1;
-            player.volume=0.45;
-            player.play().catch(()=>{});
-            musicBtn.textContent="⏸ Зупинити музику";
-        }else{
-            isPlaying=0;
-            player.pause();
-            musicBtn.textContent="▶️ Включити музику";
+    start(){
+        this.active = true;
+        id("restartEffectOverlay").style.display = "block";
+        this.clocksContainer.innerHTML = "";
+        this.bubblesContainer.innerHTML = "";
+        this.clocksInt = setInterval(()=>this.createFlyingClock(),300);
+        this.bubblesInt = setInterval(()=>this.createStatBubble(),1200);
+    },
+    
+    stop(){
+        this.active = false;
+        clearInterval(this.clocksInt);
+        clearInterval(this.bubblesInt);
+        id("restartEffectOverlay").style.display = "none";
+    },
+    
+    showCompletionScreen(){
+        reverbOverlay.classList.add("hidden");
+        id("restartEffectOverlay").style.display = "none";
+        timeTunnel.classList.remove("active","intense");
+        this.completionScreen.style.display = "flex";
+    },
+    
+    hideCompletionScreen(){
+        this.completionScreen.style.display = "none";
+    },
+    
+    createFlyingClock(){
+        const e = d.createElement("div");
+        e.className = "flying-clock";
+        const t = 80 + 100 * Math.random();
+        e.style.width = e.style.height = t + "px";
+        e.style.left = Math.random() * 100 + "%";
+        e.style.top = Math.random() * 100 + "%";
+        e.style.animationDuration = 4 + 6 * Math.random() + "s";
+        e.style.animationDelay = 0.5 * Math.random() + "s";
+        if(Math.random() > 0.5) e.style.transform = "scaleX(-1)";
+        this.clocksContainer.appendChild(e);
+        setTimeout(()=>{if(e.parentNode) e.parentNode.removeChild(e);},10000);
+    },
+    
+    createStatBubble(){
+        const e = d.createElement("div");
+        e.className = "stat-bubble";
+        const t = [
+            `Максимальне комбо: ${maxComboEver||0}`,
+            `Витрачено часу: ${formatTime(clickCloudTotal)}`,
+            `Ревербів: ${totalReverbs}`,
+            `Всього скінів: ${(ownedSkins.shapes.length+ownedSkins.clockSkins.length+ownedSkins.handSkins.length+ownedSkins.effects.length)||0}`,
+            `Авточас/сек: ${formatTime(autoRate)}`,
+            `Макс за клік: ${formatTime(maxPerClick)}`,
+            `Досягнень: ${(achievementsList.filter(e=>e.done).length)}/${achievementsList.length}`
+        ];
+        e.textContent = t[Math.floor(Math.random()*t.length)];
+        e.style.left = 10 + 80 * Math.random() + "%";
+        e.style.top = 20 + 60 * Math.random() + "%";
+        this.bubblesContainer.appendChild(e);
+        setTimeout(()=>{if(e.parentNode) e.parentNode.removeChild(e);},4000);
+    }
+};
+
+// === РЕВЕРБ СИСТЕМА ===
+function initReverbSystem(){
+    restartEffect.init();
+    
+    reverbBtn.addEventListener("click",()=>{
+        if(!confirm("Ти впевнений, що хочеш повернути час назад? Всі твої апгрейди будуть втрачені, але ти отримаєш множник!")) return;
+        startReverbMode();
+    });
+    
+    function updateReverbClockHands(){
+        if(!isReverbActive) return;
+        const e = qa("#reverbClock .hand");
+        if(e.length === 0) return;
+        if(reverbClock.classList.contains("reverb-chaos")){
+            requestAnimationFrame(updateReverbClockHands);
+            return;
+        }
+        const t = new Date();
+        const o = t.getSeconds() + t.getMilliseconds()/1000;
+        const n = t.getMinutes() + o/60;
+        const a = (t.getHours() % 12 || 12) + n/60;
+        qa("#reverbClock .second").forEach(e=>e.style.transform=`translateX(-50%) rotate(${o*6}deg)`);
+        qa("#reverbClock .minute").forEach(e=>e.style.transform=`translateX(-50%) rotate(${n*6}deg)`);
+        qa("#reverbClock .hour").forEach(e=>e.style.transform=`translateX(-50%) rotate(${a*30}deg)`);
+        requestAnimationFrame(updateReverbClockHands);
+    }
+    
+    function startReverbMode(){
+        reverbOverlay.classList.remove("hidden");
+        timeTunnel.classList.add("active");
+        reverbHint.style.opacity = "1";
+        isReverbActive = 1;
+        reverbClock.className = `clock ${current.shape}`;
+        clockSkins.find(s=>s.id === current.clock)?.a();
+        handSkins.find(s=>s.id === current.hand)?.a();
+        updateReverbClockHands();
+        setTimeout(()=>reverbHint.style.opacity = "0",3000);
+    }
+    
+    const startReverbHold = e => {
+        if(e.type.includes('touch')) e.preventDefault();
+        if(!isReverbActive) return;
+        reverbHint.style.opacity = "0";
+        reverbClock.classList.add("reverb-mode","reverb-chaos");
+        timeTunnel.classList.add("intense");
+        restartEffect.start();
+        
+        qa("#reverbClock .hand").forEach((e,t)=>{
+            const o = 0.5 + 2 * Math.random();
+            const n = Math.random() > 0.5 ? "normal" : "reverse";
+            e.style.setProperty("--duration",`${o}s`);
+            e.style.setProperty("--direction",n);
+            e.style.animation = `chaosSpin ${o}s linear infinite ${n}`;
+        });
+        
+        reverbHoldTimeout = setTimeout(completeReverb,10000);
+    };
+    
+    const stopReverbHold = e => {
+        if(e && e.type.includes('touch')) e.preventDefault();
+        clearTimeout(reverbHoldTimeout);
+        if(isReverbActive){
+            reverbClock.classList.remove("reverb-mode","reverb-chaos");
+            timeTunnel.classList.remove("intense");
+            qa("#reverbClock .hand").forEach(e=>{
+                e.style.animation = "none";
+                e.style.removeProperty("--duration");
+                e.style.removeProperty("--direction");
+            });
+            updateReverbClockHands();
+            restartEffect.stop();
+        }
+    };
+    
+    reverbClock.addEventListener("mousedown",startReverbHold);
+    reverbClock.addEventListener("touchstart",startReverbHold,{passive:false});
+    reverbClock.addEventListener("mouseup",stopReverbHold);
+    reverbClock.addEventListener("mouseleave",stopReverbHold);
+    reverbClock.addEventListener("touchend",stopReverbHold);
+    reverbClock.addEventListener("touchcancel",stopReverbHold);
+}
+
+function completeReverb(){
+    if(currentPrestigeProgress < prestigeThreshold){
+        showToast(`Потрібно ще ${formatTime(prestigeThreshold - currentPrestigeProgress)}!`);
+        return;
+    }
+    
+    stopReverbHold(new Event('manual'));
+    prestigeThreshold += 7200;
+    prestigeMultiplier *= 1.2;
+    totalReverbs++;
+    currentPrestigeProgress = score = clickCloudTotal = currentCombo = 0;
+    clickPower = maxPerClick = 1;
+    autoRate = totalUpgradesBought = 0;
+    
+    upgrades.forEach((e,t)=>{
+        e.l = 0;
+        if(buttons[t]) buttons[t].classList[t?"add":"remove"]("hidden");
+        e.up();
+    });
+    
+    multipliers.forEach(e=>{
+        if(e.b){
+            e.b = 0;
+            clickMultiplier = 1;
+        }
+        e.up?.();
+    });
+    
+    const e = d.createElement("div");
+    e.style.cssText = "position:fixed;top:0;left:0;width:100%;height:100%;background:white;z-index:10001;pointer-events:none;animation:flashFade 1s ease-out forwards;";
+    d.body.appendChild(e);
+    
+    setTimeout(()=>{
+        e.remove();
+        restartEffect.showCompletionScreen();
+        restartEffect.completionScreen.querySelector("div:nth-child(2)").textContent = `Множник: ${prestigeMultiplier.toFixed(2)}×`;
+        updateReverbText();
+        
+        const o = ()=>{
+            restartEffect.hideCompletionScreen();
+            isReverbActive = 0;
+            updateScore();
+            updateStats();
+            updateAchievements();
+            updatePrestigeProgress();
+            document.removeEventListener('click',o);
+            document.removeEventListener('touchstart',o);
+        };
+        document.addEventListener('click',o);
+        document.addEventListener('touchstart',o);
+    },1000);
+}
+
+// === СИСТЕМА ВКЛАДОК ===
+function initTabs(){
+    qa(".top-tabs .tab").forEach(b=>{
+        b.addEventListener("click",()=>{
+            qa(".top-tabs .tab").forEach(x=>x.classList.remove("active"));
+            qa(".tab-page").forEach(x=>x.classList.remove("active"));
+            b.classList.add("active");
+            id(b.dataset.tab).classList.add("active");
+        });
+    });
+}
+
+// === СЕКРЕТНА СИСТЕМА ===
+function initSecretSystem(){
+    if(!worldTitle) return;
+    
+    worldTitle.addEventListener("keydown",e=>{if(e.key==="Enter")e.preventDefault();});
+    
+    const normalizeTitle = ()=>{
+        let t = worldTitle.textContent.trim();
+        if(!t) worldTitle.textContent = "Times Clicker";
+        else if(!/\sTime$/i.test(t)) worldTitle.textContent = `${t} Time`;
+    };
+    
+    let titleCheckTimeout = null;
+    const checkTitleForSecret = ()=>{
+        const t = worldTitle.textContent.trim().replace(/\s+/g,'');
+        if(/^22092005$/i.test(t)){
+            if(!id("ultimateDevPanel")){
+                showToast("22.09.2005 — доступ відкрито через назву!");
+                createDevPanel();
+            }
+            if(titleCheckTimeout) clearTimeout(titleCheckTimeout);
+            titleCheckTimeout = null;
+            return;
+        }
+        clearTimeout(titleCheckTimeout);
+        titleCheckTimeout = setTimeout(checkTitleForSecret,800);
+    };
+    
+    worldTitle.addEventListener("blur",()=>{
+        normalizeTitle();
+        checkTitleForSecret();
+    });
+    
+    checkTitleForSecret();
+    
+    let secretCode = "", magicCode = "22092005";
+    d.addEventListener("keydown",e=>{
+        secretCode += e.key;
+        if(secretCode.length > 8) secretCode = secretCode.slice(-8);
+        if(secretCode === magicCode){
+            secretCode = "";
+            showToast("22.09.2005 — доступ відкрито!");
+            createDevPanel();
         }
     });
-    prevTrack.onclick=()=>{currentTrack=(currentTrack-1+tracks.length)%tracks.length;loadTrack(currentTrack);};
-    nextTrack.onclick=()=>{currentTrack=(currentTrack+1)%tracks.length;loadTrack(currentTrack);};
+}
+
+function createDevPanel(){
+    if(id("ultimateDevPanel")) return;
+    const p = d.createElement("div");
+    p.id = "ultimateDevPanel";
+    p.style.cssText = "position:fixed;bottom:20px;left:20px;z-index:99999;background:rgba(0,0,0,0.9);backdrop-filter:blur(12px);border:2px solid #ff00ff;border-radius:14px;padding:12px 16px;box-shadow:0 0 30px #ff00ff;font-family:Poppins,sans-serif;color:#fff;font-size:13px;width:210px;";
+    p.innerHTML = '<div style="color:#ff00ff;font-weight:700;text-align:center;margin-bottom:8px;font-size:14px;">Секретна панель</div>';
     
-    // Ініціалізація налаштувань
-    initSettings();
+    function addBtn(t,c,a){
+        const b = d.createElement("button");
+        b.textContent = t;
+        b.style.cssText = "margin:4px 0;padding:8px 12px;width:100%;background:"+c+";border:none;border-radius:10px;color:#fff;font-weight:600;cursor:pointer;font-size:12px;transition:transform 0.2s;";
+        b.onmouseover = ()=>b.style.transform = "translateY(-2px)";
+        b.onmouseout = ()=>b.style.transform = "";
+        b.onclick = ()=>{a();showToast(t+" OK");};
+        p.appendChild(b);
+    }
     
-    // Запуск оновлення годинника
-    requestAnimationFrame(function updateClock(){
-        updateClockHands();
-        requestAnimationFrame(updateClock);
+    addBtn("+10 години","#06d6d6",()=>{score+=36000;clickCloudTotal+=36000;updateScore();updateStats();});
+    addBtn("+100 авто/сек","#3b82f6",()=>autoRate+=100);
+    addBtn("×2 престиж","#a855f7",()=>{prestigeMultiplier*=2;updateStats();});
+    addBtn("Реверб","#ec4899",()=>completeReverb());
+    addBtn("Закрити","#555",()=>{p.remove();showToast("Панель закрита");});
+    
+    d.body.appendChild(p);
+}
+
+// === ДОПОМІЖНІ ФУНКЦІІ ===
+function showToast(t){
+    const e = d.createElement("div");
+    e.className = "toast";
+    e.textContent = t;
+    e.style.cssText = "font-size:18px;padding:22px 48px";
+    toastContainer.appendChild(e);
+    setTimeout(()=>e.remove(),10000);
+}
+
+function showFloating(t){
+    const e = d.createElement("div");
+    e.textContent = t;
+    e.style.cssText = "position:absolute;right:20px;top:50px;color:#ffccd1;font-weight:700;opacity:1;transition:all 0.9s ease-out";
+    clockWrapper.appendChild(e);
+    requestAnimationFrame(()=>{
+        e.style.transform = "translateX(60px) translateY(-80px)";
+        e.style.opacity = "0";
     });
+    setTimeout(()=>e.remove(),920);
+}
+
+// === ЗАПУСК ІНТЕРВАЛІВ ===
+function startIntervals(){
+    setInterval(updateClockHands,50);
+    updateClockHands();
     
-    // Запуск автоматичного прибутку
     setInterval(()=>{
-        const g=Math.round(autoRate*prestigeMultiplier);
-        if(g>0){
-            score+=g;
-            clickCloudTotal+=g;
+        const g = Math.round(autoRate * prestigeMultiplier);
+        if(g > 0){
+            score += g;
+            clickCloudTotal += g;
             updateScore();
         }
         updateStats();
         updateAchievements();
-    },1000);}
+    },1000);
+    
+    setInterval(()=>{
+        if(autoRate > maxAutoRate) maxAutoRate = autoRate;
+        if(maxComboEver > maxCombo) maxCombo = maxComboEver;
+    },1000);
+    
+    setInterval(updateSkinHighlights,50);
+}
+
+// === СИСТЕМИ АПГРЕЙДІВ (ОВЕРЛЕИ) ===
+
+// 1. ЕКРАН БЛОКУВАННЯ ТЕЛЕФОНУ
+let phoneLockImages = ['photoList/1.jpg','photoList/2.jpg','photoList/3.jpg','photoList/4.jpg','photoList/5.jpg','photoList/6.jpg','photoList/7.jpg','photoList/8.jpg','photoList/9.jpg','photoList/10.jpg'];
+let phoneSwipe = {startY:0,endY:0,isSwiping:false,hintTimeout:null};
+
+function showPhoneLockScreen(){
+    const randomIndex = Math.floor(Math.random()*phoneLockImages.length);
+    const lockImage = id('phoneLockImage');
+    lockImage.src = phoneLockImages[randomIndex];
+    const overlay = id('phoneLockOverlay');
+    overlay.style.display = 'flex';
+    phoneSwipe.startY = 0;
+    phoneSwipe.endY = 0;
+    phoneSwipe.isSwiping = false;
+    phoneSwipe.hintTimeout = setTimeout(()=>{
+        id('swipeHint').classList.add('show');
+    },10000);
+    setupPhoneSwipeListeners();
+}
+
+function hidePhoneLockScreen(){
+    const overlay = id('phoneLockOverlay');
+    overlay.style.display = 'none';
+    id('swipeHint').classList.remove('show');
+    if(phoneSwipe.hintTimeout){
+        clearTimeout(phoneSwipe.hintTimeout);
+        phoneSwipe.hintTimeout = null;
+    }
+    removePhoneSwipeListeners();
+}
+
+function setupPhoneSwipeListeners(){
+    const lockScreen = id('phoneLockScreen');
+    lockScreen.addEventListener('mousedown',handleSwipeStart);
+    lockScreen.addEventListener('mousemove',handleSwipeMove);
+    lockScreen.addEventListener('mouseup',handleSwipeEnd);
+    lockScreen.addEventListener('mouseleave',handleSwipeCancel);
+    lockScreen.addEventListener('touchstart',handleSwipeStart,{passive:false});
+    lockScreen.addEventListener('touchmove',handleSwipeMove,{passive:false});
+    lockScreen.addEventListener('touchend',handleSwipeEnd);
+    lockScreen.addEventListener('touchcancel',handleSwipeCancel);
+}
+
+function removePhoneSwipeListeners(){
+    const lockScreen = id('phoneLockScreen');
+    lockScreen.removeEventListener('mousedown',handleSwipeStart);
+    lockScreen.removeEventListener('mousemove',handleSwipeMove);
+    lockScreen.removeEventListener('mouseup',handleSwipeEnd);
+    lockScreen.removeEventListener('mouseleave',handleSwipeCancel);
+    lockScreen.removeEventListener('touchstart',handleSwipeStart);
+    lockScreen.removeEventListener('touchmove',handleSwipeMove);
+    lockScreen.removeEventListener('touchend',handleSwipeEnd);
+    lockScreen.removeEventListener('touchcancel',handleSwipeCancel);
+}
+
+function handleSwipeStart(e){
+    phoneSwipe.isSwiping = true;
+    phoneSwipe.startY = e.clientY || e.touches[0].clientY;
+    id('swipeHint').classList.remove('show');
+}
+
+function handleSwipeMove(e){
+    if(!phoneSwipe.isSwiping) return;
+    e.preventDefault();
+    phoneSwipe.endY = e.clientY || e.touches[0].clientY;
+    const deltaY = phoneSwipe.startY - phoneSwipe.endY;
+    if(deltaY > 100) handleSuccessfulUnlock();
+}
+
+function handleSwipeEnd(){phoneSwipe.isSwiping = false;}
+function handleSwipeCancel(){phoneSwipe.isSwiping = false;}
+
+function handleSuccessfulUnlock(){
+    hidePhoneLockScreen();
+    const notification = id('phoneUnlockNotification');
+    notification.classList.add('show');
+    setTimeout(()=>{notification.classList.remove('show');},3000);
+    score += 500;
+    clickCloudTotal += 500;
+    updateScore();
+}
+
+// 2. RSS СИСТЕМА
+const rssFeeds = [
+    'https://www.ukrinform.ua/rss','https://www.pravda.com.ua/rss/',
+    'https://interfax.com.ua/news/general.rss','https://tsn.ua/rss',
+    'https://www.bbc.com/ukrainian/index.xml'
+];
+let cachedNews = [], lastFetchTime = 0, shownNewsUrls = new Set(), newsTickerVisible = false;
+const CACHE_DURATION = 30 * 60 * 1000;
+
+async function fetchRSSNews(){
+    if(cachedNews.length > 0 && Date.now() - lastFetchTime < CACHE_DURATION) return cachedNews;
+    try{
+        const proxyUrl = 'https://api.allorigins.win/raw?url=';
+        const randomFeed = rssFeeds[Math.floor(Math.random()*rssFeeds.length)];
+        const response = await fetch(`${proxyUrl}${encodeURIComponent(randomFeed)}`,{mode:'cors'}).catch(()=>null);
+        if(!response) return [];
+        const text = await response.text();
+        const parser = new DOMParser();
+        const xmlDoc = parser.parseFromString(text,'text/xml');
+        const items = xmlDoc.querySelectorAll('item');
+        const news = [];
+        items.forEach(item=>{
+            const title = item.querySelector('title')?.textContent || '';
+            const description = item.querySelector('description')?.textContent || '';
+            const link = item.querySelector('link')?.textContent || '';
+            const pubDate = item.querySelector('pubDate')?.textContent || '';
+            if(title && description){
+                const cleanDescription = description.replace(/<[^>]*>/g,'').substring(0,150);
+                news.push({
+                    title: title.substring(0,80),
+                    text: cleanDescription+'...',
+                    source: 'Укрінформ',
+                    date: pubDate,
+                    link: link
+                });
+            }
+        });
+        cachedNews = news.slice(0,20);
+        lastFetchTime = Date.now();
+        return cachedNews;
+    } catch(e){
+        console.error('RSS error:',e);
+        return [];
+    }
+}
+
+async function addNewsToTicker(){
+    try{
+        const news = await fetchRSSNews();
+        if(!news || news.length === 0){
+            showToast('Не знайдено новин 😔');
+            return;
+        }
+        let availableNews = [];
+        for(const item of news){
+            if(!shownNewsUrls.has(item.link) && item.title && item.text){
+                availableNews.push(item);
+                if(availableNews.length >= 3) break;
+            }
+        }
+        if(availableNews.length === 0){
+            shownNewsUrls.clear();
+            availableNews = news.slice(0,3);
+        }
+        const selected = availableNews[Math.floor(Math.random()*availableNews.length)];
+        shownNewsUrls.add(selected.link);
+        const newsTicker = id('newsTicker');
+        const newsItem = d.createElement('div');
+        newsItem.className = 'news-item';
+        let dateStr = '';
+        if(selected.date){
+            try{
+                const date = new Date(selected.date);
+                dateStr = date.toLocaleTimeString('uk-UA',{hour:'2-digit',minute:'2-digit',hour12:false});
+            } catch(e){dateStr = 'сьогодні';}
+        }
+        newsItem.innerHTML = `
+            <div class="news-ticker-header">
+                <span class="news-source">${selected.source||'Новини'}</span>
+                ${dateStr?`<span class="news-time">${dateStr}</span>`:''}
+            </div>
+            <div class="news-ticker-title">${selected.title}</div>
+            <div class="news-ticker-text">${selected.text}</div>
+        `;
+        if(selected.link){
+            newsItem.style.cursor = 'pointer';
+            newsItem.addEventListener('click',()=>{window.open(selected.link,'_blank');});
+        }
+        newsTicker.appendChild(newsItem);
+        setTimeout(()=>{newsTicker.scrollTop = newsTicker.scrollHeight;},100);
+        const allNews = newsTicker.querySelectorAll('.news-item');
+        if(allNews.length > 5) allNews[0].remove();
+        if(!newsTickerVisible) showNewsTicker();
+    } catch(error){
+        console.error('News error:',error);
+        showToast('Помилка завантаження новин');
+    }
+}
+
+function showNewsTicker(){
+    const container = id('newsTickerContainer');
+    if(container){
+        container.classList.add('show');
+        newsTickerVisible = true;
+        setTimeout(()=>{if(newsTickerVisible) hideNewsTicker();},30000);
+    }
+}
+
+function hideNewsTicker(){
+    const container = id('newsTickerContainer');
+    if(container){
+        container.classList.remove('show');
+        newsTickerVisible = false;
+    }
+}
+
+function handleNewsFeedUpgrade(){
+    addNewsToTicker();
+    showToast('Нова новина в стрічці! 📰');
+}
+
+// 3. МЕМ-ТУР
+let memeImages = [
+    'https://media.giphy.com/media/l0MYt5jPR6QX5pnqM/giphy.gif',
+    'https://media.giphy.com/media/3o7abAHdYvZdBNnGZq/giphy.gif',
+    'https://media.giphy.com/media/26ufdipQqU2lhNA4g/giphy.gif',
+    'https://media.giphy.com/media/11sBLVxNs7v6WA/giphy.gif',
+    'https://media.giphy.com/media/jUwpNzg9IcyrK/giphy.gif',
+    'https://media.giphy.com/media/l46Cy1rHbQ92uuLXa/giphy.gif',
+    'https://media.giphy.com/media/YQitE4YNQNahy/giphy.gif',
+    'https://media.giphy.com/media/l3q2K5jinAlChoCLS/giphy.gif',
+    'https://media.giphy.com/media/3o7abBbea7eQz6qJp6/giphy.gif',
+    'https://media.giphy.com/media/26tknCqiJrBQG6DrC/giphy.gif'
+];
+let memeOverlay = null, memeImageEl = null, currentMemeTimeout = null, memeLoadingEl = null, isMemeShowing = false;
+
+function initMemeSystem(){
+    memeOverlay = d.createElement('div');
+    memeOverlay.id = 'memeOverlay';
+    memeOverlay.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.95);z-index:9998;display:none;align-items:center;justify-content:center;flex-direction:column;';
+    
+    memeLoadingEl = d.createElement('div');
+    memeLoadingEl.id = 'memeLoading';
+    memeLoadingEl.textContent = 'Завантаження мему...';
+    memeLoadingEl.style.cssText = 'color:white;font-size:18px;margin-bottom:20px;display:none;';
+    
+    memeImageEl = d.createElement('img');
+    memeImageEl.id = 'memeImage';
+    memeImageEl.style.cssText = 'max-width:85%;max-height:70%;border-radius:15px;box-shadow:0 0 50px rgba(255,255,255,0.4);object-fit:contain;display:none;';
+    
+    const memeText = d.createElement('div');
+    memeText.textContent = 'Мем-тур активовано!';
+    memeText.style.cssText = 'color:#ffcc00;font-size:20px;margin-top:20px;text-shadow:0 0 10px #ffcc00;';
+    
+    const closeBtn = d.createElement('button');
+    closeBtn.textContent = 'Закрити (або чекай 7 сек)';
+    closeBtn.style.cssText = 'margin-top:25px;padding:10px 25px;background:#ef4444;color:white;border:none;border-radius:10px;font-size:16px;cursor:pointer;font-weight:bold;';
+    closeBtn.onclick = hideMeme;
+    
+    memeOverlay.appendChild(memeLoadingEl);
+    memeOverlay.appendChild(memeImageEl);
+    memeOverlay.appendChild(memeText);
+    memeOverlay.appendChild(closeBtn);
+    d.body.appendChild(memeOverlay);
+    
+    memeOverlay.addEventListener('click',function(e){if(e.target===memeOverlay)hideMeme();});
+    
+    memeImageEl.onload = function(){
+        memeLoadingEl.style.display = 'none';
+        memeImageEl.style.display = 'block';
+        clearTimeout(currentMemeTimeout);
+        currentMemeTimeout = setTimeout(hideMeme,7000);
+    };
+    
+    memeImageEl.onerror = function(){
+        memeLoadingEl.textContent = 'Помилка завантаження мему :(';
+        setTimeout(hideMeme,2000);
+    };
+}
+
+function showMeme(){
+    if(!memeImageEl) initMemeSystem();
+    if(isMemeShowing){
+        clearTimeout(currentMemeTimeout);
+        memeOverlay.style.display = 'none';
+        isMemeShowing = false;
+    }
+    const randomIndex = Math.floor(Math.random()*memeImages.length);
+    const memeUrl = memeImages[randomIndex];
+    memeLoadingEl.style.display = 'block';
+    memeImageEl.style.display = 'none';
+    memeOverlay.style.display = 'flex';
+    isMemeShowing = true;
+    memeImageEl.src = memeUrl;
+}
+
+function hideMeme(){
+    if(memeOverlay) memeOverlay.style.display = 'none';
+    isMemeShowing = false;
+    clearTimeout(currentMemeTimeout);
+}
+
+// 4. АВТОПЕРЕГЛЯД
+let autoplayVideos = [
+    {channel:"Улюбленці",views:"1.2M",time:"0:15",thumbnail:"https://picsum.photos/600/340?random=1"},
+    {channel:"Кулінарія",views:"850K",time:"0:30",thumbnail:"https://picsum.photos/600/340?random=2"},
+    {channel:"Танці",views:"2.5M",time:"0:25",thumbnail:"https://picsum.photos/600/340?random=3"},
+    {channel:"Фітнес",views:"950K",time:"0:45",thumbnail:"https://picsum.photos/600/340?random=4"},
+    {channel:"Природа",views:"3.1M",time:"1:10",thumbnail:"https://picsum.photos/600/340?random=5"},
+    {channel:"Автоогляд",views:"1.8M",time:"0:55",thumbnail:"https://picsum.photos/600/340?random=6"},
+    {channel:"Ігри",views:"2.2M",time:"12:30",thumbnail:"https://picsum.photos/600/340?random=7"},
+    {channel:"Кліпи",views:"4.5M",time:"3:45",thumbnail:"https://picsum.photos/600/340?random=8"}
+];
+
+function showAutoplay(){
+    const m = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+    autoplayOverlay = d.createElement('div');
+    autoplayOverlay.id = 'autoplayOverlay';
+    autoplayOverlay.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background:#0f0f0f;z-index:9997;display:flex;flex-direction:column;font-family:Poppins;color:white;';
+    
+    const h = d.createElement('div');
+    h.style.cssText = 'display:flex;align-items:center;padding:15px 20px;border-bottom:1px solid #333;background:#202020;';
+    h.innerHTML = '<div style="display:flex;align-items:center;gap:10px;"><div style="width:30px;height:30px;background:#ff0000;border-radius:50%;"></div><span style="font-weight:bold;font-size:20px;">Автоперегляд</span></div>';
+    
+    const v = autoplayVideos[Math.floor(Math.random()*autoplayVideos.length)];
+    const c = d.createElement('div');
+    c.style.cssText = 'flex:1;display:flex;align-items:center;justify-content:center;padding:20px;';
+    c.innerHTML = `
+        <div style="max-width:600px;width:100%;background:#282828;border-radius:15px;overflow:hidden;">
+            <div style="position:relative;">
+                <img src="${v.thumbnail}" style="width:100%;height:340px;object-fit:cover;">
+                <div style="position:absolute;bottom:10px;right:10px;background:rgba(0,0,0,0.8);padding:5px 10px;border-radius:5px;">${v.time}</div>
+                <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:70px;height:70px;background:rgba(255,255,255,0.9);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:30px;">▶️</div>
+            </div>
+            <div style="padding:20px;">
+                <div style="font-size:22px;font-weight:bold;margin-bottom:10px;">${v.channel}</div>
+                <div style="display:flex;justify-content:space-between;color:#aaa;margin-bottom:20px;">
+                    <span>${v.views} переглядів</span><span>${v.time}</span>
+                </div>
+                <div style="background:#3ea6ff;color:white;border:none;padding:12px 25px;border-radius:20px;font-weight:bold;cursor:pointer;text-align:center;margin-bottom:20px;">Підписатися</div>
+                <div style="display:flex;gap:15px;color:#aaa;justify-content:center;">
+                    <div style="text-align:center;"><div style="font-size:24px;">👍</div><div>1.2K</div></div>
+                    <div style="text-align:center;"><div style="font-size:24px;">👎</div><div>25</div></div>
+                    <div style="text-align:center;"><div style="font-size:24px;">💬</div><div>348</div></div>
+                    <div style="text-align:center;"><div style="font-size:24px;">↪️</div><div>Поділитись</div></div>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    const cn = d.createElement('div');
+    cn.style.cssText = 'display:flex;flex:1;';
+    cn.appendChild(c);
+    
+    if(!m){
+        const s = d.createElement('div');
+        s.style.cssText = 'width:300px;background:#181818;padding:20px;border-left:1px solid #333;';
+        let r = '<div style="font-size:18px;margin-bottom:20px;">Рекомендації:</div>';
+        let sh = [...autoplayVideos].filter(x=>x!==v).sort(()=>0.5-Math.random()).slice(0,4);
+        sh.forEach(x=>{
+            r += `<div style="display:flex;margin-bottom:15px;background:#282828;border-radius:10px;overflow:hidden;cursor:pointer;">
+                    <img src="${x.thumbnail}" style="width:120px;height:70px;object-fit:cover;">
+                    <div style="padding:10px;flex:1;">
+                        <div style="font-weight:bold;margin-bottom:5px;">${x.channel}</div>
+                        <div style="font-size:13px;color:#aaa;">${x.views} · ${x.time}</div>
+                    </div>
+                  </div>`;
+        });
+        s.innerHTML = r;
+        cn.appendChild(s);
+    }
+    
+    const t = d.createElement('div');
+    t.id = 'autoplayTimer';
+    t.style.cssText = 'position:fixed;bottom:20px;left:20px;background:rgba(0,0,0,0.8);color:#3ea6ff;padding:10px 20px;border-radius:10px;font-size:16px;';
+    t.textContent = 'Наступне відео через: 5 сек';
+    
+    autoplayOverlay.appendChild(h);
+    autoplayOverlay.appendChild(cn);
+    autoplayOverlay.appendChild(t);
+    d.body.appendChild(autoplayOverlay);
+    
+    let sl = 5;
+    autoplayTimeout = setInterval(()=>{
+        sl--;
+        t.textContent = `Наступне відео через: ${sl} сек`;
+        if(sl <= 0){
+            clearInterval(autoplayTimeout);
+            hideAutoplay();
+        }
+    },1000);
+}
+
+function hideAutoplay(){
+    if(autoplayOverlay) autoplayOverlay.remove();
+    clearInterval(autoplayTimeout);
+    score += 1500;
+    clickCloudTotal += 1500;
+    showToast("+1500 сек за автоперегляд! 📺");
+    updateScore();
+}
+
+// 5. ПІДПИСКИ
+const subscriptionServices = [
+    {name:"YouTube Premium",desc:"Музика без реклами",price:"₴199/міс",color:"#FF0000",emoji:"🎬",link:"https://www.youtube.com/premium"},
+    {name:"Spotify",desc:"Мільйони пісень",price:"€9.99/міс",color:"#1DB954",emoji:"🎵",link:"https://www.spotify.com"},
+    {name:"Netflix",desc:"Фільми та серіали",price:"₴239/міс",color:"#E50914",emoji:"🍿",link:"https://www.netflix.com"},
+    {name:"Disney+",desc:"Дитячі та сімейні",price:"₴159/міс",color:"#113CCF",emoji:"🏰",link:"https://www.disneyplus.com"},
+    {name:"Megogo",desc:"Український контент",price:"₴129/міс",color:"#FF6B00",emoji:"🇺🇦",link:"https://megogo.net"},
+    {name:"Sweet.TV",desc:"ТВ онлайн",price:"₴149/міс",color:"#8A2BE2",emoji:"📺",link:"https://sweet.tv"},
+    {name:"Google One",desc:"Місце в хмарі",price:"₴79/міс",color:"#4285F4",emoji:"☁️",link:"https://one.google.com"}
+];
+
+function showSubscription(){
+    subscriptionOverlay = d.createElement('div');
+    subscriptionOverlay.id = 'subscriptionOverlay';
+    subscriptionOverlay.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;z-index:9996;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,0.85);';
+    
+    const s = subscriptionServices[Math.floor(Math.random()*subscriptionServices.length)];
+    const cn = d.createElement('div');
+    cn.style.cssText = `position:relative;max-width:450px;padding:40px;background:${s.color};border-radius:25px;box-shadow:0 25px 70px rgba(0,0,0,0.7);border:5px solid white;`;
+    cn.innerHTML = `
+        <div style="position:absolute;top:15px;right:15px;width:30px;height:30px;background:rgba(255,255,255,0.9);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:bold;cursor:pointer;color:#333;">×</div>
+        <div style="text-align:center;">
+            <div style="font-size:48px;margin-bottom:20px;">${s.emoji}</div>
+            <div style="font-size:32px;font-weight:bold;color:white;margin-bottom:15px;">${s.name}</div>
+            <div style="font-size:18px;color:rgba(255,255,255,0.95);margin-bottom:25px;background:rgba(255,255,255,0.15);padding:15px;border-radius:15px;">${s.desc}</div>
+            <div style="font-size:28px;font-weight:bold;color:white;margin-bottom:30px;background:rgba(0,0,0,0.2);padding:15px 25px;border-radius:15px;display:inline-block;">${s.price}</div>
+            <div style="font-size:16px;color:rgba(255,255,255,0.8);margin-bottom:30px;">Ексклюзивна пропозиція!</div>
+            <button id="subscribeBtn" style="background:white;color:${s.color};border:none;padding:18px 40px;border-radius:12px;font-size:20px;font-weight:bold;cursor:pointer;transition:all 0.3s;">Підписатися зараз</button>
+        </div>
+    `;
+    
+    subscriptionOverlay.appendChild(cn);
+    d.body.appendChild(subscriptionOverlay);
+    
+    cn.querySelector('div[style*="position:absolute;top:15px;right:15px"]').onclick = ()=>{
+        subscriptionOverlay.style.opacity = '0';
+        setTimeout(()=>{if(subscriptionOverlay) subscriptionOverlay.remove();},300);
+    };
+    
+    q('#subscribeBtn').onclick = ()=>{
+        if(s.link) window.open(s.link,'_blank');
+        subscriptionOverlay.style.opacity = '0';
+        setTimeout(()=>{if(subscriptionOverlay) subscriptionOverlay.remove();},300);
+    };
+    
+    setTimeout(()=>{cn.style.transform='scale(1)';cn.style.opacity='1';},10);
+    cn.style.transform = 'scale(0.8)';
+    cn.style.opacity = '0';
+    cn.style.transition = 'all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275)';
+}
+
+// 6. СЕРІАЛ-МАРАФОН
+let seriesVideos = ['rlR4PJn8b8I','4eqxI6C4Wuo','s7L2PVdrb_8','Yx9laSLnaaw','HhesaQXLuRY','5LY_UbnTJls','9GgxinPwAGc','U4K8fZ7kM7o','w3s3kA3nIS8','D4OIPL2LrmU'];
+
+function showSeriesMarathon(){
+    seriesOverlay = d.createElement('div');
+    seriesOverlay.id = 'seriesOverlay';
+    seriesOverlay.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;z-index:9995;background:linear-gradient(135deg,#1a1a2e,#16213e);display:flex;flex-direction:column;align-items:center;justify-content:center;';
+    
+    const cb = d.createElement('div');
+    cb.style.cssText = 'position:absolute;top:20px;right:20px;width:40px;height:40px;background:rgba(255,255,255,0.1);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:28px;color:white;cursor:pointer;z-index:9997;';
+    cb.innerHTML = '×';
+    cb.onclick = hideSeriesMarathon;
+    
+    const rv = seriesVideos[Math.floor(Math.random()*seriesVideos.length)];
+    const vc = d.createElement('div');
+    vc.style.cssText = 'width:90%;max-width:800px;background:rgba(0,0,0,0.7);border-radius:15px;padding:20px;box-shadow:0 15px 50px rgba(0,0,0,0.5);';
+    vc.innerHTML = `
+        <div style="text-align:center;color:white;margin-bottom:15px;font-size:24px;">🎬 Серіал-марафон</div>
+        <div style="position:relative;padding-bottom:56.25%;height:0;">
+            <iframe width="100%" height="100%" src="https://www.youtube.com/embed/${rv}?autoplay=1&mute=0&controls=1&rel=0&modestbranding=1&playsinline=1" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen style="position:absolute;top:0;left:0;width:100%;height:100%;border-radius:10px;"></iframe>
+        </div>
+        <div style="text-align:center;color:#ccc;margin-top:15px;font-size:16px;">Перегляньте трейлер серіалу. Закрийте після перегляду.</div>
+    `;
+    
+    seriesOverlay.appendChild(cb);
+    seriesOverlay.appendChild(vc);
+    d.body.appendChild(seriesOverlay);
+    
+    setTimeout(()=>{
+        score += 2500;
+        clickCloudTotal += 2500;
+        showToast("+2500 сек за серіал-марафон! 📺");
+        updateScore();
+    },8000);
+}
+
+function hideSeriesMarathon(){
+    if(seriesOverlay) seriesOverlay.remove();
+}
+
+// 7. РОБОТА З ДЕДЛАЙНОМ
+let deadlineOverlay = null, deadlineInterval = null, deadlineClicks = 0, deadlineTarget = 50, deadlineTime = 10, deadlineReached = false;
+
+function showDeadlineWork(){
+    if(deadlineOverlay) deadlineOverlay.remove();
+    
+    deadlineOverlay = d.createElement('div');
+    deadlineOverlay.id = 'deadlineOverlay';
+    deadlineOverlay.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;z-index:9994;background:linear-gradient(135deg,#1a1a2e,#0f3460);display:flex;flex-direction:column;align-items:center;justify-content:center;';
+    
+    const cb = d.createElement('div');
+    cb.style.cssText = 'position:absolute;top:20px;right:20px;width:40px;height:40px;background:rgba(255,255,255,0.1);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:28px;color:white;cursor:pointer;z-index:9995;';
+    cb.innerHTML = '×';
+    cb.onclick = hideDeadlineWork;
+    
+    const c = d.createElement('div');
+    c.id = 'deadlineContainer';
+    c.style.cssText = 'text-align:center;max-width:600px;padding:30px;background:rgba(0,0,0,0.7);border-radius:20px;box-shadow:0 0 50px rgba(0,0,255,0.5);';
+    
+    const t = d.createElement('div');
+    t.style.cssText = 'font-size:32px;margin-bottom:20px;color:#4cc9f0;';
+    t.textContent = '⏰ Робота з дедлайном';
+    
+    const dsc = d.createElement('div');
+    dsc.style.cssText = 'font-size:20px;margin-bottom:30px;color:#ccc;';
+    dsc.textContent = 'Зроби 100 кліків за 10 секунд!';
+    
+    deadlineClicks = 0; deadlineTime = 10; deadlineReached = false;
+    
+    const tm = d.createElement('div');
+    tm.id = 'deadlineTimer';
+    tm.style.cssText = 'font-size:80px;font-weight:bold;margin-bottom:20px;color:#ff6b6b;text-shadow:0 0 30px #ff6b6b;animation:pulse 1s infinite;';
+    tm.textContent = deadlineTime;
+    
+    const cd = d.createElement('div');
+    cd.id = 'deadlineCounter';
+    cd.style.cssText = 'font-size:40px;margin-bottom:30px;color:#f72585;';
+    cd.textContent = `${deadlineClicks}/${deadlineTarget} кліків`;
+    
+    const ca = d.createElement('div');
+    ca.style.cssText = 'width:200px;height:200px;background:linear-gradient(135deg,#4361ee,#3a0ca3);border-radius:50%;margin:0 auto 30px;display:flex;align-items:center;justify-content:center;font-size:60px;color:white;cursor:pointer;user-select:none;box-shadow:0 10px 30px rgba(0,0,0,0.5);transition:transform 0.1s;';
+    ca.textContent = '👆';
+    ca.onclick = function(){
+        if(deadlineTime > 0){
+            deadlineClicks++;
+            cd.textContent = `${deadlineClicks}/${deadlineTarget} кліків`;
+            ca.style.transform = 'scale(0.95)';
+            setTimeout(()=>ca.style.transform = 'scale(1)',100);
+            if(deadlineClicks >= deadlineTarget){
+                cd.style.color = '#4ade80';
+                deadlineReached = true;
+            }
+        }
+    };
+    
+    c.appendChild(t); c.appendChild(dsc); c.appendChild(tm); c.appendChild(cd); c.appendChild(ca);
+    deadlineOverlay.appendChild(cb); deadlineOverlay.appendChild(c);
+    d.body.appendChild(deadlineOverlay);
+    
+    if(deadlineInterval) clearInterval(deadlineInterval);
+    deadlineInterval = setInterval(()=>{
+        deadlineTime--;
+        tm.textContent = deadlineTime;
+        if(deadlineTime <= 7){
+            tm.style.color = '#ff0000';
+            tm.style.animation = 'pulse 0.5s infinite';
+        }
+        if(deadlineTime <= 0){
+            clearInterval(deadlineInterval);
+            setTimeout(()=>{completeDeadline(deadlineReached);},100);
+        }
+    },1000);
+}
+
+function completeDeadline(s){
+    const c = id('deadlineContainer');
+    if(!c) return;
+    if(s){
+        c.innerHTML = `
+            <div style="text-align:center;">
+                <div style="font-size:80px;color:#4ade80;margin-bottom:20px;">🎉✅</div>
+                <div style="font-size:32px;color:white;margin-bottom:20px;">Успіх! Дедлайн виконано!</div>
+                <div style="font-size:24px;color:#a7f3d0;margin-bottom:30px;">Ти зробив ${deadlineClicks} кліків за 10 секунд!</div>
+                <div style="font-size:20px;color:#bbf7d0;">+5000 секунд додано до рахунку!</div>
+            </div>
+        `;
+        setTimeout(()=>{
+            hideDeadlineWork();
+            score += 5000;
+            clickCloudTotal += 5000;
+            showToast("+5000 сек за успішний дедлайн! ⏰✅");
+            updateScore();
+        },2000);
+    } else {
+        c.innerHTML = `
+            <div style="text-align:center;">
+                <div style="font-size:80px;color:#f87171;margin-bottom:20px;">😔⏰</div>
+                <div style="font-size:32px;color:white;margin-bottom:20px;">Не встиг...</div>
+                <div style="font-size:24px;color:#fecaca;margin-bottom:30px;">Ти зробив лише ${deadlineClicks} кліків з ${deadlineTarget}</div>
+                <div style="font-size:20px;color:#fecaca;">+2500 секунд додано до рахунку (50% бонусу)</div>
+            </div>
+        `;
+        setTimeout(()=>{
+            hideDeadlineWork();
+            score += 2500;
+            clickCloudTotal += 2500;
+            showToast("+2500 сек за спробу виконати дедлайн 😔");
+            updateScore();
+        },2000);
+    }
+}
+
+function hideDeadlineWork(){
+    if(deadlineOverlay){deadlineOverlay.remove();deadlineOverlay=null;}
+    if(deadlineInterval){clearInterval(deadlineInterval);deadlineInterval=null;}
+}
+
+// 8. ЖИТТЄВИЙ КРІНЖ
+let cringeOverlay = null, cringeMessages = [
+    'Твій батько дивиться твою історію пошуку...',
+    'Ти сказав "дякую" авто-відповіді...',
+    'Ти випадково надіслав "люблю" керівнику...',
+    'Всі побачили твій екран у Zoom...',
+    'Ти відповів не на той повідомлення...',
+    'Прокинувся з робочого дзвінка на спікерфоні...',
+    'Подякував водієві, що вийшов...',
+    'Заспівав у навушниках, а вони були вимкнені...',
+    'Привітав незнайомця, думавши, що знайомий...',
+    'Залишив голосове на 10 хвилин з фоновими звуками...'
+];
+
+function showCringe(){
+    cringeOverlay = d.createElement('div');
+    cringeOverlay.id = 'cringeOverlay';
+    cringeOverlay.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;z-index:9993;background:rgba(0,0,0,0.95);display:flex;align-items:center;justify-content:center;';
+    
+    const msg = cringeMessages[Math.floor(Math.random()*cringeMessages.length)];
+    cringeOverlay.innerHTML = `
+        <div style="max-width:600px;padding:40px;background:linear-gradient(135deg,#7b2cbf,#5a189a);border-radius:25px;text-align:center;box-shadow:0 0 50px rgba(123,44,191,0.7);border:5px solid #9d4edd;">
+            <div style="font-size:48px;margin-bottom:20px;">😬</div>
+            <div style="font-size:32px;color:white;margin-bottom:20px;">${msg}</div>
+            <div style="font-size:18px;color:#e0aaff;margin-bottom:30px;">Ти відчуваєш крінж? Це нормально!</div>
+            <button onclick="hideCringe()" style="background:#ff6d00;color:white;border:none;padding:15px 30px;border-radius:12px;font-size:18px;cursor:pointer;font-weight:bold;">Продовжити (отримати +сек)</button>
+        </div>
+    `;
+    d.body.appendChild(cringeOverlay);
+}
+
+function hideCringe(){
+    if(cringeOverlay) cringeOverlay.remove();
+    score += 3000;
+    clickCloudTotal += 3000;
+    showToast("+3000 сек за життєвий досвід! 😅");
+    updateScore();
+}
+
+// 9. DISCORD-МАРАФОН
+let discordOverlay = null;
+const discordMessages = [
+    {u:'User_Pro',m:'Хто грає в цю нову гру?',t:'12:34',a:'#5865F2'},
+    {u:'GamerGirl',m:'Я пройшла за 2 години!',t:'12:35',a:'#EB459E'},
+    {u:'StreamerBoy',m:'Стрімлю зараз, заходьте',t:'12:36',a:'#ED4245'},
+    {u:'Admin',m:'Не спамте в чат',t:'12:37',a:'#57F287'},
+    {u:'NoobMaster',m:'Допоможіть з босом...',t:'12:38',a:'#FEE75C'},
+    {u:'ChatGPT',m:'Я бот, але мовчу',t:'12:39',a:'#99AAB5'}
+];
+
+function showDiscord(){
+    const bots = {
+        'User_Pro':{a:'#5865F2',type:'pro',mood:['нейтральний','дружелюбний'],topics:['ігри','техніка']},
+        'GamerGirl':{a:'#EB459E',type:'геймер',mood:['ентузіаст'],topics:['ігри','досягнення']},
+        'StreamerBoy':{a:'#ED4245',type:'стрімер',mood:['активний'],topics:['стріми','аудиторія']},
+        'Admin':{a:'#57F287',type:'адмін',mood:['серйозний'],topics:['правила','порядок']},
+        'NoobMaster':{a:'#FEE75C',type:'новачок',mood:['збентежений'],topics:['допомога','проблеми']},
+        'ChatGPT':{a:'#99AAB5',type:'бот',mood:['філософський'],topics:['технології','майбутнє']},
+        'НовийГравець':{a:'#9C84EF',type:'новий',mood:['цікавий'],topics:['знайомство','враження']},
+        'UkraineGamer':{a:'#0057B7',type:'патріот',mood:['гордий'],topics:['Україна','культура']},
+        'TechWizard':{a:'#00FFAA',type:'технічний',mood:['логічний'],topics:['програмування','інновації']}
+    };
+    
+    const aiResponses = {
+        greetings:{words:['привіт','хай','вітаю','доброго','здоров','добрий','вечір'],responses:['Привіт! Як справи?','Хай! Що нового?','Вітаю! Як твій день?','Доброго дня! Як гра?','Здоров! Як настроєння?','Привітання! Радий бачити','Добрий день! Що підкажеш?','Привіт! Світить сонце сьогодні','Хай! Готовий до спілкування?','Добрий вечір! Як пройшов день?','Привіт! Як твої успіхи в грі?','Вітаю! Бажаю гарного настрою!']},
+        games:{words:['гра','ігра','гейм','steam','epic','платформа','рівень','пройшов','пройти','бос'],responses:['Я граю в цю гру вже тиждень! Дуже круто!','Ця гра топ! Особливо мені подобається графіка.','Бачив цю гру на Steam. Варто купувати?','Я проходив іншу частину цієї франшизи.','Грав в щось подібне. Але ця гра має унікальну механіку!','Тільки що завершив головний сюжет! Епічно!','Ця гра має неймовірний саундтрек!','Чекаю на DLC для цієї гри!','Гра має складні головоломки, але це цікаво!','Мультиплеер у цій грі просто бомба!','Продавши душу за косметику в цій грі!','Ця гра варта кожного втраченого годинника!']},
+        help:{words:['допомог','допомож','бос','рівень','складно','не можу','застряг','проблема','вийти','порада'],responses:['Можу допомогти! Який саме рівень?','Пам\'ятаю цього боса. Використовуй комбінацію атак!','Дивись гайди на YouTube. Там детальні пояснення.','Спробуй підняти рівень свого персонажа.','Цей бос слабкий до магії льоду. Спробуй це!','Спробуй змінити тактику! Іноді це допомагає.','Може, тобі потрібна краща зброя?','Перезавантаж гру, іноді це вирішує проблеми.','Шукай секретні предмети на рівні!','Питай в інших гравців, вони допоможуть!','Не здавайся! Ти впораєшся!','Спробуй пограти в кооперативі з друзями.']},
+        feelings:{words:['почуваю','відчуваю','настрій','емоції','радість','сумно','щасливий','злий','втомився','енергія'],responses:['Я теж іноді так відчуваю себе в іграх.','Головне - не засмучуватися! Все вийде.','Ігри - це спосіб відволіктися від проблем.','Я зараз у гарному настрої через нову гру!','Емоції - це нормально. Особливо в іграх!','Коли щось не виходить - зроби перерву!','Радій маленьким перемогам!','Іноді треба просто випустити пар в грі!','Відпочинь, а потім спробуй знову!','Емоції роблять гру живою!','Настрій покращиться, граючи з друзями!','Не хвилюйся, всі ми через це проходимо!']},
+        ukraine:{words:['україн','київ','одес','львів','харків','дніпро','слава','україна','держава','патріот'],responses:['Пишаюся бути українцем!','Наша культура та ігри розвиваються!','Українські розробники створюють круті ігри!','Слава Україні! Героям слава!','Люблю наші традиції та гостинність!','Україна - це сила духу та волелюбність!','Наші ігри завойовують світ!','Поважаю наших захисників!','Українська мова - прекрасна!','Ми будуємо майбутнє разом!','Гордість за нашу історію!','Українці - творчі та талановиті люди!']},
+        future:{words:['майбутн','технолог','штучн','ai','віртуаль','метавсесвіт','нейромереж','квантов','робот','інноваці'],responses:['Цікаво, як технології змінять ігри.','Штучний інтелект вже зараз вражає!','Метавсесвіт - це майбутнє спілкування.','Віртуальна реальність стає доступнішою.','Машинне навчання змінить все!','Квантові комп\'ютери зроблять ігри реалістичнішими!','Нейромережі можуть створювати унікальні історії!','Роботи вже сьогодні допомагають у розробці ігор!','Технології швидко розвиваються!','Можливо, скоро ми гратимемо силою думки!','ШІ може стати справжнім другом геймера!','Майбутнє ігор виглядає фантастично!']},
+        tech:{words:['комп\'ютер','процесор','відеокарта','оперативка','жесткий','ssd','монітор','клавіатура','мишка','навушники'],responses:['Нещодавно оновив відеокарту! Літає!','SSD - найкраще вкладення для геймера!','Як тобі твоя нова клавіатура?','Навушники з шумозаглушенням - це свято!','Процесори останнього покоління просто бомба!','Оперативки ніколи не буває забагато!','Геймерський монітор з 144 Гц змінив життя!','Механічна клавіатура - найкраще відчуття!','Бездротові навушники - це свобода!','Жорсткий диск на 2 ТБ для всіх ігор!','Потрібен потужний блок живлення для усього цього!','Охолодження рідиною - для справжніх ентузіастів!']},
+        humor:{words:['смішно','жарт','прикол','кумедно','гарний','гумор','анекдот','посміятись','весело','комедія'],responses:['Чому програміст перейшов дорогу? Бо йому потрібно бути дістатися іншого байта!','Як називається оленя, яке не існує? Олень-неіснування!','Навіщо геймер купив годинник? Щоб знати, скільки часу він вже не спить!','Що сказав один біт іншому? Побачимось у порту!','Чому комп\'ютер так добре холодним? Бо у нього Windows відкриті!','Який улюблений напій геймера? Ctrl+Alt+Delete!','Чому герой гри пішов до лікаря? Бо у нього були баги!','Як геймери вітають один одного? GG!','Чому гра не запускається? Бо вона грає з тобою в хованки!','Що сказав жорсткий диск SSD? Я не маю рухомих частин, але рухаюсь швидше!','Який улюблений фрукт програміста? Java-яблуко!','Чому геймер купив другу мишку? Для подвійного кліку!']},
+        random:{words:[],responses:['Цікава думка!','Ніколи не думав про це в такому ключі.','Ти правильно помітив!','Це нагадує мені одну історію...','Так, я згоден з тобою!','Хм... Ніколи не думав про це.','Це дуже глибоке зауваження.','Ти знаєш, ти маєш рацію!','Це варто обговорити детальніше!','Дуже цікаво! Розкажи більше.','Маєш рацію на 100%!','Це справді важлива тема!','Завжди цікаво слухати такі думки.','Твоє твердження варте уваги.','Це новий погляд на речі!','Мені подобається, як ти думаєш.','Ти зачепив важливу тему.','Такі розмови розвивають!','Це варто запам\'ятати!','Дякую, що поділився цим!']}
+    };
+    
+    const lastMessages = [];
+    
+    function getCurrentTime(){
+        const n = new Date();
+        return `${n.getHours().toString().padStart(2,'0')}:${n.getMinutes().toString().padStart(2,'0')}`;
+    }
+    
+    function analyzeMessage(message){
+        const lc = message.toLowerCase();
+        const words = lc.split(' ');
+        let detectedTopics = [];
+        let detectedMood = 'нейтральний';
+        for(const topic in aiResponses){
+            if(topic !== 'random'){
+                if(aiResponses[topic].words.some(word=>lc.includes(word))){
+                    detectedTopics.push(topic);
+                }
+            }
+        }
+        if(lc.includes('?') || lc.includes('чи') || lc.includes('як')) detectedMood = 'зацікавлений';
+        if(lc.includes('!') || lc.includes('круто') || lc.includes('супер')) detectedMood = 'ентузіаст';
+        if(lc.includes('не можу') || lc.includes('складно') || lc.includes('проблема')) detectedMood = 'збентежений';
+        return {topics: detectedTopics, mood: detectedMood, words: words};
+    }
+    
+    function generateAIResponse(userMessage,user){
+        const analysis = analyzeMessage(userMessage);
+        const botList = Object.keys(bots);
+        const selectedBot = botList[Math.floor(Math.random()*botList.length)];
+        const bot = bots[selectedBot];
+        let possibleResponses = [];
+        for(const topic of analysis.topics){
+            if(aiResponses[topic]){
+                possibleResponses = possibleResponses.concat(aiResponses[topic].responses);
+            }
+        }
+        if(possibleResponses.length === 0){
+            possibleResponses = aiResponses.random.responses;
+        }
+        const response = possibleResponses[Math.floor(Math.random()*possibleResponses.length)];
+        lastMessages.push({user:selectedBot,message:response});
+        if(lastMessages.length > 5) lastMessages.shift();
+        return {bot:selectedBot,response:response,color:bot.a};
+    }
+    
+    function addMessage(u,m,a){
+        const msg = d.createElement('div');
+        msg.style.cssText = 'margin-bottom:15px;';
+        msg.innerHTML = `<div><span style="color:${a};font-weight:bold;">${u}</span><span style="color:#72767d;font-size:12px;margin-left:10px;">${getCurrentTime()}</span></div><div style="color:#dcddde;">${m}</div>`;
+        messagesCont.appendChild(msg);
+        messagesCont.scrollTop = messagesCont.scrollHeight;
+    }
+    
+    function sendUserMessage(){
+        if(!input.value.trim()) return;
+        const userMessage = input.value;
+        addMessage('Ти',userMessage,'#FFFFFF');
+        const aiThinkingTime = Math.random() * 1500 + 500;
+        setTimeout(()=>{
+            const aiResponse = generateAIResponse(userMessage,'Ти');
+            addMessage(aiResponse.bot,aiResponse.response,aiResponse.color);
+        },aiThinkingTime);
+        input.value = '';
+    }
+    
+    const isMobile = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+    discordOverlay = d.createElement('div');
+    discordOverlay.id = 'discordOverlay';
+    discordOverlay.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;z-index:9992;background:#36393f;display:flex;';
+    if(isMobile) discordOverlay.style.flexDirection = 'column';
+    
+    const sidebar = d.createElement('div');
+    sidebar.style.cssText = 'width:240px;background:#202225;padding:20px;color:white;';
+    if(isMobile){
+        sidebar.style.width = '100%';
+        sidebar.style.padding = '10px';
+        sidebar.style.display = 'flex';
+        sidebar.style.gap = '15px';
+        sidebar.style.overflowX = 'auto';
+        sidebar.style.borderBottom = '1px solid #333';
+        sidebar.innerHTML = '<div style="font-size:16px;color:#7289da;white-space:nowrap;margin-right:15px;">Discord</div><div style="color:#b9bbbe;white-space:nowrap;"># загальний</div><div style="color:#b9bbbe;white-space:nowrap;"># ігри</div><div style="color:#b9bbbe;white-space:nowrap;"># музика</div><div style="color:#b9bbbe;white-space:nowrap;"># меми</div>';
+    } else {
+        sidebar.innerHTML = '<div style="margin-bottom:30px;font-size:20px;color:#7289da;">Discord</div><div style="margin-bottom:15px;color:#b9bbbe;"># загальний</div><div style="color:#b9bbbe;"># ігри</div><div style="color:#b9bbbe;"># музика</div><div style="color:#b9bbbe;"># меми</div>';
+    }
+    
+    const main = d.createElement('div');
+    main.style.cssText = 'flex:1;padding:20px;color:white;display:flex;flex-direction:column;';
+    if(isMobile){
+        main.style.padding = '10px';
+        main.style.height = 'calc(100% - 60px)';
+    }
+    
+    const messagesCont = d.createElement('div');
+    messagesCont.id = 'discordMessages';
+    messagesCont.style.cssText = 'flex:1;overflow-y:auto;margin-bottom:20px;';
+    if(isMobile){
+        messagesCont.style.marginBottom = '10px';
+        messagesCont.style.fontSize = '14px';
+    }
+    
+    discordMessages.forEach(x=>{addMessage(x.u,x.m,x.a);});
+    if(isMobile){
+        messagesCont.querySelectorAll('div').forEach(el=>{
+            if(el.style && el.style.marginBottom === '15px') el.style.marginBottom = '10px';
+        });
+    }
+    
+    const inputCont = d.createElement('div');
+    inputCont.style.cssText = 'padding:15px;background:#40444b;border-radius:8px;color:#b9bbbe;display:flex;align-items:center;';
+    if(isMobile) inputCont.style.padding = '10px';
+    
+    const input = d.createElement('input');
+    input.type = 'text';
+    input.placeholder = 'Напишіть повідомлення в #загальний';
+    input.style.cssText = 'flex:1;background:transparent;border:none;outline:none;color:white;font-size:16px;';
+    if(isMobile) input.style.fontSize = '14px';
+    input.onkeydown = function(e){if(e.key === 'Enter') sendUserMessage();};
+    
+    const sendBtn = d.createElement('button');
+    sendBtn.innerHTML = '➤';
+    sendBtn.style.cssText = 'background:#7289da;border:none;border-radius:50%;width:32px;height:32px;color:white;cursor:pointer;margin-left:10px;';
+    if(isMobile){
+        sendBtn.style.width = '28px';
+        sendBtn.style.height = '28px';
+        sendBtn.style.marginLeft = '5px';
+    }
+    sendBtn.onclick = sendUserMessage;
+    
+    const closeBtn = d.createElement('div');
+    closeBtn.style.cssText = 'position:absolute;top:20px;right:20px;width:40px;height:40px;background:rgba(255,255,255,0.1);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:28px;color:white;cursor:pointer;';
+    if(isMobile){
+        closeBtn.style.top = '45px';
+        closeBtn.style.right = '10px';
+        closeBtn.style.width = '30px';
+        closeBtn.style.height = '30px';
+        closeBtn.style.fontSize = '20px';
+    }
+    closeBtn.innerHTML = '×';
+    closeBtn.onclick = hideDiscord;
+    
+    inputCont.appendChild(input);
+    inputCont.appendChild(sendBtn);
+    main.appendChild(messagesCont);
+    main.appendChild(inputCont);
+    discordOverlay.appendChild(sidebar);
+    discordOverlay.appendChild(main);
+    discordOverlay.appendChild(closeBtn);
+    d.body.appendChild(discordOverlay);
+    input.focus();
+    
+    setTimeout(()=>{
+        if(discordOverlay){
+            addMessage('НовийГравець','Привіт усім! Що за гра тут популярна?','#9C84EF');
+            setTimeout(()=>{
+                if(discordOverlay){
+                    const response = generateAIResponse('Привіт усім! Що за гра тут популярна?','НовийГравець');
+                    addMessage(response.bot,response.response,response.color);
+                }
+            },1000);
+        }
+    },1000);
+}
+
+function hideDiscord(){
+    if(discordOverlay) discordOverlay.remove();
+    score += 4000;
+    clickCloudTotal += 4000;
+    showToast("+4000 сек за Discord-марафон! 💬");
+    updateScore();
+}
+
+// 10. REELS ДО РАНКУ
+let reelsOverlay = null, reelsInterval = null, reelIndex = 0;
+const reelsContent = [
+    'Котик танцює 🐱','Кулінарний хак 🍳','Смішний танець 😂',
+    'Лайфхак для дому 🏠','Міні-майстер клас ✨','Комічна ситуація 🤣',
+    'Милий собака 🐶','Епічний фейл 🤦','Красивий пейзаж 🌄','Музичний кліп 🎵'
+];
+
+function showReels(){
+    reelsOverlay = d.createElement('div');
+    reelsOverlay.id = 'reelsOverlay';
+    reelsOverlay.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;z-index:9991;background:#000;display:flex;flex-direction:column;';
+    
+    const header = d.createElement('div');
+    header.style.cssText = 'padding:15px;color:white;font-size:20px;text-align:center;border-bottom:1px solid #333;';
+    header.textContent = 'Reels 📱';
+    
+    const content = d.createElement('div');
+    content.style.cssText = 'flex:1;display:flex;align-items:center;justify-content:center;color:white;font-size:48px;text-align:center;';
+    content.textContent = reelsContent[reelIndex];
+    
+    const closeBtn = d.createElement('div');
+    closeBtn.style.cssText = 'position:absolute;top:20px;right:20px;width:40px;height:40px;background:rgba(255,255,255,0.1);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:28px;color:white;cursor:pointer;';
+    closeBtn.innerHTML = '×';
+    closeBtn.onclick = hideReels;
+    
+    reelsOverlay.appendChild(header);
+    reelsOverlay.appendChild(content);
+    reelsOverlay.appendChild(closeBtn);
+    d.body.appendChild(reelsOverlay);
+    
+    reelsInterval = setInterval(()=>{
+        reelIndex = (reelIndex + 1) % reelsContent.length;
+        content.textContent = reelsContent[reelIndex];
+        content.style.animation = 'none';
+        void content.offsetWidth;
+        content.style.animation = 'reelChange 0.5s ease';
+    },2000);
+}
+
+function hideReels(){
+    if(reelsOverlay) reelsOverlay.remove();
+    if(reelsInterval) clearInterval(reelsInterval);
+    score += 3500;
+    clickCloudTotal += 3500;
+    showToast("+3500 сек за Reels до ранку! 📱");
+    updateScore();
+}
+
+// 11. ФІЛОСОФСЬКІ РОЗДУМИ
+let philosophyOverlay = null;
+const philosophyQuotes = [
+    '"Час - це найцінніший ресурс, тому що він обмежений." - Арістотель',
+    '"Ми не маємо мало часу, але багато його втрачаємо." - Сенека',
+    '"Краще три години раніше, ніж хвилина запізно." - Вільям Шекспір',
+    '"Час летить - це погана новина. Хороша новина - ви пілот свого часу." - Майкл Альтшулер',
+    '"Не витрачайте час, бо саме з нього складається життя." - Бенджамін Франклін',
+    '"Майбутнє приходить поступово, а йде раптово." - Генрі Бергсон',
+    '"Єдиний спосіб зробити час життя якісним - це присвятити його тому, що справді важливо."',
+    '"Час не чекає нікого, але кожен може навчитися керувати своїм часом."'
+];
+
+function showPhilosophy(){
+    philosophyOverlay = d.createElement('div');
+    philosophyOverlay.id = 'philosophyOverlay';
+    philosophyOverlay.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;z-index:9990;background:linear-gradient(135deg,#2c3e50,#4a6491);display:flex;align-items:center;justify-content:center;';
+    
+    const quote = philosophyQuotes[Math.floor(Math.random()*philosophyQuotes.length)];
+    philosophyOverlay.innerHTML = `
+        <div style="max-width:800px;padding:50px;background:rgba(255,255,255,0.1);backdrop-filter:blur(10px);border-radius:25px;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,0.5);border:2px solid rgba(255,255,255,0.2);">
+            <div style="font-size:48px;margin-bottom:30px;">💭</div>
+            <div style="font-size:28px;color:white;margin-bottom:30px;font-style:italic;line-height:1.4;">${quote}</div>
+            <div style="font-size:18px;color:#e0e0e0;margin-bottom:40px;">Мудрість поколінь про час...</div>
+            <button onclick="hidePhilosophy()" style="background:transparent;color:white;border:2px solid white;padding:15px 40px;border-radius:25px;font-size:18px;cursor:pointer;transition:all 0.3s;">Прийняти мудрість</button>
+        </div>
+    `;
+    d.body.appendChild(philosophyOverlay);
+}
+
+function hidePhilosophy(){
+    if(philosophyOverlay) philosophyOverlay.remove();
+    score += 6000;
+    clickCloudTotal += 6000;
+    showToast("+6000 сек за філософські роздуми! 📚");
+    updateScore();
+}
+
+// === ГЛОБАЛЬНІ ФУНКЦІЇ ДЛЯ ОВЕРЛЕЇВ ===
+window.hideCringe = hideCringe;
+window.hidePhilosophy = hidePhilosophy;
 
 // === ІНІЦІАЛІЗАЦІЯ ПРИ ЗАВАНТАЖЕННІ ===
-d.addEventListener('DOMContentLoaded',function(){
-    // Додаємо обробники кнопок вибору версії
+d.addEventListener('DOMContentLoaded', function(){
     id('desktopBtn').addEventListener('click',()=>startGame('desktop'));
     id('mobileBtn').addEventListener('click',()=>startGame('mobile'));
 });
-// === ОПТИМІЗАЦІЯ ДЛЯ МОБІЛЬНИХ (НЕ ВПЛИВАЄ НА ПК) ===
-const m='ontouchstart'in window||navigator.maxTouchPoints>0;
-if(m){
-// ОНОВЛЕННЯ СТРІЛОК - ЗМЕНШЕНА ЧАСТОТА
-const oh=updateClockHands;
-let rafId, lastUpdate=0;
-updateClockHands=()=>{    const now=Date.now();    if(now-lastUpdate>=50){        oh();        lastUpdate=now;    }    rafId=requestAnimationFrame(updateClockHands);};
-
-// АВТО-КЛІКИ - ОПТИМІЗОВАНІ ІНТЕРВАЛИ
-const ai=setInterval(()=>{const g=Math.round(autoRate*prestigeMultiplier);if(g>0){score+=g;clickCloudTotal+=g;if(score%100===0)updateScore();}if(Date.now()%3e3<100){updateStats();updateAchievements();}},1e3);
-
-// СКІНИ - ЗМЕНШЕНА ЧАСТОТА ОНОВЛЕННЯ
-let skinUpdateTimeout;
-function debouncedUpdateSkins() {    clearTimeout(skinUpdateTimeout);    skinUpdateTimeout = setTimeout(updateSkinHighlights, 150);}
-const sui = setInterval(debouncedUpdateSkins, 50);
-
-// ПЛАВАЮЧІ ЧИСЛА - ОБМЕЖЕННЯ КІЛЬКОСТІ
-let f=[];const osf=showFloating;showFloating=t=>{    if(f.length>=2){        f.forEach((o,i)=>{if(i<f.length-1&&o.parentNode)o.parentNode.removeChild(o);});        f=f.slice(-1); }
-const e=d.createElement("div");e.textContent=t;e.style.cssText="position:absolute;right:10px;top:30px;color:#ffccd1;font-weight:700;opacity:1;transition:all 0.7s ease-out;font-size:14px;";clockWrapper.appendChild(e);f.push(e);
-requestAnimationFrame(()=>{e.style.transform="translateX(40px) translateY(-50px)";e.style.opacity="0";});setTimeout(()=>{if(e.parentNode)e.parentNode.removeChild(e);f=f.filter(i=>i!==e);},700);};
-
-// СПОВІЩЕННЯ - ОБМЕЖЕННЯ КІЛЬКОСТІ
-let tc=0;const ot=showToast;showToast=t=>{if(tc>=2)return;tc++;ot(t);setTimeout(()=>{tc=Math.max(0,tc-1);},3e3);};
-
-// РЕВЕРБ СИСТЕМА - ОПТИМІЗАЦІЯ ОНОВЛЕННЯ
-const or=updateReverbClockHands;let lr=0;updateReverbClockHands=()=>{const n=Date.now();if(n-lr<50){requestAnimationFrame(updateReverbClockHands);return;}lr=n;or();};
-
-// СТАТИСТИКА - ЗМЕНШЕНА ЧАСТОТА ОНОВЛЕННЯ
-const si=setInterval(()=>{if(autoRate>maxAutoRate)maxAutoRate=autoRate;if(maxComboEver>maxCombo)maxCombo=maxComboEver;},2e3);}
-
-// === АПГРЕЙДИ ===
-upgrades=[{n:"Кліпати очима",c:1,l:0},{n:"Увімкнути телефон",c:8,l:0},{n:"Гортати стрічку",c:40,l:0},{n:"Мем-тур",c:200,l:0},{n:"Автоперегляд",c:1100,l:0},{n:"Підписка",c:6500,l:0},{n:"Серіал-марафон",c:40000,l:0},{n:"Робота з дедлайном",c:250000,l:0},{n:"Життєвий крінж",c:1600000,l:0},{n:"Discord-марафон",c:10000000,l:0},{n:"Reels до ранку",c:65000000,l:0},{n:"Філософські роздуми",c:400000000,l:0}];
-function fib(n){if(n<=1)return n;let a=0,b=1;for(let i=2;i<=n;i++)[a,b]=[b,a+b];return b;}
-upgrades.forEach((u,i)=>{const b=d.createElement("button");b.className="upgrade-btn";if(i>0)b.classList.add("hidden");b.addEventListener("click",()=>buyUpgrade(i));upgradesContainer.appendChild(b);buttons.push(b);u.up=function(){const f=fib(u.l+6),c=Math.floor(u.c*f*(i+1));b.innerHTML=`${u.n} (Lv.${u.l})<span>${formatTime(c)}</span>`;b.disabled=score<c;};u.getC=function(){return Math.floor(u.c*fib(u.l+6)*(i+1));};u.up();});
-function revealNext(){const c=upgrades.filter(u=>u.l>0).length;if(buttons[c])buttons[c].classList.remove("hidden");}
-function buyUpgrade(i){const u=upgrades[i],c=u.getC();if(score<c)return;score-=c;u.l++;totalUpgradesBought++;autoRate+=(i+1)*5*prestigeMultiplier;setTimeout(saveGame,100);showToast(`Куплено: ${u.n} (Lv.${u.l}) ✅`);if(u.n==="Увімкнути телефон"){setTimeout(()=>{showPhoneLockScreen();},500);}if(u.n==="Гортати стрічку"){setTimeout(()=>{handleNewsFeedUpgrade();},300);}if(u.n==="Мем-тур"){setTimeout(()=>{showMeme();setTimeout(()=>{score+=1000;clickCloudTotal+=1000;showToast("Посмішка за смішний мем! 😂");updateScore();},1500);},300);}if(u.n==="Автоперегляд"){setTimeout(()=>{showAutoplay();},300);}if(u.n==="Підписка"){setTimeout(()=>{showSubscription();},300);}if(u.n==="Серіал-марафон"){setTimeout(()=>{showSeriesMarathon();},300);}if(u.n==="Робота з дедлайном"){setTimeout(()=>{showDeadlineWork();},300);}if(u.n==="Життєвий крінж"){setTimeout(()=>{showCringe();},300);}if(u.n==="Discord-марафон"){setTimeout(()=>{showDiscord();},300);}if(u.n==="Reels до ранку"){setTimeout(()=>{showReels();},300);}if(u.n==="Філософські роздуми"){setTimeout(()=>{showPhilosophy();},300);} requestAnimationFrame(()=>{revealNext();u.up();updateAllButtons();updateScore();updateStats();updateAchievements();updatePrestigeProgress();});if(u.n==="Кліпати очима"){d.body.classList.remove("eye-blink");void d.body.offsetWidth;d.body.classList.add("eye-blink");setTimeout(()=>d.body.classList.remove("eye-blink"),1000);}}
-
-// === МНОЖНИКИ КЛІКУ ===
-multipliers=[{n:"Подвійний клік",c:5000,m:2,b:0},{n:"Потрійний клік",c:50000,m:3,b:0},{n:"x10 за клік",c:1000000,m:10,b:0},{n:"x50 за клік",c:20000000,m:50,b:0},{n:"x100 за клік",c:100000000,m:100,b:0}];
-multipliers.forEach(m=>{const b=d.createElement("button");b.className="upgrade-btn multiplier-btn";function upB(){if(m.b){b.remove();return;}const a=score>=m.c;b.innerHTML=`${m.n}<span>${formatTime(m.c)}</span>`;b.disabled=!a;b.style.background=a?"":"#334155";b.style.opacity=a?"1":"0.5";}b.addEventListener("click",()=>{if(score<m.c||m.b)return;    requestAnimationFrame(()=>{        score-=m.c;m.b=1;clickMultiplier=m.m;        showToast(`Активовано: ${m.n}!`);upB();updateScore();updateStats();    });},{passive:true});multipliersContainer.appendChild(b);m.up=upB;upB();});
-
-// === ВИПРАВЛЕНА СИСТЕМА КЛІКІВ ===
-function addTime(){const g=Math.round(clickPower*clickMultiplier*prestigeMultiplier);score+=g;clickCloudTotal+=g;if(g>maxPerClick)maxPerClick=g;clickGainEl.textContent=`+${formatTime(g)}`;showFloating(`+${formatTime(g)}`);triggerClickEffect();handleClickCombo(); updateScore();updatePrestigeProgress();}
-function handleClickCombo(){const n=Date.now();if(n-lastClickTime<MAX_CLICK_INTERVAL)currentCombo++;else currentCombo=1;lastClickTime=n;if(currentCombo>maxComboEver)maxComboEver=currentCombo;if(currentCombo>=COMBO_THRESHOLD){comboCount.textContent=currentCombo;comboBubble.classList.add("show");}clearTimeout(comboTimeout);comboTimeout=setTimeout(()=>{if(currentCombo>=COMBO_THRESHOLD){comboBubble.classList.add("burst");showToast(`Комбо ×${currentCombo}! 🔥`);setTimeout(()=>comboBubble.classList.remove("show","burst"),700);}currentCombo=0;},300);}
-function showToast(t){const e=d.createElement("div");e.className="toast";e.textContent=t;e.style.cssText="font-size:18px;padding:22px 48px";toastContainer.appendChild(e);setTimeout(()=>e.remove(),10000);}
-function triggerClickEffect(){clock.classList.remove("click-effect-red","click-effect-blue","click-effect-glitch","click-effect-blackhole","click-effect-ripple");void clock.offsetWidth;clock.classList.add("click-effect-"+current.effect);}
-// ВИПРАВЛЕНИЙ ОБРОБНИК КЛІКІВ - запобігає подвійним клікам
-let lastClick=0;clockWrapper.addEventListener("click",e=>{const now=Date.now();if(now-lastClick<100)return;lastClick=now;if(e.target.closest("#clickableClock")||e.target===clockWrapper)addTime();});
-function showFloating(t){const e=d.createElement("div");e.textContent=t;e.style.cssText="position:absolute;right:20px;top:50px;color:#ffccd1;font-weight:700;opacity:1;transition:all 0.9s ease-out";clockWrapper.appendChild(e);requestAnimationFrame(()=>{e.style.transform="translateX(60px) translateY(-80px)";e.style.opacity="0";});setTimeout(()=>e.remove(),920);}
-
-// === ВИПРАВЛЕНА СТАТИСТИКА - БЕЗ ЗАТРИМОК ДЛЯ ПК ===
-function updateScore(){scoreText.textContent=`Часу витрачено: ${formatTime(score)}`;cloudTotalEl.textContent=`${formatTime(clickCloudTotal)}`;updateAllButtons();}                    
-function updateStats(){realTimePlayedEl.textContent=formatTime((Date.now()-sessionStart)/1000);virtualTimeEl.textContent=formatTime(score);totalUpgradesEl.textContent=totalUpgradesBought;maxPerClickEl.textContent=formatTime(maxPerClick);prestigeMultEl.textContent=prestigeMultiplier.toFixed(2);id("maxAutoRate").textContent=formatTime(autoRate);id("maxCombo").textContent=maxComboEver;id("totalReverbs").textContent=totalReverbs;const a=achievementsList.filter(x=>x.done).length;id("achievedCount").textContent=a;id("totalAchievements").textContent=achievementsList.length;id("shapeSkinsCount").textContent=ownedSkins.shapes.length;id("clockSkinsCount").textContent=ownedSkins.clockSkins.length;id("handSkinsCount").textContent=ownedSkins.handSkins.length;id("effectSkinsCount").textContent=ownedSkins.effects.length;id("totalSkins").textContent=ownedSkins.shapes.length+ownedSkins.clockSkins.length+ownedSkins.handSkins.length+ownedSkins.effects.length;updateReverbText(); updatePrestigeProgress();}                    
-setInterval(()=>{if(autoRate>maxAutoRate)maxAutoRate=autoRate;if(maxComboEver>maxCombo)maxCombo=maxComboEver;},1000);
-
-// === ДОСЯГНЕННЯ ===
-const achRoot=id("achievements"),achievementsList=[{t:"Перший клік",desc:"Зробити перший клік",tg:1,g:()=>clickCloudTotal,done:false},{t:"100 сек",desc:"Витратити 100 сек",tg:100,g:()=>score,done:false},{t:"Перша покупка",desc:"Купити перший апгрейд",tg:1,g:()=>totalUpgradesBought,done:false},{t:"Авто запущено",desc:"Витрачаєш час автоматично",tg:1,g:()=>autoRate>0?1:0,done:false},{t:"Комбо-майстер",desc:"Досягти комбо 10+",tg:10,g:()=>maxComboEver,done:false},{t:"Майстер форм",desc:"Володіти 3 формами годинника",tg:3,g:()=>ownedSkins.shapes.length,done:false},{t:"Господар рамок",desc:"Володіти 3 кольорами рамки",tg:3,g:()=>ownedSkins.clockSkins.length,done:false},{t:"Колекціонер стрілок",desc:"Володіти 3 скінами стрілок",tg:3,g:()=>ownedSkins.handSkins.length,done:false},{t:"Маг ефектів",desc:"Володіти 3 ефектами кліку",tg:3,g:()=>ownedSkins.effects.length,done:false},{t:"Стильний",desc:"Змінити будь-який скін",tg:1,g:()=>(current.shape!=="round"||current.clock!=="neon-blue"||current.hand!=="darkblue"||current.effect!=="red")?1:0,done:false}];
-achievementsList.forEach(a=>{const e=d.createElement("div");e.className="achievement";e.innerHTML=`<strong>${a.t}</strong><div style="font-size:12px;color:#bcd">${a.desc}</div><div class="ach-progress"></div><div class="ach-state">0%</div>`;achRoot.appendChild(e);a.p=e.querySelector(".ach-progress");a.s=e.querySelector(".ach-state");});
-function updateAchievements(){achievementsList.forEach(a=>{const v=a.g(),p=Math.min(100,(v/a.tg)*100);a.p.style.width=p+"%";if(p>=100&&!a.done){a.done=true;a.s.textContent="Виконано ✅";a.s.style.color="#8df299";showToast(`Досягнення: ${a.t} ✅`);}else if(p<100)a.s.textContent=Math.floor(p)+"%";});}
-// === СИСТЕМА ПЕРЕЗАПУСКУ З ПРОГРЕСОМ ===
-function updatePrestigeProgress() { currentPrestigeProgress = score; const pB = id('prestigeProgressBar'), pT = id('prestigeProgressText'), pP = Math.min(100, (currentPrestigeProgress / prestigeThreshold) * 100);
-    if(pB) { pB.style.width = pP + '%'; pB.style.background = pP >= 100 ? 'linear-gradient(90deg, #10b981, #34d399)' : pP >= 50 ? 'linear-gradient(90deg, #f59e0b, #fbbf24)' : 'linear-gradient(90deg, #ef4444, #f87171)'; }
-    if(pT) pT.textContent = `${formatTime(currentPrestigeProgress)} / ${formatTime(prestigeThreshold)}`; updateReverbButtonState(); }
-function updateReverbButtonState() { const c = currentPrestigeProgress >= prestigeThreshold;
-    reverbBtn.disabled = !c; reverbBtn.style.opacity = c ? '1' : '0.6'; reverbBtn.style.cursor = c ? 'pointer' : 'not-allowed'; reverbBtn.style.background = c ? 'linear-gradient(90deg, #10b981, #34d399)' : 'linear-gradient(90deg, #6b7280, #9ca3af)'; }
-function updateReverbText() { nextMultiplierEl.textContent = (prestigeMultiplier * 1.2).toFixed(2); const rD = id('reverbDesc'); if(rD) rD.textContent = `Потрібно для перезапуску: ${formatTime(prestigeThreshold)}`;}
-
-// === АВТОМАТИЧНИЙ ПРИБУТОК ===
-setInterval(()=>{const g=Math.round(autoRate*prestigeMultiplier);if(g>0){score+=g;clickCloudTotal+=g;updateScore();}updateStats();updateAchievements();},1000);
-
-// === СИСТЕМА ЕФЕКТУ ПЕРЕЗАПУСКУ ===
-const restartEffect={active:!1,clocksInt:null,bubblesInt:null,
-init(){const e=document.createElement("div");e.id="restartEffectOverlay";e.style.cssText="position:fixed;top:0;left:0;width:100%;height:100%;z-index:10000;display:none;pointer-events:none;background:transparent;";document.body.appendChild(e);this.clocksContainer=document.createElement("div");this.clocksContainer.style.cssText="position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;";this.bubblesContainer=document.createElement("div");this.bubblesContainer.style.cssText="position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;";e.appendChild(this.clocksContainer);e.appendChild(this.bubblesContainer);
-// ОКРЕМИЙ екран завершення
-this.completionScreen=document.createElement("div");this.completionScreen.id="reverbCompletionScreen";this.completionScreen.style.cssText="position:fixed;top:0;left:0;width:100%;height:100%;background:#000;z-index:10002;display:none;align-items:center;justify-content:center;flex-direction:column;color:white;font-family:Poppins;text-align:center;";this.completionScreen.innerHTML=`<div style="font-size:32px;margin-bottom:20px;text-shadow:0 0 20px #0ea5e9">Ви успішно повернулися в часі!</div><div style="font-size:24px;margin-bottom:20px">Ваш множник: ${prestigeMultiplier.toFixed(2)}×</div><div style="font-size:18px;color:#cfeaff">Натисніть будь-де щоб продовжити</div>`;document.body.appendChild(this.completionScreen);},
-start(){this.active=!0;document.getElementById("restartEffectOverlay").style.display="block";this.clocksContainer.innerHTML="";this.bubblesContainer.innerHTML="";this.clocksInt=setInterval(()=>this.createFlyingClock(),300);this.bubblesInt=setInterval(()=>this.createStatBubble(),1200)},
-stop(){this.active=!1;clearInterval(this.clocksInt);clearInterval(this.bubblesInt);document.getElementById("restartEffectOverlay").style.display="none"},
-showCompletionScreen(){ reverbOverlay.classList.add("hidden");document.getElementById("restartEffectOverlay").style.display="none";timeTunnel.classList.remove("active","intense");this.completionScreen.style.display="flex";},
-hideCompletionScreen(){this.completionScreen.style.display="none"},
-createFlyingClock(){const e=document.createElement("div");e.className="flying-clock";const t=80+100*Math.random();e.style.width=e.style.height=t+"px";e.style.left=Math.random()*100+"%";e.style.top=Math.random()*100+"%";e.style.animationDuration=4+6*Math.random()+"s";e.style.animationDelay=0.5*Math.random()+"s";Math.random()>0.5&&(e.style.transform="scaleX(-1)");this.clocksContainer.appendChild(e);setTimeout(()=>{e.parentNode&&e.parentNode.removeChild(e)},1e4)},
-createStatBubble(){const e=document.createElement("div");e.className="stat-bubble";const t=[`Максимальне комбо: ${maxComboEver||0}`,`Витрачено часу: ${formatTime(clickCloudTotal)}`,`Ревербів: ${totalReverbs}`,`Всього скінів: ${(ownedSkins.shapes.length+ownedSkins.clockSkins.length+ownedSkins.handSkins.length+ownedSkins.effects.length)||0}`,`Авточас/сек: ${formatTime(autoRate)}`,`Макс за клік: ${formatTime(maxPerClick)}`,`Досягнень: ${(achievementsList.filter(e=>e.done).length)}/${achievementsList.length}`];e.textContent=t[Math.floor(Math.random()*t.length)];e.style.left=10+80*Math.random()+"%";e.style.top=20+60*Math.random()+"%";this.bubblesContainer.appendChild(e);setTimeout(()=>{e.parentNode&&e.parentNode.removeChild(e)},4e3)}};
-restartEffect.init();
-
-// === РЕВЕРБ СИСТЕМА ===
-reverbBtn.addEventListener("click",()=>{if(!confirm("Ти впевнений, що хочеш повернути час назад? Всі твої апгрейди будуть втрачені, але ти отримаєш множник!"))return;startReverbMode();});
-function startReverbMode(){    reverbOverlay.classList.remove("hidden");timeTunnel.classList.add("active");reverbHint.style.opacity="1";isReverbActive=1;    reverbClock.className=`clock ${current.shape}`;clockSkins.find(s=>s.id===current.clock)?.a();handSkins.find(s=>s.id===current.hand)?.a();    updateReverbClockHands();setTimeout(()=>reverbHint.style.opacity="0",3000);}
-function updateReverbClockHands(){    
-    if(!isReverbActive)return;
-    const e=qa("#reverbClock .hand");
-    if(e.length===0)return;    
-    if(reverbClock.classList.contains("reverb-chaos")){
-        requestAnimationFrame(updateReverbClockHands);
-        return;
-    }    
-    const t=new Date();
-    let o=t.getSeconds()+t.getMilliseconds()/1000;
-    let n=t.getMinutes()+o/60;
-    let a=(t.getHours()%12||12)+n/60;
-    
-    // ВИПРАВЛЕНА ЛОГІКА для реверб годинника
-    if(reverseClockHands) {
-        o = 60 - o;
-        n = 60 - n;
-        a = 12 - a;
-        
-        // Корекція значень
-        if(o < 0) o += 60;
-        if(n < 0) n += 60;
-        if(a <= 0) a += 12;
-        if(a > 12) a -= 12;
-    }
-    
-    qa("#reverbClock .second").forEach(e=>e.style.transform=`translateX(-50%) rotate(${o*6}deg)`);    
-    qa("#reverbClock .minute").forEach(e=>e.style.transform=`translateX(-50%) rotate(${n*6}deg)`);    
-    qa("#reverbClock .hour").forEach(e=>e.style.transform=`translateX(-50%) rotate(${a*30}deg)`);    
-    requestAnimationFrame(updateReverbClockHands);
-}
-    const startReverbHold=e=>{    if(e.type.includes('touch'))e.preventDefault();if(!isReverbActive)return;    reverbHint.style.opacity="0";reverbClock.classList.add("reverb-mode","reverb-chaos");timeTunnel.classList.add("intense");    restartEffect.start();
-    qa("#reverbClock .hand").forEach((e,t)=>{        const o=0.5+2*Math.random(),n=Math.random()>0.5?"normal":"reverse";        e.style.setProperty("--duration",`${o}s`);e.style.setProperty("--direction",n);        e.style.animation=`chaosSpin ${o}s linear infinite ${n}`;    });reverbHoldTimeout=setTimeout(completeReverb,10000);};
-const stopReverbHold=e=>{    if(e&&e.type.includes('touch'))e.preventDefault();    clearTimeout(reverbHoldTimeout);    if(isReverbActive){        reverbClock.classList.remove("reverb-mode","reverb-chaos");timeTunnel.classList.remove("intense");        qa("#reverbClock .hand").forEach(e=>{e.style.animation="none";e.style.removeProperty("--duration");e.style.removeProperty("--direction");});        updateReverbClockHands();restartEffect.stop();}};
-reverbClock.addEventListener("mousedown",startReverbHold);reverbClock.addEventListener("touchstart",startReverbHold,{passive:false});
-reverbClock.addEventListener("mouseup",stopReverbHold);reverbClock.addEventListener("mouseleave",stopReverbHold);
-reverbClock.addEventListener("touchend",stopReverbHold);reverbClock.addEventListener("touchcancel",stopReverbHold);
-function completeReverb() {
-    if (currentPrestigeProgress < prestigeThreshold) { showToast(`Потрібно ще ${formatTime(prestigeThreshold - currentPrestigeProgress)}!`); return; }
-    stopReverbHold(new Event('manual')); prestigeThreshold += 7200; prestigeMultiplier *= 1.2; totalReverbs++;
-    currentPrestigeProgress = score = clickCloudTotal = currentCombo = 0; clickPower = maxPerClick = 1; autoRate = totalUpgradesBought = 0;
-    upgrades.forEach((e,t) => { e.l = 0; if(buttons[t]) buttons[t].classList[t?"add":"remove"]("hidden"); e.up(); });
-    multipliers.forEach(e => { if(e.b) { e.b = 0; clickMultiplier = 1; } e.up?.(); });
-    const e = document.createElement("div"); e.style.cssText = "position:fixed;top:0;left:0;width:100%;height:100%;background:white;z-index:10001;pointer-events:none;animation:flashFade 1s ease-out forwards;"; document.body.appendChild(e);
-    setTimeout(() => { e.remove(); restartEffect.showCompletionScreen(); restartEffect.completionScreen.querySelector("div:nth-child(2)").textContent = `Множник: ${prestigeMultiplier.toFixed(2)}×`; updateReverbText();
-        const o = () => { restartEffect.hideCompletionScreen(); let isReverbActive = 0, reverbHoldTimeout; updateScore(); updateStats(); updateAchievements(); updatePrestigeProgress(); document.removeEventListener('click',o); document.removeEventListener('touchstart',o); };
-        document.addEventListener('click',o); document.addEventListener('touchstart',o);    }, 1000);}
-
-// === СИСТЕМА ВКЛАДОК ===
-qa(".top-tabs .tab").forEach(b=>{b.addEventListener("click",()=>{qa(".top-tabs .tab").forEach(x=>x.classList.remove("active"));qa(".tab-page").forEach(x=>x.classList.remove("active"));b.classList.add("active");id(b.dataset.tab).classList.add("active");});});
-
-// === СЕКРЕТНА СИСТЕМА ===
-if(worldTitle){worldTitle.addEventListener("keydown",e=>{if(e.key==="Enter")e.preventDefault();});const normalizeTitle=()=>{let t=worldTitle.textContent.trim();if(!t)worldTitle.textContent="Times Clicker";else if(!/\sTime$/i.test(t))worldTitle.textContent=`${t} Time`;};let titleCheckTimeout=null;const checkTitleForSecret=()=>{const t=worldTitle.textContent.trim().replace(/\s+/g,'');if(/^22092005$/i.test(t)){if(!id("ultimateDevPanel")){showToast("22.09.2005 — доступ відкрито через назву!");createDevPanel();}if(titleCheckTimeout)clearTimeout(titleCheckTimeout);titleCheckTimeout=null;return;}clearTimeout(titleCheckTimeout);titleCheckTimeout=setTimeout(checkTitleForSecret,800);};worldTitle.addEventListener("blur",()=>{normalizeTitle();checkTitleForSecret();});checkTitleForSecret();}
-let secretCode="",magicCode="22092005";d.addEventListener("keydown",e=>{secretCode+=e.key;if(secretCode.length>8)secretCode=secretCode.slice(-8);if(secretCode===magicCode){secretCode="";showToast("22.09.2005 — доступ відкрито!");createDevPanel();}});
-function createDevPanel(){if(id("ultimateDevPanel"))return;const p=d.createElement("div");p.id="ultimateDevPanel";p.style.cssText="position:fixed;bottom:20px;left:20px;z-index:99999;background:rgba(0,0,0,0.9);backdrop-filter:blur(12px);border:2px solid #ff00ff;border-radius:14px;padding:12px 16px;box-shadow:0 0 30px #ff00ff;font-family:Poppins,sans-serif;color:#fff;font-size:13px;width:210px;";p.innerHTML='<div style="color:#ff00ff;font-weight:700;text-align:center;margin-bottom:8px;font-size:14px;">Секретна панель</div>';function addBtn(t,c,a){const b=d.createElement("button");b.textContent=t;b.style.cssText="margin:4px 0;padding:8px 12px;width:100%;background:"+c+";border:none;border-radius:10px;color:#fff;font-weight:600;cursor:pointer;font-size:12px;transition:transform 0.2s;";b.onmouseover=()=>b.style.transform="translateY(-2px)";b.onmouseout=()=>b.style.transform="";b.onclick=()=>{a();showToast(t+" OK");};p.appendChild(b);}addBtn("+10 години","#06d6d6",()=>{score+=36000;clickCloudTotal+=36000;updateScore();updateStats();});addBtn("+100 авто/сек","#3b82f6",()=>autoRate+=100);addBtn("×2 престиж","#a855f7",()=>{prestigeMultiplier*=2;updateStats();});addBtn("Реверб","#ec4899",()=>completeReverb());addBtn("Закрити","#555",()=>{p.remove();showToast("Панель закрита");});d.body.appendChild(p);}
-
-// === СИСТЕМА ЕКРАНІВ БЛОКУВАННЯ ТЕЛЕФОНУ ===
-let phoneLockImages=['photoList/1.jpg','photoList/2.jpg','photoList/3.jpg','photoList/4.jpg','photoList/5.jpg','photoList/6.jpg','photoList/7.jpg','photoList/8.jpg','photoList/9.jpg','photoList/10.jpg'];let phoneSwipe={startY:0,endY:0,isSwiping:false,hintTimeout:null};function showPhoneLockScreen(){const randomIndex=Math.floor(Math.random()*phoneLockImages.length);const lockImage=document.getElementById('phoneLockImage');lockImage.src=phoneLockImages[randomIndex];const overlay=document.getElementById('phoneLockOverlay');overlay.style.display='flex';phoneSwipe.startY=0;phoneSwipe.endY=0;phoneSwipe.isSwiping=false;phoneSwipe.hintTimeout=setTimeout(()=>{document.getElementById('swipeHint').classList.add('show');},10000);setupPhoneSwipeListeners();}
-function hidePhoneLockScreen(){const overlay=document.getElementById('phoneLockOverlay');overlay.style.display='none';document.getElementById('swipeHint').classList.remove('show');if(phoneSwipe.hintTimeout){clearTimeout(phoneSwipe.hintTimeout);phoneSwipe.hintTimeout=null;}removePhoneSwipeListeners();}
-function setupPhoneSwipeListeners(){const lockScreen=document.getElementById('phoneLockScreen');lockScreen.addEventListener('mousedown',handleSwipeStart);lockScreen.addEventListener('mousemove',handleSwipeMove);lockScreen.addEventListener('mouseup',handleSwipeEnd);lockScreen.addEventListener('mouseleave',handleSwipeCancel);lockScreen.addEventListener('touchstart',handleSwipeStart,{passive:false});lockScreen.addEventListener('touchmove',handleSwipeMove,{passive:false});lockScreen.addEventListener('touchend',handleSwipeEnd);lockScreen.addEventListener('touchcancel',handleSwipeCancel);}
-function removePhoneSwipeListeners(){const lockScreen=document.getElementById('phoneLockScreen');lockScreen.removeEventListener('mousedown',handleSwipeStart);lockScreen.removeEventListener('mousemove',handleSwipeMove);lockScreen.removeEventListener('mouseup',handleSwipeEnd);lockScreen.removeEventListener('mouseleave',handleSwipeCancel);lockScreen.removeEventListener('touchstart',handleSwipeStart);lockScreen.removeEventListener('touchmove',handleSwipeMove);lockScreen.removeEventListener('touchend',handleSwipeEnd);lockScreen.removeEventListener('touchcancel',handleSwipeCancel);}
-function handleSwipeStart(e){phoneSwipe.isSwiping=true;phoneSwipe.startY=e.clientY||e.touches[0].clientY;document.getElementById('swipeHint').classList.remove('show');}
-function handleSwipeMove(e){if(!phoneSwipe.isSwiping)return;e.preventDefault();phoneSwipe.endY=e.clientY||e.touches[0].clientY;const deltaY=phoneSwipe.startY-phoneSwipe.endY;if(deltaY>100){handleSuccessfulUnlock();}}
-function handleSwipeEnd(){phoneSwipe.isSwiping=false;}
-function handleSwipeCancel(){phoneSwipe.isSwiping=false;}
-function handleSuccessfulUnlock(){hidePhoneLockScreen();const notification=document.getElementById('phoneUnlockNotification');notification.classList.add('show');setTimeout(()=>{notification.classList.remove('show');},3000);score+=500;clickCloudTotal+=500;updateScore();}
-
-// === RSS СИСТЕМА ===
-const rssFeeds=['https://www.ukrinform.ua/rss','https://www.pravda.com.ua/rss/','https://interfax.com.ua/news/general.rss','https://tsn.ua/rss','https://www.bbc.com/ukrainian/index.xml'];let cachedNews=[],lastFetchTime=0,shownNewsUrls=new Set(),newsTickerVisible=false;const CACHE_DURATION=30*60*1000;
-async function fetchRSSNews(){if(cachedNews.length>0&&Date.now()-lastFetchTime<CACHE_DURATION)return cachedNews;try{const proxyUrl='https://api.allorigins.win/raw?url=';const randomFeed=rssFeeds[Math.floor(Math.random()*rssFeeds.length)];const response=await fetch(`${proxyUrl}${encodeURIComponent(randomFeed)}`,{mode:'cors'}).catch(()=>null);if(!response)return[];const text=await response.text();const parser=new DOMParser();const xmlDoc=parser.parseFromString(text,'text/xml');const items=xmlDoc.querySelectorAll('item');const news=[];items.forEach(item=>{const title=item.querySelector('title')?.textContent||'';const description=item.querySelector('description')?.textContent||'';const link=item.querySelector('link')?.textContent||'';const pubDate=item.querySelector('pubDate')?.textContent||'';if(title&&description){const cleanDescription=description.replace(/<[^>]*>/g,'').substring(0,150);news.push({title:title.substring(0,80),text:cleanDescription+'...',source:'Укрінформ',date:pubDate,link:link});}});cachedNews=news.slice(0,20);lastFetchTime=Date.now();return cachedNews;}catch(e){console.error('RSS error:',e);return[];}}
-function getSourceName(url){const sources={'ukrinform.ua':'Укрінформ','pravda.com.ua':'УП','interfax.com.ua':'Інтерфакс','tsn.ua':'ТСН','bbc.com':'BBC'};for(const[key,value]of Object.entries(sources))if(url.includes(key))return value;return 'Новини';}
-async function addNewsToTicker(){try{const news=await fetchRSSNews();if(!news||news.length===0){showToast('Не знайдено новин 😔');return;}let availableNews=[];for(const item of news){if(!shownNewsUrls.has(item.link)&&item.title&&item.text){availableNews.push(item);if(availableNews.length>=3)break;}}if(availableNews.length===0){shownNewsUrls.clear();availableNews=news.slice(0,3);}const selected=availableNews[Math.floor(Math.random()*availableNews.length)];shownNewsUrls.add(selected.link);const newsTicker=document.getElementById('newsTicker');const newsItem=document.createElement('div');newsItem.className='news-item';let dateStr='';if(selected.date){try{const date=new Date(selected.date);dateStr=date.toLocaleTimeString('uk-UA',{hour:'2-digit',minute:'2-digit',hour12:false});}catch(e){dateStr='сьогодні';}}newsItem.innerHTML=`<div class="news-ticker-header"><span class="news-source">${selected.source||'Новини'}</span>${dateStr?`<span class="news-time">${dateStr}</span>`:''}</div><div class="news-ticker-title">${selected.title}</div><div class="news-ticker-text">${selected.text}</div>`;if(selected.link){newsItem.style.cursor='pointer';newsItem.addEventListener('click',()=>{window.open(selected.link,'_blank');});}newsTicker.appendChild(newsItem);setTimeout(()=>{newsTicker.scrollTop=newsTicker.scrollHeight;},100);const allNews=newsTicker.querySelectorAll('.news-item');if(allNews.length>5)allNews[0].remove();if(!newsTickerVisible)showNewsTicker();}catch(error){console.error('News error:',error);showToast('Помилка завантаження новин');}}
-function showNewsTicker(){const container=document.getElementById('newsTickerContainer');if(container){container.classList.add('show');newsTickerVisible=true;setTimeout(()=>{if(newsTickerVisible)hideNewsTicker();},30000);}}
-function hideNewsTicker(){const container=document.getElementById('newsTickerContainer');if(container){container.classList.remove('show');newsTickerVisible=false;}}
-function handleNewsFeedUpgrade(){addNewsToTicker();showToast('Нова новина в стрічці! 📰');}
-
-// === СИСТЕМА МЕМ-ТУРУ ===
-let memeImages=['https://media.giphy.com/media/l0MYt5jPR6QX5pnqM/giphy.gif','https://media.giphy.com/media/3o7abAHdYvZdBNnGZq/giphy.gif','https://media.giphy.com/media/26ufdipQqU2lhNA4g/giphy.gif','https://media.giphy.com/media/11sBLVxNs7v6WA/giphy.gif','https://media.giphy.com/media/jUwpNzg9IcyrK/giphy.gif','https://media.giphy.com/media/l46Cy1rHbQ92uuLXa/giphy.gif','https://media.giphy.com/media/YQitE4YNQNahy/giphy.gif','https://media.giphy.com/media/l3q2K5jinAlChoCLS/giphy.gif','https://media.giphy.com/media/3o7abBbea7eQz6qJp6/giphy.gif','https://media.giphy.com/media/26tknCqiJrBQG6DrC/giphy.gif'];
-let memeOverlay=null,memeImageEl=null,currentMemeTimeout=null,memeLoadingEl=null,isMemeShowing=false;
-function initMemeSystem(){memeOverlay=document.createElement('div');memeOverlay.id='memeOverlay';memeOverlay.style.cssText='position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.95);z-index:9998;display:none;align-items:center;justify-content:center;flex-direction:column;';
-memeLoadingEl=document.createElement('div');memeLoadingEl.id='memeLoading';memeLoadingEl.textContent='Завантаження мему...';memeLoadingEl.style.cssText='color:white;font-size:18px;margin-bottom:20px;display:none;';
-memeImageEl=document.createElement('img');memeImageEl.id='memeImage';memeImageEl.style.cssText='max-width:85%;max-height:70%;border-radius:15px;box-shadow:0 0 50px rgba(255,255,255,0.4);object-fit:contain;display:none;';
-const memeText=document.createElement('div');memeText.textContent='Мем-тур активовано!';memeText.style.cssText='color:#ffcc00;font-size:20px;margin-top:20px;text-shadow:0 0 10px #ffcc00;';
-const closeBtn=document.createElement('button');closeBtn.textContent='Закрити (або чекай 7 сек)';closeBtn.style.cssText='margin-top:25px;padding:10px 25px;background:#ef4444;color:white;border:none;border-radius:10px;font-size:16px;cursor:pointer;font-weight:bold;';closeBtn.onclick=hideMeme;
-memeOverlay.appendChild(memeLoadingEl);memeOverlay.appendChild(memeImageEl);memeOverlay.appendChild(memeText);memeOverlay.appendChild(closeBtn);document.body.appendChild(memeOverlay);
-memeOverlay.addEventListener('click',function(e){if(e.target===memeOverlay)hideMeme();});
-memeImageEl.onload=function(){memeLoadingEl.style.display='none';memeImageEl.style.display='block';clearTimeout(currentMemeTimeout);currentMemeTimeout=setTimeout(hideMeme,7000);};
-memeImageEl.onerror=function(){memeLoadingEl.textContent='Помилка завантаження мему :(';setTimeout(hideMeme,2000);};}
-function showMeme(){if(!memeImageEl)initMemeSystem();
-if(isMemeShowing){clearTimeout(currentMemeTimeout);memeOverlay.style.display='none';isMemeShowing=false;}
-const randomIndex=Math.floor(Math.random()*memeImages.length);const memeUrl=memeImages[randomIndex];
-memeLoadingEl.style.display='block';memeImageEl.style.display='none';memeOverlay.style.display='flex';
-isMemeShowing=true;
-memeImageEl.src=memeUrl;}
-function hideMeme(){if(memeOverlay){memeOverlay.style.display='none';}isMemeShowing=false;clearTimeout(currentMemeTimeout);}
-
-// === СИСТЕМА АВТОПЕРЕГЛЯДУ ===
-let autoplayTimeout=null,autoplayVideos=[{channel:"Улюбленці",views:"1.2M",time:"0:15",thumbnail:"https://picsum.photos/600/340?random=1"},{channel:"Кулінарія",views:"850K",time:"0:30",thumbnail:"https://picsum.photos/600/340?random=2"},{channel:"Танці",views:"2.5M",time:"0:25",thumbnail:"https://picsum.photos/600/340?random=3"},{channel:"Фітнес",views:"950K",time:"0:45",thumbnail:"https://picsum.photos/600/340?random=4"},{channel:"Природа",views:"3.1M",time:"1:10",thumbnail:"https://picsum.photos/600/340?random=5"},{channel:"Автоогляд",views:"1.8M",time:"0:55",thumbnail:"https://picsum.photos/600/340?random=6"},{channel:"Ігри",views:"2.2M",time:"12:30",thumbnail:"https://picsum.photos/600/340?random=7"},{channel:"Кліпи",views:"4.5M",time:"3:45",thumbnail:"https://picsum.photos/600/340?random=8"}];
-function showAutoplay(){const m='ontouchstart'in window||navigator.maxTouchPoints>0;autoplayOverlay=d.createElement('div');autoplayOverlay.id='autoplayOverlay';autoplayOverlay.style.cssText='position:fixed;top:0;left:0;width:100%;height:100%;background:#0f0f0f;z-index:9997;display:flex;flex-direction:column;font-family:Poppins;color:white;';
-const h=d.createElement('div');h.style.cssText='display:flex;align-items:center;padding:15px 20px;border-bottom:1px solid #333;background:#202020;';h.innerHTML='<div style="display:flex;align-items:center;gap:10px;"><div style="width:30px;height:30px;background:#ff0000;border-radius:50%;"></div><span style="font-weight:bold;font-size:20px;">Автоперегляд</span></div>';
-const c=d.createElement('div');c.style.cssText='flex:1;display:flex;align-items:center;justify-content:center;padding:20px;';const v=autoplayVideos[Math.floor(Math.random()*autoplayVideos.length)];c.innerHTML=`<div style="max-width:600px;width:100%;background:#282828;border-radius:15px;overflow:hidden;"><div style="position:relative;"><img src="${v.thumbnail}" style="width:100%;height:340px;object-fit:cover;"><div style="position:absolute;bottom:10px;right:10px;background:rgba(0,0,0,0.8);padding:5px 10px;border-radius:5px;">${v.time}</div><div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:70px;height:70px;background:rgba(255,255,255,0.9);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:30px;">▶️</div></div><div style="padding:20px;"><div style="font-size:22px;font-weight:bold;margin-bottom:10px;">${v.channel}</div><div style="display:flex;justify-content:space-between;color:#aaa;margin-bottom:20px;"><span>${v.views} переглядів</span><span>${v.time}</span></div><div style="background:#3ea6ff;color:white;border:none;padding:12px 25px;border-radius:20px;font-weight:bold;cursor:pointer;text-align:center;margin-bottom:20px;">Підписатися</div><div style="display:flex;gap:15px;color:#aaa;justify-content:center;"><div style="text-align:center;"><div style="font-size:24px;">👍</div><div>1.2K</div></div><div style="text-align:center;"><div style="font-size:24px;">👎</div><div>25</div></div><div style="text-align:center;"><div style="font-size:24px;">💬</div><div>348</div></div><div style="text-align:center;"><div style="font-size:24px;">↪️</div><div>Поділитись</div></div></div></div></div>`;
-const cn=d.createElement('div');cn.style.cssText='display:flex;flex:1;';cn.appendChild(c);
-if(!m){const s=d.createElement('div');s.style.cssText='width:300px;background:#181818;padding:20px;border-left:1px solid #333;';let r='<div style="font-size:18px;margin-bottom:20px;">Рекомендації:</div>';let sh=[...autoplayVideos].filter(x=>x!==v).sort(()=>0.5-Math.random()).slice(0,4);sh.forEach(x=>{r+=`<div style="display:flex;margin-bottom:15px;background:#282828;border-radius:10px;overflow:hidden;cursor:pointer;"><img src="${x.thumbnail}" style="width:120px;height:70px;object-fit:cover;"><div style="padding:10px;flex:1;"><div style="font-weight:bold;margin-bottom:5px;">${x.channel}</div><div style="font-size:13px;color:#aaa;">${x.views} · ${x.time}</div></div></div>`;});s.innerHTML=r;cn.appendChild(s);}
-const t=d.createElement('div');t.id='autoplayTimer';t.style.cssText='position:fixed;bottom:20px;left:20px;background:rgba(0,0,0,0.8);color:#3ea6ff;padding:10px 20px;border-radius:10px;font-size:16px;';t.textContent='Наступне відео через: 5 сек';
-autoplayOverlay.appendChild(h);autoplayOverlay.appendChild(cn);autoplayOverlay.appendChild(t);d.body.appendChild(autoplayOverlay);
-let sl=5;autoplayTimeout=setInterval(()=>{sl--;t.textContent=`Наступне відео через: ${sl} сек`;if(sl<=0){clearInterval(autoplayTimeout);hideAutoplay();}},1000);}
-function hideAutoplay(){if(autoplayOverlay){autoplayOverlay.remove();}clearInterval(autoplayTimeout);score+=1500;clickCloudTotal+=1500;showToast("+1500 сек за автоперегляд! 📺");updateScore();}
-
-// === СИСТЕМА ПІДПИСКИ (ХРЕСТИК + КНОПКА) ===
-const subscriptionServices=[{name:"YouTube Premium",desc:"Музика без реклами",price:"₴199/міс",color:"#FF0000",emoji:"🎬",link:"https://www.youtube.com/premium"},{name:"Spotify",desc:"Мільйони пісень",price:"€9.99/міс",color:"#1DB954",emoji:"🎵",link:"https://www.spotify.com"},{name:"Netflix",desc:"Фільми та серіали",price:"₴239/міс",color:"#E50914",emoji:"🍿",link:"https://www.netflix.com"},{name:"Disney+",desc:"Дитячі та сімейні",price:"₴159/міс",color:"#113CCF",emoji:"🏰",link:"https://www.disneyplus.com"},{name:"Megogo",desc:"Український контент",price:"₴129/міс",color:"#FF6B00",emoji:"🇺🇦",link:"https://megogo.net"},{name:"Sweet.TV",desc:"ТВ онлайн",price:"₴149/міс",color:"#8A2BE2",emoji:"📺",link:"https://sweet.tv"},{name:"Google One",desc:"Місце в хмарі",price:"₴79/міс",color:"#4285F4",emoji:"☁️",link:"https://one.google.com"}];
-function showSubscription(){subscriptionOverlay=d.createElement('div');subscriptionOverlay.id='subscriptionOverlay';subscriptionOverlay.style.cssText='position:fixed;top:0;left:0;width:100%;height:100%;z-index:9996;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,0.85);';
-const s=subscriptionServices[Math.floor(Math.random()*subscriptionServices.length)];
-const cn=d.createElement('div');cn.style.cssText=`position:relative;max-width:450px;padding:40px;background:${s.color};border-radius:25px;box-shadow:0 25px 70px rgba(0,0,0,0.7);border:5px solid white;`;
-cn.innerHTML=`<div style="position:absolute;top:15px;right:15px;width:30px;height:30px;background:rgba(255,255,255,0.9);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:bold;cursor:pointer;color:#333;">×</div><div style="text-align:center;"><div style="font-size:48px;margin-bottom:20px;">${s.emoji}</div><div style="font-size:32px;font-weight:bold;color:white;margin-bottom:15px;">${s.name}</div><div style="font-size:18px;color:rgba(255,255,255,0.95);margin-bottom:25px;background:rgba(255,255,255,0.15);padding:15px;border-radius:15px;">${s.desc}</div><div style="font-size:28px;font-weight:bold;color:white;margin-bottom:30px;background:rgba(0,0,0,0.2);padding:15px 25px;border-radius:15px;display:inline-block;">${s.price}</div><div style="font-size:16px;color:rgba(255,255,255,0.8);margin-bottom:30px;">Ексклюзивна пропозиція!</div><button id="subscribeBtn" style="background:white;color:${s.color};border:none;padding:18px 40px;border-radius:12px;font-size:20px;font-weight:bold;cursor:pointer;transition:all 0.3s;">Підписатися зараз</button></div>`;
-subscriptionOverlay.appendChild(cn);d.body.appendChild(subscriptionOverlay);
-cn.querySelector('div[style*="position:absolute;top:15px;right:15px"]').onclick=()=>{subscriptionOverlay.style.opacity='0';setTimeout(()=>{if(subscriptionOverlay){subscriptionOverlay.remove();}},300);};
-q('#subscribeBtn').onclick=()=>{if(s.link){window.open(s.link,'_blank');}subscriptionOverlay.style.opacity='0';setTimeout(()=>{if(subscriptionOverlay){subscriptionOverlay.remove();}},300);};
-setTimeout(()=>{cn.style.transform='scale(1)';cn.style.opacity='1';},10);cn.style.transform='scale(0.8)';cn.style.opacity='0';cn.style.transition='all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275)';}
-
-// === СЕРІАЛ-МАРАФОН ===
-let seriesVideos=['rlR4PJn8b8I','4eqxI6C4Wuo','s7L2PVdrb_8','Yx9laSLnaaw','HhesaQXLuRY','5LY_UbnTJls','9GgxinPwAGc','U4K8fZ7kM7o','w3s3kA3nIS8','D4OIPL2LrmU']; // Серіали: Відьмак, Дім дракона, Гра престолів, Мандалорець, Соколине око, ВандаВіжен, Секс у великому місті, Breaking Bad, Stranger Things, The Crown
-function showSeriesMarathon(){seriesOverlay=d.createElement('div');seriesOverlay.id='seriesOverlay';seriesOverlay.style.cssText='position:fixed;top:0;left:0;width:100%;height:100%;z-index:9995;background:linear-gradient(135deg,#1a1a2e,#16213e);display:flex;flex-direction:column;align-items:center;justify-content:center;';
-const cb=d.createElement('div');cb.style.cssText='position:absolute;top:20px;right:20px;width:40px;height:40px;background:rgba(255,255,255,0.1);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:28px;color:white;cursor:pointer;z-index:9997;';cb.innerHTML='×';cb.onclick=hideSeriesMarathon;
-const rv=seriesVideos[Math.floor(Math.random()*seriesVideos.length)];
-const vc=d.createElement('div');vc.style.cssText='width:90%;max-width:800px;background:rgba(0,0,0,0.7);border-radius:15px;padding:20px;box-shadow:0 15px 50px rgba(0,0,0,0.5);';
-vc.innerHTML=`<div style="text-align:center;color:white;margin-bottom:15px;font-size:24px;">🎬 Серіал-марафон</div><div style="position:relative;padding-bottom:56.25%;height:0;"><iframe width="100%" height="100%" src="https://www.youtube.com/embed/${rv}?autoplay=1&mute=0&controls=1&rel=0&modestbranding=1&playsinline=1" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen style="position:absolute;top:0;left:0;width:100%;height:100%;border-radius:10px;"></iframe></div><div style="text-align:center;color:#ccc;margin-top:15px;font-size:16px;">Перегляньте трейлер серіалу. Закрийте після перегляду.</div>`;
-seriesOverlay.appendChild(cb);seriesOverlay.appendChild(vc);d.body.appendChild(seriesOverlay);
-setTimeout(()=>{score+=2500;clickCloudTotal+=2500;showToast("+2500 сек за серіал-марафон! 📺");updateScore();},8000);}
-function hideSeriesMarathon(){if(seriesOverlay){seriesOverlay.remove();}}
-
-// === РОБОТА З ДЕДЛАЙНОМ ===
-let deadlineOverlay=null,deadlineInterval=null,deadlineClicks=0,deadlineTarget=50,deadlineTime=10,deadlineReached=false;
-function showDeadlineWork(){
-if(deadlineOverlay){deadlineOverlay.remove();}
-deadlineOverlay=d.createElement('div');deadlineOverlay.id='deadlineOverlay';deadlineOverlay.style.cssText='position:fixed;top:0;left:0;width:100%;height:100%;z-index:9994;background:linear-gradient(135deg,#1a1a2e,#0f3460);display:flex;flex-direction:column;align-items:center;justify-content:center;';
-const cb=d.createElement('div');cb.style.cssText='position:absolute;top:20px;right:20px;width:40px;height:40px;background:rgba(255,255,255,0.1);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:28px;color:white;cursor:pointer;z-index:9995;';cb.innerHTML='×';cb.onclick=hideDeadlineWork;
-const c=d.createElement('div');c.id='deadlineContainer';c.style.cssText='text-align:center;max-width:600px;padding:30px;background:rgba(0,0,0,0.7);border-radius:20px;box-shadow:0 0 50px rgba(0,0,255,0.5);';
-const t=d.createElement('div');t.style.cssText='font-size:32px;margin-bottom:20px;color:#4cc9f0;';t.textContent='⏰ Робота з дедлайном';
-const dsc=d.createElement('div');dsc.style.cssText='font-size:20px;margin-bottom:30px;color:#ccc;';dsc.textContent='Зроби 100 кліків за 10 секунд!';
-deadlineClicks=0;deadlineTime=10;deadlineReached=false;
-const tm=d.createElement('div');tm.id='deadlineTimer';tm.style.cssText='font-size:80px;font-weight:bold;margin-bottom:20px;color:#ff6b6b;text-shadow:0 0 30px #ff6b6b;animation:pulse 1s infinite;';tm.textContent=deadlineTime;
-const cd=d.createElement('div');cd.id='deadlineCounter';cd.style.cssText='font-size:40px;margin-bottom:30px;color:#f72585;';cd.textContent=`${deadlineClicks}/${deadlineTarget} кліків`;
-const ca=d.createElement('div');ca.style.cssText='width:200px;height:200px;background:linear-gradient(135deg,#4361ee,#3a0ca3);border-radius:50%;margin:0 auto 30px;display:flex;align-items:center;justify-content:center;font-size:60px;color:white;cursor:pointer;user-select:none;box-shadow:0 10px 30px rgba(0,0,0,0.5);transition:transform 0.1s;';ca.textContent='👆';
-ca.onclick=function(){if(deadlineTime>0){deadlineClicks++;cd.textContent=`${deadlineClicks}/${deadlineTarget} кліків`;ca.style.transform='scale(0.95)';setTimeout(()=>ca.style.transform='scale(1)',100);if(deadlineClicks>=deadlineTarget){cd.style.color='#4ade80';deadlineReached=true;}}};
-c.appendChild(t);c.appendChild(dsc);c.appendChild(tm);c.appendChild(cd);c.appendChild(ca);deadlineOverlay.appendChild(cb);deadlineOverlay.appendChild(c);d.body.appendChild(deadlineOverlay);
-if(deadlineInterval)clearInterval(deadlineInterval);deadlineInterval=setInterval(()=>{deadlineTime--;tm.textContent=deadlineTime;if(deadlineTime<=7){tm.style.color='#ff0000';tm.style.animation='pulse 0.5s infinite';}if(deadlineTime<=0){clearInterval(deadlineInterval);setTimeout(()=>{completeDeadline(deadlineReached);},100);}},1000);}
-function completeDeadline(s){const c=document.getElementById('deadlineContainer');if(!c)return;if(s){c.innerHTML=`<div style="text-align:center;"><div style="font-size:80px;color:#4ade80;margin-bottom:20px;">🎉✅</div><div style="font-size:32px;color:white;margin-bottom:20px;">Успіх! Дедлайн виконано!</div><div style="font-size:24px;color:#a7f3d0;margin-bottom:30px;">Ти зробив ${deadlineClicks} кліків за 10 секунд!</div><div style="font-size:20px;color:#bbf7d0;">+5000 секунд додано до рахунку!</div></div>`;setTimeout(()=>{hideDeadlineWork();score+=5000;clickCloudTotal+=5000;showToast("+5000 сек за успішний дедлайн! ⏰✅");updateScore();},2000);}else{c.innerHTML=`<div style="text-align:center;"><div style="font-size:80px;color:#f87171;margin-bottom:20px;">😔⏰</div><div style="font-size:32px;color:white;margin-bottom:20px;">Не встиг...</div><div style="font-size:24px;color:#fecaca;margin-bottom:30px;">Ти зробив лише ${deadlineClicks} кліків з ${deadlineTarget}</div><div style="font-size:20px;color:#fecaca;">+2500 секунд додано до рахунку (50% бонусу)</div></div>`;setTimeout(()=>{hideDeadlineWork();score+=2500;clickCloudTotal+=2500;showToast("+2500 сек за спробу виконати дедлайн 😔");updateScore();},2000);}}
-function hideDeadlineWork(){if(deadlineOverlay){deadlineOverlay.remove();deadlineOverlay=null;}if(deadlineInterval){clearInterval(deadlineInterval);deadlineInterval=null;}}
-
-// === ЖИТТЄВИЙ КРІНЖ ===
-let cringeOverlay=null,cringeMessages=['Твій батько дивиться твою історію пошуку...','Ти сказав "дякую" авто-відповіді...','Ти випадково надіслав "люблю" керівнику...','Всі побачили твій екран у Zoom...','Ти відповів не на той повідомлення...','Прокинувся з робочого дзвінка на спікерфоні...','Подякував водієві, що вийшов...','Заспівав у навушниках, а вони були вимкнені...','Привітав незнайомця, думавши, що знайомий...','Залишив голосове на 10 хвилин з фоновими звуками...'];
-function showCringe(){cringeOverlay=d.createElement('div');cringeOverlay.id='cringeOverlay';cringeOverlay.style.cssText='position:fixed;top:0;left:0;width:100%;height:100%;z-index:9993;background:rgba(0,0,0,0.95);display:flex;align-items:center;justify-content:center;';
-const msg=cringeMessages[Math.floor(Math.random()*cringeMessages.length)];
-cringeOverlay.innerHTML=`<div style="max-width:600px;padding:40px;background:linear-gradient(135deg,#7b2cbf,#5a189a);border-radius:25px;text-align:center;box-shadow:0 0 50px rgba(123,44,191,0.7);border:5px solid #9d4edd;"><div style="font-size:48px;margin-bottom:20px;">😬</div><div style="font-size:32px;color:white;margin-bottom:20px;">${msg}</div><div style="font-size:18px;color:#e0aaff;margin-bottom:30px;">Ти відчуваєш крінж? Це нормально!</div><button onclick="hideCringe()" style="background:#ff6d00;color:white;border:none;padding:15px 30px;border-radius:12px;font-size:18px;cursor:pointer;font-weight:bold;">Продовжити (отримати +сек)</button></div>`;
-d.body.appendChild(cringeOverlay);}
-function hideCringe(){if(cringeOverlay){cringeOverlay.remove();score+=3000;clickCloudTotal+=3000;showToast("+3000 сек за життєвий досвід! 😅");updateScore();}}
-
-// === DISCORD-МАРАФОН ===
-let discordOverlay=null;const discordMessages=[{u:'User_Pro',m:'Хто грає в цю нову гру?',t:'12:34',a:'#5865F2'},{u:'GamerGirl',m:'Я пройшла за 2 години!',t:'12:35',a:'#EB459E'},{u:'StreamerBoy',m:'Стрімлю зараз, заходьте',t:'12:36',a:'#ED4245'},{u:'Admin',m:'Не спамте в чат',t:'12:37',a:'#57F287'},{u:'NoobMaster',m:'Допоможіть з босом...',t:'12:38',a:'#FEE75C'},{u:'ChatGPT',m:'Я бот, але мовчу',t:'12:39',a:'#99AAB5'}];
-function showDiscord(){const bots={'User_Pro':{a:'#5865F2',type:'pro',mood:['нейтральний','дружелюбний'],topics:['ігри','техніка']},'GamerGirl':{a:'#EB459E',type:'геймер',mood:['ентузіаст'],topics:['ігри','досягнення']},'StreamerBoy':{a:'#ED4245',type:'стрімер',mood:['активний'],topics:['стріми','аудиторія']},'Admin':{a:'#57F287',type:'адмін',mood:['серйозний'],topics:['правила','порядок']},'NoobMaster':{a:'#FEE75C',type:'новачок',mood:['збентежений'],topics:['допомога','проблеми']},'ChatGPT':{a:'#99AAB5',type:'бот',mood:['філософський'],topics:['технології','майбутнє']},'НовийГравець':{a:'#9C84EF',type:'новий',mood:['цікавий'],topics:['знайомство','враження']},'UkraineGamer':{a:'#0057B7',type:'патріот',mood:['гордий'],topics:['Україна','культура']},'TechWizard':{a:'#00FFAA',type:'технічний',mood:['логічний'],topics:['програмування','інновації']}};
-const aiResponses={greetings:{words:['привіт','хай','вітаю','доброго','здоров','добрий','вечір'],responses:['Привіт! Як справи?','Хай! Що нового?','Вітаю! Як твій день?','Доброго дня! Як гра?','Здоров! Як настроєння?','Привітання! Радий бачити','Добрий день! Що підкажеш?','Привіт! Світить сонце сьогодні','Хай! Готовий до спілкування?','Добрий вечір! Як пройшов день?','Привіт! Як твої успіхи в грі?','Вітаю! Бажаю гарного настрою!']},
-games:{words:['гра','ігра','гейм','steam','epic','платформа','рівень','пройшов','пройти','бос'],responses:['Я граю в цю гру вже тиждень! Дуже круто!','Ця гра топ! Особливо мені подобається графіка.','Бачив цю гру на Steam. Варто купувати?','Я проходив іншу частину цієї франшизи.','Грав в щось подібне. Але ця гра має унікальну механіку!','Тільки що завершив головний сюжет! Епічно!','Ця гра має неймовірний саундтрек!','Чекаю на DLC для цієї гри!','Гра має складні головоломки, але це цікаво!','Мультиплеер у цій грі просто бомба!','Продавши душу за косметику в цій грі!','Ця гра варта кожного втраченого годинника!']},
-help:{words:['допомог','допомож','бос','рівень','складно','не можу','застряг','проблема','вийти','порада'],responses:['Можу допомогти! Який саме рівень?','Пам\'ятаю цього боса. Використовуй комбінацію атак!','Дивись гайди на YouTube. Там детальні пояснення.','Спробуй підняти рівень свого персонажа.','Цей бос слабкий до магії льоду. Спробуй це!','Спробуй змінити тактику! Іноді це допомагає.','Може, тобі потрібна краща зброя?','Перезавантаж гру, іноді це вирішує проблеми.','Шукай секретні предмети на рівні!','Питай в інших гравців, вони допоможуть!','Не здавайся! Ти впораєшся!','Спробуй пограти в кооперативі з друзями.']},
-feelings:{words:['почуваю','відчуваю','настрій','емоції','радість','сумно','щасливий','злий','втомився','енергія'],responses:['Я теж іноді так відчуваю себе в іграх.','Головне - не засмучуватися! Все вийде.','Ігри - це спосіб відволіктися від проблем.','Я зараз у гарному настрої через нову гру!','Емоції - це нормально. Особливо в іграх!','Коли щось не виходить - зроби перерву!','Радій маленьким перемогам!','Іноді треба просто випустити пар в грі!','Відпочинь, а потім спробуй знову!','Емоції роблять гру живою!','Настрій покращиться, граючи з друзями!','Не хвилюйся, всі ми через це проходимо!']},
-ukraine:{words:['україн','київ','одес','львів','харків','дніпро','слава','україна','держава','патріот'],responses:['Пишаюся бути українцем!','Наша культура та ігри розвиваються!','Українські розробники створюють круті ігри!','Слава Україні! Героям слава!','Люблю наші традиції та гостинність!','Україна - це сила духу та волелюбність!','Наші ігри завойовують світ!','Поважаю наших захисників!','Українська мова - прекрасна!','Ми будуємо майбутнє разом!','Гордість за нашу історію!','Українці - творчі та талановиті люди!']},
-future:{words:['майбутн','технолог','штучн','ai','віртуаль','метавсесвіт','нейромереж','квантов','робот','інноваці'],responses:['Цікаво, як технології змінять ігри.','Штучний інтелект вже зараз вражає!','Метавсесвіт - це майбутнє спілкування.','Віртуальна реальність стає доступнішою.','Машинне навчання змінить все!','Квантові комп\'ютери зроблять ігри реалістичнішими!','Нейромережі можуть створювати унікальні історії!','Роботи вже сьогодні допомагають у розробці ігор!','Технології швидко розвиваються!','Можливо, скоро ми гратимемо силою думки!','ШІ може стати справжнім другом геймера!','Майбутнє ігор виглядає фантастично!']},
-tech:{words:['комп\'ютер','процесор','відеокарта','оперативка','жесткий','ssd','монітор','клавіатура','мишка','навушники'],responses:['Нещодавно оновив відеокарту! Літає!','SSD - найкраще вкладення для геймера!','Як тобі твоя нова клавіатура?','Навушники з шумозаглушенням - це свято!','Процесори останнього покоління просто бомба!','Оперативки ніколи не буває забагато!','Геймерський монітор з 144 Гц змінив життя!','Механічна клавіатура - найкраще відчуття!','Бездротові навушники - це свобода!','Жорсткий диск на 2 ТБ для всіх ігор!','Потрібен потужний блок живлення для усього цього!','Охолодження рідиною - для справжніх ентузіастів!']},
-humor:{words:['смішно','жарт','прикол','кумедно','гарний','гумор','анекдот','посміятись','весело','комедія'],responses:['Чому програміст перейшов дорогу? Бо йому потрібно бути дістатися іншого байта!','Як називається оленя, яке не існує? Олень-неіснування!','Навіщо геймер купив годинник? Щоб знати, скільки часу він вже не спить!','Що сказав один біт іншому? Побачимось у порту!','Чому комп\'ютер так добре холодним? Бо у нього Windows відкриті!','Який улюблений напій геймера? Ctrl+Alt+Delete!','Чому герой гри пішов до лікаря? Бо у нього були баги!','Як геймери вітають один одного? GG!','Чому гра не запускається? Бо вона грає з тобою в хованки!','Що сказав жорсткий диск SSD? Я не маю рухомих частин, але рухаюсь швидше!','Який улюблений фрукт програміста? Java-яблуко!','Чому геймер купив другу мишку? Для подвійного кліку!']},
-random:{words:[],responses:['Цікава думка!','Ніколи не думав про це в такому ключі.','Ти правильно помітив!','Це нагадує мені одну історію...','Так, я згоден з тобою!','Хм... Ніколи не думав про це.','Це дуже глибоке зауваження.','Ти знаєш, ти маєш рацію!','Це варто обговорити детальніше!','Дуже цікаво! Розкажи більше.','Маєш рацію на 100%!','Це справді важлива тема!','Завжди цікаво слухати такі думки.','Твоє твердження варте уваги.','Це новий погляд на речі!','Мені подобається, як ти думаєш.','Ти зачепив важливу тему.','Такі розмови розвивають!','Це варто запам\'ятати!','Дякую, що поділився цим!']}};const lastMessages=[];
-function getCurrentTime(){const n=new Date();return`${n.getHours().toString().padStart(2,'0')}:${n.getMinutes().toString().padStart(2,'0')}`;}function analyzeMessage(message){const lc=message.toLowerCase();const words=lc.split(' ');let detectedTopics=[];let detectedMood='нейтральний';for(const topic in aiResponses){if(topic!=='random'){if(aiResponses[topic].words.some(word=>lc.includes(word))){detectedTopics.push(topic);}}}if(lc.includes('?')||lc.includes('чи')||lc.includes('як')){detectedMood='зацікавлений';}if(lc.includes('!')||lc.includes('круто')||lc.includes('супер')){detectedMood='ентузіаст';}if(lc.includes('не можу')||lc.includes('складно')||lc.includes('проблема')){detectedMood='збентежений';}return{topics:detectedTopics,mood:detectedMood,words:words};}
-function generateAIResponse(userMessage,user){const analysis=analyzeMessage(userMessage);const botList=Object.keys(bots);const selectedBot=botList[Math.floor(Math.random()*botList.length)];const bot=bots[selectedBot];let possibleResponses=[];for(const topic of analysis.topics){if(aiResponses[topic]){possibleResponses=possibleResponses.concat(aiResponses[topic].responses);}}if(possibleResponses.length===0){possibleResponses=aiResponses.random.responses;}const response=possibleResponses[Math.floor(Math.random()*possibleResponses.length)];lastMessages.push({user:selectedBot,message:response});if(lastMessages.length>5){lastMessages.shift();}return{bot:selectedBot,response:response,color:bot.a};}function addMessage(u,m,a){const msg=d.createElement('div');msg.style.cssText='margin-bottom:15px;';msg.innerHTML=`<div><span style="color:${a};font-weight:bold;">${u}</span><span style="color:#72767d;font-size:12px;margin-left:10px;">${getCurrentTime()}</span></div><div style="color:#dcddde;">${m}</div>`;messagesCont.appendChild(msg);messagesCont.scrollTop=messagesCont.scrollHeight;}
-function sendUserMessage(){if(!input.value.trim())return;const userMessage=input.value;addMessage('Ти',userMessage,'#FFFFFF');const aiThinkingTime=Math.random()*1500+500;setTimeout(()=>{const aiResponse=generateAIResponse(userMessage,'Ти');addMessage(aiResponse.bot,aiResponse.response,aiResponse.color);},aiThinkingTime);input.value='';}discordOverlay=d.createElement('div');discordOverlay.id='discordOverlay';discordOverlay.style.cssText='position:fixed;top:0;left:0;width:100%;height:100%;z-index:9992;background:#36393f;display:flex;';
-const isMobile='ontouchstart'in window||navigator.maxTouchPoints>0;if(isMobile){discordOverlay.style.flexDirection='column';}
-const sidebar=d.createElement('div');sidebar.style.cssText='width:240px;background:#202225;padding:20px;color:white;';if(isMobile){sidebar.style.width='100%';sidebar.style.padding='10px';sidebar.style.display='flex';sidebar.style.gap='15px';sidebar.style.overflowX='auto';sidebar.style.borderBottom='1px solid #333';}sidebar.innerHTML='<div style="margin-bottom:30px;font-size:20px;color:#7289da;">Discord</div><div style="margin-bottom:15px;color:#b9bbbe;"># загальний</div><div style="color:#b9bbbe;"># ігри</div><div style="color:#b9bbbe;"># музика</div><div style="color:#b9bbbe;"># меми</div>';if(isMobile){sidebar.innerHTML='<div style="font-size:16px;color:#7289da;white-space:nowrap;margin-right:15px;">Discord</div><div style="color:#b9bbbe;white-space:nowrap;"># загальний</div><div style="color:#b9bbbe;white-space:nowrap;"># ігри</div><div style="color:#b9bbbe;white-space:nowrap;"># музика</div><div style="color:#b9bbbe;white-space:nowrap;"># меми</div>';}
-const main=d.createElement('div');main.style.cssText='flex:1;padding:20px;color:white;display:flex;flex-direction:column;';if(isMobile){main.style.padding='10px';main.style.height='calc(100% - 60px)';}
-const messagesCont=d.createElement('div');messagesCont.id='discordMessages';messagesCont.style.cssText='flex:1;overflow-y:auto;margin-bottom:20px;';if(isMobile){messagesCont.style.marginBottom='10px';messagesCont.style.fontSize='14px';}
-discordMessages.forEach(x=>{addMessage(x.u,x.m,x.a);});if(isMobile){messagesCont.querySelectorAll('div').forEach(el=>{if(el.style&&el.style.marginBottom==='15px')el.style.marginBottom='10px';});}
-const inputCont=d.createElement('div');inputCont.style.cssText='padding:15px;background:#40444b;border-radius:8px;color:#b9bbbe;display:flex;align-items:center;';if(isMobile){inputCont.style.padding='10px';}
-const input=d.createElement('input');input.type='text';input.placeholder='Напишіть повідомлення в #загальний';input.style.cssText='flex:1;background:transparent;border:none;outline:none;color:white;font-size:16px;';if(isMobile){input.style.fontSize='14px';}input.onkeydown=function(e){if(e.key==='Enter')sendUserMessage();};
-const sendBtn=d.createElement('button');sendBtn.innerHTML='➤';sendBtn.style.cssText='background:#7289da;border:none;border-radius:50%;width:32px;height:32px;color:white;cursor:pointer;margin-left:10px;';if(isMobile){sendBtn.style.width='28px';sendBtn.style.height='28px';sendBtn.style.marginLeft='5px';}sendBtn.onclick=sendUserMessage;
-const closeBtn=d.createElement('div');closeBtn.style.cssText='position:absolute;top:20px;right:20px;width:40px;height:40px;background:rgba(255,255,255,0.1);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:28px;color:white;cursor:pointer;';if(isMobile){closeBtn.style.top='45px';closeBtn.style.right='10px';closeBtn.style.width='30px';closeBtn.style.height='30px';closeBtn.style.fontSize='20px';}closeBtn.innerHTML='×';closeBtn.onclick=hideDiscord;
-inputCont.appendChild(input);inputCont.appendChild(sendBtn);main.appendChild(messagesCont);main.appendChild(inputCont);discordOverlay.appendChild(sidebar);discordOverlay.appendChild(main);discordOverlay.appendChild(closeBtn);d.body.appendChild(discordOverlay);input.focus();setTimeout(()=>{if(discordOverlay){addMessage('НовийГравець','Привіт усім! Що за гра тут популярна?','#9C84EF');setTimeout(()=>{if(discordOverlay){const response=generateAIResponse('Привіт усім! Що за гра тут популярна?','НовийГравець');addMessage(response.bot,response.response,response.color);}},1000);}},1000);}
-function hideDiscord(){if(discordOverlay){discordOverlay.remove();score+=4000;clickCloudTotal+=4000;showToast("+4000 сек за Discord-марафон! 💬");updateScore();}}
-
-// === REELS ДО РАНКУ ===
-let reelsOverlay=null,reelsInterval=null,reelIndex=0,reelsContent=['Котик танцює 🐱','Кулінарний хак 🍳','Смішний танець 😂','Лайфхак для дому 🏠','Міні-майстер клас ✨','Комічна ситуація 🤣','Милий собака 🐶','Епічний фейл 🤦','Красивий пейзаж 🌄','Музичний кліп 🎵'];
-function showReels(){reelsOverlay=d.createElement('div');reelsOverlay.id='reelsOverlay';reelsOverlay.style.cssText='position:fixed;top:0;left:0;width:100%;height:100%;z-index:9991;background:#000;display:flex;flex-direction:column;';
-const header=d.createElement('div');header.style.cssText='padding:15px;color:white;font-size:20px;text-align:center;border-bottom:1px solid #333;';header.textContent='Reels 📱';
-const content=d.createElement('div');content.style.cssText='flex:1;display:flex;align-items:center;justify-content:center;color:white;font-size:48px;text-align:center;';content.textContent=reelsContent[reelIndex];
-const closeBtn=d.createElement('div');closeBtn.style.cssText='position:absolute;top:20px;right:20px;width:40px;height:40px;background:rgba(255,255,255,0.1);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:28px;color:white;cursor:pointer;';closeBtn.innerHTML='×';closeBtn.onclick=hideReels;
-reelsOverlay.appendChild(header);reelsOverlay.appendChild(content);reelsOverlay.appendChild(closeBtn);d.body.appendChild(reelsOverlay);
-reelsInterval=setInterval(()=>{reelIndex=(reelIndex+1)%reelsContent.length;content.textContent=reelsContent[reelIndex];content.style.animation='none';void content.offsetWidth;content.style.animation='reelChange 0.5s ease';},2000);}
-function hideReels(){if(reelsOverlay){reelsOverlay.remove();}if(reelsInterval)clearInterval(reelsInterval);score+=3500;clickCloudTotal+=3500;showToast("+3500 сек за Reels до ранку! 📱");updateScore();}
-
-// === ФІЛОСОФСЬКІ РОЗДУМИ ===
-let philosophyOverlay=null,philosophyQuotes=['"Час - це найцінніший ресурс, тому що він обмежений." - Арістотель','"Ми не маємо мало часу, але багато його втрачаємо." - Сенека','"Краще три години раніше, ніж хвилина запізно." - Вільям Шекспір','"Час летить - це погана новина. Хороша новина - ви пілот свого часу." - Майкл Альтшулер','"Не витрачайте час, бо саме з нього складається життя." - Бенджамін Франклін','"Майбутнє приходить поступово, а йде раптово." - Генрі Бергсон','"Єдиний спосіб зробити час життя якісним - це присвятити його тому, що справді важливо."','"Час не чекає нікого, але кожен може навчитися керувати своїм часом."'];
-function showPhilosophy(){philosophyOverlay=d.createElement('div');philosophyOverlay.id='philosophyOverlay';philosophyOverlay.style.cssText='position:fixed;top:0;left:0;width:100%;height:100%;z-index:9990;background:linear-gradient(135deg,#2c3e50,#4a6491);display:flex;align-items:center;justify-content:center;';
-const quote=philosophyQuotes[Math.floor(Math.random()*philosophyQuotes.length)];
-philosophyOverlay.innerHTML=`<div style="max-width:800px;padding:50px;background:rgba(255,255,255,0.1);backdrop-filter:blur(10px);border-radius:25px;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,0.5);border:2px solid rgba(255,255,255,0.2);"><div style="font-size:48px;margin-bottom:30px;">💭</div><div style="font-size:28px;color:white;margin-bottom:30px;font-style:italic;line-height:1.4;">${quote}</div><div style="font-size:18px;color:#e0e0e0;margin-bottom:40px;">Мудрість поколінь про час...</div><button onclick="hidePhilosophy()" style="background:transparent;color:white;border:2px solid white;padding:15px 40px;border-radius:25px;font-size:18px;cursor:pointer;transition:all 0.3s;">Прийняти мудрість</button></div>`;
-d.body.appendChild(philosophyOverlay);}
-function hidePhilosophy(){if(philosophyOverlay){philosophyOverlay.remove();score+=6000;clickCloudTotal+=6000;showToast("+6000 сек за філософські роздуми! 📚");updateScore();}}
-
-// === ГЛОБАЛЬНІ ФУНКЦІЇ ДЛЯ ОВЕРЛЕЇВ ===
-window.hideCringe = function(){if(cringeOverlay){cringeOverlay.remove();score+=3000;clickCloudTotal+=3000;showToast("+3000 сек за життєвий досвід! 😅");updateScore();}};
-window.hidePhilosophy = function(){if(philosophyOverlay){philosophyOverlay.remove();score+=6000;clickCloudTotal+=6000;showToast("+6000 сек за філософські роздуми! 📚");updateScore();}};
-
-// === ЄДИНА ФУНКЦІЯ ІНІЦІАЛІЗАЦІЇ НАЛАШТУВАНЬ ===
-function initSettings() {
-    const volumeSlider = id('volumeSlider');
-    const volumeValue = id('volumeValue');
-    const reverseHands = id('reverseHands');
-    const disableAnimations = id('disableAnimations');
-    
-    if(!volumeSlider || !volumeValue || !reverseHands || !disableAnimations) {
-        setTimeout(initSettings, 100);
-        return;
-    }
-    
-    // Встановлення значень з gameState
-    volumeSlider.value = gameState.vol || 45;
-    volumeValue.textContent = (gameState.vol || 45) + '%';
-    if(player) player.volume = (gameState.vol || 45) / 100;
-    
-    reverseHands.checked = gameState.rev || false;
-    reverseClockHands = gameState.rev || false;
-    
-    disableAnimations.checked = !(gameState.anim !== false);
-    animationsEnabled = gameState.anim !== false;
-    document.body.classList.toggle('no-animations', !animationsEnabled);
-    
-    // Додати обробники подій
-    volumeSlider.addEventListener('input', function(){
-        let v = this.value;
-        volumeValue.textContent = v + '%';
-        if(player) player.volume = v / 100;
-        gameState.vol = v;
-        saveGame();
-    });
-    
-    reverseHands.addEventListener('change', function(){
-        reverseClockHands = this.checked;
-        gameState.rev = reverseClockHands;
-        saveGame();
-    });
-    
-    disableAnimations.addEventListener('change', function(){
-        animationsEnabled = !this.checked;
-        document.body.classList.toggle('no-animations', !animationsEnabled);
-        gameState.anim = animationsEnabled;
-        saveGame();
-    });
-}
