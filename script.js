@@ -9,8 +9,6 @@ const d=document,q=s=>d.querySelector(s),qa=s=>d.querySelectorAll(s),id=s=>d.get
 // === ОСНОВНІ ФУНКЦІЇ ГРИ ===
 function startGame(v){id('chooser').style.display='none';id('game').classList.remove('game-hidden');if(v==='mobile')d.body.classList.add('mobile-version');else d.body.classList.remove('mobile-version');initGame();}
 function initGame(){
-// === БЛОКУВАННЯ EVAL ДЛЯ БЕЗПЕКИ ===
-(function(){'use strict';})();
 // === ОПТИМІЗАЦІЯ ДЛЯ МОБІЛЬНИХ ===
 const m='ontouchstart'in window||navigator.maxTouchPoints>0;if(m){const oh=updateClockHands;let rafId,lastUpdate=0;updateClockHands=()=>{const now=Date.now();if(now-lastUpdate>=50){oh();lastUpdate=now;}rafId=requestAnimationFrame(updateClockHands);};let f=[];const osf=showFloating;showFloating=t=>{if(f.length>=2){f.forEach((o,i)=>{if(i<f.length-1&&o.parentNode)o.parentNode.removeChild(o);});f=f.slice(-1);}const e=d.createElement("div");e.textContent=t;e.style.cssText="position:absolute;right:10px;top:30px;color:#ffccd1;font-weight:700;opacity:1;transition:all 0.7s ease-out;font-size:14px;";clockWrapper.appendChild(e);f.push(e);requestAnimationFrame(()=>{e.style.transform="translateX(40px) translateY(-50px)";e.style.opacity="0";});setTimeout(()=>{if(e.parentNode)e.parentNode.removeChild(e);f=f.filter(i=>i!==e);},700);};let tc=0;const ot=showToast;showToast=t=>{if(tc>=2)return;tc++;ot(t);setTimeout(()=>{tc=Math.max(0,tc-1);},3e3);};}
 // === ІНІЦІАЛІЗАЦІЯ DOM-ЕЛЕМЕНТІВ ===
