@@ -33,6 +33,10 @@ let realTimePlayedEl, virtualTimeEl, totalUpgradesEl, maxPerClickEl, prestigeMul
 let reverbBtn, timeTunnel, worldTitle, toastContainer, reverbOverlay, reverbClock, reverbHint;
 let reverbDesc, nextMultiplierEl;
 
+// === ФОРМАТУВАННЯ ЧАСУ (ПЕРЕМІЩЕНО НА ПОЧАТОК) ===
+function formatTime(s){s=Math.floor(s);const u=[{name:"тисячоліття",v:31536000000}, {name:"століття",v:3153600000},{name:"десятиліття",v:315360000},{name:"рік",v:31536000},{name:"міс",v:2592000},{name:"дн",v:86400},{name:"год",v:3600},{name:"хв",v:60},{name:"сек",v:1}];let r=s,p=[];for(const x of u){const a=Math.floor(r/x.v);if(a>0){p.push(`${a} ${x.name}`);r%=x.v;}}return p.length?p.join(" "):`${s} сек`;}
+let timeCache = {};
+function memoizedFormatTime(s) {    if(timeCache[s]) return timeCache[s];    const result = formatTime(s);    if(Object.keys(timeCache).length > 50) timeCache = {};    return timeCache[s] = result;}
 // === СКІНИ ===
 const clockSkins=[{id:"neon-blue",n:"Неон синій",p:0,a:()=>qa('.clock').forEach(c=>{c.style.borderColor="#0ea5e9";c.style.boxShadow="0 0 50px #0ea5e9, 0 0 100px #0ea5e9"})},{id:"purple",n:"Пурпурний",p:64800,a:()=>qa('.clock').forEach(c=>{c.style.borderColor="#8b5cf6";c.style.boxShadow="0 0 50px #8b5cf6, 0 0 100px #8b5cf6"})},{id:"pink",n:"Рожевий",p:129600,a:()=>qa('.clock').forEach(c=>{c.style.borderColor="#ec4899";c.style.boxShadow="0 0 50px #ec4899, 0 0 100px #ec4899"})},{id:"black",n:"Чорний",p:259200,a:()=>qa('.clock').forEach(c=>{c.style.borderColor="#111";c.style.boxShadow="0 0 10px #000"})}],shapes=[{id:"round",n:"Круг",p:0},{id:"square",n:"Квадрат",p:28800},{id:"diamond",n:"Ромб",p:86400},{id:"oval",n:"Овал",p:172800}],handSkins=[{id:"darkblue",n:"Темно-сині",p:0,a:()=>qa(".hand:not(.second)").forEach(h=>{h.style.background="#1e3a8a";h.style.boxShadow="";h.style.animation="none"})},{id:"pixel",n:"Піксельні",p:900,a:()=>qa(".hand:not(.second)").forEach(h=>{h.style.background="linear-gradient(#fff,#aaa)";h.style.boxShadow="";h.style.animation="none"})},{id:"neon",n:"Неонові",p:9000,a:()=>qa(".hand:not(.second)").forEach(h=>{h.style.background="#0ea5e9";h.style.boxShadow="0 0 25px #0ea5e9, 0 0 60px #0ea5e9";h.style.animation="neonPulse 2s ease-in-out infinite alternate"})},{id:"chrome",n:"Хром",p:43200,a:()=>qa(".hand:not(.second)").forEach(h=>{h.style.background="linear-gradient(90deg,#ddd,#888,#ddd)";h.style.boxShadow="0 0 15px #fff, 0 0 30px #aaa";h.style.animation="none"})}],effects=[{id:"red",n:"Червоний спалах",p:0},{id:"blue",n:"Синій вибух",p:21600},{id:"glitch",n:"Глітч",p:108000},{id:"blackhole",n:"Чорна діра",p:360000},{id:"ripple",n:"Хвиля часу",p:720000}];
 function buySkin(t,i,p,n){if(ownedSkins[t].includes(i)){current[t==="shapes"?"shape":t==="clockSkins"?"clock":t==="handSkins"?"hand":"effect"]=i;applyAllSkins();refreshAllSkinGrids();setTimeout(saveGame,100);return showToast("Скін застосовано! ✅")}if(score<p)return showToast("Не вистачає часу!");score-=p;ownedSkins[t].push(i);current[t==="shapes"?"shape":t==="clockSkins"?"clock":t==="handSkins"?"hand":"effect"]=i;applyAllSkins();updateScore();updateStats();updateAchievements(); updatePrestigeProgress(); setTimeout(saveGame,100); showToast(`Куплено: ${n} ✅`);refreshAllSkinGrids()}
@@ -96,81 +100,50 @@ function updateClockHands(){
     qa("#clickableClock .hour").forEach(x => x.style.transform = `translateX(-50%) rotate(${h * 30}deg)`);
 }
 
-// === НАЛАШТУВАННЯ ГУЧНОСТІ ===
-document.getElementById('volumeSlider').addEventListener('input',function(){
-let v=this.value;
-document.getElementById('volumeValue').textContent=v+'%';
-player.volume=v/100;
-gameState.vol=v;
-saveGame();
-});
-
-// === ПЕРЕМИКАЧІ ===
-document.getElementById('reverseHands').addEventListener('change',function(){
-reverseClockHands=this.checked;
-gameState.rev=reverseClockHands;
-saveGame();
-});
-document.getElementById('disableAnimations').addEventListener('change',function(){
-animationsEnabled=!this.checked;
-document.body.classList.toggle('no-animations',!animationsEnabled);
-gameState.anim=animationsEnabled;
-saveGame();
-});
-
-// === АВТОЗБЕРЕЖЕННЯ ===
-setInterval(saveGame,30000);
-window.addEventListener('beforeunload',saveGame);
-
 // === ОСНОВНІ ФУНКЦІЇ ===
 function startGame(v){document.getElementById('chooser').style.display='none';document.getElementById('game').classList.remove('game-hidden');if(v==='mobile')document.body.classList.add('mobile-version');else document.body.classList.remove('mobile-version'); loadGame(); initGame();}
 function initGame(){
-initSettings();
-// === ІНІЦІАЛІЗАЦІЯ НАЛАШТУВАНЬ ===
-setTimeout(() => {
-    const volumeSlider = document.getElementById('volumeSlider');
-    const volumeValue = document.getElementById('volumeValue');
-    const reverseHands = document.getElementById('reverseHands');
-    const disableAnimations = document.getElementById('disableAnimations');
-
-    if(volumeSlider && volumeValue){
-        volumeSlider.addEventListener('input',function(){
-            let v=this.value;
-            volumeValue.textContent=v+'%';
-            player.volume=v/100;
-            gameState.vol=v;
-            saveGame();
-        });
+    // Спочатку ініціалізуємо музику, щоб player був доступний
+    const trackNames=["Фонк №1","Фонк №2","Фонк №3","Фонк №4","Фонк №5","Фонк №6","Фонк №7"],tracks=["asphalt-menace.mp3","digital-overdrive.mp3","drift-phonk-phonk-music-2-434611.mp3","drift-phonk-phonk-music-432222.mp3","phonk-music-409064 (2).mp3","phonk-music-phonk-2025-432208.mp3","pixel-drift.mp3"].map(x=>`musicList/${x}`);
+    let currentTrack = 0, isPlaying = 0;
+    
+    function loadTrack(i){
+        player.src=tracks[i];
+        nowPlaying.textContent=`Зараз: ${trackNames[i]}`;
+        if(isPlaying) player.play();
     }
-
-    if(reverseHands){
-        reverseHands.addEventListener('change',function(){
-            reverseClockHands=this.checked;
-            gameState.rev=reverseClockHands;
-            saveGame();
-        });
-    }
-
-    if(disableAnimations){
-        disableAnimations.addEventListener('change',function(){
-            animationsEnabled=!this.checked;
-            document.body.classList.toggle('no-animations',!animationsEnabled);
-            gameState.anim=animationsEnabled;
-            saveGame();
-        });
-    }
-}, 500);
-
-// === ПЕРЕВІРКА ІНІЦІАЛІЗАЦІЇ НАЛАШТУВАНЬ ===
-function initSettingsElements(){    if(!document.getElementById('volumeSlider')){        console.warn('Елементи налаштувань не знайдені, ініціалізація...');        setTimeout(initSettingsElements, 100);        return;    }
-    const volumeSlider = document.getElementById('volumeSlider');    const volumeValue = document.getElementById('volumeValue');    const reverseHands = document.getElementById('reverseHands');    const disableAnimations = document.getElementById('disableAnimations');
-    // Встановлюємо початкові значення
-    if(volumeSlider && volumeValue){        volumeSlider.value = gameState.vol || 45;        volumeValue.textContent = (gameState.vol || 45) + '%';        player.volume = (gameState.vol || 45) / 100;    }
-    if(reverseHands){        reverseHands.checked = gameState.rev || false;        reverseClockHands = gameState.rev || false;    }
-    if(disableAnimations){        disableAnimations.checked = !(gameState.anim !== false);        animationsEnabled = gameState.anim !== false;        document.body.classList.toggle('no-animations', !animationsEnabled);    }}
-// Викликаємо після завантаження
-setTimeout(initSettingsElements, 1000);
-
+    
+    loadTrack(0);
+    player.addEventListener("ended",()=>{
+        currentTrack=(currentTrack+1)%tracks.length;
+        loadTrack(currentTrack);
+    });
+    
+    musicBtn.addEventListener("click",()=>{
+        if(!isPlaying){
+            isPlaying=1;
+            player.volume=0.45;
+            player.play().catch(()=>{});
+            musicBtn.textContent="⏸ Зупинити музику";
+        } else {
+            isPlaying=0;
+            player.pause();
+            musicBtn.textContent="▶️ Включити музику";
+        }
+    });
+    
+    prevTrack.onclick=()=>{
+        currentTrack=(currentTrack-1+tracks.length)%tracks.length;
+        loadTrack(currentTrack);
+    };
+    
+    nextTrack.onclick=()=>{
+        currentTrack=(currentTrack+1)%tracks.length;
+        loadTrack(currentTrack);
+    };
+    
+    // ТЕПЕР ініціалізуємо налаштування (player вже існує)
+    initSettings();
 // === ОПТИМІЗАЦІЯ ДЛЯ МОБІЛЬНИХ (НЕ ВПЛИВАЄ НА ПК) ===
 const m='ontouchstart'in window||navigator.maxTouchPoints>0;
 if(m){
@@ -200,27 +173,6 @@ const or=updateReverbClockHands;let lr=0;updateReverbClockHands=()=>{const n=Dat
 
 // СТАТИСТИКА - ЗМЕНШЕНА ЧАСТОТА ОНОВЛЕННЯ
 const si=setInterval(()=>{if(autoRate>maxAutoRate)maxAutoRate=autoRate;if(maxComboEver>maxCombo)maxCombo=maxComboEver;},2e3);}
-
-// === ОНОВЛЕННЯ ДАТИ ===
-function updateDate(){id("currentDate").textContent=new Date().toLocaleDateString('uk-UA')}
-updateDate();setInterval(updateDate,60000);
-
-// === МУЗИКА ===
-const trackNames=["Фонк №1","Фонк №2","Фонк №3","Фонк №4","Фонк №5","Фонк №6","Фонк №7"],tracks=["asphalt-menace.mp3","digital-overdrive.mp3","drift-phonk-phonk-music-2-434611.mp3","drift-phonk-phonk-music-432222.mp3","phonk-music-409064 (2).mp3","phonk-music-phonk-2025-432208.mp3","pixel-drift.mp3"].map(x=>`musicList/${x}`);
-let currentTrack = 0, isPlaying = 0;
-function loadTrack(i){player.src=tracks[i];nowPlaying.textContent=`Зараз: ${trackNames[i]}`;if(isPlaying)player.play();}
-loadTrack(0);
-player.addEventListener("ended",()=>{currentTrack=(currentTrack+1)%tracks.length;loadTrack(currentTrack);});
-musicBtn.addEventListener("click",()=>{
-if(!isPlaying){isPlaying=1;player.volume=0.45;player.play().catch(()=>{});musicBtn.textContent="⏸ Зупинити музику";}
-else{isPlaying=0;player.pause();musicBtn.textContent="▶️ Включити музику";}});
-prevTrack.onclick=()=>{currentTrack=(currentTrack-1+tracks.length)%tracks.length;loadTrack(currentTrack);};
-nextTrack.onclick=()=>{currentTrack=(currentTrack+1)%tracks.length;loadTrack(currentTrack);};
-
-// === ФОРМАТУВАННЯ ЧАСУ ===
-function formatTime(s){s=Math.floor(s);const u=[{name:"тисячоліття",v:31536000000}, {name:"століття",v:3153600000},{name:"десятиліття",v:315360000},{name:"рік",v:31536000},{name:"міс",v:2592000},{name:"дн",v:86400},{name:"год",v:3600},{name:"хв",v:60},{name:"сек",v:1}];let r=s,p=[];for(const x of u){const a=Math.floor(r/x.v);if(a>0){p.push(`${a} ${x.name}`);r%=x.v;}}return p.length?p.join(" "):`${s} сек`;}
-let timeCache = {};
-function memoizedFormatTime(s) {    if(timeCache[s]) return timeCache[s];    const result = formatTime(s);    if(Object.keys(timeCache).length > 50) timeCache = {};    return timeCache[s] = result;}
 
 // === АПГРЕЙДИ ===
 upgrades=[{n:"Кліпати очима",c:1,l:0},{n:"Увімкнути телефон",c:8,l:0},{n:"Гортати стрічку",c:40,l:0},{n:"Мем-тур",c:200,l:0},{n:"Автоперегляд",c:1100,l:0},{n:"Підписка",c:6500,l:0},{n:"Серіал-марафон",c:40000,l:0},{n:"Робота з дедлайном",c:250000,l:0},{n:"Життєвий крінж",c:1600000,l:0},{n:"Discord-марафон",c:10000000,l:0},{n:"Reels до ранку",c:65000000,l:0},{n:"Філософські роздуми",c:400000000,l:0}];
@@ -483,18 +435,14 @@ function hidePhilosophy(){if(philosophyOverlay){philosophyOverlay.remove();score
 // === ГЛОБАЛЬНІ ФУНКЦІЇ ДЛЯ ОВЕРЛЕЇВ ===
 window.hideCringe = function(){if(cringeOverlay){cringeOverlay.remove();score+=3000;clickCloudTotal+=3000;showToast("+3000 сек за життєвий досвід! 😅");updateScore();}};
 window.hidePhilosophy = function(){if(philosophyOverlay){philosophyOverlay.remove();score+=6000;clickCloudTotal+=6000;showToast("+6000 сек за філософські роздуми! 📚");updateScore();}};  
-// === Динамічний текст Перезапуску ===
-function updateReverbText(){    if(nextMultiplierEl) nextMultiplierEl.textContent = (prestigeMultiplier*1.2).toFixed(2);     if(reverbDesc) reverbDesc.textContent = `Потрібно для перезапуску: ${formatTime(prestigeThreshold)}`;}   
-    setTimeout(() => {updateScore();updateStats();updateAchievements();updateReverbText();}, 100);}
 
 // === ЄДИНА ФУНКЦІЯ ІНІЦІАЛІЗАЦІЇ НАЛАШТУВАНЬ ===
 function initSettings() {
-    const volumeSlider = document.getElementById('volumeSlider');
-    const volumeValue = document.getElementById('volumeValue');
-    const reverseHands = document.getElementById('reverseHands');
-    const disableAnimations = document.getElementById('disableAnimations');
+    const volumeSlider = id('volumeSlider');
+    const volumeValue = id('volumeValue');
+    const reverseHands = id('reverseHands');
+    const disableAnimations = id('disableAnimations');
     
-    // Перевірка, чи елементи існують
     if(!volumeSlider || !volumeValue || !reverseHands || !disableAnimations) {
         setTimeout(initSettings, 100);
         return;
@@ -503,7 +451,7 @@ function initSettings() {
     // Встановлення значень з gameState
     volumeSlider.value = gameState.vol || 45;
     volumeValue.textContent = (gameState.vol || 45) + '%';
-    player.volume = (gameState.vol || 45) / 100;
+    if(player) player.volume = (gameState.vol || 45) / 100;
     
     reverseHands.checked = gameState.rev || false;
     reverseClockHands = gameState.rev || false;
@@ -515,8 +463,8 @@ function initSettings() {
     // Додати обробники подій
     volumeSlider.addEventListener('input', function(){
         let v = this.value;
-        document.getElementById('volumeValue').textContent = v + '%';
-        player.volume = v / 100;
+        volumeValue.textContent = v + '%';
+        if(player) player.volume = v / 100;
         gameState.vol = v;
         saveGame();
     });
@@ -533,6 +481,4 @@ function initSettings() {
         gameState.anim = animationsEnabled;
         saveGame();
     });
-    // Ініціалізація налаштувань після завантаження
-setTimeout(initSettings, 100);
 }
