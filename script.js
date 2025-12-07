@@ -83,11 +83,28 @@ function resetProgress(){if(confirm('Видалити весь прогрес? �
 
 // === ОНОВЛЕНА ФУНКЦІЯ ГОДИННИКА (З ОБЕРНЕНИМИ СТРІЛКАМИ) ===
 function updateClockHands(){
-let n=new Date(),s=n.getSeconds()+n.getMilliseconds()/1000,m=n.getMinutes()+s/60,h=(n.getHours()%12||12)+m/60;
-if(reverseClockHands){s=60-s;m=60-m;h=12-h;if(h<=0)h+=12;}
-qa("#clickableClock .second").forEach(x=>x.style.transform=`translateX(-50%) rotate(${s*6}deg)`);
-qa("#clickableClock .minute").forEach(x=>x.style.transform=`translateX(-50%) rotate(${m*6}deg)`);
-qa("#clickableClock .hour").forEach(x=>x.style.transform=`translateX(-50%) rotate(${h*30}deg)`);
+    let n = new Date();
+    let s = n.getSeconds() + n.getMilliseconds()/1000;
+    let m = n.getMinutes() + s/60;
+    let h = (n.getHours() % 12 || 12) + m/60;
+    
+    // ВИПРАВЛЕНА ЛОГІКА: всі стрілки проти годинникової
+    if(reverseClockHands) {
+        // Обертаємо всі стрілки проти годинникової стрілки
+        s = 60 - s;
+        m = 60 - m;
+        h = 12 - h;
+        
+        // Корекція значень
+        if(s < 0) s += 60;
+        if(m < 0) m += 60;
+        if(h <= 0) h += 12;
+        if(h > 12) h -= 12;
+    }
+    
+    qa("#clickableClock .second").forEach(x => x.style.transform = `translateX(-50%) rotate(${s * 6}deg)`);
+    qa("#clickableClock .minute").forEach(x => x.style.transform = `translateX(-50%) rotate(${m * 6}deg)`);
+    qa("#clickableClock .hour").forEach(x => x.style.transform = `translateX(-50%) rotate(${h * 30}deg)`);
 }
 
 // === НАЛАШТУВАННЯ ГУЧНОСТІ ===
@@ -271,8 +288,28 @@ setInterval(()=>{const g=Math.round(autoRate*prestigeMultiplier);if(g>0){score+=
 
 // === ГОДИННИК ===
 function updateClockHands(){
-const n=new Date(),s=n.getSeconds()+n.getMilliseconds()/1000,m=n.getMinutes()+s/60,h=(n.getHours()%12||12)+m/60; qa("#clickableClock .second").forEach(x=>x.style.transform=`translateX(-50%) rotate(${s*6}deg)`);qa("#clickableClock .minute").forEach(x=>x.style.transform=`translateX(-50%) rotate(${m*6}deg)`); qa("#clickableClock .hour").forEach(x=>x.style.transform=`translateX(-50%) rotate(${h*30}deg)`);}
-setInterval(updateClockHands,50);updateClockHands();
+    const n = new Date();
+    let s = n.getSeconds() + n.getMilliseconds()/1000;
+    let m = n.getMinutes() + s/60;
+    let h = (n.getHours() % 12 || 12) + m/60;
+    
+    // ВИПРАВЛЕНА ЛОГІКА: всі стрілки проти годинникової
+    if(reverseClockHands) {
+        s = 60 - s;
+        m = 60 - m;
+        h = 12 - h;
+        
+        // Корекція значень
+        if(s < 0) s += 60;
+        if(m < 0) m += 60;
+        if(h <= 0) h += 12;
+        if(h > 12) h -= 12;
+    }
+    
+    qa("#clickableClock .second").forEach(x => x.style.transform = `translateX(-50%) rotate(${s * 6}deg)`);
+    qa("#clickableClock .minute").forEach(x => x.style.transform = `translateX(-50%) rotate(${m * 6}deg)`);
+    qa("#clickableClock .hour").forEach(x => x.style.transform = `translateX(-50%) rotate(${h * 30}deg)`);
+}
 
 // === СИСТЕМА ЕФЕКТУ ПЕРЕЗАПУСКУ ===
 const restartEffect={active:!1,clocksInt:null,bubblesInt:null,
@@ -290,8 +327,38 @@ restartEffect.init();
 // === РЕВЕРБ СИСТЕМА ===
 reverbBtn.addEventListener("click",()=>{if(!confirm("Ти впевнений, що хочеш повернути час назад? Всі твої апгрейди будуть втрачені, але ти отримаєш множник!"))return;startReverbMode();});
 function startReverbMode(){    reverbOverlay.classList.remove("hidden");timeTunnel.classList.add("active");reverbHint.style.opacity="1";isReverbActive=1;    reverbClock.className=`clock ${current.shape}`;clockSkins.find(s=>s.id===current.clock)?.a();handSkins.find(s=>s.id===current.hand)?.a();    updateReverbClockHands();setTimeout(()=>reverbHint.style.opacity="0",3000);}
-function updateReverbClockHands(){    if(!isReverbActive)return;const e=qa("#reverbClock .hand");if(e.length===0)return;    if(reverbClock.classList.contains("reverb-chaos")){requestAnimationFrame(updateReverbClockHands);return;}    const t=new Date(),o=t.getSeconds()+t.getMilliseconds()/1000,n=t.getMinutes()+o/60,a=(t.getHours()%12||12)+n/60;    qa("#reverbClock .second").forEach(e=>e.style.transform=`translateX(-50%) rotate(${o*6}deg)`);    qa("#reverbClock .minute").forEach(e=>e.style.transform=`translateX(-50%) rotate(${n*6}deg)`);    qa("#reverbClock .hour").forEach(e=>e.style.transform=`translateX(-50%) rotate(${a*30}deg)`);    requestAnimationFrame(updateReverbClockHands);}
-const startReverbHold=e=>{    if(e.type.includes('touch'))e.preventDefault();if(!isReverbActive)return;    reverbHint.style.opacity="0";reverbClock.classList.add("reverb-mode","reverb-chaos");timeTunnel.classList.add("intense");    restartEffect.start();
+function updateReverbClockHands(){    
+    if(!isReverbActive)return;
+    const e=qa("#reverbClock .hand");
+    if(e.length===0)return;    
+    if(reverbClock.classList.contains("reverb-chaos")){
+        requestAnimationFrame(updateReverbClockHands);
+        return;
+    }    
+    const t=new Date();
+    let o=t.getSeconds()+t.getMilliseconds()/1000;
+    let n=t.getMinutes()+o/60;
+    let a=(t.getHours()%12||12)+n/60;
+    
+    // ВИПРАВЛЕНА ЛОГІКА для реверб годинника
+    if(reverseClockHands) {
+        o = 60 - o;
+        n = 60 - n;
+        a = 12 - a;
+        
+        // Корекція значень
+        if(o < 0) o += 60;
+        if(n < 0) n += 60;
+        if(a <= 0) a += 12;
+        if(a > 12) a -= 12;
+    }
+    
+    qa("#reverbClock .second").forEach(e=>e.style.transform=`translateX(-50%) rotate(${o*6}deg)`);    
+    qa("#reverbClock .minute").forEach(e=>e.style.transform=`translateX(-50%) rotate(${n*6}deg)`);    
+    qa("#reverbClock .hour").forEach(e=>e.style.transform=`translateX(-50%) rotate(${a*30}deg)`);    
+    requestAnimationFrame(updateReverbClockHands);
+}
+    const startReverbHold=e=>{    if(e.type.includes('touch'))e.preventDefault();if(!isReverbActive)return;    reverbHint.style.opacity="0";reverbClock.classList.add("reverb-mode","reverb-chaos");timeTunnel.classList.add("intense");    restartEffect.start();
     qa("#reverbClock .hand").forEach((e,t)=>{        const o=0.5+2*Math.random(),n=Math.random()>0.5?"normal":"reverse";        e.style.setProperty("--duration",`${o}s`);e.style.setProperty("--direction",n);        e.style.animation=`chaosSpin ${o}s linear infinite ${n}`;    });reverbHoldTimeout=setTimeout(completeReverb,10000);};
 const stopReverbHold=e=>{    if(e&&e.type.includes('touch'))e.preventDefault();    clearTimeout(reverbHoldTimeout);    if(isReverbActive){        reverbClock.classList.remove("reverb-mode","reverb-chaos");timeTunnel.classList.remove("intense");        qa("#reverbClock .hand").forEach(e=>{e.style.animation="none";e.style.removeProperty("--duration");e.style.removeProperty("--direction");});        updateReverbClockHands();restartEffect.stop();}};
 reverbClock.addEventListener("mousedown",startReverbHold);reverbClock.addEventListener("touchstart",startReverbHold,{passive:false});
