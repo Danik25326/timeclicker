@@ -1,5 +1,5 @@
 // === ГЛОБАЛЬНІ ЗМІННІ ===
-const rssFeeds=['https://www.ukrinform.ua/rss','https://www.pravda.com.ua/rss/','https://interfax.com.ua/news/general.rss','https://tsn.ua/rss','https://www.bbc.com/ukrainian/index.xml'],CACHE_DURATION=30*60*1000;
+const rssFeeds=['https://www.ukrinform.ua/rss','https://www.pravda.com.ua/rss/','https://interfax.com.ua/news/general.rss','https://www.unian.ua/rss','https://hromadske.ua/rss'],CACHE_DURATION=60*60*1000;
 let score=0,clickPower=1,autoRate=0,isPlaying=0,currentTrack=0,sessionStart=Date.now(),totalUpgradesBought=0,maxPerClick=1,prestigeMultiplier=1,totalReverbs=0,maxAutoRate=0,maxCombo=0,clickCloudTotal=0,lastClickTime=0,currentCombo=0,maxComboEver=0,comboTimeout=null,MAX_CLICK_INTERVAL=350,COMBO_THRESHOLD=5,isReverbActive=0,reverbHoldTimeout=null,clickMultiplier=1,buttons=[],prestigeThreshold=3600,currentPrestigeProgress=0,reverseClockHands=false,animationsEnabled=true,gameState={v:'1.1',s:0,p:1,a:0,u:0,m:1,pm:1,tr:0,ma:0,mc:0,cct:0,pt:3600,cpp:0,cm:1,vol:45,rev:false,anim:true},firstAchievementsCheck = true,cachedNews=[],lastFetchTime=0,newsTickerVisible=false,shownNewsUrls=new Set();
 // === DOM-допоміжні ===
 const d=document,q=s=>d.querySelector(s),qa=s=>d.querySelectorAll(s),id=s=>d.getElementById(s);
