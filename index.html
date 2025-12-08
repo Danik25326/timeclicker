@@ -138,7 +138,7 @@ body{font-family:'Poppins',sans-serif;background:radial-gradient(circle at cente
 <button onclick="resetProgress()" class="reset-btn" aria-label="Скинути прогрес">🗑️ Скинути прогрес</button>
 </div>
 <div id="saveStatus" class="save-status" aria-live="polite"></div>
-<textarea id="exportImportArea" class="export-import-area" placeholder="Тут з'явиться експортований код..." aria-label="Поле для експорту/імпорту даних"></textarea>
+<textarea id="exportImportArea" class="export-import-area" placeholder="Тут з'явиться експортований код...(і сюди за потребою вставляти код для імпорту)" aria-label="Поле для експорту/імпорту даних"></textarea>
 </div>
 </section>
 </div>
@@ -161,6 +161,8 @@ body{font-family:'Poppins',sans-serif;background:radial-gradient(circle at cente
 <div id="comboText">кліків</div>
 </div>
 <img src="https://api.qrserver.com/v1/create-qr-code/?size=40x40&data=https://t.me/brainmathx_bot" alt="QR код для переходу в Telegram бот" class="bare-qr" loading="lazy" decoding="async" onclick="openModal()">
+<button class="close-btn" aria-label="Закрити модальне вікно" 
+        onclick="document.getElementById('modal').style.display='none';">Закрити</button>
 </div>
 <p id="score" aria-live="polite">Часу витрачено:0 сек</p>
 <div class="music-player" aria-label="Музичний програвач">
