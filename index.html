@@ -1,8 +1,32 @@
-<!DOCTYPE html><html lang="uk"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Times Clicker - Interactive Clicker Game</title><meta name="description" content="Play Times Clicker - interactive clicker game with particles, sounds and visual effects"><meta name="google-site-verification" content="rkK-K5aeHkOnDkWb9JFOPn5ykrsfik5uBxp4pcV3v6o"><meta name="keywords" content="clicker,game,online,idle,incremental"><link rel="canonical" href="https://danik25326.github.io/timeclicker/"><meta property="og:title" content="Times Clicker - Interactive Clicker Game"><meta property="og:description" content="Click the clock, earn time, unlock upgrades"><meta property="og:url" content="https://danik25326.github.io/timeclicker/"><meta property="og:type" content="website"><meta property="og:locale" content="uk_UA"><meta property="og:image" content="https://danik25326.github.io/timeclicker/og-image.png"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630"><meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="Times Clicker Game"><meta name="twitter:description" content="Free online clicker game with amazing visual effects"><meta name="theme-color" content="#4a6fa5"><meta name="robots" content="index,follow"><meta name="googlebot" content="index,follow"><link rel="manifest" href="manifest.json">
-<!-- Inline Favicon -->
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Times Clicker - Interactive Clicker Game</title>
+<meta name="description" content="Play Times Clicker - interactive clicker game with particles, sounds and visual effects">
+<meta name="google-site-verification" content="rkK-K5aeHkOnDkWb9JFOPn5ykrsfik5uBxp4pcV3v6o">
+<meta name="keywords" content="clicker,game,online,idle,incremental">
+<link rel="canonical" href="https://danik25326.github.io/timeclicker/">
+<meta property="og:title" content="Times Clicker - Interactive Clicker Game">
+<meta property="og:description" content="Click the clock, earn time, unlock upgrades">
+<meta property="og:url" content="https://danik25326.github.io/timeclicker/">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="uk_UA">
+<meta property="og:image" content="https://danik25326.github.io/timeclicker/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Times Clicker Game">
+<meta name="twitter:description" content="Free online clicker game with amazing visual effects">
+<meta name="theme-color" content="#4a6fa5">
+<meta name="robots" content="index,follow">
+<meta name="googlebot" content="index,follow">
+<link rel="manifest" href="manifest.json">
+<!-- Вбудована фавіконка -->
 <link rel="icon" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48Y2lyY2xlIGN4PSI1MCIgY3k9IjUwIiByPSI0NSIgc3Ryb2tlPSIjMDBhYWZmIiBzdHJva2Utd2lkdGg9IjUiIGZpbGw9Im5vbmUiLz48Y2lyY2xlIGN4PSI1MCIgY3k9IjUwIiByPSIyIiBmaWxsPSIjMDBhYWZmIi8+PHBhdGggZD0iTTUwIDI1VjUwTDUwIDUwTDUwIDUwTDUwIDUwIiBzdHJva2U9IiMwMGFhZmYiIHN0cm9rZS13aWR0aD0iNSIvPjxwYXRoIGQ9Ik01MCA1MEg3NSIgc3Ryb2tlPSIjMDBhYWZmIiBzdHJva2Utd2lkdGg9IjUiLz48L3N2Zz4=" type="image/svg+xml">
-<!-- Inline Critical CSS -->
-<style>/* CRITICAL CSS - First Screen Only */
+<!-- Критичні CSS стилі для першого екрану -->
+<style>/* КРИТИЧНІ CSS - ТІЛЬКИ ПЕРШИЙ ЕКРАН */
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:'Poppins',sans-serif;background:radial-gradient(circle at center,#0b1220,#050810);color:#fff;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;overflow-x:hidden;line-height:1.6}
 .visually-hidden{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);border:0}
@@ -11,19 +35,19 @@ body{font-family:'Poppins',sans-serif;background:radial-gradient(circle at cente
 #chooser h2{font-size:48px;color:#fff;text-shadow:0 0 30px #0ea5e9;margin-bottom:0px}
 .choose-btn{padding:25px 60px;font-size:28px;background:linear-gradient(90deg,#0ea5e9,#3b82f6);border:none;border-radius:20px;color:white;cursor:pointer;transition:all .3s;box-shadow:0 0 40px rgba(14,165,233,.7);font-weight:700;min-width:280px;text-shadow:0 0 10px rgba(255,255,255,.5)}
 .choose-btn:hover{transform:scale(1.15);box-shadow:0 0 60px rgba(14,165,233,.9)}</style>
-<!-- Async Load Remaining CSS -->
-<link rel="preload" href="style.css?v=17" as="style" onload="this.onload=null;this.rel='stylesheet'">
-<noscript><link rel="stylesheet" href="style.css?v=17"></noscript>
-<!-- Async Load Fonts -->
+<!-- Асинхронне завантаження решти CSS -->
+<link rel="preload" href="style.css?v=18" as="style" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="style.css?v=18"></noscript>
+<!-- Асинхронне завантаження шрифтів -->
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
 <noscript><link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet"></noscript>
-<!-- Schema.org -->
+<!-- Schema.org розмітка -->
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"VideoGame","name":"Times Clicker","description":"Interactive clicker game where you click a clock to earn time, unlock upgrades, skins and achievements.","url":"https://danik25326.github.io/timeclicker/","image":"https://danik25326.github.io/timeclicker/og-image.png","applicationCategory":"GameApplication","author":{"@type":"Person","name":"Danik"},"genre":["Clicker","Idle"],"playMode":"SinglePlayer"}</script>
 </head>
 <body>
 <h1 class="visually-hidden">Times Clicker - Interactive Clicker Game</h1>
-<!-- Вибір версії -->
+<!-- Вибір версії гри -->
 <div id="chooser" aria-label="Вибір версії гри">
 <h2>Times Clicker</h2>
 <button class="choose-btn" onclick="startGame('pc')" aria-label="Запустити ПК версію">ПК-версія</button>
@@ -33,7 +57,7 @@ body{font-family:'Poppins',sans-serif;background:radial-gradient(circle at cente
 <main id="game" class="game-hidden" aria-label="Основне ігрове поле">
 <!-- Назва світу -->
 <div id="worldTitle" class="editable-title" contenteditable="true" aria-label="Назва світу гри">Times Clicker</div>
-<!-- Вкладки -->
+<!-- Вкладки гри -->
 <nav class="top-tabs" role="tablist" aria-label="Ігрові вкладки">
 <button class="tab active" data-tab="tab-upgrades" role="tab" aria-selected="true" aria-controls="tab-upgrades">Апгрейди</button>
 <button class="tab" data-tab="tab-skins" role="tab" aria-selected="false" aria-controls="tab-skins">Скіни</button>
