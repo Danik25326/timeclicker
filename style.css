@@ -103,3 +103,82 @@ body.mobile-version #score{font-size:14px}body.mobile-version #currentDate{font-
 body.mobile-version #discordOverlay{flex-direction:row !important;overflow:hidden;padding:10px}body.mobile-version #discordOverlay div[style*="width:240px"]{width:200% !important;height:calc(100% - 20px) !important;overflow-y:auto !important;flex-direction:column !important;padding:10px 8px !important;align-items:stretch}body.mobile-version #discordOverlay div[style*="width:240px"] div{min-width:auto;margin:6px 0;padding:12px 8px;font-size:13px;background:#2f3136;border-radius:10px;text-align:center;word-break:break-word;transition:all 0.2s ease;border:2px solid transparent}body.mobile-version #discordOverlay div[style*="width:240px"] div.active-channel{background:#5865F2;color:#fff;font-weight:bold;border:2px solid #7289da;box-shadow:0 0 10px rgba(114,137,218,0.5)}body.mobile-version #discordMessages{padding:10px !important;font-size:13px !important;max-height:calc(100% - 120px);overflow-y:auto}body.mobile-version #discordOverlay input[type="text"]{padding:10px 12px !important;font-size:14px !important;border-radius:20px;margin:0 5px;max-width:calc(100% - 100px)}body.mobile-version #discordOverlay button{padding:10px 15px !important;font-size:14px !important;border-radius:20px;margin-right:5px}body.mobile-version #discordChannelHeader{padding:10px 15px;font-size:14px}body.mobile-version .discord-message{margin-bottom:10px;padding:8px;font-size:13px;max-width:100%;word-break:break-word}body.mobile-version .discord-message-content{max-width:100%;overflow-wrap:break-word}
 /* ===== МОБІЛЬНА ВЕРСІЯ - ВИПРАВЛЕННЯ ДЛЯ СПОВІЩЕНЬ ===== */
 body.mobile-version .toast{padding:15px 25px;font-size:16px;margin-top:10px;max-width:90%}
+/* === СТИЛІ ДЛЯ ОВЕРЛЕЇВ === */
+.floating-text{position:absolute;right:20px;top:50px;color:#ffccd1;font-weight:700;opacity:1;transition:all 0.9s ease-out;} /* Стиль для тексту, що з'являється при кліку */
+.meme-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.95);z-index:9998;display:none;align-items:center;justify-content:center;flex-direction:column;} /* Оверлей для мемів */
+.meme-loading{color:white;font-size:18px;margin-bottom:20px;display:none;} /* Завантаження мему */
+.meme-image{max-width:85%;max-height:70%;border-radius:15px;box-shadow:0 0 50px rgba(255,255,255,0.4);object-fit:contain;display:none;} /* Зображення мему */
+.meme-text{color:#ffcc00;font-size:20px;margin-top:20px;text-shadow:0 0 10px #ffcc00;} /* Текст під мемом */
+.meme-close-btn{margin-top:25px;padding:10px 25px;background:#ef4444;color:white;border:none;border-radius:10px;font-size:16px;cursor:pointer;font-weight:bold;} /* Кнопка закриття мему */
+.autoplay-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:#0f0f0f;z-index:9997;display:flex;flex-direction:column;font-family:Poppins;color:white;} /* Оверлей автоперегляду */
+.autoplay-header{display:flex;align-items:center;padding:15px 20px;border-bottom:1px solid #333;background:#202020;} /* Шапка автоперегляду */
+.autoplay-content{flex:1;display:flex;align-items:center;justify-content:center;padding:20px;} /* Контент автоперегляду */
+.autoplay-container{display:flex;flex:1;} /* Контейнер автоперегляду */
+.autoplay-sidebar{width:300px;background:#181818;padding:20px;border-left:1px solid #333;} /* Бічна панель автоперегляду */
+.autoplay-timer{position:fixed;bottom:20px;left:20px;background:rgba(0,0,0,0.8);color:#3ea6ff;padding:10px 20px;border-radius:10px;font-size:16px;} /* Таймер автоперегляду */
+.subscription-overlay{position:fixed;top:0;left:0;width:100%;height:100%;z-index:9996;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,0.85);} /* Оверлей підписки */
+.subscription-card{position:relative;max-width:450px;padding:40px;border-radius:25px;box-shadow:0 25px 70px rgba(0,0,0,0.7);border:5px solid white;} /* Картка підписки */
+.subscription-close{position:absolute;top:15px;right:15px;width:30px;height:30px;background:rgba(255,255,255,0.9);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:bold;cursor:pointer;color:#333;} /* Кнопка закриття підписки */
+.subscription-content{text-align:center;} /* Контент підписки */
+.subscription-emoji{font-size:48px;margin-bottom:20px;} /* Емодзі підписки */
+.subscription-name{font-size:32px;font-weight:bold;color:white;margin-bottom:15px;} /* Назва підписки */
+.subscription-desc{font-size:18px;color:rgba(255,255,255,0.95);margin-bottom:25px;background:rgba(255,255,255,0.15);padding:15px;border-radius:15px;} /* Опис підписки */
+.subscription-price{font-size:28px;font-weight:bold;color:white;margin-bottom:30px;background:rgba(0,0,0,0.2);padding:15px 25px;border-radius:15px;display:inline-block;} /* Ціна підписки */
+.subscription-btn{background:white;border:none;padding:18px 40px;border-radius:12px;font-size:20px;font-weight:bold;cursor:pointer;transition:all 0.3s;} /* Кнопка підписки */
+.series-overlay{position:fixed;top:0;left:0;width:100%;height:100%;z-index:9995;background:linear-gradient(135deg,#1a1a2e,#16213e);display:flex;flex-direction:column;align-items:center;justify-content:center;} /* Оверлей серіал-марафону */
+.series-close{position:absolute;top:20px;right:20px;width:40px;height:40px;background:rgba(255,255,255,0.1);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:28px;color:white;cursor:pointer;z-index:9997;} /* Кнопка закриття серіалів */
+.series-container{width:90%;max-width:800px;background:rgba(0,0,0,0.7);border-radius:15px;padding:20px;box-shadow:0 15px 50px rgba(0,0,0,0.5);} /* Контейнер серіалів */
+.series-title{text-align:center;color:white;margin-bottom:15px;font-size:24px;} /* Заголовок серіалів */
+.series-video{position:relative;padding-bottom:56.25%;height:0;} /* Відео серіалів */
+.series-note{text-align:center;color:#ccc;margin-top:15px;font-size:16px;} /* Примітка серіалів */
+.deadline-overlay{position:fixed;top:0;left:0;width:100%;height:100%;z-index:9994;background:linear-gradient(135deg,#1a1a2e,#0f3460);display:flex;flex-direction:column;align-items:center;justify-content:center;} /* Оверлей дедлайну */
+.deadline-close{position:absolute;top:20px;right:20px;width:40px;height:40px;background:rgba(255,255,255,0.1);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:28px;color:white;cursor:pointer;z-index:9995;} /* Кнопка закриття дедлайну */
+.deadline-container{text-align:center;max-width:600px;padding:30px;background:rgba(0,0,0,0.7);border-radius:20px;box-shadow:0 0 50px rgba(0,0,255,0.5);} /* Контейнер дедлайну */
+.deadline-title{font-size:32px;margin-bottom:20px;color:#4cc9f0;} /* Заголовок дедлайну */
+.deadline-desc{font-size:20px;margin-bottom:30px;color:#ccc;} /* Опис дедлайну */
+.deadline-timer{font-size:80px;font-weight:bold;margin-bottom:20px;color:#ff6b6b;text-shadow:0 0 30px #ff6b6b;animation:pulse 1s infinite;} /* Таймер дедлайну */
+.deadline-counter{font-size:40px;margin-bottom:30px;color:#f72585;} /* Лічильник дедлайну */
+.deadline-click-area{width:200px;height:200px;background:linear-gradient(135deg,#4361ee,#3a0ca3);border-radius:50%;margin:0 auto 30px;display:flex;align-items:center;justify-content:center;font-size:60px;color:white;cursor:pointer;user-select:none;box-shadow:0 10px 30px rgba(0,0,0,0.5);transition:transform 0.1s;} /* Область кліків дедлайну */
+.deadline-success{text-align:center;} /* Успіх дедлайну */
+.success-icon{font-size:80px;color:#4ade80;margin-bottom:20px;} /* Іконка успіху */
+.success-title{font-size:32px;color:white;margin-bottom:20px;} /* Заголовок успіху */
+.success-desc{font-size:24px;color:#a7f3d0;margin-bottom:30px;} /* Опис успіху */
+.success-bonus{font-size:20px;color:#bbf7d0;} /* Бонус успіху */
+.deadline-fail{text-align:center;} /* Невдача дедлайну */
+.fail-icon{font-size:80px;color:#f87171;margin-bottom:20px;} /* Іконка невдачі */
+.fail-title{font-size:32px;color:white;margin-bottom:20px;} /* Заголовок невдачі */
+.fail-desc{font-size:24px;color:#fecaca;margin-bottom:30px;} /* Опис невдачі */
+.fail-note{font-size:20px;color:#fecaca;} /* Примітка невдачі */
+.cringe-overlay{position:fixed;top:0;left:0;width:100%;height:100%;z-index:9993;background:rgba(0,0,0,0.95);display:flex;align-items:center;justify-content:center;} /* Оверлей крінжу */
+.cringe-container{max-width:600px;padding:40px;background:linear-gradient(135deg,#7b2cbf,#5a189a);border-radius:25px;text-align:center;box-shadow:0 0 50px rgba(123,44,191,0.7);border:5px solid #9d4edd;} /* Контейнер крінжу */
+.cringe-emoji{font-size:48px;margin-bottom:20px;} /* Емодзі крінжу */
+.cringe-message{font-size:32px;color:white;margin-bottom:20px;} /* Повідомлення крінжу */
+.cringe-note{font-size:18px;color:#e0aaff;margin-bottom:30px;} /* Примітка крінжу */
+.cringe-btn{background:#ff6d00;color:white;border:none;padding:15px 30px;border-radius:12px;font-size:18px;cursor:pointer;font-weight:bold;} /* Кнопка крінжу */
+.discord-overlay{position:fixed;top:0;left:0;width:100%;height:100%;z-index:9992;background:#36393f;display:flex;font-family:"Poppins",sans-serif;} /* Оверлей Discord */
+.discord-sidebar{width:240px;background:#202225;color:#fff;display:flex;flex-direction:column;overflow-y:auto;padding:15px 0;} /* Бічна панель Discord */
+.discord-sidebar-header{text-align:center;padding:15px;color:#fff;font-weight:bold;border-bottom:1px solid #2f3136;} /* Заголовок бічної панелі */
+.discord-channel-list{padding:10px 0;} /* Список каналів */
+.channel-item{padding:8px 15px;margin:2px 10px;border-radius:5px;cursor:pointer;display:flex;align-items:center;transition:background 0.2s;font-size:14px;} /* Елемент каналу */
+.channel-item.active{background-color:#5865F2!important;color:white!important;} /* Активний канал */
+.unread-badge{margin-left:auto;background:#ed4245;color:#fff;border-radius:10px;padding:2px 6px;font-size:11px;} /* Бейдж непрочитаних */
+.discord-main{flex:1;display:flex;flex-direction:column;background:#36393f;} /* Головна область Discord */
+.discord-channel-header{padding:15px 20px;border-bottom:1px solid #2f3136;color:#fff;font-weight:bold;display:flex;align-items:center;} /* Заголовок каналу */
+.channel-icon{color:#8e9297;margin-right:10px;} /* Іконка каналу */
+.discord-messages{flex:1;overflow-y:auto;padding:20px;background:#36393f;background-image:url("https://cdn.pixabay.com/photo/2018/08/14/13/23/ocean-3605547_1280.jpg");background-size:cover;background-blend-mode:overlay;} /* Повідомлення Discord */
+.discord-input-container{padding:20px;background:#40444b;display:flex;align-items:center;border-top:1px solid #2f3136;} /* Контейнер вводу */
+.discord-input{flex:1;padding:12px 15px;background:#202225;border:none;border-radius:8px;color:#fff;font-size:14px;outline:none;} /* Поле вводу Discord */
+.discord-send-btn{margin-left:10px;padding:12px 25px;background:#5865F2;color:#fff;border:none;border-radius:8px;cursor:pointer;font-weight:bold;transition:background 0.2s;} /* Кнопка відправки */
+.discord-close-btn{position:absolute;top:15px;right:20px;width:40px;height:40px;background:rgba(255,255,255,0.1);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:28px;color:#fff;cursor:pointer;z-index:9993;} /* Кнопка закриття Discord */
+.reels-overlay{position:fixed;top:0;left:0;width:100%;height:100%;z-index:9991;background:#000;display:flex;flex-direction:column;} /* Оверлей Reels */
+.reels-header{padding:15px;color:white;font-size:20px;text-align:center;border-bottom:1px solid #333;} /* Заголовок Reels */
+.reels-content{flex:1;display:flex;align-items:center;justify-content:center;color:white;font-size:48px;text-align:center;} /* Контент Reels */
+.reels-close-btn{position:absolute;top:20px;right:20px;width:40px;height:40px;background:rgba(255,255,255,0.1);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:28px;color:white;cursor:pointer;} /* Кнопка закриття Reels */
+.philosophy-overlay{position:fixed;top:0;left:0;width:100%;height:100%;z-index:9990;background:linear-gradient(135deg,#2c3e50,#4a6491);display:flex;align-items:center;justify-content:center;} /* Оверлей філософії */
+.philosophy-container{max-width:800px;padding:50px;background:rgba(255,255,255,0.1);backdrop-filter:blur(10px);border-radius:25px;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,0.5);border:2px solid rgba(255,255,255,0.2);} /* Контейнер філософії */
+.philosophy-emoji{font-size:48px;margin-bottom:30px;} /* Емодзі філософії */
+.philosophy-quote{font-size:28px;color:white;margin-bottom:30px;font-style:italic;line-height:1.4;} /* Цитата філософії */
+.philosophy-note{font-size:18px;color:#e0e0e0;margin-bottom:40px;} /* Примітка філософії */
+.philosophy-btn{background:transparent;color:white;border:2px solid white;padding:15px 40px;border-radius:25px;font-size:18px;cursor:pointer;transition:all 0.3s;} /* Кнопка філософії */
+/* === АДАПТИВНІ СТИЛІ === */
+@media (max-width: 768px) {.autoplay-sidebar{display:none;} .discord-sidebar{width:180px;} .discord-input{padding:10px 12px;} .discord-send-btn{padding:10px 15px;}} /* Адаптивні стилі для мобільних пристроїв */
