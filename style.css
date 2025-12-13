@@ -31,8 +31,8 @@ body{font-family:'Poppins',sans-serif;background:radial-gradient(circle at cente
 .top-tabs{position:absolute;top:78px;left:50%;transform:translateX(-50%);display:flex;gap:10px;z-index:20;background:rgba(15,23,42,0.9);padding:12px 24px;border-radius:50px;backdrop-filter:blur(14px);box-shadow:0 10px 40px rgba(0,0,0,0.7)}
 .top-tabs .tab{padding:11px 20px;font-size:14px;min-width:96px;background:transparent;border:none;color:#cfeaff;cursor:pointer;border-radius:50px;transition:all .2s}
 .top-tabs .tab.active{background:var(--neon);color:#000;font-weight:700}
-/* ===== QR-КОД (ФІКСОВАНИЙ) ===== */
-.bare-qr{width:40px;height:40px;cursor:pointer;position:fixed;top:10px;right:20px;z-index:10000;transition:transform .2s ease;border:1px solid #ddd;border-radius:6px;background:#fff;pointer-events:auto;transform:translateZ(0);will-change:transform;contain:layout style paint}
+/* ===== QR-КОД (АБСОЛЮТНО ФІКСОВАНИЙ) ===== */
+.bare-qr{width:40px;height:40px;cursor:pointer;position:fixed;top:10px;right:20px;z-index:10000;transition:transform .2s ease;border:1px solid #ddd;border-radius:6px;background:#fff;pointer-events:auto;transform:translateZ(0);will-change:transform;contain:layout style paint;backface-visibility:hidden;-webkit-backface-visibility:hidden;overscroll-behavior:none;touch-action:none;user-select:none}
 .bare-qr:hover{transform:scale(1.05)}
 /* ===== МОДАЛЬНЕ ВІКНО ===== */
 .modal{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.8);justify-content:center;align-items:center;z-index:1000}
@@ -78,13 +78,14 @@ body{font-family:'Poppins',sans-serif;background:radial-gradient(circle at cente
 #comboBubble.burst{animation:burstAnim .8s ease-out forwards}
 #comboCount{font-size:48px;color:var(--accent);text-shadow:0 0 16px var(--accent)}
 @keyframes burstAnim{0%{transform:scale(1)}50%{transform:scale(1.6)}100%{transform:scale(0);opacity:0}}
-/* ===== МУЗИЧНИЙ ПЛЕЄР ===== */
+/* ===== МУЗИЧНИКИ ПЛЕЄР ===== */
 #score{font-size:22px;text-shadow:0 0 14px var(--neon)}
 .music-player{display:flex;gap:16px;align-items:center}
 .phonk-btn,.music-switch,.reverb-btn{padding:14px 28px;border-radius:50px;border:none;color:#fff;font-weight:700;cursor:pointer;box-shadow:0 0 24px rgba(14,165,233,.25);transition:all .2s}
 .phonk-btn{background:var(--grad-neon)}
 .music-switch{background:var(--grad-purple);font-size:20px;padding:14px}
 .now-playing{margin-top:10px;font-size:15px;color:#cfeaff}
+/* ===== ПОКРАЩЕНІ КНОПКИ МУЗИКИ ===== */
 .music-player button{position:relative;overflow:hidden;z-index:1;background:var(--grad-purple);transition:all .35s;box-shadow:0 0 20px rgba(236,72,153,.5)}
 .music-player button::before{content:'';position:absolute;top:0;left:-100%;width:50%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.4),transparent);transform:skewX(-20deg);transition:left .8s}
 .music-player button:hover::before{left:100%}
@@ -139,17 +140,16 @@ body{font-family:'Poppins',sans-serif;background:radial-gradient(circle at cente
 .reverb-hint{position:absolute;top:34%;left:50%;transform:translateX(-50%);background:rgba(255,59,92,.95);color:#fff;padding:20px 40px;border-radius:50px;font-size:28px;font-weight:700;z-index:1001;animation:pulseHint 1.8s infinite}
 @keyframes pulseHint{0%,100%{transform:translateX(-50%) scale(1)}50%{transform:translateX(-50%) scale(1.15)}}
 #reverbClock{border:10px solid #ff00ff;box-shadow:0 0 50px #ff00ff,inset 0 0 40px rgba(255,0,255,0.4);cursor:grab;z-index:10}
-/* ===== ЛІТАЮЧІ ГОДИННИКИ ===== */
+/* ===== ЛІТАЮЧІ ГОДИННИКИ ТА БУЛЬБАШКИ ===== */
 .flying-clock{position:absolute;background:rgba(14,165,233,0.1);border:2px solid #0ea5e9;border-radius:50%;box-shadow:0 0 20px #0ea5e9;animation:clockFloat linear forwards;display:flex;align-items:center;justify-content:center;color:#fff;font-size:12px}
 @keyframes clockFloat{0%{transform:translateY(0) rotate(0deg);opacity:1}100%{transform:translateY(-100vh) rotate(360deg);opacity:0}}
-/* ===== СТАТИСТИЧНІ БУЛЬБАШКИ ===== */
 .stat-bubble{position:absolute;background:rgba(236,72,153,0.9);color:#fff;padding:8px 12px;border-radius:15px;font-size:12px;box-shadow:0 0 15px rgba(236,72,153,0.7);animation:statFloat 3s ease-in forwards;text-align:center;max-width:200px}
 @keyframes statFloat{0%{transform:translateY(0) scale(0.8);opacity:0}20%{transform:translateY(-20px) scale(1);opacity:1}80%{transform:translateY(-60px) scale(1);opacity:1}100%{transform:translateY(-80px) scale(0.8);opacity:0}}
 /* ===== АНІМАЦІЯ РЕВЕРБУ ===== */
 #reverbClock.reverb-mode{animation:reverbPulse 1.2s ease-in-out infinite}
 @keyframes reverbPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.15)}}
 .reverb-overlay.hidden{display:none}
-/* ===== ПРОГРЕС ПЕРЕЗАПУСКУ ===== */
+/* ===== ПРОГРЕС ПЕРЕЗАПУСКУ (ПК ВЕРСІЯ) ===== */
 .prestige-progress-container{margin:20px auto;max-width:400px;background:#1e293b;border-radius:15px;padding:15px;border:2px solid #334155}
 .progress-header{display:flex;justify-content:space-between;margin-bottom:8px}
 .progress-label{color:#cbd5e1;font-size:14px}
@@ -163,18 +163,18 @@ body{font-family:'Poppins',sans-serif;background:radial-gradient(circle at cente
 .reverb-chaos .hour{--duration:1.8s;--direction:normal}
 .reverb-chaos .minute{--duration:0.9s;--direction:reverse}
 .reverb-chaos .second{--duration:0.5s;--direction:normal}
-/* ===== КНОПКА РЕВЕРБУ ===== */
+/* ===== КНОПКА РЕВЕРБУ (ПК ВЕРСІЯ) ===== */
 .reverb-btn{margin-top:30px;padding:14px 32px;background:var(--grad-accent);border:none;color:#fff;font-weight:700;font-size:16px;border-radius:14px;cursor:pointer;box-shadow:0 0 30px rgba(255,59,92,.6),0 6px 20px rgba(0,0,0,.4);transition:all .2s ease;text-shadow:0 0 10px rgba(255,255,255,.5)}
 .reverb-btn:hover{transform:translateY(-4px);box-shadow:0 0 50px rgba(255,59,92,.9),0 10px 30px rgba(0,0,0,.5)}
 /* ===== СКРОЛБАРИ ===== */
 .upgrades-container::-webkit-scrollbar{width:10px}
 .upgrades-container::-webkit-scrollbar-thumb{background:rgba(255,255,255,.12);border-radius:8px}
 .upgrades-container::-webkit-scrollbar-thumb:hover{background:rgba(255,255,255,.2)}
-/* ===== RANGE INPUT ===== */
+/* ===== СТИЛІ ДЛЯ RANGE INPUT ===== */
 input[type="range"]{-webkit-appearance:none;appearance:none;background:transparent;cursor:pointer}
 input[type="range"]::-webkit-slider-track{background:#334155;height:6px;border-radius:3px}
 input[type="range"]::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;background:#0ea5e9;height:20px;width:20px;border-radius:50%;border:2px solid white}
-/* ===== НАЛАШТУВАННЯ ===== */
+/* ===== НАЛАШТУВАННЯ (ПК ВЕРСІЯ) ===== */
 .settings-container{padding:20px;color:#fff;max-width:100%;overflow-y:auto;height:calc(100vh - 200px)}
 .setting-item{margin-bottom:20px;display:flex;align-items:center;gap:15px;flex-wrap:wrap}
 .setting-item label{width:200px;font-weight:bold;color:#cbd5e1}
@@ -192,27 +192,33 @@ input[type="range"]::-webkit-slider-thumb{-webkit-appearance:none;appearance:non
 .save-status.error{background:#ef4444;color:#fff}
 .export-import-area{width:100%;height:120px;margin-top:20px;padding:10px;background:#1e293b;color:#fff;border:1px solid #475569;border-radius:5px;resize:vertical;font-family:monospace;font-size:12px}
 .export-import-area:focus{outline:none;border-color:#0ea5e9}
-/* ===== ВИМКНЕННЯ АНІМАЦІЙ ===== */
+/* ===== СТИЛЬ БЕЗ АНІМАЦІЙ ===== */
 .no-animations *{animation:none;transition:none}
 .no-animations .toast{opacity:0.9}
 /* ===== КАСТОМНІ СКРОЛБАРИ ===== */
+/* Глобальні стилі для всіх скролбарів */
 ::-webkit-scrollbar{width:10px;height:10px}
 ::-webkit-scrollbar-track{background:rgba(15,23,42,0.5);border-radius:10px}
 ::-webkit-scrollbar-thumb{background:linear-gradient(180deg,#0ea5e9,#3b82f6);border-radius:10px;border:2px solid rgba(255,255,255,0.1)}
 ::-webkit-scrollbar-thumb:hover{background:linear-gradient(180deg,#3b82f6,#0ea5e9);box-shadow:0 0 10px rgba(14,165,233,0.7)}
 ::-webkit-scrollbar-corner{background:rgba(15,23,42,0.8)}
+/* Для Firefox */
 *{scrollbar-width:thin;scrollbar-color:#0ea5e9 rgba(15,23,42,0.5)}
+/* Спеціальні стилі для стрічки новин */
 #newsTicker::-webkit-scrollbar{width:8px}
 #newsTicker::-webkit-scrollbar-track{background:rgba(30,41,59,0.6);border-radius:4px}
 #newsTicker::-webkit-scrollbar-thumb{background:linear-gradient(180deg,#3b82f6,#1e3a8a);border-radius:4px;border:1px solid rgba(255,255,255,0.2)}
 #newsTicker{scrollbar-width:thin;scrollbar-color:#3b82f6 rgba(30,41,59,0.6)}
+/* Спеціальні стилі для Discord */
 #discordMessages::-webkit-scrollbar{width:8px}
 #discordMessages::-webkit-scrollbar-track{background:rgba(32,34,37,0.8);border-radius:4px}
 #discordMessages::-webkit-scrollbar-thumb{background:linear-gradient(180deg,#7289da,#5865F2);border-radius:4px;border:1px solid rgba(255,255,255,0.2)}
 #discordMessages{scrollbar-width:thin;scrollbar-color:#7289da rgba(32,34,37,0.8)}
+/* Стилі для скролу в налаштуваннях */
 .export-import-area::-webkit-scrollbar{width:8px}
 .export-import-area::-webkit-scrollbar-track{background:rgba(30,41,59,0.8);border-radius:4px}
 .export-import-area::-webkit-scrollbar-thumb{background:linear-gradient(180deg,#0ea5e9,#1e40af);border-radius:4px;border:1px solid rgba(255,255,255,0.2)}
+/* Стилі для скролу в апгрейдах (якщо ще немає) */
 .upgrades-container::-webkit-scrollbar{width:10px}
 .upgrades-container::-webkit-scrollbar-track{background:rgba(15,23,42,0.5);border-radius:8px}
 .upgrades-container::-webkit-scrollbar-thumb{background:rgba(255,255,255,.12);border-radius:8px;border:2px solid rgba(255,255,255,0.05)}
@@ -223,7 +229,7 @@ body.eye-blink::before{content:"";position:fixed;inset:0;background:#000;z-index
 #timeTunnel.intense{opacity:1;background:radial-gradient(circle at center,#8b5cf6 0%,#ec4899 30%,#ff006e 60%,#000 100%)}
 #timeTunnel.reverb-complete{animation:finalFlash 1.5s ease-out forwards}
 @keyframes finalFlash{0%{opacity:1;background:#fff}100%{opacity:0}}
-/* ===== ЕФЕКТИ ДЛЯ СКІНІВ ===== */
+/* ===== ДОДАТКОВІ СТИЛІ ДЛЯ СКІНІВ ===== */
 #effectSkins{display:grid;grid-template-columns:repeat(5,1fr);gap:14px;max-width:480px;margin:0 auto}
 #effectSkins .skin{width:auto;height:85px;font-size:12px;padding:8px}
 #clickCloud{top:20px;right:-170px;width:170px;padding:10px 16px;background:rgba(15,23,42,.8);border-radius:16px;box-shadow:0 8px 32px rgba(0,0,0,.6);backdrop-filter:blur(8px);z-index:20}
@@ -235,7 +241,7 @@ body.eye-blink::before{content:"";position:fixed;inset:0;background:#000;z-index
 .combo-bubble.hidden{display:none}
 @keyframes pulse{0%{transform:scale(1)}50%{transform:scale(1.05)}100%{transform:scale(1)}}
 @keyframes reelChange{0%{opacity:0.5;transform:translateY(20px)}100%{opacity:1;transform:translateY(0)}}
-/* ===== МОБІЛЬНА ВЕРСІЯ ===== */
+/* ===== МОБІЛЬНА ВЕРСІЯ - ВСІ ЗМІНИ ТІЛЬКИ ДЛЯ ТЕЛЕФОНІВ ===== */
 body.mobile-version .clock,body.mobile-version .hand,body.mobile-version .skin{will-change:transform,opacity;transform:translateZ(0)}
 body.mobile-version .upgrades-container,body.mobile-version .skins-grid,body.mobile-version .achievements-grid{contain:layout style paint;content-visibility:auto}
 body.mobile-version .top-tabs,body.mobile-version .click-cloud,body.mobile-version #comboBubble{backdrop-filter:blur(8px);background:rgba(15,23,42,0.95)}
@@ -254,20 +260,28 @@ body.mobile-version #comboCount{font-size:26px}
 body.mobile-version #comboText{font-size:9px}
 body.mobile-version #clickCloud{left:-8px;top:6px;width:88px;padding:5px 8px;font-size:11px}
 body.mobile-version #clickGain{font-size:13px}
+/* ===== МОБІЛЬНА ВЕРСІЯ - QR КОД (АБСОЛЮТНО НЕЗМІННИЙ) ===== */
+body.mobile-version .bare-qr{position:fixed !important;top:10px !important;right:20px !important;z-index:10000 !important;width:40px !important;height:40px !important;transform:none !important;transition:none !important;pointer-events:auto !important;will-change:auto !important;contain:none !important;backface-visibility:visible !important;-webkit-backface-visibility:visible !important;overscroll-behavior:none !important;touch-action:none !important;user-select:none !important;filter:none !important;opacity:1 !important;visibility:visible !important;display:block !important;background:#fff !important;border:1px solid #ddd !important;border-radius:6px !important}
+body.mobile-version .bare-qr:hover{transform:none !important}
+/* ===== МОБІЛЬНА ВЕРСІЯ - АПГРЕЙДИ ТА МНОЖНИКИ (відкриваються поступово) ===== */
 body.mobile-version .upgrades-container,body.mobile-version #multipliers{display:flex;flex-direction:column;gap:10px;padding:8px 6px 16px;max-height:400px;overflow-y:auto;overflow-x:hidden}
 body.mobile-version .upgrades-container::-webkit-scrollbar,body.mobile-version #multipliers::-webkit-scrollbar{display:none}
 body.mobile-version .upgrade-btn{min-width:auto;padding:12px 10px;font-size:12.8px;display:flex;flex-direction:column;align-items:flex-start;justify-content:center;text-align:left;width:100%;margin-bottom:5px}
 body.mobile-version .upgrade-btn.hidden{display:none !important}
 body.mobile-version .upgrade-btn span{float:none;display:block;margin-top:4px;font-size:11px;color:#cfeaff;opacity:0.9;font-weight:600;word-break:break-word}
+/* ===== МОБІЛЬНА ВЕРСІЯ - КНОПКА РЕВЕРБУ (менший текст, по центру) ===== */
 body.mobile-version .reverb-btn{text-align:center;padding:12px 15px;font-size:10px;margin-top:15px;width:90%;max-width:250px;display:block;margin-left:auto;margin-right:auto;background:var(--grad-accent);border:none;color:#fff;font-weight:700;border-radius:14px;cursor:pointer;box-shadow:0 0 20px rgba(255,59,92,.6);transition:all .2s ease;text-shadow:0 0 8px rgba(255,255,255,.5);word-break:keep-all;white-space:normal;line-height:1.3}
+/* ===== МОБІЛЬНА ВЕРСІЯ - СКІНИ ===== */
 body.mobile-version .skins-section>.skins-grid{display:flex;overflow-x:auto;gap:14px;padding:10px 0 24px;-webkit-overflow-scrolling:touch;scroll-snap-type:x mandatory;scroll-behavior:smooth}
 body.mobile-version .skin{min-width:96px;height:96px;flex:0 0 auto;font-size:12.5px;text-align:center;scroll-snap-align:center;padding-top:8px}
 body.mobile-version .tab-body h3,.skins-section h4{margin:20px 0 12px;font-size:18px;color:#bfe9ff;text-align:center}
 body.mobile-version #tab-skins .skins-grid{display:flex;flex-wrap:nowrap;overflow-x:auto;overflow-y:hidden;gap:14px;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch}
 body.mobile-version #tab-skins .skins-grid .skin{flex:0 0 auto;min-width:110px;height:110px;scroll-snap-align:center}
 body.mobile-version #tab-skins .skins-grid::-webkit-scrollbar{display:none}
+/* ===== МОБІЛЬНА ВЕРСІЯ - ДОСЯГНЕННЯ ===== */
 body.mobile-version #tab-achievements .achievements-grid{display:flex;flex-direction:column;gap:12px;padding:10px 0}
 body.mobile-version #tab-achievements .achievement{width:100%;margin:0}
+/* ===== МОБІЛЬНА ВЕРСІЯ - МУЗИЧНИЙ ПЛЕЄР ===== */
 body.mobile-version .music-player{display:flex;gap:2px;justify-content:center;align-items:center;flex-wrap:nowrap;width:100%;max-width:270px;margin:0 auto}
 body.mobile-version .phonk-btn{padding:8px 10px;font-size:11px;min-width:110px;margin:0;flex-shrink:0}
 body.mobile-version .music-switch{padding:8px 8px;font-size:12px;min-width:35px;margin:0;flex-shrink:0}
@@ -277,6 +291,7 @@ body.mobile-version .music-player button{transform:none;transition:none}
 body.mobile-version .music-player button:active{transform:none}
 body.mobile-version .music-player button:hover{transform:none;box-shadow:none}
 body.mobile-version #musicBtn:hover{transform:none;box-shadow:none}
+/* ===== МОБІЛЬНА ВЕРСІЯ - СИСТЕМА ПЕРЕЗАПУСКУ (цифри під текстом) ===== */
 body.mobile-version .prestige-progress-container{max-width:90%;margin:15px auto;padding:12px}
 body.mobile-version .progress-header{display:flex;flex-direction:column;gap:5px;margin-bottom:10px}
 body.mobile-version .progress-label{font-size:13px;text-align:center}
@@ -284,6 +299,7 @@ body.mobile-version .progress-text{font-size:13px;margin-top:5px;text-align:cent
 body.mobile-version .progress-bar-bg{margin:10px 0}
 body.mobile-version .progress-bar-fill{height:16px}
 body.mobile-version .progress-footer{font-size:11px}
+/* ===== МОБІЛЬНА ВЕРСІЯ - НАЛАШТУВАННЯ (вертикальне вирівнювання, поле експорту вище) ===== */
 body.mobile-version .settings-container{padding:15px;text-align:left;max-height:500px;overflow-y:auto}
 body.mobile-version .setting-item{margin-bottom:18px;display:flex;flex-direction:column;gap:8px;align-items:flex-start;width:100%}
 body.mobile-version .setting-item label{width:100%;font-size:14px}
@@ -292,18 +308,22 @@ body.mobile-version .setting-buttons{display:flex;flex-direction:column;gap:10px
 body.mobile-version .save-btn,body.mobile-version .export-btn,body.mobile-version .import-btn,body.mobile-version .reset-btn{width:100%;padding:14px;font-size:15px;border-radius:10px}
 body.mobile-version .save-status{margin-top:12px;padding:10px;border-radius:5px;font-size:13px}
 body.mobile-version .export-import-area{height:100px;font-size:12px;padding:8px;margin-top:15px}
+/* ===== МОБІЛЬНА ВЕРСІЯ - РЕВЕРБ ===== */
 body.mobile-version .reverb-instruction{font-size:20px;margin-bottom:30px;text-align:center;line-height:1.3;padding:0 10px}
 body.mobile-version .reverb-hint{padding:10px 20px;font-size:14px;top:38%}
 body.mobile-version #tab-reverb{text-align:center}
+/* ===== МОБІЛЬНА ВЕРСІЯ - ГОДИННИК РЕВЕРБУ ===== */
 body.mobile-version #reverbClock.reverb-mode,body.mobile-version #reverbClock{width:218px;height:218px}
 body.mobile-version #reverbClock .hand.hour{height:50px}
 body.mobile-version #reverbClock .hand.minute{height:74px}
 body.mobile-version #reverbClock .hand.second{height:88px}
 body.mobile-version #reverbClock .center-dot{width:12px;height:12px}
+/* ===== МОБІЛЬНА ВЕРСІЯ - ІНШІ СТИЛІ ===== */
 body.mobile-version #score{font-size:14px}
 body.mobile-version #currentDate{font-size:12px}
 body.mobile-version #restartMessage{font-size:8px}
 body.mobile-version .container{gap:22px}
+/* ===== МОБІЛЬНА ВЕРСІЯ - DISCORD АДАПТАЦІЯ (ліва ширша панель, активний канал яскравіший) ===== */
 body.mobile-version #discordOverlay{flex-direction:row !important;overflow:hidden;padding:10px}
 body.mobile-version #discordOverlay div[style*="width:240px"]{width:200% !important;height:calc(100% - 20px) !important;overflow-y:auto !important;flex-direction:column !important;padding:10px 8px !important;align-items:stretch}
 body.mobile-version #discordOverlay div[style*="width:240px"] div{min-width:auto;margin:6px 0;padding:12px 8px;font-size:13px;background:#2f3136;border-radius:10px;text-align:center;word-break:break-word;transition:all 0.2s ease;border:2px solid transparent}
@@ -314,4 +334,5 @@ body.mobile-version #discordOverlay button{padding:10px 15px !important;font-siz
 body.mobile-version #discordChannelHeader{padding:10px 15px;font-size:14px}
 body.mobile-version .discord-message{margin-bottom:10px;padding:8px;font-size:13px;max-width:100%;word-break:break-word}
 body.mobile-version .discord-message-content{max-width:100%;overflow-wrap:break-word}
+/* ===== МОБІЛЬНА ВЕРСІЯ - ВИПРАВЛЕННЯ ДЛЯ СПОВІЩЕНЬ ===== */
 body.mobile-version .toast{padding:15px 25px;font-size:16px;margin-top:10px;max-width:90%}
