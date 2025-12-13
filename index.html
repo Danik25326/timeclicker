@@ -46,9 +46,6 @@ body{font-family:'Poppins',sans-serif;background:radial-gradient(circle at cente
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"VideoGame","name":"Times Clicker","description":"Interactive clicker game where you click a clock to earn time, unlock upgrades, skins and achievements.","url":"https://danik25326.github.io/timeclicker/","image":"https://danik25326.github.io/timeclicker/og-image.png","applicationCategory":"GameApplication","author":{"@type":"Person","name":"Danik"},"genre":["Clicker","Idle"],"playMode":"SinglePlayer"}</script>
 </head>
 <body>
-<!-- QR-КОД ПРИХОВАНИЙ ДО ПОЧАТКУ ГРИ -->
-<img src="https://api.qrserver.com/v1/create-qr-code/?size=40x40&data=https://t.me/brainmathx_bot" alt="QR код для переходу в Telegram бот" class="bare-qr" loading="lazy" decoding="async" onclick="openModal()" id="staticQR" style="display: none;">
-
 <h1 class="visually-hidden">Times Clicker - Interactive Clicker Game</h1>
 <!-- Вибір версії гри -->
 <div id="chooser" aria-label="Вибір версії гри">
@@ -186,6 +183,7 @@ body{font-family:'Poppins',sans-serif;background:radial-gradient(circle at cente
 <div id="comboCount">0</div>
 <div id="comboText">кліків</div>
 </div>
+<img src="https://api.qrserver.com/v1/create-qr-code/?size=40x40&data=https://t.me/brainmathx_bot" alt="QR код для переходу в Telegram бот" class="bare-qr" loading="lazy" decoding="async" onclick="openModal()">
 </div>
 <p id="score" aria-live="polite">Часу витрачено:0 сек</p>
 <div class="music-player" aria-label="Музичний програвач">
@@ -238,6 +236,6 @@ body{font-family:'Poppins',sans-serif;background:radial-gradient(circle at cente
         onclick="document.getElementById('modal').style.display='none';">Закрити</button>
 </div>
 </div>
-<script src="script.js?v=18"></script>
+<script src="script.js?v=17"></script>
 </body>
 </html>
