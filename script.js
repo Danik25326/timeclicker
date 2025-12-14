@@ -171,7 +171,23 @@ const updateUpgradePanel=()=>{const e=document.getElementById('constellationUpgr
 const buyConstellationUpgrade=e=>{if(e==='center'){if(constellation.center.unlocked||skillPoints<constellation.center.cost)return;skillPoints-=constellation.center.cost;constellation.center.unlocked=true;constellation.center.level=1;showToast('Ядро часу активовано! +1000 секунд при перезапуску ⭐');}else{const t=findStarById(e);if(!t||t.unlocked||skillPoints<t.cost)return;const o=[constellation.hourHand,constellation.minuteHand,constellation.secondHand].find(o=>o.stars.some(o=>o.id===e));if(o){const n=o.stars.findIndex(o=>o.id===e);if(n>0&&!o.stars[n-1].unlocked){showToast('Спочатку активуйте попередню зірку на цій стрілці!');return;}}skillPoints-=t.cost;t.unlocked=true;applyConstellationBonus(t);showToast('Зірка '+e.toUpperCase()+' активована! ⭐');}updateConstellationDisplay();saveConstellation();updateStats();};
 const applyConstellationBonus=e=>{switch(e.bonus.type){case'prestige':prestigeMultiplier+=e.bonus.value;break;case'clickMultiplier':clickMultiplier*=e.bonus.value;break;case'autoRate':autoRate+=e.bonus.value;break;case'clickPower':clickPower+=e.bonus.value;break;case'skinDiscount':break;case'all':clickPower*=e.bonus.value;autoRate*=e.bonus.value;}};
 const saveConstellation=()=>{const e={constellation:constellation,skillPoints:skillPoints};localStorage.setItem('timeClickerConstellation',JSON.stringify(e));};
-const loadConstellation=()=>{const e=localStorage.getItem('timeClickerConstellation');if(e)try{const t=JSON.parse(e);constellation=t.constellation||constellation;skillPoints=t.skillPoints||0;}catch(e){console.error('Помилка завантаження сузір\'я:',e);}const e=[...constellation.hourHand.stars,...constellation.minuteHand.stars,...constellation.secondHand.stars];e.forEach(e=>{if(e.unlocked)applyConstellationBonus(e);});};
+const loadConstellation = () => {
+  const saved = localStorage.getItem('timeClickerConstellation');
+  if (saved) {
+    try {
+      const data = JSON.parse(saved);
+      constellation = data.constellation || constellation;
+      skillPoints = data.skillPoints || 0;
+    } catch (err) {
+      console.error('Помилка завантаження сузір\'я:', err);
+    }
+  }
+  
+  const allStars = [...constellation.hourHand.stars, ...constellation.minuteHand.stars, ...constellation.secondHand.stars];
+  allStars.forEach(star => {
+    if (star.unlocked) applyConstellationBonus(star);
+  });
+};
 // === ЗАПУСК ІНТЕРВАЛІВ ===
 function startIntervals(){setInterval(updateClockHands,50);updateClockHands();setInterval(()=>{const g=Math.round(autoRate*prestigeMultiplier);if(g>0){score+=g;clickCloudTotal+=g;updateScore();}updateStats();updateAchievements();},1000);setInterval(()=>{if(autoRate>maxAutoRate)maxAutoRate=autoRate;if(maxComboEver>maxCombo)maxCombo=maxComboEver;},1000);setInterval(updateSkinHighlights,50);setInterval(saveGame,30000);}
 // === ІНІЦІАЛІЗАЦІЯ ПРИ ЗАВАНТАЖЕННІ ===
