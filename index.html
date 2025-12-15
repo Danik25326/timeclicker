@@ -188,20 +188,16 @@
 </div>
 </div>
 </main>
-<!-- Контейнер сузір'я з ободком -->
-<div id="constellationContainer" style="position:fixed;top:0;left:0;width:100%;height:100%;background:radial-gradient(circle at center,#0a0a2a 0%,#000 100%);z-index:9999;display:none;align-items:center;justify-content:center;">
-<div class="constellation-border"></div>
-<div id="constellationClock" style="position:relative;width:800px;height:800px;margin:auto;"></div>
-<div id="constellationSkillPoints" style="position:absolute;top:20px;right:20px;background:rgba(0,0,0,0.8);color:gold;padding:8px 15px;border-radius:8px;font-size:16px;font-weight:bold;border:2px solid gold;z-index:10000;display:none;">Очки: 0</div>
-<button id="constellationExitBtn" style="position:absolute;bottom:20px;right:20px;padding:10px 20px;background:#f44336;color:white;border:none;border-radius:5px;cursor:pointer;z-index:1000;">Покинути сузір'я</button>
-<div id="constellationUpgradePanel" style="position:absolute;bottom:60px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,0.9);border-radius:10px;padding:15px;display:none;z-index:1000;min-width:300px;">
+<!-- Оверлеї для різних подій -->
+<!-- Контейнер сузір'я (показується після перезапуску) -->
+<div id="constellationContainer" style="position:fixed;top:0;left:0;width:100%;height:100%;background:radial-gradient(circle at center,#0a0a2a 0%,#000 100%);z-index:9999;display:none;align-items:center;justify-content:center;"></div>
+<!-- Панель прокачки сузір'я -->
+<div id="constellationUpgradePanel" style="position:fixed;bottom:20px;left:20px;background:rgba(0,0,0,0.9);border:2px solid #444;border-radius:15px;padding:15px;color:#fff;width:280px;z-index:10000;display:none;backdrop-filter:blur(10px);">
 <h3 style="margin:0 0 10px;color:gold;text-align:center;font-size:20px;">⭐ Прокачка сузір'я</h3>
 <div id="constellationUpgradeContent"></div>
-<div style="text-align:center;margin-top:10px;">
-<button id="constellationBuyBtn" style="padding:8px 16px;background:#4CAF50;color:white;border:none;border-radius:4px;cursor:pointer;display:none;">Купити вміння</button>
-<button onclick="hideUpgradePanel()" style="padding:8px 16px;background:#f44336;color:white;border:none;border-radius:4px;cursor:pointer;margin-left:10px;">Закрити</button>
 </div>
-</div>
+<!-- Очки навичок -->
+<div id="constellationSkillPoints" style="position:fixed;top:20px;right:20px;background:rgba(0,0,0,0.8);color:gold;padding:8px 15px;border-radius:8px;font-size:16px;font-weight:bold;border:2px solid gold;z-index:10000;display:none;">Очки: 0</div>
 <!-- Екран блокування телефону -->
 <div id="phoneLockOverlay" class="phone-lock-overlay" aria-label="Екран блокування телефону" hidden>
 <div class="phone-lock-screen" id="phoneLockScreen">
