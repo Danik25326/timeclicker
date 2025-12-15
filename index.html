@@ -202,6 +202,19 @@
 <button onclick="hideUpgradePanel()" style="padding:8px 16px;background:#f44336;color:white;border:none;border-radius:4px;cursor:pointer;margin-left:10px;">Закрити</button>
 </div>
 </div>
+<!-- Екран блокування телефону -->
+<div id="phoneLockOverlay" class="phone-lock-overlay" aria-label="Екран блокування телефону" hidden>
+<div class="phone-lock-screen" id="phoneLockScreen">
+<img src="" alt="Зображення для екрана блокування" class="phone-lock-image" id="phoneLockImage" loading="lazy" decoding="async">
+<div class="swipe-indicator" aria-hidden="true"></div>
+<div class="swipe-hint" id="swipeHint">Свайпни вгору</div>
+</div>
+</div>
+<!-- Сповіщення про розблокування -->
+<div id="phoneUnlockNotification" class="phone-unlock-notification" aria-live="assertive" hidden>Телефон успішно розблоковано</div>
+<!-- Стрічка новин -->
+<div id="newsTickerContainer" class="news-ticker-container" aria-label="Стрічка новин">
+<div id="newsTicker" class="news-ticker"></div>
 </div>
 <!-- Оверлей для ревербу -->
 <div id="reverbOverlay" class="reverb-overlay hidden" aria-label="Екран перезапуску гри" hidden>
