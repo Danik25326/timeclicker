@@ -23,33 +23,24 @@
 <meta name="robots" content="index,follow">
 <meta name="googlebot" content="index,follow">
 <link rel="manifest" href="manifest.json">
-<!-- Вбудована фавіконка -->
 <link rel="icon" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48Y2lyY2xlIGN4PSI1MCIgY3k9IjUwIiByPSI0NSIgc3Ryb2tlPSIjMDBhYWZmIiBzdHJva2Utd2lkdGg9IjUiIGZpbGw9Im5vbmUiLz48Y2lyY2xlIGN4PSI1MCIgY3k9IjUwIiByPSIyIiBmaWxsPSIjMDBhYWZmIi8+PHBhdGggZD0iTTUwIDI1VjUwTDUwIDUwTDUwIDUwTDUwIDUwIiBzdHJva2U9IiMwMGFhZmYiIHN0cm9rZS13aWR0aD0iNSIvPjxwYXRoIGQ9Ik01MCA1MEg3NSIgc3Ryb2tlPSIjMDBhYWZmIiBzdHJva2Utd2lkdGg9IjUiLz48L3N2Zz4=" type="image/svg+xml">
-<!-- Критичні CSS стилі для першого екрану -->
 <style>*{box-sizing:border-box;margin:0;padding:0}body{font-family:'Poppins',sans-serif;background:radial-gradient(circle at center,#0b1220,#050810);color:#fff;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;overflow-x:hidden;line-height:1.6}.visually-hidden{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);border:0}.game-hidden{display:none}#chooser{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:30px;text-align:center;min-height:auto;padding-top:10px}#chooser h2{font-size:48px;color:#fff;text-shadow:0 0 30px #0ea5e9;margin-bottom:0px}.choose-btn{padding:25px 60px;font-size:28px;background:linear-gradient(90deg,#0ea5e9,#3b82f6);border:none;border-radius:20px;color:white;cursor:pointer;transition:all .3s;box-shadow:0 0 40px rgba(14,165,233,.7);font-weight:700;min-width:280px;text-shadow:0 0 10px rgba(255,255,255,.5)}.choose-btn:hover{transform:scale(1.15);box-shadow:0 0 60px rgba(14,165,233,.9)}</style>
-<!-- Асинхронне завантаження решти CSS -->
 <link rel="preload" href="style.css?v=18" as="style" onload="this.onload=null;this.rel='stylesheet'">
 <noscript><link rel="stylesheet" href="style.css?v=18"></noscript>
-<!-- Асинхронне завантаження шрифтів -->
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
 <noscript><link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet"></noscript>
-<!-- Schema.org розмітка -->
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"VideoGame","name":"Times Clicker","description":"Interactive clicker game where you click a clock to earn time, unlock upgrades, skins and achievements.","url":"https://danik25326.github.io/timeclicker/","image":"https://danik25326.github.io/timeclicker/og-image.png","applicationCategory":"GameApplication","author":{"@type":"Person","name":"Danik"},"genre":["Clicker","Idle"],"playMode":"SinglePlayer"}</script>
 </head>
 <body>
 <h1 class="visually-hidden">Times Clicker - Interactive Clicker Game</h1>
-<!-- Вибір версії гри -->
 <div id="chooser" aria-label="Вибір версії гри">
 <h2>Times Clicker</h2>
 <button class="choose-btn" onclick="startGame('pc')" aria-label="Запустити ПК версію">ПК-версія</button>
 <button class="choose-btn" onclick="startGame('mobile')" aria-label="Запустити мобільну версію">Мобільна версія</button>
 </div>
-<!-- Основне ігрове поле -->
 <main id="game" class="game-hidden" aria-label="Основне ігрове поле">
-<!-- Назва світу -->
 <div id="worldTitle" class="editable-title" contenteditable="true" aria-label="Назва світу гри">Times Clicker</div>
-<!-- Вкладки гри -->
 <nav class="top-tabs" role="tablist" aria-label="Ігрові вкладки">
 <button class="tab active" data-tab="tab-upgrades" role="tab" aria-selected="true" aria-controls="tab-upgrades">Апгрейди</button>
 <button class="tab" data-tab="tab-skins" role="tab" aria-selected="false" aria-controls="tab-skins">Скіни</button>
@@ -59,17 +50,13 @@
 <button class="tab" data-tab="tab-multipliers" role="tab" aria-selected="false" aria-controls="tab-multipliers">Множники</button>
 <button class="tab" data-tab="settings" role="tab" aria-selected="false" aria-controls="settings">Налаштування</button>
 </nav>
-<!-- Контейнер з двома панелями -->
 <div class="container">
-<!-- Ліва панель з вмістом вкладок -->
 <div class="left-panel">
 <div class="tab-body">
-<!-- Вкладка апгрейдів -->
 <section id="tab-upgrades" class="tab-page active" role="tabpanel" aria-labelledby="tab-upgrades">
 <h3>Апгрейди</h3>
 <div id="upgrades" class="upgrades-container" aria-label="Список доступних апгрейдів"></div>
 </section>
-<!-- Вкладка скінів -->
 <section id="tab-skins" class="tab-page" role="tabpanel" aria-labelledby="tab-skins" hidden>
 <h3>Скіни</h3>
 <div class="skins-section">
@@ -83,7 +70,6 @@
 <div class="skins-grid" id="effectSkins" aria-label="Вибір ефектів кліку"></div>
 </div>
 </section>
-<!-- Вкладка статистики -->
 <section id="tab-stats" class="tab-page" role="tabpanel" aria-labelledby="tab-stats" hidden>
 <h3>Статистика</h3>
 <ul class="stats-list" aria-label="Ігрова статистика">
@@ -105,12 +91,10 @@
 <li>Всього скінів: <span id="totalSkins">4</span>/17</li>
 </ul>
 </section>
-<!-- Вкладка досягнень -->
 <section id="tab-achievements" class="tab-page" role="tabpanel" aria-labelledby="tab-achievements" hidden>
 <h3>Досягнення</h3>
 <div id="achievements" class="achievements-grid" aria-label="Список досягнень"></div>
 </section>
-<!-- Вкладка перезапуску -->
 <section id="tab-reverb" class="tab-page" role="tabpanel" aria-labelledby="tab-reverb" hidden>
 <h3>Перезапуск</h3>
 <p id="reverbDesc">Повертаючи час назад, ти отримаєш множник <span id="nextMultiplier">1.20</span>× до всіх прибутків.</p>
@@ -125,12 +109,10 @@
 <div class="progress-footer">Наступний множник: <span id="nextMultiplier"> 1.20</span>×</div>
 <button id="reverbBtn" class="reverb-btn" aria-label="Повернути час назад">Повернути час назад</button>
 </section>
-<!-- Вкладка множників -->
 <section id="tab-multipliers" class="tab-page" role="tabpanel" aria-labelledby="tab-multipliers" hidden>
 <h3>Множники кліку</h3>
 <div id="multipliers" class="upgrades-container" aria-label="Список множників"></div>
 </section>
-<!-- Вкладка налаштувань -->
 <section id="settings" class="tab-page" role="tabpanel" aria-labelledby="settings" hidden>
 <div class="settings-container">
 <div class="setting-item">
@@ -158,7 +140,6 @@
 </section>
 </div>
 </div>
-<!-- Права панель з годинником і музикою -->
 <div class="right-panel">
 <div id="clockWrapper" aria-label="Інтерактивний годинник">
 <div id="clickableClock" class="clock round" role="button" tabindex="0" aria-label="Клікніть для отримання часу">
@@ -188,17 +169,12 @@
 </div>
 </div>
 </main>
-<!-- Оверлеї для різних подій -->
-<!-- Контейнер сузір'я (показується після перезапуску) -->
 <div id="constellationContainer" style="position:fixed;top:0;left:0;width:100%;height:100%;background:radial-gradient(circle at center,#0a0a2a 0%,#000 100%);z-index:9999;display:none;align-items:center;justify-content:center;"></div>
-<!-- Панель прокачки сузір'я -->
 <div id="constellationUpgradePanel" style="position:fixed;bottom:20px;left:20px;background:rgba(0,0,0,0.9);border:2px solid #444;border-radius:15px;padding:15px;color:#fff;width:280px;z-index:10000;display:none;backdrop-filter:blur(10px);">
 <h3 style="margin:0 0 10px;color:gold;text-align:center;font-size:20px;">⭐ Прокачка сузір'я</h3>
 <div id="constellationUpgradeContent"></div>
 </div>
-<!-- Очки навичок -->
 <div id="constellationSkillPoints" style="position:fixed;top:20px;right:20px;background:rgba(0,0,0,0.8);color:gold;padding:8px 15px;border-radius:8px;font-size:16px;font-weight:bold;border:2px solid gold;z-index:10000;display:none;">Очки: 0</div>
-<!-- Екран блокування телефону -->
 <div id="phoneLockOverlay" class="phone-lock-overlay" aria-label="Екран блокування телефону" hidden>
 <div class="phone-lock-screen" id="phoneLockScreen">
 <img src="" alt="Зображення для екрана блокування" class="phone-lock-image" id="phoneLockImage" loading="lazy" decoding="async">
@@ -206,13 +182,10 @@
 <div class="swipe-hint" id="swipeHint">Свайпни вгору</div>
 </div>
 </div>
-<!-- Сповіщення про розблокування -->
 <div id="phoneUnlockNotification" class="phone-unlock-notification" aria-live="assertive" hidden>Телефон успішно розблоковано</div>
-<!-- Стрічка новин -->
 <div id="newsTickerContainer" class="news-ticker-container" aria-label="Стрічка новин">
 <div id="newsTicker" class="news-ticker"></div>
 </div>
-<!-- Оверлей для ревербу -->
 <div id="reverbOverlay" class="reverb-overlay hidden" aria-label="Екран перезапуску гри" hidden>
 <div class="reverb-instruction">Зажми та тримай годинник 10 секунд,<br>щоб повернути час назад!</div>
 <div id="reverbHint" class="reverb-hint">Зажми мене!</div>
@@ -223,11 +196,8 @@
 <div class="center-dot" aria-hidden="true"></div>
 </div>
 </div>
-<!-- Тунель часу (ефект) -->
 <div id="timeTunnel" class="time-tunnel" aria-hidden="true"></div>
-<!-- Контейнер для тостів -->
 <div id="toastContainer" aria-live="polite"></div>
-<!-- Модальне вікно з QR кодом -->
 <div class="modal" id="modal" aria-label="Модальне вікно з QR кодом" hidden>
 <div class="modal-content">
 <img src="https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=https://t.me/brainmathx_bot" alt="Великий QR код для переходу в Telegram бот" class="large-qr" loading="lazy" decoding="async">
