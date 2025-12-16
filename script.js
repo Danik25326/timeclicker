@@ -218,4 +218,4 @@ const hideUpgradePanel=()=>{const e=id('constellationUpgradePanel');if(e)e.style
 function startIntervals(){setInterval(updateClockHands,50);updateClockHands();setInterval(()=>{const g=Math.round(autoRate*prestigeMultiplier);if(g>0){score+=g;clickCloudTotal+=g;updateScore();}updateStats();updateAchievements();},1000);setInterval(()=>{if(autoRate>maxAutoRate)maxAutoRate=autoRate;if(maxComboEver>maxCombo)maxCombo=maxComboEver;},1000);setInterval(updateSkinHighlights,50);setInterval(saveGame,30000);}
 d.addEventListener('DOMContentLoaded',function(){id('desktopBtn')?.addEventListener('click',()=>startGame('desktop'));id('mobileBtn')?.addEventListener('click',()=>startGame('mobile'));});
 function openModal(){id('modal').style.display='flex';}
-function closeModal(){id('modal').style.display='none';}```
+function closeModal(){id('modal').style.display='none';}
