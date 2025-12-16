@@ -241,8 +241,9 @@ body.eye-blink::before{content:"";position:fixed;inset:0;background:#000;z-index
 .typing-cursor{display:inline-block;width:2px;background-color:#fff;animation:cursorBlink 1s infinite;margin-left:2px;vertical-align:middle}
 @keyframes cursorBlink{0%,100%{opacity:1}50%{opacity:0}}
 .highlighted-step{position:relative;z-index:15001 !important;box-shadow:0 0 30px rgba(255,255,255,0.2);transition:all 0.5s ease}
-.tutorial-dialogue-box{position:fixed;left:50%;transform:translateX(-50%);width:90%;max-width:600px;background:rgba(15,23,42,0.95);border:2px solid #0ea5e9;border-radius:20px;padding:25px;z-index:16000;display:none;box-shadow:0 0 50px rgba(14,165,233,0.5);text-align:center;bottom:40px;transition:bottom 0.3s}
-@media (max-width:768px){.tutorial-dialogue-box{bottom:20%}}
+.tutorial-dialogue-box{position:fixed;left:50%;transform:translateX(-50%);width:90%;max-width:600px;background:rgba(15,23,42,0.95);border:2px solid #0ea5e9;border-radius:20px;padding:25px;z-index:16000;display:none;box-shadow:0 0 50px rgba(14,165,233,0.5);text-align:center;bottom:30px;transition:all 0.5s ease}
+.tutorial-dialogue-box.dialogue-top{bottom:auto !important;top:160px}
+@media (max-width:768px){.tutorial-dialogue-box{bottom:25%}.tutorial-dialogue-box.dialogue-top{top:20%}}
 /* ===== МОБІЛЬНА ВЕРСІЯ ===== */
 body.mobile-version .clock,body.mobile-version .hand,body.mobile-version .skin{will-change:transform,opacity;transform:translateZ(0)}
 body.mobile-version .upgrades-container,body.mobile-version .skins-grid,body.mobile-version .achievements-grid{contain:layout style paint;content-visibility:auto}
