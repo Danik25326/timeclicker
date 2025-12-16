@@ -49,6 +49,8 @@
 <button class="tab" data-tab="tab-reverb" role="tab" aria-selected="false" aria-controls="tab-reverb">Перезапуск</button>
 <button class="tab" data-tab="tab-multipliers" role="tab" aria-selected="false" aria-controls="tab-multipliers">Множники</button>
 <button class="tab" data-tab="settings" role="tab" aria-selected="false" aria-controls="settings">Налаштування</button>
+<button class="tab" data-tab="tab-tutorial" role="tab" aria-selected="false" aria-controls="tab-tutorial">Туторіал</button>
+<button class="tab" data-tab="tab-developers" role="tab" aria-selected="false" aria-controls="tab-developers">Розробники</button>
 </nav>
 <div class="container">
 <div class="left-panel">
@@ -133,9 +135,34 @@
 <button onclick="exportData()" class="export-btn" aria-label="Експортувати дані гри">📤 Експорт даних</button>
 <button onclick="importData()" class="import-btn" aria-label="Імпортувати дані гри">📥 Імпорт даних</button>
 <button onclick="resetProgress()" class="reset-btn" aria-label="Скинути прогрес">🗑️ Скинути прогрес</button>
+<button onclick="openLanguageModal()" class="save-btn" style="background:#8b5cf6;" aria-label="Змінити мову">🌐 Мова / Language</button>
 </div>
 <div id="saveStatus" class="save-status" aria-live="polite"></div>
 <textarea id="exportImportArea" class="export-import-area" placeholder="Тут з'явиться експортований код...(і сюди за потребою вставляти код для імпорту)" aria-label="Поле для експорту/імпорту даних"></textarea>
+</div>
+</section>
+<section id="tab-tutorial" class="tab-page" role="tabpanel" aria-labelledby="tab-tutorial" hidden>
+<h3>База Знань</h3>
+<div class="upgrades-container" id="tutorialContent">
+<div class="achievement"><strong>Як грати?</strong><br>Просто клікай по годиннику, заробляй час та купуй апгрейди.</div>
+<div class="achievement"><strong>Апгрейди</strong><br>Дозволяють отримувати час автоматично без кліків.</div>
+<div class="achievement"><strong>Множники</strong><br>Збільшують кількість часу за один клік.</div>
+<div class="achievement"><strong>Перезапуск</strong><br>Скидає прогрес, але дає потужний постійний множник.</div>
+</div>
+</section>
+<section id="tab-developers" class="tab-page" role="tabpanel" aria-labelledby="tab-developers" hidden>
+<h3>Розробники</h3>
+<div class="upgrades-container" style="text-align:center;">
+<p style="margin-bottom:15px;color:#cfeaff;">Ця гра була створена з любов'ю до часу та кліків.</p>
+<div class="achievement" style="margin-bottom:15px;">
+<strong>Danik</strong>
+<div style="font-size:12px;color:#bcd">Full Stack Developer & Game Designer</div>
+<div style="margin-top:10px;">
+<a href="#" id="devLinkTelegram" style="color:#0ea5e9;text-decoration:none;margin:0 5px;">Telegram</a> |
+<a href="#" id="devLinkInstagram" style="color:#ec4899;text-decoration:none;margin:0 5px;">Instagram</a>
+</div>
+</div>
+<button onclick="openModal()" class="save-btn" style="width:100%;margin-top:10px;">Підтримати проект</button>
 </div>
 </section>
 </div>
@@ -158,13 +185,13 @@
 </div>
 <img src="https://api.qrserver.com/v1/create-qr-code/?size=40x40&data=https://t.me/brainmathx_bot" alt="QR код для переходу в Telegram бот" class="bare-qr" loading="lazy" decoding="async" onclick="openModal()">
 </div>
-<p id="score" aria-live="polite">Часу витрачено:0 сек</p>
+<p id="score" aria-live="polite">Часу витрачено: 0 сек</p>
 <div class="music-player" aria-label="Музичний програвач">
 <button id="prevTrack" class="music-switch" aria-label="Попередній трек">⬅️</button>
 <button id="musicBtn" class="phonk-btn" aria-label="Увімкнути або вимкнути музику">▶️ Включити музику</button>
 <button id="nextTrack" class="music-switch" aria-label="Наступний трек">➡️</button>
 </div>
-<div id="nowPlaying" class="now-playing" aria-live="polite">Зараз:—</div>
+<div id="nowPlaying" class="now-playing" aria-live="polite">Зараз: —</div>
 <audio id="player" preload="auto" aria-label="Аудіопрогравач"></audio>
 </div>
 </div>
@@ -202,10 +229,31 @@
 <div class="modal-content">
 <img src="https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=https://t.me/brainmathx_bot" alt="Великий QR код для переходу в Telegram бот" class="large-qr" loading="lazy" decoding="async">
 <p class="modal-text">Навіщо витрачати час на вирішення рівнянь, якщо його можна використати на щось корисніше?</p>
-<a href="https://t.me/brainmathx_bot" target="_blank" class="telegram-link">Або перейдіть за посиланням:t.me/brainmathx_bot</a>
+<a href="https://t.me/brainmathx_bot" target="_blank" class="telegram-link">Або перейдіть за посиланням: t.me/brainmathx_bot</a>
 <button class="close-btn" aria-label="Закрити модальне вікно" onclick="document.getElementById('modal').style.display='none';">Закрити</button>
 </div>
 </div>
-<script src="script.js?v=17"></script>
+<div id="languageSelectionOverlay" class="modal" style="display:none;z-index:20000;background:rgba(0,0,0,0.95);">
+<div class="modal-content" style="max-width:500px;width:90%;background:#1e293b;border:2px solid #0ea5e9;color:white;">
+<h3 style="margin-bottom:20px;color:#0ea5e9;font-size:24px;">Оберіть мову / Select Language</h3>
+<input type="text" id="langSearch" placeholder="Пошук мови / Search language..." style="width:100%;padding:12px;margin-bottom:15px;background:#0f1724;border:1px solid #334155;color:white;border-radius:8px;">
+<div id="langList" style="max-height:300px;overflow-y:auto;display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:20px;"></div>
+<button id="langConfirmBtn" class="choose-btn" style="width:100%;min-width:auto;padding:12px;font-size:18px;display:none;">Продовжити</button>
+</div>
+</div>
+<div id="tutorialOverlay" style="position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.85);z-index:15000;display:none;pointer-events:all;"></div>
+<div id="tutorialDialogue" style="position:fixed;bottom:10%;left:50%;transform:translateX(-50%);width:90%;max-width:600px;background:rgba(15,23,42,0.95);border:2px solid #0ea5e9;border-radius:20px;padding:25px;z-index:16000;display:none;box-shadow:0 0 50px rgba(14,165,233,0.5);text-align:center;">
+<div id="tutorialText" style="font-size:18px;color:white;min-height:60px;margin-bottom:20px;line-height:1.5;"></div>
+<div style="display:flex;gap:10px;justify-content:center;">
+<button id="tutorialBackBtn" class="music-switch" style="display:none;font-size:16px;">Назад</button>
+<button id="tutorialNextBtn" class="phonk-btn" style="display:none;">Продовжити</button>
+</div>
+<div id="tutorialChoiceBtns" style="display:none;gap:15px;justify-content:center;margin-top:10px;flex-wrap:wrap;">
+<button id="skipTutorialChoice" class="reset-btn" style="padding:15px 25px;">Пффф туторіал для дитини</button>
+<button id="startTutorialChoice" class="save-btn" style="padding:15px 25px;">Чому ні, може дізнаюсь щось нове</button>
+</div>
+</div>
+<button id="skipTutorialTopBtn" style="position:fixed;top:20px;right:20px;padding:10px 20px;background:#ef4444;color:white;border:none;border-radius:10px;font-weight:bold;cursor:pointer;z-index:16001;display:none;">Скіпнути туторіал</button>
+<script src="script.js?v=18"></script>
 </body>
 </html>
