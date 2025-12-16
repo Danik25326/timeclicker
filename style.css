@@ -125,8 +125,10 @@ body{font-family:'Poppins',sans-serif;background:radial-gradient(circle at cente
 .click-effect-glitch{animation:glitch .6s steps(4)}
 .click-effect-blackhole{animation:blackhole 1s ease-in-out}
 .click-effect-ripple{animation:ripple 1s ease-out}
+.click-effect-neon{animation:clickNeon .4s ease-out}
 @keyframes clickRed{0%,100%{box-shadow:0 0 50px var(--neon)}50%{box-shadow:0 0 100px #ff3b5c,0 0 160px #ff3b5c;border-color:#ff3b5c;transform:scale(1.1)}}
 @keyframes clickBlue{0%,100%{box-shadow:0 0 50px var(--neon)}50%{box-shadow:0 0 100px #0ea5e9,0 0 160px #0ea5e9;border-color:#0ea5e9;transform:scale(1.12)}}
+@keyframes clickNeon{0%,100%{box-shadow:0 0 50px #fff}50%{box-shadow:0 0 100px #fff,0 0 160px #fff;border-color:#fff;transform:scale(1.1)}}
 @keyframes glitch{0%,100%{transform:translate(0)}20%{transform:translate(-10px,10px)}40%{transform:translate(10px,-10px)}60%{transform:translate(-10px,-8px)}80%{transform:translate(10px,8px)}}
 @keyframes blackhole{0%{transform:scale(1)}50%{transform:scale(.85)}100%{transform:scale(1)}}
 @keyframes ripple{0%{box-shadow:0 0 50px var(--neon)}100%{box-shadow:0 0 0 160px rgba(14,165,233,0)}}
@@ -235,6 +237,10 @@ body.eye-blink::before{content:"";position:fixed;inset:0;background:#000;z-index
 .combo-bubble.hidden{display:none}
 @keyframes pulse{0%{transform:scale(1)}50%{transform:scale(1.05)}100%{transform:scale(1)}}
 @keyframes reelChange{0%{opacity:0.5;transform:translateY(20px)}100%{opacity:1;transform:translateY(0)}}
+/* ===== ТУТОРІАЛ ТА ДІАЛОГИ ===== */
+.typing-cursor{display:inline-block;width:2px;background-color:#fff;animation:cursorBlink 1s infinite;margin-left:2px;vertical-align:middle}
+@keyframes cursorBlink{0%,100%{opacity:1}50%{opacity:0}}
+.highlighted-step{position:relative;z-index:15001 !important;box-shadow:0 0 30px rgba(255,255,255,0.2);transition:all 0.5s ease}
 /* ===== МОБІЛЬНА ВЕРСІЯ ===== */
 body.mobile-version .clock,body.mobile-version .hand,body.mobile-version .skin{will-change:transform,opacity;transform:translateZ(0)}
 body.mobile-version .upgrades-container,body.mobile-version .skins-grid,body.mobile-version .achievements-grid{contain:layout style paint;content-visibility:auto}
