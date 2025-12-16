@@ -25,8 +25,8 @@
 <link rel="manifest" href="manifest.json">
 <link rel="icon" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48Y2lyY2xlIGN4PSI1MCIgY3k9IjUwIiByPSI0NSIgc3Ryb2tlPSIjMDBhYWZmIiBzdHJva2Utd2lkdGg9IjUiIGZpbGw9Im5vbmUiLz48Y2lyY2xlIGN4PSI1MCIgY3k9IjUwIiByPSIyIiBmaWxsPSIjMDBhYWZmIi8+PHBhdGggZD0iTTUwIDI1VjUwTDUwIDUwTDUwIDUwTDUwIDUwIiBzdHJva2U9IiMwMGFhZmYiIHN0cm9rZS13aWR0aD0iNSIvPjxwYXRoIGQ9Ik01MCA1MEg3NSIgc3Ryb2tlPSIjMDBhYWZmIiBzdHJva2Utd2lkdGg9IjUiLz48L3N2Zz4=" type="image/svg+xml">
 <style>*{box-sizing:border-box;margin:0;padding:0}body{font-family:'Poppins',sans-serif;background:radial-gradient(circle at center,#0b1220,#050810);color:#fff;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;overflow-x:hidden;line-height:1.6}.visually-hidden{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);border:0}.game-hidden{display:none}#chooser{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:30px;text-align:center;min-height:auto;padding-top:10px}#chooser h2{font-size:48px;color:#fff;text-shadow:0 0 30px #0ea5e9;margin-bottom:0px}.choose-btn{padding:25px 60px;font-size:28px;background:linear-gradient(90deg,#0ea5e9,#3b82f6);border:none;border-radius:20px;color:white;cursor:pointer;transition:all .3s;box-shadow:0 0 40px rgba(14,165,233,.7);font-weight:700;min-width:280px;text-shadow:0 0 10px rgba(255,255,255,.5)}.choose-btn:hover{transform:scale(1.15);box-shadow:0 0 60px rgba(14,165,233,.9)}</style>
-<link rel="preload" href="style.css?v=18" as="style" onload="this.onload=null;this.rel='stylesheet'">
-<noscript><link rel="stylesheet" href="style.css?v=18"></noscript>
+<link rel="preload" href="style.css?v=19" as="style" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="style.css?v=19"></noscript>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
 <noscript><link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet"></noscript>
@@ -36,124 +36,125 @@
 <h1 class="visually-hidden">Times Clicker - Interactive Clicker Game</h1>
 <div id="chooser" aria-label="Вибір версії гри">
 <h2>Times Clicker</h2>
-<button class="choose-btn" onclick="startGame('pc')" aria-label="Запустити ПК версію">ПК-версія</button>
-<button class="choose-btn" onclick="startGame('mobile')" aria-label="Запустити мобільну версію">Мобільна версія</button>
+<button class="choose-btn" onclick="startGame('pc')" aria-label="Запустити ПК версію" data-lang-key="pc_version">ПК-версія</button>
+<button class="choose-btn" onclick="startGame('mobile')" aria-label="Запустити мобільну версію" data-lang-key="mobile_version">Мобільна версія</button>
 </div>
 <main id="game" class="game-hidden" aria-label="Основне ігрове поле">
 <div id="worldTitle" class="editable-title" contenteditable="true" aria-label="Назва світу гри">Times Clicker</div>
 <nav class="top-tabs" role="tablist" aria-label="Ігрові вкладки">
-<button class="tab active" data-tab="tab-upgrades" role="tab" aria-selected="true" aria-controls="tab-upgrades">Апгрейди</button>
-<button class="tab" data-tab="tab-skins" role="tab" aria-selected="false" aria-controls="tab-skins">Скіни</button>
-<button class="tab" data-tab="tab-stats" role="tab" aria-selected="false" aria-controls="tab-stats">Статистика</button>
-<button class="tab" data-tab="tab-achievements" role="tab" aria-selected="false" aria-controls="tab-achievements">Досягнення</button>
-<button class="tab" data-tab="tab-reverb" role="tab" aria-selected="false" aria-controls="tab-reverb">Перезапуск</button>
-<button class="tab" data-tab="tab-multipliers" role="tab" aria-selected="false" aria-controls="tab-multipliers">Множники</button>
-<button class="tab" data-tab="settings" role="tab" aria-selected="false" aria-controls="settings">Налаштування</button>
-<button class="tab" data-tab="tab-tutorial" role="tab" aria-selected="false" aria-controls="tab-tutorial">Туторіал</button>
-<button class="tab" data-tab="tab-developers" role="tab" aria-selected="false" aria-controls="tab-developers">Розробники</button>
+<button class="tab active" data-tab="tab-upgrades" role="tab" aria-selected="true" aria-controls="tab-upgrades" data-lang-key="tab_upgrades">Апгрейди</button>
+<button class="tab" data-tab="tab-skins" role="tab" aria-selected="false" aria-controls="tab-skins" data-lang-key="tab_skins">Скіни</button>
+<button class="tab" data-tab="tab-stats" role="tab" aria-selected="false" aria-controls="tab-stats" data-lang-key="tab_stats">Статистика</button>
+<button class="tab" data-tab="tab-achievements" role="tab" aria-selected="false" aria-controls="tab-achievements" data-lang-key="tab_achievements">Досягнення</button>
+<button class="tab" data-tab="tab-reverb" role="tab" aria-selected="false" aria-controls="tab-reverb" data-lang-key="tab_reverb">Перезапуск</button>
+<button class="tab" data-tab="tab-multipliers" role="tab" aria-selected="false" aria-controls="tab-multipliers" data-lang-key="tab_multipliers">Множники</button>
+<button class="tab" data-tab="settings" role="tab" aria-selected="false" aria-controls="settings" data-lang-key="tab_settings">Налаштування</button>
+<button class="tab" data-tab="tab-tutorial" role="tab" aria-selected="false" aria-controls="tab-tutorial" data-lang-key="tab_tutorial">Туторіал</button>
+<button class="tab" data-tab="tab-developers" role="tab" aria-selected="false" aria-controls="tab-developers" data-lang-key="tab_developers">Розробники</button>
 </nav>
 <div class="container">
 <div class="left-panel">
 <div class="tab-body">
 <section id="tab-upgrades" class="tab-page active" role="tabpanel" aria-labelledby="tab-upgrades">
-<h3>Апгрейди</h3>
+<h3 data-lang-key="tab_upgrades_title">Апгрейди</h3>
 <div id="upgrades" class="upgrades-container" aria-label="Список доступних апгрейдів"></div>
 </section>
 <section id="tab-skins" class="tab-page" role="tabpanel" aria-labelledby="tab-skins" hidden>
-<h3>Скіни</h3>
+<h3 data-lang-key="tab_skins_title">Скіни</h3>
 <div class="skins-section">
-<h4>Форма годинника</h4>
+<h4 data-lang-key="skin_shape_title">Форма годинника</h4>
 <div class="skins-grid" id="shapeSkins" aria-label="Вибір форми годинника"></div>
-<h4>Колір годинника</h4>
+<h4 data-lang-key="skin_color_title">Колір годинника</h4>
 <div class="skins-grid" id="clockSkins" aria-label="Вибір кольору годинника"></div>
-<h4>Стрілки</h4>
+<h4 data-lang-key="skin_hand_title">Стрілки</h4>
 <div class="skins-grid" id="handSkins" aria-label="Вибір скінів стрілок"></div>
-<h4>Ефект кліку</h4>
+<h4 data-lang-key="skin_effect_title">Ефект кліку</h4>
 <div class="skins-grid" id="effectSkins" aria-label="Вибір ефектів кліку"></div>
 </div>
 </section>
 <section id="tab-stats" class="tab-page" role="tabpanel" aria-labelledby="tab-stats" hidden>
-<h3>Статистика</h3>
+<h3 data-lang-key="tab_stats_title">Статистика</h3>
 <ul class="stats-list" aria-label="Ігрова статистика">
-<li>Часу витрачено: <span id="cloudTotal">0 сек</span></li>
-<li>Реальний час у сесії: <span id="realTimePlayed">0 сек</span></li>
-<li>Віртуально витрачено: <span id="virtualTime">0 сек</span></li>
-<li>Куплено апгрейдів: <span id="totalUpgrades">0</span></li>
-<li>Найбільше за клік: <span id="maxPerClick">0 сек</span></li>
-<li>Найбільше за авто/сек: <span id="maxAutoRate">0 сек</span></li>
-<li>Найдовше комбо: <span id="maxCombo">0</span> кліків</li>
-<li>Перезапусків зроблено: <span id="totalReverbs">0</span></li>
-<li>Поточний множник: <span id="prestigeMult">1.00</span>×</li>
-<li class="stats-separator">Досягнення: <span id="achievedCount">0</span>/<span id="totalAchievements">6</span></li>
-<li class="stats-separator">Зібрано скінів:</li>
-<li>• Форми годинника: <span id="shapeSkinsCount">1</span>/4</li>
-<li>• Кольори годинника: <span id="clockSkinsCount">1</span>/4</li>
-<li>• Стрілки: <span id="handSkinsCount">1</span>/4</li>
-<li>• Ефекти кліку: <span id="effectSkinsCount">1</span>/5</li>
-<li>Всього скінів: <span id="totalSkins">4</span>/17</li>
+<li><span data-lang-key="stat_spent">Часу витрачено:</span> <span id="cloudTotal">0 сек</span></li>
+<li><span data-lang-key="stat_real_time">Реальний час у сесії:</span> <span id="realTimePlayed">0 сек</span></li>
+<li><span data-lang-key="stat_virtual_time">Віртуально витрачено:</span> <span id="virtualTime">0 сек</span></li>
+<li><span data-lang-key="stat_upgrades_bought">Куплено апгрейдів:</span> <span id="totalUpgrades">0</span></li>
+<li><span data-lang-key="stat_max_click">Найбільше за клік:</span> <span id="maxPerClick">0 сек</span></li>
+<li><span data-lang-key="stat_max_auto">Найбільше за авто/сек:</span> <span id="maxAutoRate">0 сек</span></li>
+<li><span data-lang-key="stat_max_combo">Найдовше комбо:</span> <span id="maxCombo">0</span> <span data-lang-key="clicks">кліків</span></li>
+<li><span data-lang-key="stat_total_reverbs">Перезапусків зроблено:</span> <span id="totalReverbs">0</span></li>
+<li><span data-lang-key="stat_current_mult">Поточний множник:</span> <span id="prestigeMult">1.00</span>×</li>
+<li class="stats-separator"><span data-lang-key="stat_achievements">Досягнення:</span> <span id="achievedCount">0</span>/<span id="totalAchievements">6</span></li>
+<li class="stats-separator" data-lang-key="stat_skins_collected">Зібрано скінів:</li>
+<li>• <span data-lang-key="skin_shape_title">Форми годинника</span>: <span id="shapeSkinsCount">1</span>/4</li>
+<li>• <span data-lang-key="skin_color_title">Кольори годинника</span>: <span id="clockSkinsCount">1</span>/4</li>
+<li>• <span data-lang-key="skin_hand_title">Стрілки</span>: <span id="handSkinsCount">1</span>/4</li>
+<li>• <span data-lang-key="skin_effect_title">Ефекти кліку</span>: <span id="effectSkinsCount">1</span>/5</li>
+<li><span data-lang-key="stat_total_skins">Всього скінів:</span> <span id="totalSkins">4</span>/17</li>
 </ul>
 </section>
 <section id="tab-achievements" class="tab-page" role="tabpanel" aria-labelledby="tab-achievements" hidden>
-<h3>Досягнення</h3>
+<h3 data-lang-key="tab_achievements_title">Досягнення</h3>
 <div id="achievements" class="achievements-grid" aria-label="Список досягнень"></div>
 </section>
 <section id="tab-reverb" class="tab-page" role="tabpanel" aria-labelledby="tab-reverb" hidden>
-<h3>Перезапуск</h3>
-<p id="reverbDesc">Повертаючи час назад, ти отримаєш множник <span id="nextMultiplier">1.20</span>× до всіх прибутків.</p>
+<h3 data-lang-key="tab_reverb_title">Перезапуск</h3>
+<p id="reverbDesc"><span data-lang-key="reverb_desc_part1">Повертаючи час назад, ти отримаєш множник</span> <span id="nextMultiplier">1.20</span><span data-lang-key="reverb_desc_part2">× до всіх прибутків.</span></p>
 <div id="prestigeProgressContainer" class="prestige-progress-container" aria-label="Прогрес перезапуску">
 <div class="progress-header">
-<span class="progress-label">Прогрес перезапуску</span>
+<span class="progress-label" data-lang-key="reverb_progress">Прогрес перезапуску</span>
 <span id="prestigeProgressText" class="progress-text">0/1 година</span>
 </div>
 <div class="progress-bar-bg">
 <div id="prestigeProgressBar" class="progress-bar-fill"></div>
 </div>
-<div class="progress-footer">Наступний множник: <span id="nextMultiplier"> 1.20</span>×</div>
-<button id="reverbBtn" class="reverb-btn" aria-label="Повернути час назад">Повернути час назад</button>
+<div class="progress-footer"><span data-lang-key="reverb_next_mult">Наступний множник:</span> <span id="nextMultiplierFooter"> 1.20</span>×</div>
+<button id="reverbBtn" class="reverb-btn" aria-label="Повернути час назад" data-lang-key="btn_reverb">Повернути час назад</button>
 </section>
 <section id="tab-multipliers" class="tab-page" role="tabpanel" aria-labelledby="tab-multipliers" hidden>
-<h3>Множники кліку</h3>
+<h3 data-lang-key="tab_multipliers_title">Множники кліку</h3>
 <div id="multipliers" class="upgrades-container" aria-label="Список множників"></div>
 </section>
 <section id="settings" class="tab-page" role="tabpanel" aria-labelledby="settings" hidden>
 <div class="settings-container">
 <div class="setting-item">
-<label for="volumeSlider">Гучність музики:</label>
+<label for="volumeSlider" data-lang-key="settings_volume">Гучність музики:</label>
 <input type="range" id="volumeSlider" min="0" max="100" value="45" aria-label="Регулювання гучності музики">
 <span id="volumeValue">45%</span>
 </div>
 <div class="setting-item">
-<label for="reverseHands">Обернені стрілки:</label>
+<label for="reverseHands" data-lang-key="settings_reverse">Обернені стрілки:</label>
 <input type="checkbox" id="reverseHands" aria-label="Обернути стрілки годинника">
 </div>
 <div class="setting-item">
-<label for="disableAnimations">Вимкнути анімацію:</label>
+<label for="disableAnimations" data-lang-key="settings_anim">Вимкнути анімацію:</label>
 <input type="checkbox" id="disableAnimations" aria-label="Відключити анімації">
 </div>
 <div class="setting-buttons">
-<button onclick="saveGame()" class="save-btn" aria-label="Зберегти гру">💾 Зберегти зараз</button>
-<button onclick="exportData()" class="export-btn" aria-label="Експортувати дані гри">📤 Експорт даних</button>
-<button onclick="importData()" class="import-btn" aria-label="Імпортувати дані гри">📥 Імпорт даних</button>
-<button onclick="resetProgress()" class="reset-btn" aria-label="Скинути прогрес">🗑️ Скинути прогрес</button>
-<button onclick="openLanguageModal()" class="save-btn" style="background:#8b5cf6;" aria-label="Змінити мову">🌐 Мова / Language</button>
+<button onclick="saveGame()" class="save-btn" aria-label="Зберегти гру" data-lang-key="btn_save">💾 Зберегти зараз</button>
+<button onclick="exportData()" class="export-btn" aria-label="Експортувати дані гри" data-lang-key="btn_export">📤 Експорт даних</button>
+<button onclick="importData()" class="import-btn" aria-label="Імпортувати дані гри" data-lang-key="btn_import">📥 Імпорт даних</button>
+<button onclick="resetProgress()" class="reset-btn" aria-label="Скинути прогрес" data-lang-key="btn_reset">🗑️ Скинути прогрес</button>
+<button onclick="openLanguageModal()" class="save-btn" style="background:#8b5cf6;" aria-label="Змінити мову" data-lang-key="btn_lang">🌐 Мова / Language</button>
+<button onclick="startTutorial()" class="save-btn" style="background:#f59e0b;" aria-label="Пройти туторіал ще раз" data-lang-key="btn_restart_tutorial">🎓 Пройти туторіал ще раз</button>
 </div>
 <div id="saveStatus" class="save-status" aria-live="polite"></div>
-<textarea id="exportImportArea" class="export-import-area" placeholder="Тут з'явиться експортований код...(і сюди за потребою вставляти код для імпорту)" aria-label="Поле для експорту/імпорту даних"></textarea>
+<textarea id="exportImportArea" class="export-import-area" placeholder="Тут з'явиться експортований код...(і сюди за потребою вставляти код для імпорту)" aria-label="Поле для експорту/імпорту даних" data-lang-key="export_placeholder"></textarea>
 </div>
 </section>
 <section id="tab-tutorial" class="tab-page" role="tabpanel" aria-labelledby="tab-tutorial" hidden>
-<h3>База Знань</h3>
+<h3 data-lang-key="tab_tutorial_title">База Знань</h3>
 <div class="upgrades-container" id="tutorialContent">
-<div class="achievement"><strong>Як грати?</strong><br>Просто клікай по годиннику, заробляй час та купуй апгрейди.</div>
-<div class="achievement"><strong>Апгрейди</strong><br>Дозволяють отримувати час автоматично без кліків.</div>
-<div class="achievement"><strong>Множники</strong><br>Збільшують кількість часу за один клік.</div>
-<div class="achievement"><strong>Перезапуск</strong><br>Скидає прогрес, але дає потужний постійний множник.</div>
+<div class="achievement"><strong data-lang-key="wiki_how_play">Як грати?</strong><br><span data-lang-key="wiki_how_play_desc">Просто клікай по годиннику, заробляй час та купуй апгрейди.</span></div>
+<div class="achievement"><strong data-lang-key="wiki_upgrades">Апгрейди</strong><br><span data-lang-key="wiki_upgrades_desc">Дозволяють отримувати час автоматично без кліків.</span></div>
+<div class="achievement"><strong data-lang-key="wiki_multipliers">Множники</strong><br><span data-lang-key="wiki_multipliers_desc">Збільшують кількість часу за один клік.</span></div>
+<div class="achievement"><strong data-lang-key="wiki_reverb">Перезапуск</strong><br><span data-lang-key="wiki_reverb_desc">Скидає прогрес, але дає потужний постійний множник.</span></div>
 </div>
 </section>
 <section id="tab-developers" class="tab-page" role="tabpanel" aria-labelledby="tab-developers" hidden>
-<h3>Розробники</h3>
+<h3 data-lang-key="tab_developers_title">Розробники</h3>
 <div class="upgrades-container" style="text-align:center;">
-<p style="margin-bottom:15px;color:#cfeaff;">Ця гра була створена з любов'ю до часу та кліків.</p>
+<p style="margin-bottom:15px;color:#cfeaff;" data-lang-key="dev_credits">Ця гра була створена з любов'ю до часу та кліків.</p>
 <div class="achievement" style="margin-bottom:15px;">
 <strong>Danik</strong>
 <div style="font-size:12px;color:#bcd">Full Stack Developer & Game Designer</div>
@@ -162,7 +163,7 @@
 <a href="#" id="devLinkInstagram" style="color:#ec4899;text-decoration:none;margin:0 5px;">Instagram</a>
 </div>
 </div>
-<button onclick="openModal()" class="save-btn" style="width:100%;margin-top:10px;">Підтримати проект</button>
+<button onclick="openModal()" class="save-btn" style="width:100%;margin-top:10px;" data-lang-key="btn_support">Підтримати проект</button>
 </div>
 </section>
 </div>
@@ -181,24 +182,24 @@
 </div>
 <div id="comboBubble" class="combo-bubble hidden" aria-label="Комбо лічильник">
 <div id="comboCount">0</div>
-<div id="comboText">кліків</div>
+<div id="comboText" data-lang-key="clicks">кліків</div>
 </div>
 <img src="https://api.qrserver.com/v1/create-qr-code/?size=40x40&data=https://t.me/brainmathx_bot" alt="QR код для переходу в Telegram бот" class="bare-qr" loading="lazy" decoding="async" onclick="openModal()">
 </div>
-<p id="score" aria-live="polite">Часу витрачено: 0 сек</p>
+<p id="score" aria-live="polite"><span data-lang-key="score_prefix">Часу витрачено:</span> 0 <span data-lang-key="unit_sec">сек</span></p>
 <div class="music-player" aria-label="Музичний програвач">
 <button id="prevTrack" class="music-switch" aria-label="Попередній трек">⬅️</button>
-<button id="musicBtn" class="phonk-btn" aria-label="Увімкнути або вимкнути музику">▶️ Включити музику</button>
+<button id="musicBtn" class="phonk-btn" aria-label="Увімкнути або вимкнути музику" data-lang-key="btn_music_on">▶️ Включити музику</button>
 <button id="nextTrack" class="music-switch" aria-label="Наступний трек">➡️</button>
 </div>
-<div id="nowPlaying" class="now-playing" aria-live="polite">Зараз: —</div>
+<div id="nowPlaying" class="now-playing" aria-live="polite"><span data-lang-key="music_now">Зараз:</span> —</div>
 <audio id="player" preload="auto" aria-label="Аудіопрогравач"></audio>
 </div>
 </div>
 </main>
 <div id="constellationContainer" style="position:fixed;top:0;left:0;width:100%;height:100%;background:radial-gradient(circle at center,#0a0a2a 0%,#000 100%);z-index:9999;display:none;align-items:center;justify-content:center;"></div>
 <div id="constellationUpgradePanel" style="position:fixed;bottom:20px;left:20px;background:rgba(0,0,0,0.9);border:2px solid #444;border-radius:15px;padding:15px;color:#fff;width:280px;z-index:10000;display:none;backdrop-filter:blur(10px);">
-<h3 style="margin:0 0 10px;color:gold;text-align:center;font-size:20px;">⭐ Прокачка сузір'я</h3>
+<h3 style="margin:0 0 10px;color:gold;text-align:center;font-size:20px;" data-lang-key="constellation_title">⭐ Прокачка сузір'я</h3>
 <div id="constellationUpgradeContent"></div>
 </div>
 <div id="constellationSkillPoints" style="position:fixed;top:20px;right:20px;background:rgba(0,0,0,0.8);color:gold;padding:8px 15px;border-radius:8px;font-size:16px;font-weight:bold;border:2px solid gold;z-index:10000;display:none;">Очки: 0</div>
@@ -206,16 +207,16 @@
 <div class="phone-lock-screen" id="phoneLockScreen">
 <img src="" alt="Зображення для екрана блокування" class="phone-lock-image" id="phoneLockImage" loading="lazy" decoding="async">
 <div class="swipe-indicator" aria-hidden="true"></div>
-<div class="swipe-hint" id="swipeHint">Свайпни вгору</div>
+<div class="swipe-hint" id="swipeHint" data-lang-key="phone_swipe_hint">Свайпни вгору</div>
 </div>
 </div>
-<div id="phoneUnlockNotification" class="phone-unlock-notification" aria-live="assertive" hidden>Телефон успішно розблоковано</div>
+<div id="phoneUnlockNotification" class="phone-unlock-notification" aria-live="assertive" hidden data-lang-key="phone_unlocked">Телефон успішно розблоковано</div>
 <div id="newsTickerContainer" class="news-ticker-container" aria-label="Стрічка новин">
 <div id="newsTicker" class="news-ticker"></div>
 </div>
 <div id="reverbOverlay" class="reverb-overlay hidden" aria-label="Екран перезапуску гри" hidden>
-<div class="reverb-instruction">Зажми та тримай годинник 10 секунд,<br>щоб повернути час назад!</div>
-<div id="reverbHint" class="reverb-hint">Зажми мене!</div>
+<div class="reverb-instruction" data-lang-key="reverb_instruction">Зажми та тримай годинник 10 секунд,<br>щоб повернути час назад!</div>
+<div id="reverbHint" class="reverb-hint" data-lang-key="reverb_hint">Зажми мене!</div>
 <div id="reverbClock" class="clock round" aria-label="Годинник для перезапуску">
 <div class="hand hour" aria-hidden="true"></div>
 <div class="hand minute" aria-hidden="true"></div>
@@ -228,32 +229,32 @@
 <div class="modal" id="modal" aria-label="Модальне вікно з QR кодом" hidden>
 <div class="modal-content">
 <img src="https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=https://t.me/brainmathx_bot" alt="Великий QR код для переходу в Telegram бот" class="large-qr" loading="lazy" decoding="async">
-<p class="modal-text">Навіщо витрачати час на вирішення рівнянь, якщо його можна використати на щось корисніше?</p>
-<a href="https://t.me/brainmathx_bot" target="_blank" class="telegram-link">Або перейдіть за посиланням: t.me/brainmathx_bot</a>
-<button class="close-btn" aria-label="Закрити модальне вікно" onclick="document.getElementById('modal').style.display='none';">Закрити</button>
+<p class="modal-text" data-lang-key="modal_qr_text">Навіщо витрачати час на вирішення рівнянь, якщо його можна використати на щось корисніше?</p>
+<a href="https://t.me/brainmathx_bot" target="_blank" class="telegram-link">t.me/brainmathx_bot</a>
+<button class="close-btn" aria-label="Закрити модальне вікно" onclick="document.getElementById('modal').style.display='none';" data-lang-key="btn_close">Закрити</button>
 </div>
 </div>
 <div id="languageSelectionOverlay" class="modal" style="display:none;z-index:20000;background:rgba(0,0,0,0.95);">
 <div class="modal-content" style="max-width:500px;width:90%;background:#1e293b;border:2px solid #0ea5e9;color:white;">
-<h3 style="margin-bottom:20px;color:#0ea5e9;font-size:24px;">Оберіть мову / Select Language</h3>
+<h3 style="margin-bottom:20px;color:#0ea5e9;font-size:24px;" data-lang-key="lang_select_title">Оберіть мову / Select Language</h3>
 <input type="text" id="langSearch" placeholder="Пошук мови / Search language..." style="width:100%;padding:12px;margin-bottom:15px;background:#0f1724;border:1px solid #334155;color:white;border-radius:8px;">
 <div id="langList" style="max-height:300px;overflow-y:auto;display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:20px;"></div>
-<button id="langConfirmBtn" class="choose-btn" style="width:100%;min-width:auto;padding:12px;font-size:18px;display:none;">Продовжити</button>
+<button id="langConfirmBtn" class="choose-btn" style="width:100%;min-width:auto;padding:12px;font-size:18px;display:none;" data-lang-key="btn_continue">Продовжити</button>
 </div>
 </div>
 <div id="tutorialOverlay" style="position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.85);z-index:15000;display:none;pointer-events:all;"></div>
-<div id="tutorialDialogue" style="position:fixed;bottom:10%;left:50%;transform:translateX(-50%);width:90%;max-width:600px;background:rgba(15,23,42,0.95);border:2px solid #0ea5e9;border-radius:20px;padding:25px;z-index:16000;display:none;box-shadow:0 0 50px rgba(14,165,233,0.5);text-align:center;">
+<div id="tutorialDialogue" class="tutorial-dialogue-box">
 <div id="tutorialText" style="font-size:18px;color:white;min-height:60px;margin-bottom:20px;line-height:1.5;"></div>
 <div style="display:flex;gap:10px;justify-content:center;">
-<button id="tutorialBackBtn" class="music-switch" style="display:none;font-size:16px;">Назад</button>
-<button id="tutorialNextBtn" class="phonk-btn" style="display:none;">Продовжити</button>
+<button id="tutorialBackBtn" class="music-switch" style="display:none;font-size:16px;" data-lang-key="btn_back">Назад</button>
+<button id="tutorialNextBtn" class="phonk-btn" style="display:none;" data-lang-key="btn_continue">Продовжити</button>
 </div>
 <div id="tutorialChoiceBtns" style="display:none;gap:15px;justify-content:center;margin-top:10px;flex-wrap:wrap;">
-<button id="skipTutorialChoice" class="reset-btn" style="padding:15px 25px;">Пффф туторіал для дитини</button>
-<button id="startTutorialChoice" class="save-btn" style="padding:15px 25px;">Чому ні, може дізнаюсь щось нове</button>
+<button id="skipTutorialChoice" class="reset-btn" style="padding:15px 25px;" data-lang-key="btn_tut_skip">Пффф туторіал для дитини</button>
+<button id="startTutorialChoice" class="save-btn" style="padding:15px 25px;" data-lang-key="btn_tut_start">Чому ні, може дізнаюсь щось нове</button>
 </div>
 </div>
-<button id="skipTutorialTopBtn" style="position:fixed;top:20px;right:20px;padding:10px 20px;background:#ef4444;color:white;border:none;border-radius:10px;font-weight:bold;cursor:pointer;z-index:16001;display:none;">Скіпнути туторіал</button>
-<script src="script.js?v=18"></script>
+<button id="skipTutorialTopBtn" style="position:fixed;top:20px;right:20px;padding:10px 20px;background:#ef4444;color:white;border:none;border-radius:10px;font-weight:bold;cursor:pointer;z-index:16001;display:none;" data-lang-key="btn_skip_tut">Скіпнути туторіал</button>
+<script src="script.js?v=19"></script>
 </body>
 </html>
