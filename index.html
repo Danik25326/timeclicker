@@ -25,8 +25,8 @@
 <link rel="manifest" href="manifest.json">
 <link rel="icon" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48Y2lyY2xlIGN4PSI1MCIgY3k9IjUwIiByPSI0NSIgc3Ryb2tlPSIjMDBhYWZmIiBzdHJva2Utd2lkdGg9IjUiIGZpbGw9Im5vbmUiLz48Y2lyY2xlIGN4PSI1MCIgY3k9IjUwIiByPSIyIiBmaWxsPSIjMDBhYWZmIi8+PHBhdGggZD0iTTUwIDI1VjUwTDUwIDUwTDUwIDUwTDUwIDUwIiBzdHJva2U9IiMwMGFhZmYiIHN0cm9rZS13aWR0aD0iNSIvPjxwYXRoIGQ9Ik01MCA1MEg3NSIgc3Ryb2tlPSIjMDBhYWZmIiBzdHJva2Utd2lkdGg9IjUiLz48L3N2Zz4=" type="image/svg+xml">
 <style>*{box-sizing:border-box;margin:0;padding:0}body{font-family:'Poppins',sans-serif;background:radial-gradient(circle at center,#0b1220,#050810);color:#fff;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;overflow-x:hidden;line-height:1.6}.visually-hidden{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);border:0}.game-hidden{display:none}#chooser{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:30px;text-align:center;min-height:auto;padding-top:10px}#chooser h2{font-size:48px;color:#fff;text-shadow:0 0 30px #0ea5e9;margin-bottom:0px}.choose-btn{padding:25px 60px;font-size:28px;background:linear-gradient(90deg,#0ea5e9,#3b82f6);border:none;border-radius:20px;color:white;cursor:pointer;transition:all .3s;box-shadow:0 0 40px rgba(14,165,233,.7);font-weight:700;min-width:280px;text-shadow:0 0 10px rgba(255,255,255,.5)}.choose-btn:hover{transform:scale(1.15);box-shadow:0 0 60px rgba(14,165,233,.9)}</style>
-<link rel="preload" href="style.css?v=19" as="style" onload="this.onload=null;this.rel='stylesheet'">
-<noscript><link rel="stylesheet" href="style.css?v=19"></noscript>
+<link rel="preload" href="style.css?v=20" as="style" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="style.css?v=20"></noscript>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
 <noscript><link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet"></noscript>
@@ -35,12 +35,12 @@
 <body>
 <h1 class="visually-hidden">Times Clicker - Interactive Clicker Game</h1>
 <div id="chooser" aria-label="Вибір версії гри">
-<h2>Times Clicker</h2>
+<h2 data-lang-key="game_title">Times Clicker</h2>
 <button class="choose-btn" onclick="startGame('pc')" aria-label="Запустити ПК версію" data-lang-key="pc_version">ПК-версія</button>
 <button class="choose-btn" onclick="startGame('mobile')" aria-label="Запустити мобільну версію" data-lang-key="mobile_version">Мобільна версія</button>
 </div>
 <main id="game" class="game-hidden" aria-label="Основне ігрове поле">
-<div id="worldTitle" class="editable-title" contenteditable="true" aria-label="Назва світу гри">Times Clicker</div>
+<div id="worldTitle" class="editable-title" contenteditable="true" aria-label="Назва світу гри" data-lang-key="game_title">Times Clicker</div>
 <nav class="top-tabs" role="tablist" aria-label="Ігрові вкладки">
 <button class="tab active" data-tab="tab-upgrades" role="tab" aria-selected="true" aria-controls="tab-upgrades" data-lang-key="tab_upgrades">Апгрейди</button>
 <button class="tab" data-tab="tab-skins" role="tab" aria-selected="false" aria-controls="tab-skins" data-lang-key="tab_skins">Скіни</button>
@@ -75,12 +75,12 @@
 <section id="tab-stats" class="tab-page" role="tabpanel" aria-labelledby="tab-stats" hidden>
 <h3 data-lang-key="tab_stats_title">Статистика</h3>
 <ul class="stats-list" aria-label="Ігрова статистика">
-<li><span data-lang-key="stat_spent">Часу витрачено:</span> <span id="cloudTotal">0 сек</span></li>
-<li><span data-lang-key="stat_real_time">Реальний час у сесії:</span> <span id="realTimePlayed">0 сек</span></li>
-<li><span data-lang-key="stat_virtual_time">Віртуально витрачено:</span> <span id="virtualTime">0 сек</span></li>
+<li><span data-lang-key="stat_spent">Часу витрачено:</span> <span id="cloudTotal">0</span> <span data-lang-key="unit_sec">сек</span></li>
+<li><span data-lang-key="stat_real_time">Реальний час у сесії:</span> <span id="realTimePlayed">0</span> <span data-lang-key="unit_sec">сек</span></li>
+<li><span data-lang-key="stat_virtual_time">Віртуально витрачено:</span> <span id="virtualTime">0</span> <span data-lang-key="unit_sec">сек</span></li>
 <li><span data-lang-key="stat_upgrades_bought">Куплено апгрейдів:</span> <span id="totalUpgrades">0</span></li>
-<li><span data-lang-key="stat_max_click">Найбільше за клік:</span> <span id="maxPerClick">0 сек</span></li>
-<li><span data-lang-key="stat_max_auto">Найбільше за авто/сек:</span> <span id="maxAutoRate">0 сек</span></li>
+<li><span data-lang-key="stat_max_click">Найбільше за клік:</span> <span id="maxPerClick">0</span> <span data-lang-key="unit_sec">сек</span></li>
+<li><span data-lang-key="stat_max_auto">Найбільше за авто/сек:</span> <span id="maxAutoRate">0</span> <span data-lang-key="unit_sec">сек</span></li>
 <li><span data-lang-key="stat_max_combo">Найдовше комбо:</span> <span id="maxCombo">0</span> <span data-lang-key="clicks">кліків</span></li>
 <li><span data-lang-key="stat_total_reverbs">Перезапусків зроблено:</span> <span id="totalReverbs">0</span></li>
 <li><span data-lang-key="stat_current_mult">Поточний множник:</span> <span id="prestigeMult">1.00</span>×</li>
@@ -103,7 +103,7 @@
 <div id="prestigeProgressContainer" class="prestige-progress-container" aria-label="Прогрес перезапуску">
 <div class="progress-header">
 <span class="progress-label" data-lang-key="reverb_progress">Прогрес перезапуску</span>
-<span id="prestigeProgressText" class="progress-text">0/1 година</span>
+<span id="prestigeProgressText" class="progress-text">0/1 <span data-lang-key="unit_hour">година</span></span>
 </div>
 <div class="progress-bar-bg">
 <div id="prestigeProgressBar" class="progress-bar-fill"></div>
@@ -177,7 +177,7 @@
 <div class="center-dot" aria-hidden="true"></div>
 </div>
 <div id="clickCloud" class="click-cloud">
-<div id="clickGain">+0 сек</div>
+<div id="clickGain">+0 <span data-lang-key="unit_sec">сек</span></div>
 <div id="currentDate"></div>
 </div>
 <div id="comboBubble" class="combo-bubble hidden" aria-label="Комбо лічильник">
@@ -255,6 +255,6 @@
 </div>
 </div>
 <button id="skipTutorialTopBtn" style="position:fixed;top:20px;right:20px;padding:10px 20px;background:#ef4444;color:white;border:none;border-radius:10px;font-weight:bold;cursor:pointer;z-index:16001;display:none;" data-lang-key="btn_skip_tut">Скіпнути туторіал</button>
-<script src="script.js?v=19"></script>
+<script src="script.js?v=20"></script>
 </body>
 </html>
