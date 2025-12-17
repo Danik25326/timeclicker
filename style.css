@@ -379,3 +379,10 @@ body.mobile-version #tutorialContent h4 {
     margin-top: 30px !important;    /* Великий відступ зверху від попереднього тексту */
     margin-bottom: 15px !important; /* Відступ знизу до власного тексту */
     color: var(--neon);             /* (Опціонально) Підсвітимо заголовки */
+
+/* 2. Відступ для самого тексту (параграфів) */
+body.mobile-version #tutorialContent p {
+    margin-bottom: 20px !important; /* Відступ після абзацу */
+    line-height: 1.6 !important;    /* Трохи збільшимо висоту рядка для читабельності */
+}
+
