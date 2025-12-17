@@ -341,13 +341,16 @@ body.mobile-version .toast{padding:15px 25px;font-size:16px;margin-top:10px;max-
 @keyframes pulse-star{0%{box-shadow:0 0 10px #0ff;}50%{box-shadow:0 0 25px #0ff;}100%{box-shadow:0 0 10px #0ff;}}
 /* ===== ФІКС СКРОЛУ ДЛЯ БАЗИ ЗНАНЬ (MOBILE) ===== */
 
-/* 1. Налаштовуємо контейнер саме для вкладки Туторіал/База Знань */
+/* 1. Оновлений контейнер для бази знань */
 body.mobile-version #tutorialContent {
-    display: block !important;       /* Забезпечуємо блочне відображення */
-    max-height: 55vh !important;     /* ГОЛОВНЕ: Обмежуємо висоту (55% від екрану), щоб з'явився скрол */
-    overflow-y: auto !important;     /* Вмикаємо прокрутку, коли текст вилазить за межі */
-    overflow-x: hidden !important;   /* Ховаємо горизонтальний скрол */
-    padding-right: 10px !important;  /* Відступ, щоб текст не прилипав до повзунка */
+    display: flex !important;           /* Повертаємо Flex, щоб елементи ставали блоками */
+    flex-direction: column !important;  /* Вибудовуємо їх у стовпчик */
+    gap: 15px !important;               /* <--- ОСЬ ЦЕЙ ЗАЗОР між кольоровими блоками */
+    
+    max-height: 55vh !important;        /* Висота для скролу */
+    overflow-y: auto !important;        /* Вмикаємо скрол */
+    overflow-x: hidden !important;
+    padding-right: 10px !important;
     margin-bottom: 20px;
 }
 
@@ -370,19 +373,5 @@ body.mobile-version #tutorialContent::-webkit-scrollbar-thumb {
     border-radius: 4px;
     border: 1px solid rgba(255, 255, 255, 0.2);
     box-shadow: 0 0 10px var(--neon); /* Додаємо світіння */
-}
-/* ===== ДОДАЄМО ВІДСТУПИ МІЖ ТЕКСТОМ ===== */
-
-/* 1. Відступ для заголовків (наприклад, "Апгрейди") */
-body.mobile-version #tutorialContent h3, 
-body.mobile-version #tutorialContent h4 {
-    margin-top: 30px !important;    /* Великий відступ зверху від попереднього тексту */
-    margin-bottom: 15px !important; /* Відступ знизу до власного тексту */
-    color: var(--neon);             /* (Опціонально) Підсвітимо заголовки */
-
-/* 2. Відступ для самого тексту (параграфів) */
-body.mobile-version #tutorialContent p {
-    margin-bottom: 20px !important; /* Відступ після абзацу */
-    line-height: 1.6 !important;    /* Трохи збільшимо висоту рядка для читабельності */
 }
 
