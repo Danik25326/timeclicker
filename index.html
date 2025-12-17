@@ -139,7 +139,15 @@
 <button onclick="startTutorial()" class="save-btn" style="background:#f59e0b;" aria-label="Пройти туторіал ще раз" data-lang-key="btn_restart_tutorial">🎓 Пройти туторіал ще раз</button>
 </div>
 <div id="saveStatus" class="save-status" aria-live="polite"></div>
-<textarea         id="exportImportArea"         class="export-import-area"         placeholder="Тут з'явиться експортований код...(і сюди за потребою вставляти код для імпорту)"         aria-label="Поле для експорту/імпорту даних"         data-lang-key="export_placeholder"    ></textarea></section>
+<div class="export-container">
+    <textarea 
+        id="exportImportArea" 
+        class="export-import-area" 
+        placeholder="Тут з'явиться експортований код...(і сюди за потребою вставляти код для імпорту)" 
+        aria-label="Поле для експорту/імпорту даних" 
+        data-lang-key="export_placeholder"
+    ></textarea>
+</div>
 </div>
 <section id="tab-tutorial" class="tab-page" role="tabpanel" aria-labelledby="tab-tutorial" hidden>
 <h3 data-lang-key="tab_tutorial_title">База Знань</h3>
