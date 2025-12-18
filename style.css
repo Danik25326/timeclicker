@@ -339,34 +339,48 @@ body.mobile-version .toast{padding:15px 25px;font-size:16px;margin-top:10px;max-
 .constellation-line.active{background:linear-gradient(90deg,gold,transparent);box-shadow:0 0 10px gold;}
 .constellation-zoom{animation:constellation-zoom 2s cubic-bezier(0.175,0.885,0.32,1.275) forwards;}
 @keyframes pulse-star{0%{box-shadow:0 0 10px #0ff;}50%{box-shadow:0 0 25px #0ff;}100%{box-shadow:0 0 10px #0ff;}}
-/* ===== ФІКС СКРОЛУ ДЛЯ БАЗИ ЗНАНЬ (MOBILE) ===== */
+/* ===== МОБІЛЬНИЙ ВЕРТИКАЛЬНИЙ СКРОЛ (ДОДАТИ В КІНЕЦЬ) ===== */
 
-/* 1. Відступ для заголовків (наприклад, "Апгрейди") */
-body.mobile-version #tutorialContent h3, 
-body.mobile-version #tutorialContent h4 {
-    margin-top: 30px !important;    /* Великий відступ зверху від попереднього тексту */
-    margin-bottom: 15px !important; /* Відступ знизу до власного тексту */
-    color: var(--neon);             /* (Опціонально) Підсвітимо заголовки */
+/* 1. Вмикаємо відображення скролбару (перебиваємо приховування) */
+body.mobile-version .upgrades-container::-webkit-scrollbar,
+body.mobile-version .settings-container::-webkit-scrollbar,
+body.mobile-version .tab-page::-webkit-scrollbar,
+body.mobile-version #multipliers::-webkit-scrollbar,
+body.mobile-version #tab-achievements::-webkit-scrollbar {
+    display: block !important;
+    width: 6px !important;
 }
 
-/* 2. Малюємо сам повзунок (тільки для цього блоку) */
-body.mobile-version #tutorialContent::-webkit-scrollbar {
-    display: block !important;       /* Примусово показуємо скролбар */
-    width: 8px !important;           /* Ширина повзунка */
+/* 2. Стилізуємо фон доріжки скролу */
+body.mobile-version .upgrades-container::-webkit-scrollbar-track,
+body.mobile-version .settings-container::-webkit-scrollbar-track,
+body.mobile-version .tab-page::-webkit-scrollbar-track,
+body.mobile-version #multipliers::-webkit-scrollbar-track,
+body.mobile-version #tab-achievements::-webkit-scrollbar-track {
+    background: rgba(15, 23, 42, 0.3);
+    border-radius: 3px;
 }
 
-/* Фон доріжки скролу */
-body.mobile-version #tutorialContent::-webkit-scrollbar-track {
-    background: rgba(15, 23, 42, 0.6);
-    border-radius: 4px;
-    margin: 5px 0;
+/* 3. Стилізуємо сам повзунок (неоновий, щоб було видно) */
+body.mobile-version .upgrades-container::-webkit-scrollbar-thumb,
+body.mobile-version .settings-container::-webkit-scrollbar-thumb,
+body.mobile-version .tab-page::-webkit-scrollbar-thumb,
+body.mobile-version #multipliers::-webkit-scrollbar-thumb,
+body.mobile-version #tab-achievements::-webkit-scrollbar-thumb {
+    background: var(--neon);
+    border-radius: 3px;
+    border: 1px solid rgba(255,255,255,0.1);
 }
 
-/* Сам бігунок (неоновий) */
-body.mobile-version #tutorialContent::-webkit-scrollbar-thumb {
-    background: var(--neon);         /* Твій основний синій колір */
-    border-radius: 4px;
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    box-shadow: 0 0 10px var(--neon); /* Додаємо світіння */
+/* 4. Налаштування для текстових вкладок (Як грати / База знань) */
+body.mobile-version .tab-page {
+    overflow-y: auto !important;
+    /* Обмежуємо висоту, щоб з'явився скрол, а не розтягувало сторінку */
+    max-height: 55vh; 
+    padding-right: 8px; /* Відступ, щоб текст не налізав на повзунок */
 }
 
+/* Корекція для апгрейдів, щоб повзунок був збоку */
+body.mobile-version .upgrades-container {
+    padding-right: 8px;
+}
