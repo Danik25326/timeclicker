@@ -341,17 +341,12 @@ body.mobile-version .toast{padding:15px 25px;font-size:16px;margin-top:10px;max-
 @keyframes pulse-star{0%{box-shadow:0 0 10px #0ff;}50%{box-shadow:0 0 25px #0ff;}100%{box-shadow:0 0 10px #0ff;}}
 /* ===== ФІКС СКРОЛУ ДЛЯ БАЗИ ЗНАНЬ (MOBILE) ===== */
 
-/* 1. Оновлений контейнер для бази знань */
-body.mobile-version #tutorialContent {
-    display: flex !important;           /* Повертаємо Flex, щоб елементи ставали блоками */
-    flex-direction: column !important;  /* Вибудовуємо їх у стовпчик */
-    gap: 15px !important;               /* <--- ОСЬ ЦЕЙ ЗАЗОР між кольоровими блоками */
-    
-    max-height: 55vh !important;        /* Висота для скролу */
-    overflow-y: auto !important;        /* Вмикаємо скрол */
-    overflow-x: hidden !important;
-    padding-right: 10px !important;
-    margin-bottom: 20px;
+/* 1. Відступ для заголовків (наприклад, "Апгрейди") */
+body.mobile-version #tutorialContent h3, 
+body.mobile-version #tutorialContent h4 {
+    margin-top: 30px !important;    /* Великий відступ зверху від попереднього тексту */
+    margin-bottom: 15px !important; /* Відступ знизу до власного тексту */
+    color: var(--neon);             /* (Опціонально) Підсвітимо заголовки */
 }
 
 /* 2. Малюємо сам повзунок (тільки для цього блоку) */
