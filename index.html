@@ -50,20 +50,43 @@
 <script src="translations.js?v=1"></script>
 <script src="script.js?v=21"></script>
 <script src="chooser_lang.js"></script>
-<script src="endgame.js"></script>
-<div id="bossArena" style="display:none;position:fixed;inset:0;background:#000;z-index:9999;flex-direction:column;align-items:center;justify-content:center;font-family:monospace;">
-    <div id="bossDialogue" style="color:#fff;font-size:24px;margin-bottom:20px;text-align:center;min-height:50px;"></div>
-    <div id="bossCanvasBox" style="display:none;border:2px solid #fff;"><canvas id="bossCanvas" width="800" height="600" style="width:100%;max-width:800px;"></canvas></div>
-    <div id="bossControls" style="margin-top:20px;display:flex;gap:10px;"></div>
-</div>
-<div id="legendOverlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.9);z-index:10000;align-items:center;justify-content:center;">
-    <div style="width:350px;height:500px;background:#f4e4bc;color:#3e2723;padding:20px;transform:rotate(-2deg);position:relative;">
-        <div id="legendFront"><h3>Легенда</h3><p>Той хто отримає 2 ключі... зупинить час.</p><center style="font-size:40px;margin:20px;">🗝️🗝️</center><button onclick="closeLegend()" style="position:absolute;bottom:10px;left:35%;">Закрити</button><div onclick="flipLegend()" style="position:absolute;top:0;right:0;width:50px;height:100%;cursor:w-resize;"></div></div>
-        <div id="legendBack" style="display:none;"><h3>Шанс</h3><p>Код відновлення:</p><h2 id="secretCode"></h2><p>Введи на клавіатурі.</p></div>
+<div id="bossArena" class="hidden" style="position:fixed;top:0;left:0;width:100%;height:100%;background:#000;z-index:20000;display:none;flex-direction:column;align-items:center;justify-content:center;font-family:'Poppins',sans-serif;">
+    <div id="bossDialogue" style="position:absolute;bottom:20%;width:80%;text-align:center;color:#fff;font-size:24px;text-shadow:0 0 10px #f00;min-height:100px;"></div>
+    <div id="bossControls" style="position:absolute;bottom:10%;display:flex;gap:20px;"></div>
+    <div id="bossCanvasContainer" style="position:relative;width:800px;height:600px;border:2px solid #fff;display:none;background:#000;">
+        <canvas id="bossCanvas" width="800" height="600"></canvas>
+        <div id="bossScoreBoard" style="position:absolute;top:-60px;left:0;width:100%;display:flex;justify-content:center;gap:50px;color:#fff;font-size:30px;font-weight:bold;">
+            <div id="playerScoreBoard">ТИ: <span>⬜⬜⬜</span></div>
+            <div id="clockScoreBoard">ГОДИННИК: <span>⬜⬜⬜</span></div>
+        </div>
     </div>
 </div>
-<div id="restorePanel" style="display:none;position:fixed;inset:0;background:#000;z-index:10001;flex-direction:column;align-items:center;justify-content:center;color:#fff;">
-    <h1>--:--</h1><input type="text" oninput="checkRestoreTime(this.value)" placeholder="ГГ:ХХ" style="font-size:30px;text-align:center;">
+
+<div id="legendOverlay" class="hidden" style="position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.95);z-index:20001;display:none;align-items:center;justify-content:center;">
+    <div id="legendPaper" style="width:400px;height:600px;background:#f4e4bc;color:#3e2723;padding:40px;font-family:'Courier New', monospace;box-shadow:0 0 50px rgba(0,0,0,1);transform:rotate(-2deg);position:relative;overflow:hidden;">
+        <div id="legendFront">
+            <h2 style="text-align:center;border-bottom:2px solid #3e2723;padding-bottom:10px;">Легенда Часу</h2>
+            <p style="font-size:18px;line-height:1.5;margin-top:20px;">Легенда мовить, що той хто отримає 2 ключі зуміє зробити те, що не вдавалося нікому. Він зможе зупинити сам потік часу...</p>
+            <div style="text-align:center;margin-top:30px;">
+                <div id="finalKeyBtn" style="font-size:50px;cursor:pointer;animation:pulse 2s infinite;">🗝️</div>
+            </div>
+            <button onclick="closeLegend()" style="position:absolute;bottom:20px;left:50%;transform:translateX(-50%);padding:10px 30px;background:#3e2723;color:#f4e4bc;border:none;font-weight:bold;cursor:pointer;">Завершити</button>
+        </div>
+        <div id="legendBack" style="display:none;height:100%;">
+            <h2 style="text-align:center;color:#800000;">Останній Шанс</h2>
+            <p style="font-size:16px;margin-top:20px;">"Якщо ж легенда все таки дійсна і будь хто із нас залишить свій час. То буде лише єдина нагода ПОВЕРНУТИ УСЕ НАЗАД."</p>
+            <div id="secretCodeDisplay" style="text-align:center;font-size:24px;font-weight:bold;margin:30px 0;letter-spacing:5px;color:#800000;"></div>
+            <p style="font-size:12px;text-align:center;">(твій шанс все повернути в твоєму часі)</p>
+            <button onclick="flipLegend(false)" style="position:absolute;bottom:20px;left:20px;padding:5px 10px;">↩</button>
+        </div>
+        <div id="paperSwipeArea" style="position:absolute;top:0;right:0;width:50px;height:100%;cursor:w-resize;"></div>
+    </div>
+</div>
+
+<div id="restorePanel" class="hidden" style="position:fixed;top:0;left:0;width:100%;height:100%;background:#000;z-index:20005;display:none;align-items:center;justify-content:center;flex-direction:column;">
+    <div style="font-size:60px;color:#fff;margin-bottom:20px;font-family:monospace;">--:--</div>
+    <input type="text" id="restoreTimeInput" placeholder="ГГ:ХХ" maxlength="5" style="background:transparent;border:2px solid #fff;color:#fff;font-size:40px;text-align:center;width:200px;padding:10px;font-family:monospace;">
+    <div style="color:#666;margin-top:10px;">Введи свій дійсний час</div>
 </div>
 </body>
 </html>
