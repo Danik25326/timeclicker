@@ -325,61 +325,34 @@ body.mobile-version .discord-message{margin-bottom:10px;padding:8px;font-size:13
 body.mobile-version .discord-message-content{max-width:100%;overflow-wrap:break-word}
 body.mobile-version .toast{padding:15px 25px;font-size:16px;margin-top:10px;max-width:90%}
 /* ===== СУЗІР'Я (БАЗОВІ) ===== */
-.constellation-border{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:400px;height:400px;border:2px solid #666;border-radius:50%;pointer-events:none;z-index:5;box-shadow:0 0 20px rgba(100,100,100,0.5),inset 0 0 15px rgba(100,100,100,0.3);}
-.constellation-star{position:absolute;width:15px;height:15px;background:#666;border-radius:50%;transform:translate(-50%,-50%);cursor:pointer;transition:all 0.5s cubic-bezier(0.175,0.885,0.32,1.275);z-index:20;}
-.constellation-star:hover{transform:translate(-50%,-50%) scale(1.3);}
-.constellation-star.active{background:#ffd700;box-shadow:0 0 20px #ffd700,0 0 40px #ffd700;}
-.constellation-star.can-afford{background:#888;box-shadow:0 0 15px #0ff;animation:pulse-star 2s infinite;}
-.constellation-center{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:30px;height:30px;background:#444;border-radius:50%;cursor:pointer;transition:all 0.3s;z-index:30;}
-.constellation-center.active{background:gold;box-shadow:0 0 30px gold,0 0 60px gold;}
-.constellation-line{position:absolute;height:2px;background:rgba(100,100,100,0.3);transform-origin:0 0;pointer-events:none;z-index:10;}
-.constellation-line.second-hand{width:200px;background:rgba(150,150,150,0.4);}
-.constellation-line.minute-hand{width:160px;background:rgba(130,130,130,0.35);}
-.constellation-line.hour-hand{width:120px;background:rgba(110,110,110,0.3);}
-.constellation-line.active{background:linear-gradient(90deg,gold,transparent);box-shadow:0 0 10px gold;}
-.constellation-zoom{animation:constellation-zoom 2s cubic-bezier(0.175,0.885,0.32,1.275) forwards;}
-@keyframes pulse-star{0%{box-shadow:0 0 10px #0ff;}50%{box-shadow:0 0 25px #0ff;}100%{box-shadow:0 0 10px #0ff;}}
+.constellation-border{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:400px;height:400px;border:2px solid #666;border-radius:50%;pointer-events:none;z-index:5;box-shadow:0 0 20px rgba(100,100,100,0.5),inset 0 0 15px rgba(100,100,100,0.3)}
+.constellation-star{position:absolute;width:15px;height:15px;background:#666;border-radius:50%;transform:translate(-50%,-50%);cursor:pointer;transition:all 0.5s cubic-bezier(0.175,0.885,0.32,1.275);z-index:20}
+.constellation-star:hover{transform:translate(-50%,-50%) scale(1.3)}
+.constellation-star.active{background:#ffd700;box-shadow:0 0 20px #ffd700,0 0 40px #ffd700}
+.constellation-star.can-afford{background:#888;box-shadow:0 0 15px #0ff;animation:pulse-star 2s infinite}
+.constellation-center{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:30px;height:30px;background:#444;border-radius:50%;cursor:pointer;transition:all 0.3s;z-index:30}
+.constellation-center.active{background:gold;box-shadow:0 0 30px gold,0 0 60px gold}
+.constellation-line{position:absolute;height:2px;background:rgba(100,100,100,0.3);transform-origin:0 0;pointer-events:none;z-index:10}
+.constellation-line.second-hand{width:200px;background:rgba(150,150,150,0.4)}
+.constellation-line.minute-hand{width:160px;background:rgba(130,130,130,0.35)}
+.constellation-line.hour-hand{width:120px;background:rgba(110,110,110,0.3)}
+.constellation-line.active{background:linear-gradient(90deg,gold,transparent);box-shadow:0 0 10px gold}
+.constellation-zoom{animation:constellation-zoom 2s cubic-bezier(0.175,0.885,0.32,1.275) forwards}
+@keyframes pulse-star{0%{box-shadow:0 0 10px #0ff}50%{box-shadow:0 0 25px #0ff}100%{box-shadow:0 0 10px #0ff}}
 /* ===== ФІКС СКРОЛУ ДЛЯ БАЗИ ЗНАНЬ (MOBILE) ===== */
-
-/* 1. Налаштовуємо контейнер саме для вкладки Туторіал/База Знань */
-body.mobile-version #tutorialContent {
-    display: block !important;       /* Забезпечуємо блочне відображення */
-    max-height: 55vh !important;     /* ГОЛОВНЕ: Обмежуємо висоту (55% від екрану), щоб з'явився скрол */
-    overflow-y: auto !important;     /* Вмикаємо прокрутку, коли текст вилазить за межі */
-    overflow-x: hidden !important;   /* Ховаємо горизонтальний скрол */
-    padding-right: 10px !important;  /* Відступ, щоб текст не прилипав до повзунка */
-    margin-bottom: 20px;
-}
-
-/* 2. Малюємо сам повзунок (тільки для цього блоку) */
-body.mobile-version #tutorialContent::-webkit-scrollbar {
-    display: block !important;       /* Примусово показуємо скролбар */
-    width: 8px !important;           /* Ширина повзунка */
-}
-
-/* Фон доріжки скролу */
-body.mobile-version #tutorialContent::-webkit-scrollbar-track {
-    background: rgba(15, 23, 42, 0.6);
-    border-radius: 4px;
-    margin: 5px 0;
-}
-
-/* Сам бігунок (неоновий) */
-body.mobile-version #tutorialContent::-webkit-scrollbar-thumb {
-    background: var(--neon);         /* Твій основний синій колір */
-    border-radius: 4px;
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    box-shadow: 0 0 10px var(--neon); /* Додаємо світіння */
-}
+body.mobile-version #tutorialContent{display:block !important;max-height:55vh !important;overflow-y:auto !important;overflow-x:hidden !important;padding-right:10px !important;margin-bottom:20px}
+body.mobile-version #tutorialContent::-webkit-scrollbar{display:block !important;width:8px !important}
+body.mobile-version #tutorialContent::-webkit-scrollbar-track{background:rgba(15,23,42,0.6);border-radius:4px;margin:5px 0}
+body.mobile-version #tutorialContent::-webkit-scrollbar-thumb{background:var(--neon);border-radius:4px;border:1px solid rgba(255,255,255,0.2);box-shadow:0 0 10px var(--neon)}
 /* СТИЛІ ДЛЯ КІНЦЯ ЧАСУ */
-.broken-clock .hand { transition: transform 2s cubic-bezier(0.6, -0.28, 0.735, 0.045) !important; background: #444 !important; box-shadow: none !important; animation: none !important; }
-.broken-clock { border-color: #444 !important; box-shadow: none !important; filter: grayscale(100%); }
-.stat-broken { color: #f00 !important; text-decoration: line-through; animation: glitch 0.2s infinite; }
-#bossCanvas { box-shadow: 0 0 20px #0ea5e9; border-radius: 4px; }
-.boss-text-anim { overflow: hidden; white-space: nowrap; animation: typing 2s steps(40, end); }
-@keyframes typing { from { width: 0 } to { width: 100% } }
-.key-hole-anim { animation: rotateKey 2s ease-in-out forwards; }
-@keyframes rotateKey { 0% { transform: rotate(0deg); } 100% { transform: rotate(-360deg); } }
+.broken-clock .hand{transition:transform 2s cubic-bezier(0.6,-0.28,0.735,0.045) !important;background:#444 !important;box-shadow:none !important;animation:none !important}
+.broken-clock{border-color:#444 !important;box-shadow:none !important;filter:grayscale(100%)}
+.stat-broken{color:#f00 !important;text-decoration:line-through;animation:glitch 0.2s infinite}
+#bossCanvas{box-shadow:0 0 20px #0ea5e9;border-radius:4px}
+.boss-text-anim{overflow:hidden;white-space:nowrap;animation:typing 2s steps(40,end)}
+@keyframes typing{from{width:0}to{width:100%}}
+.key-hole-anim{animation:rotateKey 2s ease-in-out forwards}
+@keyframes rotateKey{0%{transform:rotate(0deg)}100%{transform:rotate(-360deg)}}
 @keyframes floatKey{0%,100%{transform:translateY(0)}50%{transform:translateY(-20px)}}
 @keyframes fadeOut{to{opacity:0;transform:scale(0.5)}}
 .key-vanish{animation:fadeOut 0.5s forwards !important;}
