@@ -371,3 +371,12 @@ body.mobile-version #tutorialContent::-webkit-scrollbar-thumb {
     border: 1px solid rgba(255, 255, 255, 0.2);
     box-shadow: 0 0 10px var(--neon); /* Додаємо світіння */
 }
+/* СТИЛІ ДЛЯ КІНЦЯ ЧАСУ */
+.broken-clock .hand { transition: transform 2s cubic-bezier(0.6, -0.28, 0.735, 0.045) !important; background: #444 !important; box-shadow: none !important; animation: none !important; }
+.broken-clock { border-color: #444 !important; box-shadow: none !important; filter: grayscale(100%); }
+.stat-broken { color: #f00 !important; text-decoration: line-through; animation: glitch 0.2s infinite; }
+#bossCanvas { box-shadow: 0 0 20px #0ea5e9; border-radius: 4px; }
+.boss-text-anim { overflow: hidden; white-space: nowrap; animation: typing 2s steps(40, end); }
+@keyframes typing { from { width: 0 } to { width: 100% } }
+.key-hole-anim { animation: rotateKey 2s ease-in-out forwards; }
+@keyframes rotateKey { 0% { transform: rotate(0deg); } 100% { transform: rotate(-360deg); } }
