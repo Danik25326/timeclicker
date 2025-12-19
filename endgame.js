@@ -589,3 +589,33 @@ window.addEventListener('load', () => {
         EndGameSystem.init();
     }, 1000);
 });
+// Глобальна функція для перевірки зірок
+window.checkForAllStarsUnlocked = function() {
+    if (EndGameSystem.state.keysObtained >= 1) return; // Вже отримано ключ
+    
+    const allStars = [
+        ...constellation.hourHand.stars,
+        ...constellation.minuteHand.stars,
+        ...constellation.secondHand.stars
+    ];
+    
+    const allUnlocked = allStars.every(star => star.unlocked) && 
+                       constellation.center.unlocked;
+    
+    if (allUnlocked && !EndGameSystem.state.keysObtained) {
+        EndGameSystem.grantFirstKey();
+    }
+};
+
+// Перевіряти при завантаженні
+window.addEventListener('load', () => {
+    setTimeout(() => {
+        // Ініціалізувати систему
+        EndGameSystem.init();
+        
+        // Перевірити зірки при старті
+        if (typeof checkForAllStarsUnlocked !== 'undefined') {
+            checkForAllStarsUnlocked();
+        }
+    }, 1000);
+});
