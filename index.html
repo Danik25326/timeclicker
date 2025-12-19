@@ -51,5 +51,19 @@
 <script src="script.js?v=21"></script>
 <script src="chooser_lang.js"></script>
 <script src="endgame.js"></script>
+<div id="bossArena" style="display:none;position:fixed;inset:0;background:#000;z-index:9999;flex-direction:column;align-items:center;justify-content:center;font-family:monospace;">
+    <div id="bossDialogue" style="color:#fff;font-size:24px;margin-bottom:20px;text-align:center;min-height:50px;"></div>
+    <div id="bossCanvasBox" style="display:none;border:2px solid #fff;"><canvas id="bossCanvas" width="800" height="600" style="width:100%;max-width:800px;"></canvas></div>
+    <div id="bossControls" style="margin-top:20px;display:flex;gap:10px;"></div>
+</div>
+<div id="legendOverlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.9);z-index:10000;align-items:center;justify-content:center;">
+    <div style="width:350px;height:500px;background:#f4e4bc;color:#3e2723;padding:20px;transform:rotate(-2deg);position:relative;">
+        <div id="legendFront"><h3>Легенда</h3><p>Той хто отримає 2 ключі... зупинить час.</p><center style="font-size:40px;margin:20px;">🗝️🗝️</center><button onclick="closeLegend()" style="position:absolute;bottom:10px;left:35%;">Закрити</button><div onclick="flipLegend()" style="position:absolute;top:0;right:0;width:50px;height:100%;cursor:w-resize;"></div></div>
+        <div id="legendBack" style="display:none;"><h3>Шанс</h3><p>Код відновлення:</p><h2 id="secretCode"></h2><p>Введи на клавіатурі.</p></div>
+    </div>
+</div>
+<div id="restorePanel" style="display:none;position:fixed;inset:0;background:#000;z-index:10001;flex-direction:column;align-items:center;justify-content:center;color:#fff;">
+    <h1>--:--</h1><input type="text" oninput="checkRestoreTime(this.value)" placeholder="ГГ:ХХ" style="font-size:30px;text-align:center;">
+</div>
 </body>
 </html>
