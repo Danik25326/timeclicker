@@ -230,30 +230,30 @@ function runBossStage(){if(bossState.gameIdx>=3){finishBossFight();return}const 
 function setupControls(g){const isMob=/Android|iPhone|iPad|iPod/i.test(navigator.userAgent)||window.innerWidth<800,m=id('mobileControls');m.innerHTML='';m.style.display=isMob?'block':'none';if(!isMob)return;if(g==='pacman'){setupPacmanSwipes(id('bossCanvasContainer'));m.innerHTML=`<div style="color:white;text-align:center;padding:10px;opacity:0.7">Свайпай для руху 👆</div>`;}else if(g==='shooter'){m.innerHTML=`<div style="display:flex;justify-content:space-between;align-items:center;padding:20px;width:100%;height:100%;"><div style="display:flex;gap:20px;"><button class="ctrl-btn" ontouchstart="handleTouchStart('x',-1)" ontouchend="handleTouchEnd('x')">⬅</button><button class="ctrl-btn" ontouchstart="handleTouchStart('x',1)" ontouchend="handleTouchEnd('x')">➡</button></div><button class="ctrl-btn fire-btn" ontouchstart="handleTouchStart('f',true)" ontouchend="handleTouchEnd('f')">🔥</button></div>`;}else if(g==='tanks'){m.innerHTML=`<div style="display:flex;justify-content:space-between;align-items:flex-end;padding:20px;width:100%;height:100%;"><div style="position:relative;width:150px;height:150px;"><button class="ctrl-btn dpad-up" style="position:absolute;top:0;left:50px;" ontouchstart="handleTouchStart('y',-1)" ontouchend="handleTouchEnd('y')">⬆</button><button class="ctrl-btn dpad-down" style="position:absolute;bottom:0;left:50px;" ontouchstart="handleTouchStart('y',1)" ontouchend="handleTouchEnd('y')">⬇</button><button class="ctrl-btn dpad-left" style="position:absolute;top:50px;left:0;" ontouchstart="handleTouchStart('x',-1)" ontouchend="handleTouchEnd('x')">⬅</button><button class="ctrl-btn dpad-right" style="position:absolute;top:50px;right:0;" ontouchstart="handleTouchStart('x',1)" ontouchend="handleTouchEnd('x')">➡</button></div><button class="ctrl-btn fire-btn" ontouchstart="handleTouchStart('f',true)" ontouchend="handleTouchEnd('f')">💥</button></div>`;}}
 function setupPacmanSwipes(el){let tsX=0,tsY=0;el.ontouchstart=e=>{tsx=e.touches[0].clientX;tsy=e.touches[0].clientY;e.preventDefault()};el.ontouchmove=e=>e.preventDefault();el.ontouchend=e=>{const dx=e.changedTouches[0].clientX-tsx,dy=e.changedTouches[0].clientY-tsy;if(Math.abs(dx)>Math.abs(dy)){inputs.nextDir={x:dx>0?1:-1,y:0}}else{inputs.nextDir={x:0,y:dy>0?1:-1}}};}
 
-// === SPACE INVADERS (PIXEL ART & BOSS) ===
-function initSpaceInvaders(cv,ctx){let p={x:370,y:550,w:40,h:30},b=[],en=[],boss=null,eDir=1,lastF=0;function spawn(){en=[];if(bossState.level<3){for(let r=0;r<3;r++)for(let c=0;c<6;c++)en.push({x:80+c*80,y:50+r*50,w:40,h:30,t:r})}else{boss={x:300,y:50,w:200,h:120,hp:20,dir:1};}}spawn();
-const drawAlien=(x,y,w,h,t)=>{ctx.fillStyle=t===0?'#00ff00':t===1?'#ffff00':'#ff00ff';const p=w/8;for(let r=0;r<6;r++)for(let c=0;c<8;c++)if((parseInt("1001100101111110111111110101101010000001".substr(r*8+c,1))))ctx.fillRect(x+c*p,y+r*p,p,p)};
-const drawBoss=(x,y,w,h)=>{ctx.fillStyle='#ff0000';ctx.fillRect(x,y,w,h);ctx.fillStyle='#000';ctx.fillRect(x+40,y+30,30,30);ctx.fillRect(x+130,y+30,30,30);ctx.fillRect(x+50,y+90,100,10)};
+// === SPACE INVADERS (PIXEL ART) ===
+function initSpaceInvaders(cv,ctx){let p={x:370,y:550,w:40,h:30},b=[],en=[],boss=null,eDir=1,lastF=0;function spawn(){en=[];if(bossState.level<3){for(let r=0;r<2;r++)for(let c=0;c<5;c++)en.push({x:100+c*80,y:50+r*50,w:40,h:30,t:r})}else{boss={x:300,y:50,w:160,h:100,hp:25,dir:1};}}spawn();
+const drawAlien=(x,y,w,h,t)=>{ctx.fillStyle=t===0?'#00ff00':t===1?'#ffff00':'#ff00ff';const s=5;
+const sp=[[0,0,1,0,0,0,0,0,1,0,0,0,0,0,1,0,0,0,0,0,1,0,0,0,0,1,1,1,1,1,1,0,1,1,0,1,1,0,1,1,1,1,1,1,1,1,1,1,1,0,1,1,1,1,0,1,1,0,1,0,0,1,0,1],[0,0,0,1,1,0,0,0,0,0,1,1,1,1,0,0,0,1,1,1,1,1,1,0,1,1,0,1,1,0,1,1,1,1,1,1,1,1,1,1,0,0,1,0,0,1,0,0,0,1,0,1,1,0,1,0,1,0,1,0,0,1,0,1]];
+const sh=sp[t%2];for(let r=0;r<8;r++)for(let c=0;c<8;c++)if(sh[r*8+c])ctx.fillRect(x+c*s,y+r*s,s,s)};
+const drawBoss=(x,y)=>{ctx.fillStyle='#ff0000';const s=10;const bMap=[0,0,1,1,1,1,0,0,0,1,1,1,1,1,1,0,1,1,0,1,1,0,1,1,1,1,1,1,1,1,1,1,1,1,0,1,1,0,1,1,1,1,0,1,1,0,1,1,0,0,0,1,1,0,0,0,0,0,1,0,0,1,0,0];for(let r=0;r<8;r++)for(let c=0;c<8;c++)if(bMap[r*8+c])ctx.fillRect(x+c*s*2,y+r*s,s*2,s)};
 bossState.loop=function(){ctx.fillStyle='#000';ctx.fillRect(0,0,800,600);
-// Player Ship
-ctx.fillStyle='#0ea5e9';ctx.beginPath();ctx.moveTo(p.x+20,p.y);ctx.lineTo(p.x+40,p.y+20);ctx.lineTo(p.x+40,p.y+30);ctx.lineTo(p.x,p.y+30);ctx.lineTo(p.x,p.y+20);ctx.fill();
+ctx.fillStyle='#0ea5e9';ctx.fillRect(p.x+15,p.y,10,10);ctx.fillRect(p.x+5,p.y+10,30,10);ctx.fillRect(p.x,p.y+20,40,10);
 if(inputs.x)p.x+=inputs.x*6;p.x=Math.max(0,Math.min(760,p.x));
 if(inputs.fire&&Date.now()-lastF>350){b.push({x:p.x+18,y:p.y,type:'p'});lastF=Date.now()}
 b.forEach((bul,i)=>{bul.y+=bul.type==='p'?-10:5;ctx.fillStyle=bul.type==='p'?'#fff':'#f00';ctx.fillRect(bul.x,bul.y,4,12);if(bul.y<0||bul.y>600)b.splice(i,1);
 if(bul.type==='p'){if(boss){if(bul.x>boss.x&&bul.x<boss.x+boss.w&&bul.y>boss.y&&bul.y<boss.y+boss.h){boss.hp--;b.splice(i,1);if(boss.hp<=0){onGameEnd(true);return}}}
 en.forEach((e,ei)=>{if(bul.x>e.x&&bul.x<e.x+e.w&&bul.y>e.y&&bul.y<e.y+e.h){b.splice(i,1);en.splice(ei,1)}})}else{if(bul.x>p.x&&bul.x<p.x+p.w&&bul.y>p.y&&bul.y<p.y+p.h){onGameEnd(false);return}}});
-if(boss){drawBoss(boss.x,boss.y,boss.w,boss.h);boss.x+=boss.dir*3;if(boss.x<20||boss.x>580)boss.dir*=-1;if(Math.random()<0.05)b.push({x:boss.x+boss.w/2,y:boss.y+boss.h,type:'e'});
-ctx.fillStyle='#f00';ctx.fillRect(200,20,400,10);ctx.fillStyle='#0f0';ctx.fillRect(200,20,400*(boss.hp/20),10);
+if(boss){drawBoss(boss.x,boss.y);boss.x+=boss.dir*3;if(boss.x<20||boss.x>620)boss.dir*=-1;if(Math.random()<0.08)b.push({x:boss.x+80,y:boss.y+100,type:'e'});
+ctx.fillStyle='#555';ctx.fillRect(200,20,400,10);ctx.fillStyle='#f00';ctx.fillRect(200,20,400*(boss.hp/25),10);
 }else{let edge=false;en.forEach(e=>{drawAlien(e.x,e.y,e.w,e.h,e.t);e.x+=2*eDir*(1+bossState.level*0.5);if(e.x<10||e.x>750)edge=true;if(e.y>530){onGameEnd(false);return}});if(edge){eDir*=-1;en.forEach(e=>e.y+=20)}if(en.length===0){bossState.level++;spawn();if(bossState.level>3)onGameEnd(true);else showToast(`Рівень ${bossState.level}`)}}
 if(bossState.active)requestAnimationFrame(bossState.loop)};bossState.loop();}
 
-// === TANKS 1990 (BATTLE CITY STYLE) ===
+// === TANKS 1990 ===
 function initTanks1990(cv,ctx){let p={x:280,y:500,dir:0,mv:false},b=[],en=[],lastF=0,kills=0;const map=["0000000000000","0202020202020","0202020202020","0202020202020","0000003000000","0202000020202","0202000020202","0000000000000","0202020202020","0000004000000"];const sz=60;
 function spawn(){if(en.length<3)en.push({x:Math.floor(Math.random()*3)*240,y:0,dir:2,t:Date.now()})}
 function drawTank(t,c){const x=t.x+10,y=t.y+10,s=40;ctx.fillStyle='#000';ctx.fillRect(x,y,s,s);ctx.fillStyle=c;ctx.fillRect(x+5,y+5,30,30);ctx.fillStyle='#000';
 if(t.dir===0||t.dir===2){ctx.fillRect(x,y,8,40);ctx.fillRect(x+32,y,8,40)}else{ctx.fillRect(x,y,40,8);ctx.fillRect(x,y+32,40,8)}
-ctx.fillStyle=c==='#fabd2f'?'#d65d0e':'#006400';ctx.beginPath();ctx.arc(x+20,y+20,8,0,7);ctx.fill();ctx.strokeStyle='#000';ctx.lineWidth=4;ctx.beginPath();ctx.moveTo(x+20,y+20);
-ctx.lineTo(x+20+([0,1,0,-1][t.dir]*25),y+20+([-1,0,1,0][t.dir]*25));ctx.stroke();}
+ctx.fillStyle=c==='#fabd2f'?'#d65d0e':'#006400';ctx.beginPath();ctx.arc(x+20,y+20,8,0,7);ctx.fill();ctx.fillRect(x+18+([0,1,0,-1][t.dir]*15),y+18+([-1,0,1,0][t.dir]*15),4,4);}
 bossState.loop=function(){ctx.fillStyle='#666';ctx.fillRect(0,0,800,600);
 for(let r=0;r<10;r++)for(let c=0;c<13;c++){let type=map[r][c];if(type!=='0'){ctx.fillStyle=type==='2'?'#b45309':type==='3'?'#7c2d12':'#ffd700';ctx.fillRect(c*sz,r*sz,sz,sz);if(type==='2'){ctx.fillStyle='#000';ctx.fillRect(c*sz+10,r*sz+10,40,40);ctx.fillStyle='#b45309';ctx.fillRect(c*sz+15,r*sz+15,30,30)}}}
 if(Math.random()<0.02)spawn();
@@ -276,7 +276,7 @@ else if(Math.abs(bul.x-(p.x+30))<20&&Math.abs(bul.y-(p.y+30))<20)onGameEnd(false
 ctx.fillStyle='#fff';ctx.font='24px Poppins';ctx.fillText(`Ворогів знищено: ${kills}/5`,20,30);
 if(bossState.active)requestAnimationFrame(bossState.loop)};bossState.loop();}
 
-// === PACMAN (FIXED COORDINATES) ===
+// === PACMAN (FIXED) ===
 function initPacman(cv,ctx){const sz=40,map=["1111111111111111","1000001000000001","1011101011111001","1010000000001001","1010111011100001","1000000010001111","1111111110000001","1111111111111111"];let p={x:1,y:1,dx:0,dy:0,px:40,py:40},g=[{x:8,y:5,c:'red',px:320,py:200,dx:0,dy:0}],dots=0;for(let r=0;r<8;r++)for(let c=0;c<16;c++)if(map[r][c]==='0')dots++;
 bossState.loop=function(){ctx.fillStyle='#000';ctx.fillRect(0,0,800,600);
 if(p.px%sz===0&&p.py%sz===0){p.x=Math.round(p.px/sz);p.y=Math.round(p.py/sz);
@@ -300,7 +300,7 @@ bossResults.push(win);updateBossScore();
 if(win){bossState.gameIdx++;if(bossState.gameIdx>=3){finishBossFight()}else{bossDialogueSequence([{who:"clock",text:"Непогано. Наступна гра."}]);setTimeout(()=>runBossStage(),1500);}}
 else{bossDialogueSequence([{who:"clock",text:"Слабко. Спробуй ще раз."}]);setTimeout(()=>{id('bossControls').innerHTML=`<button class="choose-btn" onclick="exitBossFail()">Здатися</button><button class="choose-btn" style="background:#10b981" onclick="restartCurrentGame()">Реванш</button>`;},1000);}}
 function restartCurrentGame(){bossResults.pop();bossState.active=true;runBossStage();}
-function updateBossScore(){let cH='',pH='';for(let i=0;i<3;i++){if(i<bossResults.length){if(bossResults[i]){pH+='✅ ';cH+='❌ '}else{pH+='❌ ';cH+='✅ '}}else{pH+='⬜ ';cH+='⬜ '}}id('clockScoreBoard').innerHTML=`ГОДИННИК: ${cH}`;id('playerScoreBoard').innerHTML=`ТИ: ${pH}`;id('gameNameDisplay').textContent=formatGameName(bossState.gameOrder[bossState.gameIdx]||'');}
+function updateBossScore(){let cH='',pH='';for(let i=0;i<3;i++){if(i<bossResults.length){if(bossResults[i]){pH+='✅ ';cH+='❌ '}else{pH+='❌ ';cH+='✅ '}}else{pH+='⬜ ';cH+='⬜ '}}id('clockScoreBoard').innerHTML=`ГОДИННИК: ${cH} <span style="font-size:14px;color:#aaa">(${formatGameName(bossState.gameOrder[bossState.gameIdx]||'')})</span>`;id('playerScoreBoard').innerHTML=`ТИ: ${pH}`;}
 
 // === ЗАВЕРШЕННЯ БОЮ ===
 function finishBossFight(){bossDialogueSequence([{who:"clock",text:"Ти переміг... Час підкорився тобі."}]);setTimeout(()=>{id('bossControls').innerHTML=`<button class="choose-btn" style="background:#10b981;font-size:24px;padding:20px;" onclick="giveSecondKey()">ЗАБРАТИ КЛЮЧ 🗝️</button>`;},1500);}
