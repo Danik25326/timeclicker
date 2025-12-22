@@ -316,9 +316,9 @@ if(gh.px%sz===0&&gh.py%sz===0){let gx=Math.round(gh.px/sz),gy=Math.round(gh.py/s
 [{x:0,y:-1},{x:0,y:1},{x:-1,y:0},{x:1,y:0}].forEach(d=>{if(canMove(gx+d.x,gy+d.y)&&!(d.x===-gh.dx&&d.y===-gh.dy))opts.push(d)});
 if(opts.length){if(gh.s==='active'){let best=opts[0],minD=9999;opts.forEach(o=>{let dist=Math.hypot((gx+o.x)-p.x,(gy+o.y)-p.y);if(dist<minD){minD=dist;best=o}});gh.dx=best.x;gh.dy=best.y}
 else if(gh.s==='scared'){let best=opts[0],maxD=-1;opts.forEach(o=>{let dist=Math.hypot((gx+o.x)-p.x,(gy+o.y)-p.y);if(dist>maxD){maxD=dist;best=o}});gh.dx=best.x;gh.dy=best.y}
-else if(gh.s==='dead'){let best=opts[0],minD=9999;opts.forEach(o=>{let dist=Math.hypot((gx+o.x)-10,(gy+o.y)-8);if(dist<minD){minD=dist;best=o}});gh.dx=best.x;gh.dy=best.y;if(gx===10&&gy===8){gh.s='active';gh.c=gh.oc}}}
-}else{gh.dx=-gh.dx;gh.dy=-gh.dy}}gh.px+=gh.dx*(gh.s==='dead'?6:3);gh.py+=gh.dy*(gh.s==='dead'?6:3);drawGhost(gh);
-if(Math.abs(gh.px-p.px)<20&&Math.abs(gh.py-p.py)<20){if(gh.s==='scared')gh.s='dead';else if(gh.s==='active')onGameEnd(false)}});
+else if(gh.s==='dead'){let best=opts[0],minD=9999;opts.forEach(o=>{let dist=Math.hypot((gx+o.x)-10,(gy+o.y)-8);if(dist<minD){minD=dist;best=o}});gh.dx=best.x;gh.dy=best.y;if(gx===10&&gy===8){gh.s='active';gh.c=gh.oc}}}}
+else{gh.dx=-gh.dx;gh.dy=-gh.dy}}gh.px+=gh.dx*(gh.s==='dead'?6:3);gh.py+=gh.dy*(gh.s==='dead'?6:3);drawGhost(gh);
+if(Math.abs(gh.px-p.px)<20&&Math.abs(gh.py-p.py)<20){if(gh.s==='scared')gh.s='dead';else if(gh.s==='active')onGameEnd(false)}};
 drawGhost(ghosts.find(g=>g.s==='house')||{px:-100,py:-100,c:'#000'});
 ctx.fillStyle='#fff';ctx.font='24px Poppins';ctx.fillText(`Точок залишилось: ${dots}`,20,30);
 if(bossState.active)requestAnimationFrame(bossState.loop)};bossState.loop();}
