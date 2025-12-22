@@ -263,14 +263,20 @@ if(boss){drawBoss(boss.x,boss.y);boss.x+=boss.dir*3;if(boss.x<20||boss.x>620)bos
 }else{let edge=false;en.forEach(e=>{drawAlien(e.x,e.y,e.w,e.h,e.t);e.x+=2*eDir*(1+bossState.level*0.5);if(e.x<10||e.x>750)edge=true;if(e.y>530){onGameEnd(false);return}});if(edge){eDir*=-1;en.forEach(e=>e.y+=20)}if(en.length===0){bossState.level++;spawn();if(bossState.level>3)onGameEnd(true);else showToast(`Рівень ${bossState.level}`)}}
 if(bossState.active)requestAnimationFrame(bossState.loop)};bossState.loop();}
 
-// === TANKS 1990 (FIXED CONTROLS & COLLISION) ===
+// === TANKS 1990 (PERFECT CONTROLS & VISUALS) ===
 function initTanks1990(cv,ctx){let p={x:280,y:520,dir:0,mv:false},b=[],en=[],lastF=0,kills=0,nextSpawnT=0;
 const map=["00000000000000000000","02020020222200202020","02020020200200202020","02020020200200202020","02022220200200202020","00000000000000000000","02020000022000002020","02020000022000002020","00000000000000000000","02022200000000222020","02000000000000000020","02000000000000000020","00000000444400000000","00000000433400000000","00000000400400000000"];const sz=40;
 function checkCol(rect){const r1=Math.floor(rect.y/sz),c1=Math.floor(rect.x/sz),r2=Math.floor((rect.y+35)/sz),c2=Math.floor((rect.x+35)/sz);if(r1<0||c1<0||r2>=15||c2>=20)return true;return(map[r1][c1]!=='0'||map[r1][c2]!=='0'||map[r2][c1]!=='0'||map[r2][c2]!=='0');}
-function spawn(){if(en.length<4&&Date.now()>nextSpawnT){const loc=Math.random()>0.5?{x:0,y:0}:{x:760,y:0};if(!en.some(e=>Math.abs(e.x-loc.x)<50&&Math.abs(e.y-loc.y)<50)){en.push({x:loc.x,y:loc.y,dir:2,t:Date.now()});nextSpawnT=Date.now()+1500}}}
-function drawTank(t,c){const x=t.x,y=t.y;ctx.save();ctx.translate(x+20,y+20);ctx.rotate(["0",Math.PI/2,Math.PI,-Math.PI/2][t.dir]);ctx.fillStyle=c;ctx.fillRect(-14,-14,28,28);ctx.fillStyle='#000';ctx.fillRect(-18,-16,36,8);ctx.fillRect(-18,8,36,8);ctx.beginPath();ctx.arc(0,0,8,0,7);ctx.fill();ctx.fillRect(-2,-20,4,20);ctx.restore();}
+function spawn(){if(en.length<4&&Date.now()>nextSpawnT){const loc=Math.random()>0.5?{x:0,y:0}:{x:760,y:0};if(!en.some(e=>Math.abs(e.x-loc.x)<60&&Math.abs(e.y-loc.y)<60)){en.push({x:loc.x,y:loc.y,dir:2,t:Date.now()});nextSpawnT=Date.now()+2000}}}
+function drawTank(t,c){const x=t.x+20,y=t.y+20;ctx.save();ctx.translate(x,y);ctx.rotate([0,Math.PI/2,Math.PI,-Math.PI/2][t.dir]);
+ctx.fillStyle='#000';ctx.fillRect(-18,-18,36,36); // Tracks bg
+ctx.fillStyle=c;ctx.fillRect(-12,-14,24,28); // Body
+ctx.fillStyle='#000';ctx.fillRect(-18,-16,8,32);ctx.fillRect(10,-16,8,32); // Tracks details
+ctx.fillStyle=c==='#fbbf24'?'#d97706':'#4b5563';ctx.beginPath();ctx.arc(0,0,9,0,7);ctx.fill(); // Turret
+ctx.fillStyle='#000';ctx.fillRect(-3,-24,6,24); // Barrel (Points UP relative to center)
+ctx.restore();}
 bossState.loop=function(){if(!bossState.active)return;ctx.fillStyle='#636363';ctx.fillRect(0,0,800,600);
-for(let r=0;r<15;r++)for(let c=0;c<20;c++){let t=map[r][c];if(t!=='0'){ctx.fillStyle=t==='2'?'#b45309':t==='3'?'#eab308':'#fff';ctx.fillRect(c*sz,r*sz,sz,sz);if(t==='2'){ctx.fillStyle='#000';ctx.fillRect(c*sz+15,r*sz+15,10,10)}}}
+for(let r=0;r<15;r++)for(let c=0;c<20;c++){let t=map[r][c];if(t!=='0'){ctx.fillStyle=t==='2'?'#b45309':t==='3'?'#eab308':'#fff';ctx.fillRect(c*sz,r*sz,sz,sz);if(t==='2'){ctx.fillStyle='#000';ctx.fillRect(c*sz+10,r*sz+10,20,20);ctx.fillStyle='#78350f';ctx.fillRect(c*sz+15,r*sz+15,10,10)}}}
 spawn();
 if(inputs.x||inputs.y){let od=p.dir;if(inputs.x)p.dir=inputs.x>0?1:3;if(inputs.y)p.dir=inputs.y>0?2:0;
 if(od!==p.dir){p.x=Math.round(p.x/5)*5;p.y=Math.round(p.y/5)*5}
@@ -285,12 +291,44 @@ b.forEach((bul,i)=>{bul.x+=bul.dx*6;bul.y+=bul.dy*6;ctx.fillStyle=bul.own?'#ffff
 if(bul.x<0||bul.x>800||bul.y<0||bul.y>600){b.splice(i,1);return}
 let br=Math.floor(bul.y/sz),bc=Math.floor(bul.x/sz);
 if(map[br]&&map[br][bc]!=='0'){if(map[br][bc]==='2')map[br]=map[br].substr(0,bc)+'0'+map[br].substr(bc+1);if(map[br][bc]==='3'){onGameEnd(false);return}b.splice(i,1);return}
-if(bul.own){en.forEach((e,ei)=>{if(Math.abs(bul.x-(e.x+20))<25&&Math.abs(bul.y-(e.y+20))<25){b.splice(i,1);en.splice(ei,1);kills++;if(kills>=5)onGameEnd(true)}})}
+if(bul.own){en.forEach((e,ei)=>{if(Math.abs(bul.x-(e.x+20))<28&&Math.abs(bul.y-(e.y+20))<28){b.splice(i,1);en.splice(ei,1);kills++;if(kills>=5)onGameEnd(true)}})}
 else if(Math.abs(bul.x-(p.x+20))<20&&Math.abs(bul.y-(p.y+20))<20)onGameEnd(false)});
 ctx.fillStyle='#fff';ctx.font='24px Poppins';ctx.fillText(`Ворогів знищено: ${kills}/5`,20,30);
 if(bossState.active)requestAnimationFrame(bossState.loop)};bossState.loop();}
 
-function initPacman(cv,ctx){const sz=40,map=["11111111111111111111","12000000011000000021","10111111011011111101","10111111011011111101","10000000000000000001","10111101144110111101","10000001999910000001","10111101111110111101","10000000000000000001","10111101111110111101","10111101111110111101","10000000011000000001","10111111011011111101","12000000000000000021","11111111111111111111"],canMove=(x,y)=>map[y]&&map[y][x]!=='1',drawGhost=(g)=>{const x=g.px,y=g.py,c=g.s==='scared'?'#0000ff':g.s==='dead'?'rgba(0,0,0,0)':g.c;if(g.s!=='dead'){ctx.fillStyle=c;ctx.beginPath();ctx.arc(x+20,y+18,14,Math.PI,0);ctx.lineTo(x+34,y+34);ctx.lineTo(x+27,y+28);ctx.lineTo(x+20,y+34);ctx.lineTo(x+13,y+28);ctx.lineTo(x+6,y+34);ctx.lineTo(x+6,y+18);ctx.fill();}ctx.fillStyle='#fff';ctx.beginPath();ctx.arc(x+14,y+16,4,0,7);ctx.arc(x+26,y+16,4,0,7);ctx.fill();ctx.fillStyle='#000';ctx.beginPath();ctx.arc(x+14+(g.dx*2),y+16+(g.dy*2),2,0,7);ctx.arc(x+26+(g.dx*2),y+16+(g.dy*2),2,0,7);ctx.fill();};let p={x:10,y:8,dx:0,dy:0,px:400,py:320,angle:0,mouth:0},ghosts=[{x:9,y:6,px:360,py:240,c:'#ff0000',oc:'#ff0000',s:'active'},{x:10,y:6,px:400,py:240,c:'#ffb8ae',oc:'#ffb8ae',s:'house'},{x:9,y:6,px:360,py:240,c:'#00ffff',oc:'#00ffff',s:'house'},{x:10,y:6,px:400,py:240,c:'#ffb852',oc:'#ffb852',s:'house'}],dots=0,released=1,score=0,scaredT=0;for(let r=0;r<15;r++)for(let c=0;c<20;c++)if(map[r][c]==='0'||map[r][c]==='2')dots++;bossState.loop=()=>{if(!bossState.active)return;ctx.fillStyle='#000';ctx.fillRect(0,0,800,600);if(p.px%sz===0&&p.py%sz===0){p.x=Math.round(p.px/sz);p.y=Math.round(p.py/sz);if(inputs.nextDir&&canMove(p.x+inputs.nextDir.x,p.y+inputs.nextDir.y)){p.dx=inputs.nextDir.x;p.dy=inputs.nextDir.y;p.angle=Math.atan2(p.dy,p.dx);inputs.nextDir=null}else if(inputs.x||inputs.y){if(canMove(p.x+(inputs.x||0),p.y+(inputs.y||0))){p.dx=inputs.x;p.dy=inputs.y;p.angle=Math.atan2(p.dy,p.dx)}}if(!canMove(p.x+p.dx,p.y+p.dy)){p.dx=0;p.dy=0}}p.px+=p.dx*4;p.py+=p.dy*4;p.mouth=(p.dx||p.dy)?Math.abs(Math.sin(Date.now()/100)*0.25):0.25;let cx=Math.floor((p.px+20)/sz),cy=Math.floor((p.py+20)/sz);if(map[cy]&&['0','2'].includes(map[cy][cx])){if(map[cy][cx]==='2'){scaredT=Date.now()+8000;ghosts.forEach(g=>{if(g.s==='active')g.s='scared'})}map[cy]=map[cy].substr(0,cx)+' '+map[cy].substr(cx+1);dots--;score+=10;if(dots%20===0&&released<4){ghosts[released].s='active';ghosts[released].px=400;ghosts[released].py=240;released++}if(dots<=0)onGameEnd(true)}if(scaredT>0&&Date.now()>scaredT){scaredT=0;ghosts.forEach(g=>{if(g.s==='scared')g.s='active'})}for(let r=0;r<15;r++)for(let c=0;c<20;c++){if(map[r][c]==='1'){ctx.fillStyle='#1e3a8a';ctx.fillRect(c*sz,r*sz,sz,sz);ctx.strokeStyle='#3b82f6';ctx.strokeRect(c*sz,r*sz,sz,sz)}else if(map[r][c]==='0'){ctx.fillStyle='#fbbf24';ctx.beginPath();ctx.arc(c*sz+sz/2,r*sz+sz/2,4,0,7);ctx.fill()}else if(map[r][c]==='2'){ctx.fillStyle='#ffb8ae';ctx.beginPath();ctx.arc(c*sz+sz/2,r*sz+sz/2,10,0,7);ctx.fill()}}ctx.save();ctx.translate(p.px+20,p.py+20);ctx.rotate(p.angle);ctx.fillStyle='#ffff00';ctx.beginPath();ctx.arc(0,0,16,p.mouth,Math.PI*2-p.mouth);ctx.lineTo(0,0);ctx.fill();ctx.restore();ghosts.forEach(gh=>{if(gh.s==='house')return;if(gh.px%sz===0&&gh.py%sz===0){let gx=Math.round(gh.px/sz),gy=Math.round(gh.py/sz),opts=[];[{x:0,y:-1},{x:0,y:1},{x:-1,y:0},{x:1,y:0}].forEach(d=>{if(canMove(gx+d.x,gy+d.y)&&!(d.x===-gh.dx&&d.y===-gh.dy))opts.push(d)});if(opts.length){if(gh.s==='active'){let best=opts[0],minD=9999;opts.forEach(o=>{let dist=Math.hypot((gx+o.x)-p.x,(gy+o.y)-p.y);if(dist<minD){minD=dist;best=o}});gh.dx=best.x;gh.dy=best.y}else if(gh.s==='scared'){let best=opts[0],maxD=-1;opts.forEach(o=>{let dist=Math.hypot((gx+o.x)-p.x,(gy+o.y)-p.y);if(dist>maxD){maxD=dist;best=o}});gh.dx=best.x;gh.dy=best.y}else if(gh.s==='dead'){let best=opts[0],minD=9999;opts.forEach(o=>{let dist=Math.hypot((gx+o.x)-10,(gy+o.y)-8);if(dist<minD){minD=dist;best=o}});gh.dx=best.x;gh.dy=best.y;if(gx===10&&gy===8){gh.s='active';gh.c=gh.oc}}}else{gh.dx=-gh.dx;gh.dy=-gh.dy}}gh.px+=gh.dx*(gh.s==='dead'?6:3);gh.py+=gh.dy*(gh.s==='dead'?6:3);drawGhost(gh);if(Math.abs(gh.px-p.px)<20&&Math.abs(gh.py-p.py)<20){if(gh.s==='scared')gh.s='dead';else if(gh.s==='active')onGameEnd(false)}});drawGhost(ghosts.find(g=>g.s==='house')||{px:-100,py:-100,c:'#000'});ctx.fillStyle='#fff';ctx.font='24px Poppins';ctx.fillText(`Точок залишилось: ${dots}`,20,30);if(bossState.active)requestAnimationFrame(bossState.loop)};bossState.loop()}
+// === PACMAN (STRICT WALLS, SMART GHOSTS & SMOOTH INPUT) ===
+function initPacman(cv,ctx){const sz=40;
+const map=["11111111111111111111","12000000011000000021","10111111011011111101","10111111011011111101","10000000000000000001","10111101144110111101","10000001999910000001","10111101111110111101","10000000000000000001","10111101111110111101","10111101111110111101","10000000011000000001","10111111011011111101","12000000000000000021","11111111111111111111"];
+let p={x:10,y:8,dx:0,dy:0,px:400,py:320,angle:0,mouth:0,nextD:null},ghosts=[{x:9,y:6,px:360,py:240,c:'#ff0000',oc:'#ff0000',s:'active',dx:0,dy:0},{x:10,y:6,px:400,py:240,c:'#ffb8ae',oc:'#ffb8ae',s:'house',dx:0,dy:0},{x:9,y:6,px:360,py:240,c:'#00ffff',oc:'#00ffff',s:'house',dx:0,dy:0},{x:10,y:6,px:400,py:240,c:'#ffb852',oc:'#ffb852',s:'house',dx:0,dy:0}],dots=0,released=1,score=0,scaredT=0;
+for(let r=0;r<15;r++)for(let c=0;c<20;c++)if(map[r][c]==='0'||map[r][c]==='2')dots++;
+const canMove=(x,y)=>map[y]&&map[y][x]!=='1';
+const drawGhost=(g)=>{const x=g.px,y=g.py,c=g.s==='scared'?'#0000ff':g.s==='dead'?'rgba(0,0,0,0)':g.c;
+if(g.s!=='dead'){ctx.fillStyle=c;ctx.beginPath();ctx.arc(x+20,y+18,14,Math.PI,0);ctx.lineTo(x+34,y+34);ctx.lineTo(x+27,y+28);ctx.lineTo(x+20,y+34);ctx.lineTo(x+13,y+28);ctx.lineTo(x+6,y+34);ctx.lineTo(x+6,y+18);ctx.fill();}
+ctx.fillStyle='#fff';ctx.beginPath();ctx.arc(x+14,y+16,4,0,7);ctx.arc(x+26,y+16,4,0,7);ctx.fill();ctx.fillStyle='#000';ctx.beginPath();ctx.arc(x+14+(g.dx*2),y+16+(g.dy*2),2,0,7);ctx.arc(x+26+(g.dx*2),y+16+(g.dy*2),2,0,7);ctx.fill();}
+bossState.loop=function(){if(!bossState.active)return;ctx.fillStyle='#000';ctx.fillRect(0,0,800,600);
+if(inputs.nextDir)p.nextD=inputs.nextDir;else if(inputs.x||inputs.y)p.nextD={x:inputs.x||0,y:inputs.y||0};
+if(p.px%sz===0&&p.py%sz===0){p.x=Math.round(p.px/sz);p.y=Math.round(p.py/sz);
+if(p.nextD && canMove(p.x+p.nextD.x,p.y+p.nextD.y)){p.dx=p.nextD.x;p.dy=p.nextD.y;p.angle=Math.atan2(p.dy,p.dx);p.nextD=null;}
+else if(!canMove(p.x+p.dx,p.y+p.dy)){p.dx=0;p.dy=0}}
+p.px+=p.dx*4;p.py+=p.dy*4;p.mouth=(p.dx||p.dy)?Math.abs(Math.sin(Date.now()/100)*0.25):0.25;
+let cx=Math.floor((p.px+20)/sz),cy=Math.floor((p.py+20)/sz);
+if(map[cy]&&['0','2'].includes(map[cy][cx])){if(map[cy][cx]==='2'){scaredT=Date.now()+8000;ghosts.forEach(g=>{if(g.s==='active')g.s='scared'})}map[cy]=map[cy].substr(0,cx)+' '+map[cy].substr(cx+1);dots--;score+=10;
+if(dots%20===0&&released<4){ghosts[released].s='active';ghosts[released].px=400;ghosts[released].py=240;released++}if(dots<=0)onGameEnd(true)}
+if(scaredT>0&&Date.now()>scaredT){scaredT=0;ghosts.forEach(g=>{if(g.s==='scared')g.s='active'})}
+for(let r=0;r<15;r++)for(let c=0;c<20;c++){if(map[r][c]==='1'){ctx.fillStyle='#1e3a8a';ctx.fillRect(c*sz,r*sz,sz,sz);ctx.strokeStyle='#3b82f6';ctx.strokeRect(c*sz,r*sz,sz,sz)}else if(map[r][c]==='0'){ctx.fillStyle='#fbbf24';ctx.beginPath();ctx.arc(c*sz+sz/2,r*sz+sz/2,4,0,7);ctx.fill()}else if(map[r][c]==='2'){ctx.fillStyle='#ffb8ae';ctx.beginPath();ctx.arc(c*sz+sz/2,r*sz+sz/2,10,0,7);ctx.fill()}}
+ctx.save();ctx.translate(p.px+20,p.py+20);ctx.rotate(p.angle);ctx.fillStyle='#ffff00';ctx.beginPath();ctx.arc(0,0,16,p.mouth,Math.PI*2-p.mouth);ctx.lineTo(0,0);ctx.fill();ctx.restore();
+ghosts.forEach(gh=>{if(gh.s==='house')return;
+if(gh.px%sz===0&&gh.py%sz===0){let gx=Math.round(gh.px/sz),gy=Math.round(gh.py/sz),opts=[];
+[{x:0,y:-1},{x:0,y:1},{x:-1,y:0},{x:1,y:0}].forEach(d=>{if(canMove(gx+d.x,gy+d.y)&&!(d.x===-gh.dx&&d.y===-gh.dy))opts.push(d)});
+if(opts.length){if(gh.s==='active'){let best=opts[0],minD=9999;opts.forEach(o=>{let dist=Math.hypot((gx+o.x)-p.x,(gy+o.y)-p.y);if(dist<minD){minD=dist;best=o}});gh.dx=best.x;gh.dy=best.y}
+else if(gh.s==='scared'){let best=opts[0],maxD=-1;opts.forEach(o=>{let dist=Math.hypot((gx+o.x)-p.x,(gy+o.y)-p.y);if(dist>maxD){maxD=dist;best=o}});gh.dx=best.x;gh.dy=best.y}
+else if(gh.s==='dead'){let best=opts[0],minD=9999;opts.forEach(o=>{let dist=Math.hypot((gx+o.x)-10,(gy+o.y)-8);if(dist<minD){minD=dist;best=o}});gh.dx=best.x;gh.dy=best.y;if(gx===10&&gy===8){gh.s='active';gh.c=gh.oc}}}
+}else{gh.dx=-gh.dx;gh.dy=-gh.dy}}gh.px+=gh.dx*(gh.s==='dead'?6:3);gh.py+=gh.dy*(gh.s==='dead'?6:3);drawGhost(gh);
+if(Math.abs(gh.px-p.px)<20&&Math.abs(gh.py-p.py)<20){if(gh.s==='scared')gh.s='dead';else if(gh.s==='active')onGameEnd(false)}});
+drawGhost(ghosts.find(g=>g.s==='house')||{px:-100,py:-100,c:'#000'});
+ctx.fillStyle='#fff';ctx.font='24px Poppins';ctx.fillText(`Точок залишилось: ${dots}`,20,30);
+if(bossState.active)requestAnimationFrame(bossState.loop)};bossState.loop();}
+
 // === ОБРОБКА РЕЗУЛЬТАТІВ ===
 function onGameEnd(win){if(bossState.loop)cancelAnimationFrame(bossState.loop);bossState.active=false;bossState.loop=null;id('mobileControls').style.display='none';id('bossCanvasContainer').style.display='none';const b=id('practiceExitBtn');if(b)b.remove();
 if(bossState.isPractice){if(win)showToast("Тренувальна перемога!");else showToast("Спробуй ще раз!");runBossStage(bossState.practiceGame);return}
