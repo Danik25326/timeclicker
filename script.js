@@ -296,42 +296,34 @@ else if(Math.abs(bul.x-(p.x+20))<20&&Math.abs(bul.y-(p.y+20))<20)onGameEnd(false
 ctx.fillStyle='#fff';ctx.font='24px Poppins';ctx.fillText(`Ворогів знищено: ${kills}/5`,20,30);
 if(bossState.active)requestAnimationFrame(bossState.loop)};bossState.loop();}
 
-// === PACMAN (SMART AI, FORCED EXIT, STRICT WALLS) ===
+// === PACMAN (FIXED TURNS & SYNTAX) ===
 function initPacman(cv,ctx){const sz=40;
-// 0=dot, 1=wall, 2=power, 4=ghost_door, 9=ghost_house_interior
 const map=["11111111111111111111","12000000011000000021","10111111011011111101","10111111011011111101","10000000000000000001","10111101144110111101","10000001999910000001","10111101111110111101","10000000000000000001","10111101111110111101","10111101111110111101","10000000011000000001","10111111011011111101","12000000000000000021","11111111111111111111"];
-let p={x:10,y:13,dx:0,dy:0,px:400,py:520,angle:0,mouth:0,nextD:null},ghosts=[{x:9,y:6,px:360,py:240,c:'#ff0000',oc:'#ff0000',s:'active',dx:0,dy:0},{x:10,y:6,px:400,py:240,c:'#ffb8ae',oc:'#ffb8ae',s:'house',dx:0,dy:0},{x:9,y:6,px:360,py:240,c:'#00ffff',oc:'#00ffff',s:'house',dx:0,dy:0},{x:10,y:6,px:400,py:240,c:'#ffb852',oc:'#ffb852',s:'house',dx:0,dy:0}],dots=0,released=1,score=0,scaredT=0;
+let p={x:10,y:8,dx:0,dy:0,px:400,py:320,angle:0,mouth:0,nextD:null},ghosts=[{x:9,y:6,px:360,py:240,c:'#ff0000',oc:'#ff0000',s:'active'},{x:10,y:6,px:400,py:240,c:'#ffb8ae',oc:'#ffb8ae',s:'house'},{x:9,y:6,px:360,py:240,c:'#00ffff',oc:'#00ffff',s:'house'},{x:10,y:6,px:400,py:240,c:'#ffb852',oc:'#ffb852',s:'house'}],dots=0,released=1,score=0,scaredT=0;
 for(let r=0;r<15;r++)for(let c=0;c<20;c++)if(map[r][c]==='0'||map[r][c]==='2')dots++;
-const canMove=(x,y,isGhost=false)=>{if(!map[y])return false;const t=map[y][x];if(isGhost&&t==='4')return true;return t!=='1'&&t!=='9'&&t!=='4'};
+const canMove=(x,y)=>map[y]&&map[y][x]!=='1';
 const drawGhost=(g)=>{const x=g.px,y=g.py,c=g.s==='scared'?'#0000ff':g.s==='dead'?'rgba(0,0,0,0)':g.c;
 if(g.s!=='dead'){ctx.fillStyle=c;ctx.beginPath();ctx.arc(x+20,y+18,14,Math.PI,0);ctx.lineTo(x+34,y+34);ctx.lineTo(x+27,y+28);ctx.lineTo(x+20,y+34);ctx.lineTo(x+13,y+28);ctx.lineTo(x+6,y+34);ctx.lineTo(x+6,y+18);ctx.fill();}
 ctx.fillStyle='#fff';ctx.beginPath();ctx.arc(x+14,y+16,4,0,7);ctx.arc(x+26,y+16,4,0,7);ctx.fill();ctx.fillStyle='#000';ctx.beginPath();ctx.arc(x+14+(g.dx*2),y+16+(g.dy*2),2,0,7);ctx.arc(x+26+(g.dx*2),y+16+(g.dy*2),2,0,7);ctx.fill();}
 bossState.loop=function(){if(!bossState.active)return;ctx.fillStyle='#000';ctx.fillRect(0,0,800,600);
-// Player Movement logic
 if(inputs.nextDir)p.nextD=inputs.nextDir;else if(inputs.x||inputs.y)p.nextD={x:inputs.x||0,y:inputs.y||0};
 if(p.px%sz===0&&p.py%sz===0){p.x=Math.round(p.px/sz);p.y=Math.round(p.py/sz);
-if(p.nextD&&canMove(p.x+p.nextD.x,p.y+p.nextD.y)){p.dx=p.nextD.x;p.dy=p.nextD.y;p.angle=Math.atan2(p.dy,p.dx);p.nextD=null}
+if(p.nextD && canMove(p.x+p.nextD.x,p.y+p.nextD.y)){p.dx=p.nextD.x;p.dy=p.nextD.y;p.angle=Math.atan2(p.dy,p.dx);p.nextD=null;}
 else if(!canMove(p.x+p.dx,p.y+p.dy)){p.dx=0;p.dy=0}}
 p.px+=p.dx*4;p.py+=p.dy*4;p.mouth=(p.dx||p.dy)?Math.abs(Math.sin(Date.now()/100)*0.25):0.25;
-// Dot eating & Logic
 let cx=Math.floor((p.px+20)/sz),cy=Math.floor((p.py+20)/sz);
 if(map[cy]&&['0','2'].includes(map[cy][cx])){if(map[cy][cx]==='2'){scaredT=Date.now()+8000;ghosts.forEach(g=>{if(g.s==='active')g.s='scared'})}map[cy]=map[cy].substr(0,cx)+' '+map[cy].substr(cx+1);dots--;score+=10;
-if(dots%20===0&&released<4){ghosts[released].s='exit_house';released++}if(dots<=0)onGameEnd(true)}
+if(dots%20===0&&released<4){ghosts[released].s='active';ghosts[released].px=400;ghosts[released].py=240;released++}if(dots<=0)onGameEnd(true)}
 if(scaredT>0&&Date.now()>scaredT){scaredT=0;ghosts.forEach(g=>{if(g.s==='scared')g.s='active'})}
-// Draw Map
-for(let r=0;r<15;r++)for(let c=0;c<20;c++){if(map[r][c]==='1'){ctx.fillStyle='#1e3a8a';ctx.fillRect(c*sz,r*sz,sz,sz);ctx.strokeStyle='#3b82f6';ctx.strokeRect(c*sz,r*sz,sz,sz)}else if(map[r][c]==='0'){ctx.fillStyle='#fbbf24';ctx.beginPath();ctx.arc(c*sz+sz/2,r*sz+sz/2,4,0,7);ctx.fill()}else if(map[r][c]==='2'){ctx.fillStyle='#ffb8ae';ctx.beginPath();ctx.arc(c*sz+sz/2,r*sz+sz/2,10,0,7);ctx.fill()}else if(map[r][c]==='4'){ctx.fillStyle='#ffb8ae';ctx.fillRect(c*sz,r*sz+15,sz,10)}}
-// Draw Player
+for(let r=0;r<15;r++)for(let c=0;c<20;c++){if(map[r][c]==='1'){ctx.fillStyle='#1e3a8a';ctx.fillRect(c*sz,r*sz,sz,sz);ctx.strokeStyle='#3b82f6';ctx.strokeRect(c*sz,r*sz,sz,sz)}else if(map[r][c]==='0'){ctx.fillStyle='#fbbf24';ctx.beginPath();ctx.arc(c*sz+sz/2,r*sz+sz/2,4,0,7);ctx.fill()}else if(map[r][c]==='2'){ctx.fillStyle='#ffb8ae';ctx.beginPath();ctx.arc(c*sz+sz/2,r*sz+sz/2,10,0,7);ctx.fill()}}
 ctx.save();ctx.translate(p.px+20,p.py+20);ctx.rotate(p.angle);ctx.fillStyle='#ffff00';ctx.beginPath();ctx.arc(0,0,16,p.mouth,Math.PI*2-p.mouth);ctx.lineTo(0,0);ctx.fill();ctx.restore();
-// Ghost Logic
 ghosts.forEach(gh=>{if(gh.s==='house')return;
-if(gh.px%sz===0&&gh.py%sz===0){let gx=Math.round(gh.px/sz),gy=Math.round(gh.py/sz);
-if(gh.s==='exit_house'){if(gx!==9||gy!==5){let tx=9,ty=5;if(gx<tx)gh.dx=1;else if(gx>tx)gh.dx=-1;else gh.dx=0;if(gy<ty)gh.dy=1;else if(gy>ty)gh.dy=-1;else gh.dy=0;}else{gh.dx=0;gh.dy=-1;if(gy<=4){gh.s='active';gh.dy=0}}}
-else{let opts=[];[{x:0,y:-1},{x:0,y:1},{x:-1,y:0},{x:1,y:0}].forEach(d=>{if(canMove(gx+d.x,gy+d.y,true)&&!(d.x===-gh.dx&&d.y===-gh.dy))opts.push(d)});
-if(opts.length){let target={x:p.x,y:p.y};if(gh.s==='scared')target={x:0,y:0};if(gh.s==='dead')target={x:9,y:5};
-let best=opts[0],bestDist=gh.s==='scared'?-1:999999;
-opts.forEach(o=>{let d=Math.hypot((gx+o.x)-target.x,(gy+o.y)-target.y);if(gh.s==='scared'?d>bestDist:d<bestDist){bestDist=d;best=o}});gh.dx=best.x;gh.dy=best.y;
-if(gh.s==='dead'&&gx===9&&gy===5){gh.s='exit_house';gh.c=gh.oc}}else{gh.dx=-gh.dx;gh.dy=-gh.dy}}}
-gh.px+=gh.dx*(gh.s==='dead'?6:3);gh.py+=gh.dy*(gh.s==='dead'?6:3);drawGhost(gh);
+if(gh.px%sz===0&&gh.py%sz===0){let gx=Math.round(gh.px/sz),gy=Math.round(gh.py/sz),opts=[];
+[{x:0,y:-1},{x:0,y:1},{x:-1,y:0},{x:1,y:0}].forEach(d=>{if(canMove(gx+d.x,gy+d.y)&&!(d.x===-gh.dx&&d.y===-gh.dy))opts.push(d)});
+if(opts.length){if(gh.s==='active'){let best=opts[0],minD=9999;opts.forEach(o=>{let dist=Math.hypot((gx+o.x)-p.x,(gy+o.y)-p.y);if(dist<minD){minD=dist;best=o}});gh.dx=best.x;gh.dy=best.y}
+else if(gh.s==='scared'){let best=opts[0],maxD=-1;opts.forEach(o=>{let dist=Math.hypot((gx+o.x)-p.x,(gy+o.y)-p.y);if(dist>maxD){maxD=dist;best=o}});gh.dx=best.x;gh.dy=best.y}
+else if(gh.s==='dead'){let best=opts[0],minD=9999;opts.forEach(o=>{let dist=Math.hypot((gx+o.x)-10,(gy+o.y)-8);if(dist<minD){minD=dist;best=o}});gh.dx=best.x;gh.dy=best.y;if(gx===10&&gy===8){gh.s='active';gh.c=gh.oc}}}
+}else{gh.dx=-gh.dx;gh.dy=-gh.dy}}gh.px+=gh.dx*(gh.s==='dead'?6:3);gh.py+=gh.dy*(gh.s==='dead'?6:3);drawGhost(gh);
 if(Math.abs(gh.px-p.px)<20&&Math.abs(gh.py-p.py)<20){if(gh.s==='scared')gh.s='dead';else if(gh.s==='active')onGameEnd(false)}});
 drawGhost(ghosts.find(g=>g.s==='house')||{px:-100,py:-100,c:'#000'});
 ctx.fillStyle='#fff';ctx.font='24px Poppins';ctx.fillText(`Точок залишилось: ${dots}`,20,30);
