@@ -213,15 +213,21 @@ function updateInputs(){inputs.x=0;inputs.y=0;if(keys['ArrowLeft']||keys['KeyA']
 function handleTouchStart(d,v){if(d==='x')inputs.x=v;if(d==='y')inputs.y=v;if(d==='f')inputs.fire=true;}
 function handleTouchEnd(d){if(d==='x')inputs.x=0;if(d==='y')inputs.y=0;if(d==='f')inputs.fire=false;}
 
-// === ДІАЛОГИ (ДИНАМІЧНІ) ===
-function bossDialogueSequence(lines,idx=0){const dg=id('bossDialogue'),ct=id('bossControls');if(idx===0){ct.innerHTML='';dg.innerHTML=''}if(idx>=lines.length)return;const l=lines[idx];ct.innerHTML='';dg.innerHTML=`<p style="color:${l.who==='clock'?'#0ea5e9':'#fff'};margin-bottom:10px;">${l.who==='clock'?'ГОДИННИК':'ТИ'}</p><div class="typewriter" id="bossTypeArea${idx}"></div>`;
-typeBossText(id('bossTypeArea'+idx),l.text,()=>{
-if(l.autoExit){setTimeout(exitBossFail,1500);return}
-if(l.choice){ct.innerHTML=`<button class="choose-btn" style="background:#ef4444" onclick="handleBossChoice(false)">Не готовий</button><button class="choose-btn" style="background:#10b981" onclick="handleBossChoice(true)">Готовий</button>`}
-else if(l.failChoice){ct.innerHTML=`<button class="choose-btn" onclick="startExitSequence()">Я піду, але ще повернуся</button><button class="choose-btn" style="background:#10b981" onclick="showPracticeMenu()">Давай вибір гри для тренування</button>`}
-else if(l.practiceChoice){ct.innerHTML=`<div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap"><button class="choose-btn" onclick="startPracticeGame('shooter')">Space Invaders</button><button class="choose-btn" onclick="startPracticeGame('tanks')">Tanks 1990</button><button class="choose-btn" onclick="startPracticeGame('pacman')">Pacman</button></div>`}
-else if(idx+1<lines.length){ct.innerHTML=`<button class="phonk-btn" onclick="bossDialogueSequence(window.curBossLines,${idx+1})">Продовжити</button>`}
-else{ct.innerHTML=''}});}
+// === ДІАЛОГИ (ВИПРАВЛЕНО CRASH) ===
+function bossDialogueSequence(lines,idx=0){
+    window.curBossLines = lines; // <--- ОСЬ ЦЕЙ РЯДОК Я ПОВЕРНУВ! ВІН ЛІКУЄ ПОМИЛКУ
+    const dg=id('bossDialogue'),ct=id('bossControls');if(idx===0){ct.innerHTML='';dg.innerHTML=''}
+    if(idx>=lines.length)return;const l=lines[idx];ct.innerHTML='';
+    dg.innerHTML=`<p style="color:${l.who==='clock'?'#0ea5e9':'#fff'};margin-bottom:10px;">${l.who==='clock'?'ГОДИННИК':'ТИ'}</p><div class="typewriter" id="bossTypeArea${idx}"></div>`;
+    typeBossText(id('bossTypeArea'+idx),l.text,()=>{
+        if(l.autoExit){setTimeout(exitBossFail,1500);return}
+        if(l.choice){ct.innerHTML=`<button class="choose-btn" style="background:#ef4444" onclick="handleBossChoice(false)">Не готовий</button><button class="choose-btn" style="background:#10b981" onclick="handleBossChoice(true)">Готовий</button>`}
+        else if(l.failChoice){ct.innerHTML=`<button class="choose-btn" onclick="startExitSequence()">Я піду, але ще повернуся</button><button class="choose-btn" style="background:#10b981" onclick="showPracticeMenu()">Давай вибір гри для тренування</button>`}
+        else if(l.practiceChoice){ct.innerHTML=`<div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap"><button class="choose-btn" onclick="startPracticeGame('shooter')">Space Invaders</button><button class="choose-btn" onclick="startPracticeGame('tanks')">Tanks 1990</button><button class="choose-btn" onclick="startPracticeGame('pacman')">Pacman</button></div>`}
+        else if(idx+1<lines.length){ct.innerHTML=`<button class="phonk-btn" onclick="bossDialogueSequence(window.curBossLines,${idx+1})">Продовжити</button>`}
+        else{ct.innerHTML=''}
+    });
+}
 function typeBossText(el,txt,cb){let i=0;el.innerHTML='';function t(){if(i<txt.length){el.innerHTML+=txt.charAt(i);i++;setTimeout(t,30)}else if(cb)cb()}t()}
 
 // === ЛОГІКА БОСА І МЕНЮ ===
