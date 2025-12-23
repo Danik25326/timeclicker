@@ -391,7 +391,7 @@ body.mobile-version #tutorialContent::-webkit-scrollbar-thumb{background:var(--n
     #bossControls button { padding: 12px 20px !important; font-size: 14px !important; min-width: 100px; margin: 5px; flex: 1 1 40%; }
 
     /* Мобільні кнопки керування */
-    #mobileControls { display: block !important; bottom: 10px !important; height: 180px !important; width: 100% !important; pointer-events: none; z-index: 20005; }
+    #mobileControls { display: none; bottom: 10px !important; height: 180px !important; width: 100% !important; pointer-events: none; z-index: 20005; }
     .ctrl-btn { pointer-events: auto; background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.3); color: white; border-radius: 50%; width: 60px; height: 60px; font-size: 24px; display: flex; align-items: center; justify-content: center; active: scale(0.9); touch-action: manipulation; -webkit-user-select: none; user-select: none; backdrop-filter: blur(5px); }
     .ctrl-btn:active { background: rgba(14,165,233,0.5); }
     .fire-btn { background: rgba(255,0,0,0.2) !important; border-color: #ff4444 !important; width: 75px !important; height: 75px !important; font-size: 32px !important; position: absolute; right: 20px; bottom: 20px; }
