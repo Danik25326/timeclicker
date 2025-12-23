@@ -286,7 +286,7 @@ else{bossDialogueSequence([{who:"clock",text:"Я був більшої думк�
 function updateBossScore(){let cH='',pH='';for(let i=0;i<3;i++){if(i<bossResults.length){if(bossResults[i]){pH+='✅ ';cH+='❌ '}else{pH+='❌ ';cH+='✅ '}}else{pH+='⬜ ';cH+='⬜ '}}id('clockScoreBoard').innerHTML=`ГОДИННИК: ${cH} <span style="font-size:14px;color:#aaa">(${formatGameName(bossState.gameOrder[bossState.gameIdx]||'')})</span>`;id('playerScoreBoard').innerHTML=`ТИ: ${pH}`;}
 
 // === ЗАВЕРШЕННЯ БОЮ ===
-function finishBossFight(){bossDialogueSequence([{who:"clock",text:"Ти переміг... Час підкорився тобі."}]);setTimeout(()=>{id('bossControls').innerHTML=`<button class="choose-btn" style="background:#10b981;font-size:24px;padding:20px;" onclick="id('bossArena').style.display='none';gameState.ending=1;showLegendScreen();saveGame()">ПРОЧИТАТИ ЗАПИСКУ 📜</button>`;},1500);}
+function finishBossFight(){bossDialogueSequence([{who:"clock",text:"Ти переміг... Час підкорився тобі."}]);setTimeout(()=>{id('bossControls').innerHTML=`<button class="choose-btn" style="background:#10b981;font-size:24px;padding:20px;" onclick="document.getElementById('bossArena').style.display='none';gameState.ending=1;showLegendScreen();saveGame()">ПРОЧИТАТИ ЗАПИСКУ 📜</button>`;},1500);}
 function exitBossFail(){id('bossArena').style.display='none';id('game').classList.remove('game-hidden');showToast("Ти відступив...");}
 
 // === ЛЕГЕНДА ТА КЛЮЧ ===
