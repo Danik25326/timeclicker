@@ -296,58 +296,93 @@ else if(Math.abs(bul.x-(p.x+20))<20&&Math.abs(bul.y-(p.y+20))<20)onGameEnd(false
 ctx.fillStyle='#fff';ctx.font='24px Poppins';ctx.fillText(`Ворогів знищено: ${kills}/5`,20,30);
 if(bossState.active)requestAnimationFrame(bossState.loop)};bossState.loop();}
 
-// === PACMAN (BFS AI, NO COMMENTS, COMPACT) ===
+// === PACMAN (OPTIMIZED, 1 LIFE, OLD GHOST VISUALS) ===
 function initPacman(cv, ctx) {
-    const sz=18, sp=2, baseColor='#1919A6', pelletColor='#FFB8AE';
-    const boards = [
-        [6,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,5], [3,6,4,4,4,4,4,4,4,4,4,4,4,4,5,6,4,4,4,4,4,4,4,4,4,4,4,4,5,3], [3,3,1,1,1,1,1,1,1,1,1,1,1,1,3,3,1,1,1,1,1,1,1,1,1,1,1,1,3,3], [3,3,1,6,4,4,5,1,6,4,4,4,5,1,3,3,1,6,4,4,4,5,1,6,4,4,5,1,3,3], [3,3,2,3,0,0,3,1,3,0,0,0,3,1,3,3,1,3,0,0,0,3,1,3,0,0,3,2,3,3], [3,3,1,7,4,4,8,1,7,4,4,4,8,1,7,8,1,7,4,4,4,8,1,7,4,4,8,1,3,3], [3,3,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,3,3], [3,3,1,6,4,4,5,1,6,5,1,6,4,4,4,4,4,4,5,1,6,5,1,6,4,4,5,1,3,3], [3,3,1,7,4,4,8,1,3,3,1,7,4,4,5,6,4,4,8,1,3,3,1,7,4,4,8,1,3,3], [3,3,1,1,1,1,1,1,3,3,1,1,1,1,3,3,1,1,1,1,3,3,1,1,1,1,1,1,3,3],
-        [3,7,4,4,4,4,5,1,3,7,4,4,5,0,3,3,0,6,4,4,8,3,1,6,4,4,4,4,8,3], [3,0,0,0,0,0,3,1,3,6,4,4,8,0,7,8,0,7,4,4,5,3,1,3,0,0,0,0,0,3], [3,0,0,0,0,0,3,1,3,3,0,0,0,0,0,0,0,0,0,0,3,3,1,3,0,0,0,0,0,3], [8,0,0,0,0,0,3,1,3,3,0,6,4,4,9,9,4,4,5,0,3,3,1,3,0,0,0,0,0,7], [4,4,4,4,4,4,8,1,7,8,0,3,0,0,0,0,0,0,3,0,7,8,1,7,4,4,4,4,4,4], [0,0,0,0,0,0,0,1,0,0,0,3,0,0,0,0,0,0,3,0,0,0,1,0,0,0,0,0,0,0], [4,4,4,4,4,4,5,1,6,5,0,3,0,0,0,0,0,0,3,0,6,5,1,6,4,4,4,4,4,4], [5,0,0,0,0,0,3,1,3,3,0,7,4,4,4,4,4,4,8,0,3,3,1,3,0,0,0,0,0,6], [3,0,0,0,0,0,3,1,3,3,0,0,0,0,0,0,0,0,0,0,3,3,1,3,0,0,0,0,0,3], [3,0,0,0,0,0,3,1,3,3,0,6,4,4,4,4,4,4,5,0,3,3,1,3,0,0,0,0,0,3],
-        [3,6,4,4,4,4,8,1,7,8,0,7,4,4,5,6,4,4,8,0,7,8,1,7,4,4,4,4,5,3], [3,3,1,1,1,1,1,1,1,1,1,1,1,1,3,3,1,1,1,1,1,1,1,1,1,1,1,1,3,3], [3,3,1,6,4,4,5,1,6,4,4,4,5,1,3,3,1,6,4,4,4,5,1,6,4,4,5,1,3,3], [3,3,1,7,4,5,3,1,7,4,4,4,8,1,7,8,1,7,4,4,4,8,1,3,6,4,8,1,3,3], [3,3,2,1,1,3,3,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,3,3,1,1,2,3,3], [3,7,4,5,1,3,3,1,6,5,1,6,4,4,4,4,4,4,5,1,6,5,1,3,3,1,6,4,8,3], [3,6,4,8,1,7,8,1,3,3,1,7,4,4,5,6,4,4,8,1,3,3,1,7,8,1,7,4,5,3], [3,3,1,1,1,1,1,1,3,3,1,1,1,1,3,3,1,1,1,1,3,3,1,1,1,1,1,1,3,3], [3,3,1,6,4,4,4,4,8,7,4,4,5,1,3,3,1,6,4,4,8,7,4,4,4,4,5,1,3,3], [3,3,1,7,4,4,4,4,4,4,4,4,8,1,7,8,1,7,4,4,4,4,4,4,4,4,8,1,3,3],
-        [3,3,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,3,3], [3,7,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,8,3], [7,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,8]
-    ];
-    let dots=0, score=0, powerup=false, pTimer=0, mouth=0;
-    let p={x:14*sz,y:23*sz+sz/2,dir:0,nextDir:0,sx:14*sz,sy:23*sz+sz/2};
-    let ghosts=[{id:0,x:13*sz,y:14*sz,tx:0,ty:0,spd:sp,dir:2,c:'#FF0000',sc:false,dead:false,box:true},{id:1,x:14*sz,y:14*sz,tx:0,ty:0,spd:sp,dir:2,c:'#00FFFF',sc:false,dead:false,box:true},{id:2,x:12*sz,y:14*sz,tx:0,ty:0,spd:sp,dir:2,c:'#FFB8FF',sc:false,dead:false,box:true},{id:3,x:15*sz,y:14*sz,tx:0,ty:0,spd:sp,dir:2,c:'#FFB852',sc:false,dead:false,box:true}];
-    boards.forEach(r=>r.forEach(c=>{if(c===1||c===2)dots++}));
-    const canTurn=(x,y)=>{const c=Math.floor((x+sz/2)/sz),r=Math.floor((y+sz/2)/sz),res=[false,false,false,false];
-        if(r>=0&&r<33&&c>=0&&c<30){if(boards[r][c-1]<3||boards[r][c-1]===9)res[1]=true;if(boards[r][c+1]<3||boards[r][c+1]===9)res[0]=true;if(boards[r-1][c]<3||boards[r-1][c]===9)res[2]=true;if(boards[r+1][c]<3||boards[r+1][c]===9)res[3]=true;} return res;}
-    const drawMap=()=>{ctx.lineWidth=2;ctx.strokeStyle=baseColor;
-        boards.forEach((row,r)=>{row.forEach((v,c)=>{const x=c*sz,y=r*sz;
-            if(v===1)ctx.fillStyle=pelletColor,ctx.beginPath(),ctx.arc(x+sz/2,y+sz/2,3,0,7),ctx.fill();
-            if(v===2&&Math.floor(Date.now()/200)%2)ctx.fillStyle=pelletColor,ctx.beginPath(),ctx.arc(x+sz/2,y+sz/2,7,0,7),ctx.fill();
-            if(v===3)ctx.beginPath(),ctx.moveTo(x+sz/2,y),ctx.lineTo(x+sz/2,y+sz),ctx.stroke();
-            if(v===4)ctx.beginPath(),ctx.moveTo(x,y+sz/2),ctx.lineTo(x+sz,y+sz/2),ctx.stroke();
-            if(v===5)ctx.beginPath(),ctx.arc(x,y+sz,sz/2,1.5*Math.PI,2*Math.PI),ctx.stroke();
-            if(v===6)ctx.beginPath(),ctx.arc(x+sz,y+sz,sz/2,Math.PI,1.5*Math.PI),ctx.stroke();
-            if(v===7)ctx.beginPath(),ctx.arc(x+sz,y,sz/2,0.5*Math.PI,Math.PI),ctx.stroke();
-            if(v===8)ctx.beginPath(),ctx.arc(x,y,sz/2,0,0.5*Math.PI),ctx.stroke();
-            if(v===9)ctx.strokeStyle='#fff',ctx.beginPath(),ctx.moveTo(x,y+sz/2),ctx.lineTo(x+sz,y+sz/2),ctx.stroke(),ctx.strokeStyle=baseColor;})})};
-    bossState.loop=()=>{if(!bossState.active)return;ctx.fillStyle='#000';ctx.fillRect(0,0,800,600);ctx.save();ctx.translate(130,20);drawMap();
-        if(powerup){pTimer++;if(pTimer>600){powerup=false;pTimer=0;ghosts.forEach(g=>g.sc=false)}}
-        if(inputs.x===1)p.nextDir=0;if(inputs.x===-1)p.nextDir=1;if(inputs.y===-1)p.nextDir=2;if(inputs.y===1)p.nextDir=3;
-        let turns=canTurn(p.x,p.y);
-        if((p.x%sz<sp&&p.x%sz>-sp)&&(p.y%sz<sp&&p.y%sz>-sp)){p.x=Math.round(p.x/sz)*sz;p.y=Math.round(p.y/sz)*sz;if(turns[p.nextDir])p.dir=p.nextDir;}
-        if(turns[p.dir]){if(p.dir===0)p.x+=sp;if(p.dir===1)p.x-=sp;if(p.dir===2)p.y-=sp;if(p.dir===3)p.y+=sp;}
-        if(p.x>29*sz)p.x=-sz;if(p.x<-sz)p.x=29*sz;
-        let c=Math.floor((p.x+sz/2)/sz),r=Math.floor((p.y+sz/2)/sz);
-        if(boards[r][c]===1||boards[r][c]===2){if(boards[r][c]===2){powerup=true;pTimer=0;ghosts.forEach(g=>g.sc=true)}boards[r][c]=0;score+=10;dots--;if(dots<=0)onGameEnd(true)}
-        mouth=Math.abs(Math.sin(Date.now()/100)*0.25);
-        ctx.fillStyle='#FF0';ctx.beginPath();ctx.arc(p.x+sz/2,p.y+sz/2,13,([0.2,Math.PI+0.2,1.7*Math.PI,0.7*Math.PI][p.dir])+mouth,([1.8,Math.PI-0.2,1.3*Math.PI,0.3*Math.PI][p.dir])-mouth);ctx.lineTo(p.x+sz/2,p.y+sz/2);ctx.fill();
-        ghosts.forEach(g=>{
-            let tx=p.x,ty=p.y;
-            if(g.dead){tx=14*sz;ty=14*sz;if(Math.abs(g.x-tx)<sz&&Math.abs(g.y-ty)<sz){g.dead=false;g.box=true;g.sc=false}}
-            else if(g.sc){tx=0;ty=0;if(g.id===1)tx=29*sz;if(g.id===2)ty=32*sz;if(g.id===3){tx=29*sz;ty=32*sz}}
-            else if(g.id===1){if(p.dir===0)tx+=4*sz;if(p.dir===1)tx-=4*sz;if(p.dir===2)ty-=4*sz;if(p.dir===3)ty+=4*sz}
-            else if(g.id===2){let bx=ghosts[0].x,by=ghosts[0].y,px=p.x,py=p.y;if(p.dir===0)px+=2*sz;if(p.dir===1)px-=2*sz;if(p.dir===2)py-=2*sz;if(p.dir===3)py+=2*sz;tx=bx+2*(px-bx);ty=by+2*(py-by)}
-            else if(g.id===3){if(Math.hypot(g.x-p.x,g.y-p.y)>8*sz){tx=p.x;ty=p.y}else{tx=0;ty=32*sz}}
-            if(g.box){tx=14*sz;ty=11*sz;if(Math.abs(g.x-tx)<sz/2&&Math.abs(g.y-ty)<sz/2)g.box=false;}
-            let gt=canTurn(g.x,g.y),bestD=-1,minD=999999,dirs=[0,1,2,3];
-            if(g.x%sz===0&&g.y%sz===0){dirs.forEach(d=>{if(gt[d]&&d!==[1,0,3,2][g.dir]){let nx=g.x+(d===0?sz:d===1?-sz:0),ny=g.y+(d===2?-sz:d===3?sz:0),dist=(nx-tx)**2+(ny-ty)**2;if(dist<minD){minD=dist;bestD=d}}});if(bestD!==-1)g.dir=bestD}
-            if(g.dir===0)g.x+=g.spd;if(g.dir===1)g.x-=g.spd;if(g.dir===2)g.y-=g.spd;if(g.dir===3)g.y+=g.spd;
-            ctx.fillStyle=g.dead?'rgba(0,0,0,0)':g.sc?'#00F':g.c;ctx.beginPath();ctx.arc(g.x+sz/2,g.y+sz/2,14,Math.PI,0);ctx.fillRect(g.x+2,g.y+sz/2,sz-4,sz/2);ctx.fill();
-            ctx.fillStyle='#FFF';ctx.beginPath();ctx.arc(g.x+6,g.y+6,4,0,7);ctx.arc(g.x+12,g.y+6,4,0,7);ctx.fill();
-            if(Math.hypot(g.x-p.x,g.y-p.y)<sz){if(g.sc&&!g.dead){g.dead=true;score+=200}else if(!g.dead)onGameEnd(false)}});
-        ctx.restore();ctx.fillStyle='#fff';ctx.font='24px Poppins';ctx.fillText(`Score: ${score}`,20,30);if(bossState.active)requestAnimationFrame(bossState.loop)};bossState.loop();}
+    const SZ = 40, SP = 4, map = ["11111111111111111111", "12000000011000000021", "10111111011011111101", "10111111011011111101", "10000000000000000001", "10111101144110111101", "10000001999910000001", "10111101111110111101", "10000000000000000001", "10111101111110111101", "10111101111110111101", "10000000011000000001", "10111111011011111101", "12000000000000000021", "11111111111111111111"];
+    let score = 0, dots = 0, frames = 0, state = 'play', scaredT = 0, p = { x: 400, y: 320, d: 4, nd: 4, mx: 0, my: 0 }, gs = [];
+    const dirs = [{ x: 1, y: 0 }, { x: -1, y: 0 }, { x: 0, y: -1 }, { x: 0, y: 1 }, { x: 0, y: 0 }]; // R, L, U, D, Stop
+    const isWall = (c, r) => r < 0 || r >= 15 || c < 0 || c >= 20 || map[r][c] === '1' || map[r][c] === '4' || map[r][c] === '9';
+    const init = () => {
+        dots = 0; map.forEach(r => dots += (r.match(/[02]/g) || []).length);
+        gs = [{ c: '#ff0000', x: 360, y: 240, d: 2, s: 'hunt', t: 'r' }, { c: '#ffb8ae', x: 400, y: 240, d: 3, s: 'house', t: 'p' }, { c: '#00ffff', x: 360, y: 240, d: 2, s: 'house', t: 'b' }, { c: '#ffb852', x: 400, y: 240, d: 3, s: 'house', t: 'o' }];
+        gs.forEach(g => { g.mx = 0; g.my = 0; g.ix = g.x; g.iy = g.y });
+    }; init();
+    const getTarget = (g) => {
+        if (g.s === 'dead') return { c: 9, r: 5 }; if (g.s === 'scared') return { c: Math.floor(Math.random() * 20), r: Math.floor(Math.random() * 15) };
+        const pc = Math.floor((p.x + 20) / SZ), pr = Math.floor((p.y + 20) / SZ);
+        if (g.t === 'r') return { c: pc, r: pr };
+        if (g.t === 'p') { const tx = pc + dirs[p.d].x * 4, ty = pr + dirs[p.d].y * 4; return { c: tx, r: ty }; }
+        return { c: pc, r: pr }; // Simple fallback for others
+    };
+    const moveEnt = (e, isP) => {
+        const xc = e.x + 20, yc = e.y + 20, c = Math.floor(xc / SZ), r = Math.floor(yc / SZ);
+        if (e.x % SZ === 0 && e.y % SZ === 0) {
+            if (isP) {
+                if (e.nd !== 4 && !isWall(c + dirs[e.nd].x, r + dirs[e.nd].y)) e.d = e.nd;
+                if (isWall(c + dirs[e.d].x, r + dirs[e.d].y)) e.d = 4;
+            } else {
+                if (e.s === 'house') { if (frames % 60 === 0) e.s = 'exit'; return; }
+                if (e.s === 'exit') { e.d = 2; if (r <= 5) { e.s = 'hunt'; e.y = 5 * SZ; } }
+                else {
+                    const t = getTarget(e), opp = e.d === 0 ? 1 : e.d === 1 ? 0 : e.d === 2 ? 3 : 2;
+                    let bestD = e.d, minD = 999999;
+                    [0, 1, 2, 3].forEach(d => {
+                        if (d === opp && e.s !== 'dead') return;
+                        if (!isWall(c + dirs[d].x, r + dirs[d].y)) {
+                            const dist = (c + dirs[d].x - t.c) ** 2 + (r + dirs[d].y - t.r) ** 2;
+                            if (dist < minD) { minD = dist; bestD = d; }
+                        }
+                    }); e.d = bestD;
+                }
+            }
+        }
+        e.x += dirs[e.d].x * (isP ? SP : (e.s === 'scared' ? 2 : e.s === 'dead' ? 8 : 3));
+        e.y += dirs[e.d].y * (isP ? SP : (e.s === 'scared' ? 2 : e.s === 'dead' ? 8 : 3));
+        if (e.x < -20) e.x = 800; if (e.x > 800) e.x = -20;
+    };
+    const drawGhost = (g) => {
+        const x = g.x, y = g.y, c = g.s === 'scared' ? '#0000ff' : g.s === 'dead' ? 'rgba(0,0,0,0)' : g.c;
+        if (g.s !== 'dead') {
+            ctx.fillStyle = c; ctx.beginPath(); ctx.arc(x + 20, y + 18, 14, Math.PI, 0); ctx.lineTo(x + 34, y + 34);
+            ctx.lineTo(x + 27, y + 28); ctx.lineTo(x + 20, y + 34); ctx.lineTo(x + 13, y + 28); ctx.lineTo(x + 6, y + 34); ctx.lineTo(x + 6, y + 18); ctx.fill();
+        }
+        ctx.fillStyle = '#fff'; ctx.beginPath(); ctx.arc(x + 14, y + 16, 4, 0, 7); ctx.arc(x + 26, y + 16, 4, 0, 7); ctx.fill();
+        ctx.fillStyle = '#000'; ctx.beginPath(); const ex = dirs[g.d].x * 2, ey = dirs[g.d].y * 2;
+        ctx.arc(x + 14 + ex, y + 16 + ey, 2, 0, 7); ctx.arc(x + 26 + ex, y + 16 + ey, 2, 0, 7); ctx.fill();
+    };
+    bossState.loop = function () {
+        if (!bossState.active) return;
+        ctx.fillStyle = '#000'; ctx.fillRect(0, 0, 800, 600);
+        if (state !== 'play') { ctx.fillStyle = '#fff'; ctx.font = '40px Poppins'; ctx.fillText(state === 'win' ? 'ПЕРЕМОГА!' : 'ГРУ ЗАКІНЧЕНО', 250, 300); if(state==='win')onGameEnd(true); else onGameEnd(false); return; }
+        if (inputs.x > 0) p.nd = 0; if (inputs.x < 0) p.nd = 1; if (inputs.y < 0) p.nd = 2; if (inputs.y > 0) p.nd = 3;
+        moveEnt(p, true);
+        const pc = Math.floor((p.x + 20) / SZ), pr = Math.floor((p.y + 20) / SZ);
+        if (map[pr][pc] === '0' || map[pr][pc] === '2') {
+            if (map[pr][pc] === '2') { scaredT = frames + 600; gs.forEach(g => g.s = g.s === 'active' || g.s === 'hunt' ? 'scared' : g.s); }
+            map[pr] = map[pr].substr(0, pc) + ' ' + map[pr].substr(pc + 1); dots--; score += 10;
+            if (dots <= 0) state = 'win';
+        }
+        if (scaredT && frames > scaredT) { scaredT = 0; gs.forEach(g => { if (g.s === 'scared') g.s = 'hunt' }); }
+        for (let r = 0; r < 15; r++) for (let c = 0; c < 20; c++) {
+            if (map[r][c] === '1') { ctx.fillStyle = '#1e3a8a'; ctx.fillRect(c * SZ, r * SZ, SZ, SZ); ctx.strokeStyle = '#3b82f6'; ctx.strokeRect(c * SZ, r * SZ, SZ, SZ); }
+            else if (map[r][c] === '0') { ctx.fillStyle = '#fbbf24'; ctx.beginPath(); ctx.arc(c * SZ + 20, r * SZ + 20, 4, 0, 7); ctx.fill(); }
+            else if (map[r][c] === '2') { ctx.fillStyle = '#ffb8ae'; ctx.beginPath(); ctx.arc(c * SZ + 20, r * SZ + 20, 10, 0, 7); ctx.fill(); }
+            else if (map[r][c] === '4') { ctx.fillStyle = '#ffb8ae'; ctx.fillRect(c * SZ, r * SZ + 15, SZ, 10); }
+        }
+        ctx.save(); ctx.translate(p.x + 20, p.y + 20); ctx.rotate(Math.atan2(dirs[p.d].y, dirs[p.d].x));
+        ctx.fillStyle = '#ffff00'; ctx.beginPath(); const mouth = Math.abs(Math.sin(frames / 5) * 0.25);
+        ctx.arc(0, 0, 16, mouth, Math.PI * 2 - mouth); ctx.lineTo(0, 0); ctx.fill(); ctx.restore();
+        gs.forEach(g => {
+            moveEnt(g, false); drawGhost(g);
+            if (Math.abs(g.x - p.x) < 20 && Math.abs(g.y - p.y) < 20) {
+                if (g.s === 'scared') { g.s = 'dead'; score += 200; }
+                else if (g.s !== 'dead') state = 'lose';
+            }
+        });
+        ctx.fillStyle = '#fff'; ctx.font = '24px Poppins'; ctx.fillText(`Рахунок: ${score}`, 20, 30); frames++;
+        requestAnimationFrame(bossState.loop);
+    }; bossState.loop();
+}
 
 // === ОБРОБКА РЕЗУЛЬТАТІВ ===
 function onGameEnd(win){if(bossState.loop)cancelAnimationFrame(bossState.loop);bossState.active=false;bossState.loop=null;id('mobileControls').style.display='none';id('bossCanvasContainer').style.display='none';const b=id('practiceExitBtn');if(b)b.remove();
