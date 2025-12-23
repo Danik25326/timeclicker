@@ -356,9 +356,13 @@ body.mobile-version #tutorialContent::-webkit-scrollbar-thumb{background:var(--n
 @keyframes floatKey{0%,100%{transform:translateY(0)}50%{transform:translateY(-20px)}}
 @keyframes fadeOut{to{opacity:0;transform:scale(0.5)}}
 .key-vanish{animation:fadeOut 0.5s forwards !important;}
-/* Фікс для ключів в годиннику - строго по центру */
-.k-ins{position:absolute !important;top:50% !important;transform:translate(-50%,-50%) !important;font-size:50px !important;z-index:25;}
-.k-left{left:0 !important; transform-origin: center right;}
-.k-right{right:0 !important; transform-origin: center left;}
-/* Приховування виділення часу */
+/* Нові правильні стилі для ключів ритуалу */
+.k-ins {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 50px;
+    z-index: 50;
+    pointer-events: none;
+}/* Приховування виділення часу */
 .stat-stealth{color:#cfeaff !important; text-decoration:none !important; cursor:default;}
