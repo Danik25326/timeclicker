@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Time Clicker</string>
+    <string name="title_activity_main">Time Clicker</string>
+    <string name="package_name">com.timeclicker.app</string>
+    <string name="custom_url_scheme">com.timeclicker.app</string>
+</resources>

@@ -1,0 +1,28 @@
+{
+  "name": "timeclicker",
+  "version": "1.0.0",
+  "description": "[![MIT License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE) [![Live Demo](https://img.shields.io/badge/Play-Online-blue.svg)](https://danik25326.github.io/timeclicker/) [![GitHub Pages](https://img.shields.io/badge/Hosted-GitHub_Pages-purple.svg)](https://pages.github.com/)",
+  "main": "chooser_lang.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Danik25326/timeclicker.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/Danik25326/timeclicker/issues"
+  },
+  "homepage": "https://github.com/Danik25326/timeclicker#readme",
+  "dependencies": {
+    "@capacitor/android": "^8.3.3",
+    "@capacitor/core": "^8.3.3"
+  },
+  "devDependencies": {
+    "@capacitor/cli": "^8.3.3"
+  }
+}
