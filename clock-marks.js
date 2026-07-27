@@ -47,23 +47,16 @@
   }
 
   function syncMarks() {
-    var color = "";
-    var shape = "round";
-    
-    // Беремо поточний скін і форму безпосередньо з гри
-    if (window.current) {
-      if (window.current.clock) {
-        var c = window.current.clock;
-        color = c === "neon-blue" ? "#0ea5e9" : c === "purple" ? "#8b5cf6" : c === "pink" ? "#ec4899" : "#111";
-      }
-      if (window.current.shape) {
-        shape = window.current.shape;
-      }
-    }
-
     document.querySelectorAll('.clock').forEach(function (clockEl) {
-      if (!color) color = clockEl.style.borderColor || getComputedStyle(clockEl).borderTopColor;
+      // Визначаємо колір безпосередньо з годинника
+      var color = clockEl.style.borderColor || getComputedStyle(clockEl).borderTopColor;
       if (color) clockEl.style.setProperty('--mark-color', color);
+      
+      // Визначаємо форму безпосередньо з класів, які висять на годиннику
+      var shape = 'round';
+      if (clockEl.classList.contains('square')) shape = 'square';
+      else if (clockEl.classList.contains('diamond')) shape = 'diamond';
+      else if (clockEl.classList.contains('oval')) shape = 'oval';
       
       var marks = clockEl.querySelectorAll('.mark-wrap');
       marks.forEach(function (wrap) {
@@ -74,16 +67,15 @@
         var r = 1; // За замовчуванням коло
         
         // --- МАГІЯ ГЕОМЕТРІЇ ---
-        // Вираховуємо віддаленість від центру, щоб вписатись у фігуру
         if (shape === 'square') {
           r = 1 / Math.max(absSin, absCos);
         } else if (shape === 'diamond') {
           r = 1 / (absSin + absCos);
         } else if (shape === 'oval') {
-          r = 1; // Овал - це просто здавлене коло, r=1 виглядає найкраще
+          r = 1; // Овал - це просто здавлене коло
         }
         
-        var baseRadius = 43; // Відсоток віддаленості від центру (залишає 7% на відступ від краю)
+        var baseRadius = 43; // Відсоток віддаленості від центру
         var radius = baseRadius * r;
         var top = 50 - radius;
         
@@ -102,7 +94,6 @@
 
   function getSavedPreference() {
     var saved = localStorage.getItem(STORAGE_KEY);
-    // ЗМІНА ТУТ: Якщо в пам'яті немає налаштування (перший вхід), повертаємо false
     return saved === null ? false : saved === '1';
   }
 
