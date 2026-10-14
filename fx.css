@@ -1,0 +1,420 @@
+/* =====================================================================
+   fx.css — сучасний візуальний шар поверх style.css
+   Підключається ПІСЛЯ style.css. Логіку гри не чіпає.
+   ===================================================================== */
+
+:root{
+  --fx-accent:#0ea5e9;            /* синхронізується з кольором годинника (fx.js) */
+  --fx-accent-rgb:14,165,233;
+  --fx-pink:#ff2d87;
+  --fx-violet:#8b5cf6;
+  --fx-glass:rgba(12,18,38,.55);
+  --fx-glass-strong:rgba(10,15,32,.78);
+  --fx-stroke:rgba(255,255,255,.09);
+  --fx-ease:cubic-bezier(.22,1,.36,1);
+  --fx-spring:cubic-bezier(.34,1.56,.64,1);
+}
+
+html{background:#04060f}
+body{background:transparent !important;font-feature-settings:"tnum" 1}
+
+/* ---------- Фон: живі аврори (під canvas із зірками) ---------- */
+body::before{
+  content:"";position:fixed;inset:-20%;z-index:-3;pointer-events:none;
+  background:
+    radial-gradient(40% 35% at 20% 25%,rgba(var(--fx-accent-rgb),.22),transparent 70%),
+    radial-gradient(35% 40% at 80% 20%,rgba(139,92,246,.20),transparent 70%),
+    radial-gradient(45% 40% at 70% 85%,rgba(255,45,135,.14),transparent 70%),
+    radial-gradient(60% 60% at 50% 50%,#0a1124,#04060f 80%);
+  animation:fxAurora 28s ease-in-out infinite alternate;
+}
+@keyframes fxAurora{
+  0%{transform:translate3d(0,0,0) scale(1) rotate(0deg)}
+  50%{transform:translate3d(-3%,2%,0) scale(1.08) rotate(2deg)}
+  100%{transform:translate3d(3%,-2%,0) scale(1.04) rotate(-2deg)}
+}
+/* легка плівкова зернистість + віньєтка */
+body::after{
+  content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
+  background:radial-gradient(120% 90% at 50% 50%,transparent 55%,rgba(0,0,0,.55) 100%);
+}
+#fxBg{position:fixed;inset:0;width:100%;height:100%;z-index:-2;pointer-events:none}
+#fxTop{position:fixed;inset:0;width:100%;height:100%;z-index:60;pointer-events:none}
+
+/* ---------- Вибір версії ---------- */
+#chooser h2{
+  font-size:clamp(40px,7vw,72px);font-weight:700;letter-spacing:-.02em;text-shadow:none;
+  background:linear-gradient(110deg,#fff 10%,#7dd3fc 35%,#c4b5fd 55%,#ff7ab8 80%,#fff);
+  background-size:250% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;
+  filter:drop-shadow(0 0 28px rgba(14,165,233,.45));
+  animation:fxShimmer 7s linear infinite;
+}
+@keyframes fxShimmer{to{background-position:-250% 0}}
+.choose-btn{
+  position:relative;overflow:hidden;border:1px solid rgba(255,255,255,.18);
+  background:linear-gradient(135deg,rgba(14,165,233,.9),rgba(99,102,241,.9));
+  border-radius:22px;box-shadow:0 10px 40px rgba(14,165,233,.35),inset 0 1px 0 rgba(255,255,255,.35);
+  transition:transform .4s var(--fx-spring),box-shadow .3s;
+}
+.choose-btn::after{
+  content:"";position:absolute;top:0;left:-60%;width:40%;height:100%;
+  background:linear-gradient(100deg,transparent,rgba(255,255,255,.45),transparent);
+  transform:skewX(-20deg);transition:left .7s var(--fx-ease);
+}
+.choose-btn:hover{transform:translateY(-4px) scale(1.05);box-shadow:0 18px 60px rgba(99,102,241,.55),inset 0 1px 0 rgba(255,255,255,.4)}
+.choose-btn:hover::after{left:130%}
+.choose-btn:active{transform:scale(.97)}
+
+/* ---------- Заголовок ---------- */
+.editable-title{
+  font-weight:700;letter-spacing:-.01em;text-shadow:none;
+  background:linear-gradient(100deg,#fff 20%,#7dd3fc 50%,#fff 80%);background-size:200% 100%;
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+  filter:drop-shadow(0 0 18px rgba(var(--fx-accent-rgb),.55));
+  animation:fxShimmer 9s linear infinite;
+}
+
+/* ---------- Вкладки ---------- */
+.top-tabs{
+  background:var(--fx-glass-strong);border:1px solid var(--fx-stroke);
+  backdrop-filter:blur(18px) saturate(140%);-webkit-backdrop-filter:blur(18px) saturate(140%);
+  box-shadow:0 14px 50px rgba(0,0,0,.6),inset 0 1px 0 rgba(255,255,255,.07);
+}
+.top-tabs .tab{position:relative;color:#9fb6d6;font-weight:500;transition:color .25s,background .3s var(--fx-ease),transform .25s var(--fx-spring)}
+.top-tabs .tab:hover{color:#fff;background:rgba(255,255,255,.07);transform:translateY(-1px)}
+.top-tabs .tab.active{
+  color:#04101c;font-weight:700;
+  background:linear-gradient(135deg,#7dd3fc,var(--fx-accent));
+  box-shadow:0 0 22px rgba(var(--fx-accent-rgb),.6),inset 0 1px 0 rgba(255,255,255,.6);
+  animation:fxPop .45s var(--fx-spring);
+}
+@keyframes fxPop{0%{transform:scale(.9)}100%{transform:scale(1)}}
+
+/* ---------- Ліва панель ---------- */
+.left-panel{
+  position:relative;background:var(--fx-glass);border:1px solid var(--fx-stroke);border-radius:24px;
+  backdrop-filter:blur(20px) saturate(150%);-webkit-backdrop-filter:blur(20px) saturate(150%);
+  box-shadow:0 24px 70px rgba(0,0,0,.65),inset 0 1px 0 rgba(255,255,255,.07);
+}
+.left-panel::before{ /* градієнтна рамка */
+  content:"";position:absolute;inset:0;border-radius:inherit;padding:1px;pointer-events:none;
+  background:linear-gradient(160deg,rgba(var(--fx-accent-rgb),.55),transparent 35%,transparent 65%,rgba(255,45,135,.4));
+  -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);
+  -webkit-mask-composite:xor;mask-composite:exclude;
+}
+.tab-page.active{animation:fxTabIn .45s var(--fx-ease)}
+@keyframes fxTabIn{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+.tab-body h3{font-weight:700;letter-spacing:-.01em;margin-bottom:10px}
+
+/* ---------- Апгрейди ---------- */
+.upgrade-btn{
+  position:relative;overflow:hidden;text-align:left;font-weight:500;
+  background:linear-gradient(135deg,rgba(255,255,255,.07),rgba(255,255,255,.02));
+  border:1px solid var(--fx-stroke);border-radius:16px;padding:14px 16px;
+  box-shadow:0 6px 20px rgba(0,0,0,.35);
+  transition:transform .35s var(--fx-spring),border-color .3s,box-shadow .3s,background .3s;
+  animation:fxCardIn .5s var(--fx-ease) backwards;
+}
+@keyframes fxCardIn{from{opacity:0;transform:translateX(-18px) scale(.97)}to{opacity:1;transform:none}}
+.upgrade-btn::before{ /* акцентна смужка */
+  content:"";position:absolute;left:0;top:14%;bottom:14%;width:3px;border-radius:3px;
+  background:linear-gradient(180deg,#7dd3fc,var(--fx-accent));box-shadow:0 0 12px var(--fx-accent);
+  opacity:.9;transition:top .3s,bottom .3s;
+}
+.upgrade-btn::after{ /* блиск */
+  content:"";position:absolute;top:0;left:-70%;width:45%;height:100%;
+  background:linear-gradient(100deg,transparent,rgba(255,255,255,.18),transparent);
+  transform:skewX(-20deg);transition:left .8s var(--fx-ease);pointer-events:none;
+}
+.upgrade-btn span{
+  background:rgba(var(--fx-accent-rgb),.16);border:1px solid rgba(var(--fx-accent-rgb),.35);
+  padding:3px 10px;border-radius:999px;font-size:.88em;color:#cfeaff;white-space:nowrap;float:none;
+}
+.upgrade-btn:hover:not(:disabled){
+  transform:translateY(-3px) scale(1.012);border-color:rgba(var(--fx-accent-rgb),.6);
+  background:linear-gradient(135deg,rgba(var(--fx-accent-rgb),.28),rgba(255,255,255,.03));
+  box-shadow:0 14px 34px rgba(var(--fx-accent-rgb),.28);
+}
+.upgrade-btn:hover:not(:disabled)::before{top:6%;bottom:6%}
+.upgrade-btn:hover:not(:disabled)::after{left:130%}
+.upgrade-btn:active:not(:disabled){transform:scale(.97)}
+.upgrade-btn:not(:disabled):not(.hidden){border-color:rgba(var(--fx-accent-rgb),.35);animation:fxCardIn .5s var(--fx-ease) backwards,fxReady 2.6s ease-in-out .6s infinite}
+@keyframes fxReady{0%,100%{box-shadow:0 6px 20px rgba(0,0,0,.35),0 0 0 0 rgba(var(--fx-accent-rgb),0)}50%{box-shadow:0 6px 20px rgba(0,0,0,.35),0 0 22px 0 rgba(var(--fx-accent-rgb),.32)}}
+.upgrade-btn:disabled{opacity:.42;filter:saturate(.5)}
+.upgrade-btn:disabled::before{background:#475569;box-shadow:none}
+.multiplier-btn::before{background:linear-gradient(180deg,#c4b5fd,var(--fx-pink));box-shadow:0 0 12px var(--fx-pink)}
+.multiplier-btn span{background:rgba(255,45,135,.16);border-color:rgba(255,45,135,.4)}
+.multiplier-btn:hover:not(:disabled){border-color:rgba(255,45,135,.6);background:linear-gradient(135deg,rgba(139,92,246,.3),rgba(255,45,135,.12));box-shadow:0 14px 34px rgba(255,45,135,.25)}
+
+/* ---------- Скіни / досягнення ---------- */
+.skin{
+  border:1px solid var(--fx-stroke);background:linear-gradient(145deg,rgba(255,255,255,.07),rgba(255,255,255,.015));
+  border-radius:18px;transition:transform .35s var(--fx-spring),box-shadow .3s,border-color .3s;
+}
+.skin:hover{transform:translateY(-4px) scale(1.05);border-color:rgba(var(--fx-accent-rgb),.6)}
+.skin.active{border:1px solid var(--fx-accent);box-shadow:0 0 26px rgba(var(--fx-accent-rgb),.55),inset 0 0 18px rgba(var(--fx-accent-rgb),.18)}
+.achievement{
+  background:linear-gradient(145deg,rgba(255,255,255,.06),rgba(255,255,255,.015));
+  border:1px solid var(--fx-stroke);border-radius:16px;transition:transform .3s var(--fx-spring),border-color .3s;
+}
+.achievement:hover{transform:translateY(-3px);border-color:rgba(var(--fx-accent-rgb),.45)}
+.ach-progress{height:5px;background:linear-gradient(90deg,var(--fx-accent),var(--fx-violet),var(--fx-pink));box-shadow:0 0 12px var(--fx-accent)}
+
+/* ---------- Правильна панель: рахунок ---------- */
+#score{
+  padding:10px 26px;border-radius:999px;font-weight:600;letter-spacing:.01em;text-shadow:none;
+  background:var(--fx-glass);border:1px solid var(--fx-stroke);
+  backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+  box-shadow:0 8px 30px rgba(0,0,0,.45),0 0 28px rgba(var(--fx-accent-rgb),.22),inset 0 1px 0 rgba(255,255,255,.08);
+  transition:transform .15s var(--fx-spring);
+}
+#score.fx-bump{transform:scale(1.045)}
+
+/* ---------- ГОДИННИК ---------- */
+#clockWrapper{
+  --rx:0deg;--ry:0deg;
+  transform:perspective(1100px) rotateX(var(--rx)) rotateY(var(--ry));
+  transition:transform .35s var(--fx-ease);will-change:transform;
+}
+#clockWrapper.fx-tilting{transition:transform .08s linear}
+#clockWrapper::before{ /* ореол за годинником */
+  content:"";position:absolute;inset:-18%;z-index:-1;pointer-events:none;border-radius:50%;
+  background:radial-gradient(circle,rgba(var(--fx-accent-rgb),.38) 0%,rgba(var(--fx-accent-rgb),.12) 40%,transparent 68%);
+  filter:blur(18px);animation:fxHalo 4s ease-in-out infinite;
+}
+@keyframes fxHalo{0%,100%{opacity:.65;transform:scale(.96)}50%{opacity:1;transform:scale(1.06)}}
+#clockWrapper.fx-hit::before{animation:fxHaloHit .5s var(--fx-ease)}
+@keyframes fxHaloHit{0%{opacity:1;transform:scale(1.18)}100%{opacity:.7;transform:scale(1)}}
+
+#clickableClock{
+  border-width:5px;cursor:pointer;
+  background:
+    radial-gradient(circle at 32% 24%,rgba(255,255,255,.17),transparent 38%),
+    radial-gradient(circle at 50% 50%,rgba(var(--fx-accent-rgb),.10),rgba(3,7,18,.92) 72%),
+    #050914;
+  transition:filter .25s;
+}
+#clickableClock:hover{filter:brightness(1.12)}
+#clickableClock::before{ /* обертовий блик скла */
+  content:"";position:absolute;inset:0;border-radius:inherit;z-index:1;pointer-events:none;
+  background:conic-gradient(from 0deg,transparent 0 78%,rgba(255,255,255,.13) 90%,transparent 100%);
+  animation:fxSweep 7s linear infinite;
+}
+@keyframes fxSweep{to{transform:rotate(360deg)}}
+#clickableClock::after{ /* внутрішнє кільце */
+  content:"";position:absolute;inset:11%;border-radius:inherit;z-index:1;pointer-events:none;
+  border:1px solid rgba(255,255,255,.07);
+  box-shadow:inset 0 0 40px rgba(var(--fx-accent-rgb),.12),0 0 24px rgba(var(--fx-accent-rgb),.08);
+}
+.clock.diamond::before,.clock.diamond::after{border-radius:0}
+
+/* стрілки */
+#clickableClock .hand{border-radius:999px;filter:drop-shadow(0 4px 6px rgba(0,0,0,.6))}
+#clickableClock .hour{width:9px}
+#clickableClock .minute{width:6px}
+#clickableClock .second{
+  width:3px;background:linear-gradient(180deg,#ff7ab8,var(--fx-pink) 40%,#ff2d55);
+  box-shadow:0 0 14px var(--fx-pink),0 0 34px rgba(255,45,135,.6);
+}
+#clickableClock .second::after{ /* противага секундної */
+  content:"";position:absolute;top:100%;left:50%;width:7px;height:26px;margin-left:-3.5px;
+  border-radius:999px;background:inherit;box-shadow:inherit;
+}
+/* кольори стрілок для типового скіна («Темно-сині») — сучасний градієнт */
+body[data-hand-skin="darkblue"] #clickableClock .hour:not(.second),
+body[data-hand-skin="darkblue"] #clickableClock .minute:not(.second){
+  background:linear-gradient(180deg,#e0f2fe,#38bdf8 45%,#1d4ed8) !important;
+  box-shadow:0 0 16px rgba(56,189,248,.65),0 0 2px #fff inset !important;
+}
+@keyframes neonPulse{from{filter:brightness(1)}to{filter:brightness(1.5)}}
+#clickableClock .center-dot{
+  width:20px;height:20px;z-index:11 !important;
+  background:radial-gradient(circle at 35% 30%,#fff,var(--fx-pink) 55%,#7a0a3a);
+  border:2px solid rgba(255,255,255,.85);box-shadow:0 0 20px var(--fx-pink),0 3px 8px rgba(0,0,0,.6);
+}
+
+/* позначки */
+.clock-marks .mark{border-radius:99px}
+.clock-marks .mark-number{font-weight:600;font-size:30px;opacity:.95}
+
+/* прибираємо старі «топорні» спливаючі цифри — замість них canvas */
+#clockWrapper > div:not([id]):not([class]){display:none !important}
+
+/* хмарка приросту */
+#clickCloud{
+  border:1px solid var(--fx-stroke);border-radius:18px;
+  background:var(--fx-glass-strong);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
+  box-shadow:0 12px 34px rgba(0,0,0,.55),inset 0 1px 0 rgba(255,255,255,.07);
+}
+#clickGain{font-weight:700;background:linear-gradient(90deg,#ff7ab8,#ff2d87);-webkit-background-clip:text;background-clip:text;color:transparent;text-shadow:none}
+
+/* комбо */
+#comboBubble{
+  border:none;background:radial-gradient(circle at 35% 30%,rgba(255,255,255,.25),rgba(255,45,135,.35));
+  box-shadow:0 0 0 3px rgba(255,45,135,.7),0 0 40px rgba(255,45,135,.6),inset 0 0 24px rgba(255,255,255,.15);
+  transition:transform .4s var(--fx-spring);
+}
+#comboBubble.show{animation:fxComboPulse .9s ease-in-out infinite}
+@keyframes fxComboPulse{0%,100%{transform:scale(1) rotate(-3deg)}50%{transform:scale(1.08) rotate(3deg)}}
+#comboCount{text-shadow:0 0 20px #fff,0 0 30px var(--fx-pink)}
+
+/* ---------- Музика ---------- */
+.music-player button{
+  border:1px solid rgba(255,255,255,.14);box-shadow:0 8px 26px rgba(0,0,0,.4),inset 0 1px 0 rgba(255,255,255,.25);
+  transition:transform .35s var(--fx-spring),box-shadow .3s;
+}
+.now-playing{display:flex;gap:10px;align-items:center;justify-content:center}
+.now-playing::before{ /* еквалайзер */
+  content:"";width:22px;height:16px;flex:none;opacity:.35;
+  background:
+    linear-gradient(var(--fx-accent),var(--fx-accent)) 0 100%/4px 40% no-repeat,
+    linear-gradient(var(--fx-accent),var(--fx-accent)) 6px 100%/4px 70% no-repeat,
+    linear-gradient(var(--fx-accent),var(--fx-accent)) 12px 100%/4px 50% no-repeat,
+    linear-gradient(var(--fx-accent),var(--fx-accent)) 18px 100%/4px 85% no-repeat;
+}
+body.music-playing .now-playing::before{opacity:1;animation:fxEq .9s steps(1,end) infinite}
+@keyframes fxEq{
+  0%{background-size:4px 30%,4px 90%,4px 55%,4px 70%}
+  25%{background-size:4px 80%,4px 40%,4px 95%,4px 35%}
+  50%{background-size:4px 55%,4px 75%,4px 30%,4px 100%}
+  75%{background-size:4px 95%,4px 50%,4px 70%,4px 45%}
+  100%{background-size:4px 30%,4px 90%,4px 55%,4px 70%}
+}
+
+/* ---------- Сповіщення ---------- */
+.toast{
+  background:var(--fx-glass-strong);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);
+  border:1px solid var(--fx-stroke);border-left:4px solid #34d399;border-radius:18px;
+  box-shadow:0 16px 50px rgba(0,0,0,.65),0 0 30px rgba(52,211,153,.15);
+  animation:fxToastIn .6s var(--fx-spring),toastOut .6s 9.4s ease-in forwards;
+}
+@keyframes fxToastIn{from{transform:translateY(40px) scale(.9);opacity:0}to{transform:none;opacity:1}}
+
+/* ---------- Налаштування / кнопки ---------- */
+.save-btn,.export-btn,.import-btn,.reset-btn{border-radius:12px;box-shadow:0 6px 18px rgba(0,0,0,.4),inset 0 1px 0 rgba(255,255,255,.25);transition:transform .3s var(--fx-spring),filter .2s}
+.save-btn:hover,.export-btn:hover,.import-btn:hover,.reset-btn:hover{filter:brightness(1.15)}
+.reverb-btn{border-radius:16px;border:1px solid rgba(255,255,255,.2)}
+.prestige-progress-container{background:var(--fx-glass);border:1px solid var(--fx-stroke);border-radius:18px;backdrop-filter:blur(12px)}
+.progress-bar-bg{background:rgba(255,255,255,.08);box-shadow:inset 0 2px 6px rgba(0,0,0,.5)}
+.progress-bar-fill{box-shadow:0 0 14px currentColor;position:relative;overflow:hidden}
+.progress-bar-fill::after{content:"";position:absolute;inset:0;background:linear-gradient(100deg,transparent 30%,rgba(255,255,255,.4) 50%,transparent 70%);background-size:200% 100%;animation:fxBar 2.2s linear infinite}
+@keyframes fxBar{from{background-position:200% 0}to{background-position:-200% 0}}
+
+/* ---------- Ефекти кліку: плавніші версії ---------- */
+@keyframes clickRed{0%,100%{transform:scale(1)}40%{transform:scale(1.07);border-color:#ff3b5c;box-shadow:0 0 90px #ff3b5c,0 0 170px rgba(255,59,92,.7)}}
+@keyframes clickBlue{0%,100%{transform:scale(1)}40%{transform:scale(1.08);box-shadow:0 0 90px #38bdf8,0 0 170px rgba(56,189,248,.7)}}
+.click-effect-red,.click-effect-blue{animation-timing-function:var(--fx-ease) !important;animation-duration:.45s !important}
+
+/* ---------- Мобільна версія: легший рендер ---------- */
+body.mobile-version::before{animation:none}
+body.mobile-version #clickableClock::before{animation:none}
+body.mobile-version #clockWrapper{transform:none;will-change:auto}
+body.mobile-version .left-panel,body.mobile-version .top-tabs{backdrop-filter:blur(8px)}
+
+/* ---------- «Без анімацій» та системний reduce-motion ---------- */
+body.no-animations::before,body.no-animations #clickableClock::before,body.no-animations #clockWrapper::before{animation:none !important}
+body.no-animations #fxBg,body.no-animations #fxTop{display:none}
+body.no-animations #clockWrapper{transform:none}
+@media (prefers-reduced-motion:reduce){
+  body::before,#clickableClock::before,#clockWrapper::before,.upgrade-btn{animation:none !important}
+  #fxBg,#fxTop{display:none}
+  #clockWrapper{transform:none}
+}
+
+/* =====================================================================
+   ЛЕГКИЙ РЕЖИМ (body.fx-lite) — телефони та слабкі пристрої.
+   Вмикається з fx.js автоматично. Прибирає все, що дороге для GPU:
+   backdrop-filter, blur/drop-shadow фільтри, нескінченні анімації,
+   анімацію box-shadow.
+   ===================================================================== */
+body.fx-lite *{backdrop-filter:none !important;-webkit-backdrop-filter:none !important}
+
+/* без скла → щільніший фон панелей */
+body.fx-lite .left-panel,
+body.fx-lite .top-tabs,
+body.fx-lite #score,
+body.fx-lite #clickCloud,
+body.fx-lite .toast,
+body.fx-lite .prestige-progress-container{background:rgba(9,14,30,.94)}
+body.fx-lite .left-panel{box-shadow:0 8px 24px rgba(0,0,0,.5)}
+body.fx-lite .left-panel::before{display:none}
+body.fx-lite .top-tabs{box-shadow:0 6px 18px rgba(0,0,0,.5)}
+
+/* фон: статичний градієнт замість рухомих авор */
+body.fx-lite::before{
+  inset:0;animation:none;
+  background:
+    radial-gradient(60% 45% at 22% 18%,rgba(var(--fx-accent-rgb),.16),transparent 70%),
+    radial-gradient(50% 40% at 82% 88%,rgba(255,45,135,.10),transparent 70%),
+    #050914;
+}
+body.fx-lite::after{display:none}
+
+/* годинник: без блюру, без sweep, без drop-shadow */
+body.fx-lite #clockWrapper{transform:none;will-change:auto}
+body.fx-lite #clockWrapper::before{
+  filter:none;animation:none;inset:-8%;
+  background:radial-gradient(circle,rgba(var(--fx-accent-rgb),.26) 0%,transparent 66%);
+}
+body.fx-lite #clockWrapper.fx-hit::before{animation:none}
+body.fx-lite #clickableClock{will-change:transform;box-shadow:0 0 26px rgba(var(--fx-accent-rgb),.75) !important}
+body.fx-lite #clickableClock::before{display:none}
+body.fx-lite #clickableClock::after{box-shadow:none}
+body.fx-lite #clickableClock:hover{filter:none}
+body.fx-lite #clickableClock .hand{filter:none;will-change:transform}
+body.fx-lite #clickableClock .second{box-shadow:0 0 8px var(--fx-pink)}
+body.fx-lite #clickableClock .center-dot{box-shadow:0 0 8px var(--fx-pink)}
+body.fx-lite[data-hand-skin="darkblue"] #clickableClock .hour:not(.second),
+body.fx-lite[data-hand-skin="darkblue"] #clickableClock .minute:not(.second){box-shadow:none !important}
+body.fx-lite .clock-marks .mark,
+body.fx-lite .clock-marks .mark-number{box-shadow:none;text-shadow:none;transition:none}
+
+/* ефекти кліку: тільки transform (без анімації тіней) */
+@keyframes fxLitePulse{0%,100%{transform:scale(1)}40%{transform:scale(1.05)}}
+body.fx-lite .click-effect-red,
+body.fx-lite .click-effect-blue,
+body.fx-lite .click-effect-neon,
+body.fx-lite .click-effect-ripple{animation:fxLitePulse .22s ease-out !important}
+
+/* жодних нескінченних анімацій */
+body.fx-lite .editable-title,
+body.fx-lite #chooser h2{animation:none;filter:none}
+body.fx-lite #comboBubble.show{animation:none}
+body.fx-lite .upgrade-btn,
+body.fx-lite .upgrade-btn:not(:disabled):not(.hidden){animation:none;box-shadow:none}
+body.fx-lite .upgrade-btn::after,
+body.fx-lite .choose-btn::after,
+body.fx-lite .progress-bar-fill::after{display:none}
+body.fx-lite .upgrade-btn:hover:not(:disabled){box-shadow:none;transform:none}
+body.fx-lite .tab-page.active,
+body.fx-lite .top-tabs .tab.active{animation:none}
+body.fx-lite .top-tabs .tab.active{box-shadow:none}
+body.fx-lite .now-playing::before,
+body.fx-lite.music-playing .now-playing::before{animation:none}
+body.fx-lite .toast{animation:fxToastIn .3s ease-out,toastOut .6s 9.4s ease-in forwards;box-shadow:0 6px 18px rgba(0,0,0,.6)}
+body.fx-lite .skin.active,
+body.fx-lite .achievement:hover,
+body.fx-lite .skin:hover{box-shadow:none;transform:none}
+body.fx-lite .music-player button,
+body.fx-lite .choose-btn{box-shadow:none}
+body.fx-lite #score{box-shadow:none;transition:none}
+body.fx-lite #comboBubble{box-shadow:0 0 0 3px rgba(255,45,135,.7)}
+
+/* =====================================================================
+   Прибираємо синє виділення при тапі (мобільні) та виділення тексту/виду
+   ===================================================================== */
+html,body,button,.tab,.skin,.upgrade-btn,.choose-btn,#clockWrapper,#clickableClock{
+  -webkit-tap-highlight-color:transparent;
+}
+#clockWrapper,#clockWrapper *,.clock-marks,.clock-marks *{
+  -webkit-user-select:none;user-select:none;
+  -webkit-touch-callout:none;            /* без меню довгого натискання */
+  -webkit-user-drag:none;
+}
+#clickableClock{
+  touch-action:manipulation;             /* без затримки та зуму від подвійного тапу */
+  outline:none;
+}
+#clickableClock:focus{outline:none}
+#clickableClock:focus-visible{outline:2px solid rgba(var(--fx-accent-rgb),.7);outline-offset:6px} /* лише для клавіатури */
+button,.tab,.skin,.upgrade-btn{touch-action:manipulation}
