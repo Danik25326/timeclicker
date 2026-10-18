@@ -303,3 +303,12 @@ body.fx-lite .pl-n{background:rgba(28,30,46,.92)}
 .upgrade-btn.fx-bought[data-ic]::before{animation:fxPopIn .5s var(--fx-spring)}
 body.mobile-version .upgrade-btn[data-ic]{padding-left:50px !important;min-height:52px}
 body.mobile-version .upgrade-btn[data-ic]::before{left:8px;width:32px;height:32px;font-size:17px;border-radius:10px}
+
+/* ================= ромб: блик за годинниковою стрілкою + «скло» на телефоні ================= */
+body[data-shape="diamond"] #clickableClock::after{
+  display:block;position:absolute;inset:0;border:0;border-radius:0;box-shadow:none;z-index:1;pointer-events:none;
+  background:conic-gradient(from 0deg,transparent 0 78%,rgba(255,255,255,.13) 90%,transparent 100%);
+  animation:fxSweep 7s linear infinite;
+}
+body.fx-lite[data-shape="diamond"] #clickableClock::after{display:none}      /* на телефоні блик вимкнений (економія) */
+body.fx-lite[data-shape="diamond"] #clickableClock::before{display:block}    /* але «скло» ромба мусить бути (інакше він суцільний) */
