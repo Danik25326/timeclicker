@@ -1,4 +1,4 @@
-/* scenes.css v3 — сучасний вигляд «сцен» апгрейдів. Підключається ПІСЛЯ fx.css */
+/* scenes.css v4 — сучасний вигляд «сцен» апгрейдів. Підключається ПІСЛЯ fx.css */
 :root{--sc-glass:rgba(14,18,40,.78);--sc-line:rgba(255,255,255,.14)}
 
 /* ================= спільне ================= */
@@ -315,7 +315,10 @@ body.fx-lite[data-shape="diamond"] #clickableClock::before{display:block}    /* 
 
 
 /* ================= Discord: індикатор «друкує…» і ваші повідомлення ================= */
-.fx-typing{min-height:22px;padding:0 22px 8px;font-size:13px;color:#a5b4fc;font-style:italic}
+.fx-foot{display:flex;justify-content:space-between;align-items:center;gap:12px;min-height:26px;padding:0 22px 8px}
+.fx-typing{font-size:13px;color:#a5b4fc;font-style:italic;min-height:18px}
+.fx-quota{font-size:12px;color:#8ea0cc;white-space:nowrap;cursor:help}
+.fx-quota b{color:#c7d2fe}
 #discordMessages > div.fx-me{background:linear-gradient(135deg,rgba(99,102,241,.38),rgba(139,92,246,.26)) !important;border-color:rgba(165,180,252,.35) !important}
 
 /* ================= ромб: стрілки не виходять на рамку (пропорційно розміру годинника) ================= */
