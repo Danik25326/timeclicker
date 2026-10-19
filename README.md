@@ -2,12 +2,12 @@
 [![Live Demo](https://img.shields.io/badge/Play-Online-blue.svg)](https://danik25326.github.io/timeclicker/)
 [![GitHub Pages](https://img.shields.io/badge/Hosted-GitHub_Pages-purple.svg)](https://pages.github.com/)
 
-# Time Clicker Game ⏰🎮
+# Times Clicker Game ⏰🎮
 
 
 ## 🇺🇦 **Українська версія**
 
-### 🕹️ Гра Time Clicker
+### 🕹️ Гра Times Clicker
 Інтерактивна клікер-гра з вражаючими візуальними ефектами та фонк-музикою!
 
 ### ✨ Особливості
