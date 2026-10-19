@@ -1,4 +1,4 @@
-/* scenes.js v3 — сучасні версії «сцен» апгрейдів (та сама ідея, новий вигляд).
+/* scenes.js v4 — сучасні версії «сцен» апгрейдів (та сама ідея, новий вигляд).
    Підключається ПІСЛЯ script.js і fx.js. Підміняє функції show…() і використовує
    ті самі глобальні змінні та hide…() гри, тож логіка/нагороди не змінюються. */
 (function () {
@@ -291,22 +291,30 @@
   /* =====================================================================
      DISCORD: живий чат на Groq (модель openai/gpt-oss-120b)
        • #барабулька — розмова з пам'яттю (поки апгрейд відкритий; при виході пам'ять стирається)
-       • інші канали — ШІ пише репліки вигаданих користувачів за темою каналу:
-         хтось ставить питання, інший відповідає, реагують і на ваші повідомлення
-       • економія ліміту (30 запитів/хв, 1000/день, 8000 токенів/хв, 200K/день на ВЕСЬ ключ):
-         репліки генеруються пачками, є ліміти на браузер, а коли ліміт вичерпано —
-         запасний режим із локальними репліками (чат не «вмирає»).
+       • інші канали — ШІ пише репліки вигаданих користувачів за темою каналу
+       • БЮДЖЕТ ТОКЕНІВ: ліміт Groq — 8000 токенів/хв і 200K/день на ВЕСЬ ключ.
+         45% хвилинного ліміту — тільки Барабульці, 45% — тільки фоновому чату, 10% запас.
+         Чат не може «позичити» токени в Барабульки, тож розмова з нею не страждає.
+       • Чат неспішний (як у людей): ~3 репліки раз на 45–75 с, між репліками 4–9 с.
+       • Коли бюджет/ліміт вичерпано — запасні локальні репліки, чат не «вмирає».
      ===================================================================== */
   (function () {
     var KEY = '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';   // ← ключ Groq (вшитий свідомо)
     var MODEL = 'openai/gpt-oss-120b';
     var API = 'https://api.groq.com/openai/v1/chat/completions';
     var LIM = {
-      perMinute: 10,          // усі запити з одного браузера
-      bgPerMinute: 2,         // фонові «пачки» чату
-      perDay: 150,            // усього на браузер за добу
-      sessionBg: 30,          // фонових пачок за одне відкриття Discord
-      bgEvery: [50000, 80000] // пауза між фоновими пачками (мс)
+      tpm: 8000,                                   // ліміт Groq: токенів на хвилину (на весь ключ)
+      share: { chat: 0.45, ai: 0.45 },             // частки хвилинного ліміту (решта 10% — запас)
+      dayTokens: { chat: 30000, ai: 70000 },       // макс. токенів за добу НА ОДИН БРАУЗЕР (у Groq 200K на весь ключ)
+      bgEvery: [45000, 75000],                     // пауза між фоновими «пачками» чату
+      bgEveryAI: [90000, 140000],                  // ... коли ви говорите з Барабулькою (чат тихіший)
+      localEvery: [60000, 90000],                  // пауза між запасними локальними репліками
+      gap: [4000, 9000],                           // пауза між репліками «живих» користувачів
+      replyGap: [3000, 6000],                      // ... коли вони відповідають вам
+      seedMin: 40000,                              // «стартова» пачка нового каналу — не частіше ніж раз на 40 с
+      replyMin: 10000,                             // ШІ-відповідь на ваше повідомлення — не частіше ніж раз на 10 с
+      aiHistMsgs: 10, aiHistChars: 2600,           // скільки пам'яті передаємо Барабульці
+      aiMax: 450, chatMax: 420                     // макс. токенів відповіді
     };
     if (typeof showDiscord !== 'function') return;
 
@@ -330,22 +338,39 @@
       'Відповідай українською, живо, зазвичай 1–4 речення; можеш пояснювати, жартувати, допомагати з іграми, технологіями, навчанням і життям. ' +
       'Пам\u2019ятай, про що ви говорили в цій розмові, і враховуй це. Не вигадуй фактів: якщо не знаєш — чесно скажи.';
 
-    var alive = false, extras = true, tokKey = 'max_completion_tokens', coolUntil = 0;
-    var log = [], bgLog = [], sess = { bg: 0 }, convo = [], hist = {}, seeded = {}, busy = {}, nextBg = 0, lastCh = [], typingEl = null;
+    var alive = false, extras = true, tokKey = 'max_completion_tokens', coolUntil = 0, estChat = 800;
+    var spent = { chat: [], ai: [] }, convo = [], hist = {}, seeded = {}, busy = {}, nextBg = 0, lastCh = [], lastSeed = 0, lastReply = 0, foot = null;
     var day = (function () {
-      var d = new Date().toISOString().slice(0, 10), o = { d: d, n: 0 };
-      try { var j = JSON.parse(localStorage.getItem('fxDiscordDay') || 'null'); if (j && j.d === d) o = j; } catch (e) {}
+      var d = new Date().toISOString().slice(0, 10), o = { d: d, n: 0, tok: { chat: 0, ai: 0 } };
+      try { var j = JSON.parse(localStorage.getItem('fxDiscordDay') || 'null'); if (j && j.d === d && j.tok) o = j; } catch (e) {}
       return o;
     })();
-    function bump() { day.n++; try { localStorage.setItem('fxDiscordDay', JSON.stringify(day)); } catch (e) {} }
+    function saveDay() { try { localStorage.setItem('fxDiscordDay', JSON.stringify(day)); } catch (e) {} }
     function now() { return Date.now(); }
     function sleep(ms) { return new Promise(function (r) { setTimeout(r, ms); }); }
     function rnd(a, b) { return a + Math.random() * (b - a); }
-    function allowed(bg) {
-      var t = now(); if (t < coolUntil || day.n >= LIM.perDay) return false;
-      log = log.filter(function (x) { return t - x < 60000; }); if (log.length >= LIM.perMinute) return false;
-      if (bg) { bgLog = bgLog.filter(function (x) { return t - x < 60000; }); if (bgLog.length >= LIM.bgPerMinute || sess.bg >= LIM.sessionBg) return false; }
-      return true;
+    function R(a) { return rnd(a[0], a[1]); }
+
+    /* ---------- токенний бюджет ---------- */
+    function used(k) { var t = now(); spent[k] = spent[k].filter(function (x) { return t - x.t < 60000; }); return spent[k].reduce(function (a, x) { return a + x.n; }, 0); }
+    function cap(k) { return LIM.tpm * LIM.share[k]; }
+    function dayLeft(k) { return LIM.dayTokens[k] - day.tok[k]; }
+    function canSpend(k, est) { return now() >= coolUntil && used(k) + est <= cap(k) && dayLeft(k) >= est; }
+    function record(k, n) { spent[k].push({ t: now(), n: n }); day.tok[k] += n; day.n++; saveDay(); }
+    function waitSec(k, est) {                       // скільки секунд чекати, поки звільниться місце в хвилинному бюджеті
+      var t = now(), need = used(k) + est - cap(k), acc = 0, arr = spent[k].slice().sort(function (a, b) { return a.t - b.t; });
+      for (var i = 0; i < arr.length; i++) { acc += arr[i].n; if (acc >= need) return Math.max(1, Math.ceil((arr[i].t + 60000 - t) / 1000)); }
+      return 5;
+    }
+    async function waitBudget(k, est, maxMs) {
+      var t0 = now();
+      while (true) {
+        if (dayLeft(k) < est) return { ok: false, reason: 'day' };
+        if (canSpend(k, est)) return { ok: true };
+        var w = Math.max(waitSec(k, est) * 1000, coolUntil - now());
+        if (now() - t0 + Math.min(w, 2000) > maxMs) return { ok: false, reason: 'wait', sec: Math.ceil(w / 1000) };
+        await sleep(Math.min(w, 2000)); if (!alive) return { ok: false, reason: 'closed' };
+      }
     }
 
     /* ---------- запит до Groq ---------- */
@@ -353,7 +378,7 @@
       o = o || {};
       var body = { model: MODEL, messages: messages, temperature: o.temp == null ? 0.9 : o.temp };
       if (extras) { body.reasoning_effort = 'low'; body.include_reasoning = false; }
-      body[tokKey] = o.max || 500;
+      body[tokKey] = o.max || 400;
       for (var attempt = 0; attempt < 3; attempt++) {
         var ac = typeof AbortController !== 'undefined' ? new AbortController() : null, tm = setTimeout(function () { if (ac) ac.abort(); }, 22000);
         try {
@@ -364,13 +389,16 @@
           if (r.status === 400) {
             var tx = await r.text();
             if (extras && /reasoning/i.test(tx)) { extras = false; delete body.reasoning_effort; delete body.include_reasoning; continue; }
-            if (tokKey === 'max_completion_tokens' && /max_completion_tokens/i.test(tx)) { delete body.max_completion_tokens; tokKey = 'max_tokens'; body.max_tokens = o.max || 500; continue; }
+            if (tokKey === 'max_completion_tokens' && /max_completion_tokens/i.test(tx)) { delete body.max_completion_tokens; tokKey = 'max_tokens'; body.max_tokens = o.max || 400; continue; }
             return { error: 'bad', message: tx.slice(0, 120) };
           }
           if (!r.ok) { if (r.status >= 500 && attempt < 2) { await sleep(1200); continue; } return { error: 'http', status: r.status }; }
-          var j = await r.json(); log.push(now()); bump();
+          var j = await r.json();
+          var tokUsed = (j.usage && j.usage.total_tokens) || o.est || 800;
+          record(o.kind || 'chat', tokUsed);
+          if (o.kind === 'chat') estChat = Math.round(estChat * 0.6 + tokUsed * 0.4);
           var rem = parseInt(r.headers.get('x-ratelimit-remaining-tokens'), 10);
-          if (rem >= 0 && rem < 1200) coolUntil = Math.max(coolUntil, now() + 15000);       // бережемо токени/хв
+          if (rem >= 0 && rem < 800) coolUntil = Math.max(coolUntil, now() + 12000);
           var m = j.choices && j.choices[0] && j.choices[0].message;
           return { text: String((m && m.content) || '').trim() };
         } catch (e) {
@@ -382,11 +410,19 @@
       return { error: 'net' };
     }
 
-    /* ---------- Барабулька (розмова з пам'яттю на час сесії) ---------- */
+    /* ---------- Барабулька (розмова з пам'яттю на час сесії; бюджет — окремий від чату) ---------- */
+    function convoChars() { return convo.reduce(function (a, m) { return a + m.content.length; }, 0); }
     window.generateAIResponseDirect = async function (u) {
       convo.push({ role: 'user', content: u });
-      while (convo.length > 16 || convo.reduce(function (a, m) { return a + m.content.length; }, 0) > 4200) convo.shift();
-      var r = await groq([{ role: 'system', content: BARABULKA }].concat(convo), { max: 600, temp: 0.8 });
+      while (convo.length > LIM.aiHistMsgs || (convoChars() > LIM.aiHistChars && convo.length > 1)) convo.shift();
+      var est = Math.ceil((BARABULKA.length + convoChars()) / 3.2) + LIM.aiMax;
+      var w = await waitBudget('ai', est, 25000);
+      if (!w.ok) {
+        convo.pop();
+        return { error: 'api_fail', message: w.reason === 'day' ? 'На сьогодні ліміт розмов з Барабулькою вичерпано — продовжимо завтра' :
+                 w.reason === 'closed' ? '' : 'Ліміт токенів на хвилину — спробуй ще раз за ~' + w.sec + ' с' };
+      }
+      var r = await groq([{ role: 'system', content: BARABULKA }].concat(convo), { kind: 'ai', max: LIM.aiMax, temp: 0.8, est: est });
       if (r.error || !r.text) {
         convo.pop();
         var msg = r.error === 'rate' ? 'Забагато запитів — спробуй за ' + r.wait + ' с' :
@@ -415,19 +451,19 @@
       var last = (hist[ch] || []).slice(-1)[0], act = pickPers(4, last && BYNAME[last.u] ? last.u : null);
       var sys = 'Ти симулюєш живий український Discord-чат (розмовна мова, трохи сленгу й емодзі, без образ і лінків). Канал: ' + TOPIC[ch] + '.\n' +
         'Учасники (вигадані): ' + act.map(function (p) { return p.n + ' — ' + p.d; }).join('; ') + '.\n' +
-        'Напиши ' + (opt.n || 4) + ' наступні репліки переписки: різні учасники, по 1–2 короткі речення, природно. ' +
+        'Напиши ' + (opt.n || 3) + ' наступні репліки переписки: різні учасники, по 1–2 короткі речення, природно. ' +
         'Хтось ставить питання — інший відповідає; можна жартувати, сперечатися, ділитись історією. Не повторюй сказане раніше.' +
-        (opt.user ? ' Користувач «Ви» щойно написав у чаті — відреагуй саме на це (звертайся до нього), потім можна додати ще 1 репліку між учасниками.' : '') +
+        (opt.user ? ' Користувач «Ви» щойно написав у чаті — відреагуй саме на це (звертайся до нього).' : '') +
         '\nВідповідь — ЛИШЕ JSON-масив: [{"u":"Ім\u2019я","m":"текст"}]. Імена тільки зі списку учасників.';
-      var h = (hist[ch] || []).slice(-10);
+      var h = (hist[ch] || []).slice(-6);
       return [{ role: 'system', content: sys }, { role: 'user', content: h.length ? 'Останні повідомлення:\n' + plain(h) : 'Чат щойно відкрили — почни природну розмову за темою каналу.' }];
     }
     function parse(txt) {
       var m = String(txt).match(/\[[\s\S]*\]/); if (!m) return [];
       var a; try { a = JSON.parse(m[0]); } catch (e) { return []; }
       if (!Array.isArray(a)) return [];
-      return a.filter(function (x) { return x && BYNAME[x.u] && typeof x.m === 'string' && x.m.trim(); }).slice(0, 6)
-              .map(function (x) { return { u: x.u, m: x.m.trim().slice(0, 280) }; });
+      return a.filter(function (x) { return x && BYNAME[x.u] && typeof x.m === 'string' && x.m.trim(); }).slice(0, 4)
+              .map(function (x) { return { u: x.u, m: x.m.trim().slice(0, 260) }; });
     }
     function localLines(ch, userTxt) {
       var ps = pickPers(2);
@@ -439,46 +475,62 @@
       var pr = (LOCAL[ch] || LOCAL.general)[(Math.random() * 3) | 0];
       return [{ u: ps[0].n, m: pr[0] }, { u: ps[1].n, m: pr[1] }];
     }
-    function setTyping(ch, who) {
-      var m = document.getElementById('discordMessages'); if (!m) return;
-      if (!typingEl || !typingEl.isConnected) {
-        typingEl = document.createElement('div'); typingEl.className = 'fx-typing'; m.parentNode.insertBefore(typingEl, m.nextSibling);
+    function ensureFoot() {
+      var m = document.getElementById('discordMessages'); if (!m) return null;
+      if (!foot || !foot.isConnected) {
+        foot = document.createElement('div'); foot.className = 'fx-foot';
+        foot.innerHTML = '<span class="fx-typing"></span><span class="fx-quota"></span>';
+        m.parentNode.insertBefore(foot, m.nextSibling);
       }
-      typingEl.textContent = (who && currentDiscordChannel === ch) ? '✍️ ' + who + ' друкує…' : '';
+      return foot;
+    }
+    function setTyping(ch, who) {
+      var f = ensureFoot(); if (!f) return;
+      f.querySelector('.fx-typing').textContent = (who && currentDiscordChannel === ch) ? '✍️ ' + who + ' друкує…' : '';
+    }
+    function pct(k) { return Math.min(100, Math.round(used(k) / cap(k) * 100)); }
+    function renderQuota() {
+      var f = ensureFoot(); if (!f) return;
+      var q = f.querySelector('.fx-quota');
+      q.innerHTML = '⚡ Барабулька <b>' + pct('ai') + '%</b> · чат <b>' + pct('chat') + '%</b>';
+      q.title = 'Токени за хвилину: ' + used('ai') + '/' + cap('ai') + ' (Барабулька), ' + used('chat') + '/' + cap('chat') + ' (чат).\n' +
+        'Сьогодні в цьому браузері: Барабулька ' + day.tok.ai + '/' + LIM.dayTokens.ai + ', чат ' + day.tok.chat + '/' + LIM.dayTokens.chat + ' токенів.' +
+        (now() < coolUntil ? '\nПауза через ліміт Groq: ' + Math.ceil((coolUntil - now()) / 1000) + ' с' : '');
     }
     function push(ch, u, m, color, mine) {
       (hist[ch] = hist[ch] || []).push({ u: u, m: m }); if (hist[ch].length > 30) hist[ch].shift();
       addMessageToChannel(ch, esc(u), esc(m), color);
       if (mine) { var box = document.getElementById('discordMessages'); if (box && box.lastChild && currentDiscordChannel === ch) box.lastChild.classList.add('fx-me'); }
     }
-    async function play(ch, lines) {
+    async function play(ch, lines, gap, reply) {
       for (var i = 0; i < lines.length; i++) {
         if (!alive) return;
         var L = lines[i]; setTyping(ch, L.u);
-        await sleep(Math.max(700, Math.min(2600, 450 + L.m.length * 38)));
+        await sleep(Math.max(900, Math.min(2800, 600 + L.m.length * 30)) + (i === 0 && reply ? 0 : 0));
         if (!alive) return; setTyping(ch, '');
-        push(ch, L.u, L.m, BYNAME[L.u].c); await sleep(rnd(300, 800));
+        push(ch, L.u, L.m, BYNAME[L.u].c);
+        if (i < lines.length - 1) await sleep(R(gap));            // неспішний темп, як у людей
       }
     }
     async function batch(ch, o) {
       o = o || {};
-      while (busy[ch]) { await sleep(300); if (!alive) return; }
+      while (busy[ch]) { await sleep(400); if (!alive) return; }
       busy[ch] = true;
       try {
         var lines = [];
-        if (allowed(!!o.bg)) {
-          if (o.bg) { bgLog.push(now()); sess.bg++; }
-          var r = await groq(prompt(ch, o), { max: 560, temp: 0.95 });
+        if (!o.noAI && canSpend('chat', Math.round(estChat * 1.15))) {
+          var r = await groq(prompt(ch, o), { kind: 'chat', max: LIM.chatMax, temp: 0.95, est: estChat });
           if (r.text) lines = parse(r.text);
         }
         if (!lines.length) lines = localLines(ch, o.userTxt);
         if (!alive) return;
-        await play(ch, lines);
+        await play(ch, lines, o.user ? LIM.replyGap : LIM.gap, !!o.user);
       } catch (e) {} finally { busy[ch] = false; setTyping(ch, ''); }
     }
     function userSay(ch, txt) {
       push(ch, tt('Ви'), txt, '#8EA2FF', true);
-      batch(ch, { user: true, userTxt: txt, n: 3 });
+      var ai = now() - lastReply >= LIM.replyMin; lastReply = now();    // не частіше ніж раз на 10 с «платна» відповідь
+      batch(ch, { user: true, userTxt: txt, n: 3, noAI: !ai });
     }
     async function askBarabulka(txt) {
       var inp = document.querySelector('#discordOverlay input[type="text"]');
@@ -488,7 +540,7 @@
       var ans = await window.generateAIResponseDirect(txt);
       setTyping('ai', '');
       if (!alive) return;
-      if (ans && ans.error) addMessageToChannel('ai', esc(tt('Барабулька')), esc(tt('Помилка: ') + ans.message), '#FF4444');
+      if (ans && ans.error) { if (ans.message) addMessageToChannel('ai', esc(tt('Барабулька')), esc(tt('Помилка: ') + ans.message), '#FF4444'); }
       else addMessageToChannel('ai', esc(tt('Барабулька')), esc(ans), '#00FFAA');
       if (inp) { inp.disabled = false; try { inp.focus(); } catch (e) {} }
     }
@@ -496,17 +548,18 @@
     /* ---------- фонова активність (замість шаблонних фраз) ---------- */
     window.startDiscordActivity = function () {
       try { if (discordActivityInterval) clearInterval(discordActivityInterval); } catch (e) {}
-      nextBg = now() + 7000;
+      nextBg = now() + 20000;
       try {
         discordActivityInterval = setInterval(function () {
+          renderQuota();
           if (!alive || !discordOverlay || document.hidden || now() < nextBg) return;
           var ch;
           for (var k = 0; k < 6; k++) { ch = TEXT[(Math.random() * TEXT.length) | 0]; if (lastCh.indexOf(ch) < 0) break; }
           lastCh.push(ch); if (lastCh.length > 2) lastCh.shift();
-          var ai = allowed(true);
-          nextBg = now() + (ai ? rnd(LIM.bgEvery[0], LIM.bgEvery[1]) : rnd(20000, 35000));
-          batch(ch, { bg: true, n: 4 });
-        }, 3000);
+          var ai = canSpend('chat', Math.round(estChat * 1.15));
+          nextBg = now() + (!ai ? R(LIM.localEvery) : (currentDiscordChannel === 'ai' ? R(LIM.bgEveryAI) : R(LIM.bgEvery)));
+          batch(ch, { bg: true, n: 3, noAI: !ai });
+        }, 1000);
       } catch (e) {}
     };
 
@@ -524,7 +577,7 @@
     window.showDiscord = function () {
       if (discordOverlay) return;
       try { userGroqApiKey = KEY; } catch (e) {}
-      alive = true; convo = []; hist = {}; seeded = {}; busy = {}; sess.bg = 0; lastCh = []; typingEl = null;
+      alive = true; convo = []; hist = {}; seeded = {}; busy = {}; lastCh = []; foot = null; lastSeed = 0; lastReply = 0;
       var r = oShow.apply(this, arguments);
       try {
         var gm = (discordChannelMessages.general || []);
@@ -536,6 +589,7 @@
           inp.value = '';
           if (ch === 'ai') askBarabulka(txt); else userSay(ch, txt);
         };
+        renderQuota();
       } catch (e) {}
       return r;
     };
@@ -549,15 +603,21 @@
           if (box) { box.innerHTML = ''; (discordChannelMessages.reality || []).forEach(function (m) { renderMsg(box, m); }); box.scrollTop = box.scrollHeight; }
           if (inp) { inp.disabled = false; inp.placeholder = tt('Напишіть повідомлення...'); }
         }
-        if (TEXT.indexOf(cid) > -1 && !seeded[cid]) { seeded[cid] = true; setTimeout(function () { if (alive) batch(cid, { n: 4 }); }, 400); }
+        if (TEXT.indexOf(cid) > -1 && !seeded[cid]) {
+          seeded[cid] = true;
+          var cheap = now() - lastSeed < LIM.seedMin; lastSeed = now();    // не частіше ніж раз на 40 с «платна» стартова пачка
+          setTimeout(function () { if (alive) batch(cid, { n: 3, noAI: cheap }); }, 600);
+        }
+        renderQuota();
       } catch (e) {}
       return r;
     };
     window.hideDiscord = function () {
       alive = false; convo = []; hist = {}; seeded = {}; busy = {};        // сесія стирається — Барабулька «забуває» розмову
-      try { if (typingEl) typingEl.remove(); } catch (e) {} typingEl = null;
+      try { if (foot) foot.remove(); } catch (e) {} foot = null;
       return oHide.apply(this, arguments);
     };
+    window.__fxDc = { LIM: LIM, day: day, used: used, cap: cap, canSpend: canSpend, state: function () { return { estChat: estChat, coolUntil: coolUntil, spent: spent }; } };
   })();
 
   /* кнопки/хоткеї: Esc закриває сцену */
