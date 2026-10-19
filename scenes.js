@@ -1,4 +1,4 @@
-/* scenes.js v2 — сучасні версії «сцен» апгрейдів (та сама ідея, новий вигляд).
+/* scenes.js v3 — сучасні версії «сцен» апгрейдів (та сама ідея, новий вигляд).
    Підключається ПІСЛЯ script.js і fx.js. Підміняє функції show…() і використовує
    ті самі глобальні змінні та hide…() гри, тож логіка/нагороди не змінюються. */
 (function () {
@@ -284,6 +284,279 @@
         }
       } catch (e) {}
       return r;
+    };
+  })();
+
+
+  /* =====================================================================
+     DISCORD: живий чат на Groq (модель openai/gpt-oss-120b)
+       • #барабулька — розмова з пам'яттю (поки апгрейд відкритий; при виході пам'ять стирається)
+       • інші канали — ШІ пише репліки вигаданих користувачів за темою каналу:
+         хтось ставить питання, інший відповідає, реагують і на ваші повідомлення
+       • економія ліміту (30 запитів/хв, 1000/день, 8000 токенів/хв, 200K/день на ВЕСЬ ключ):
+         репліки генеруються пачками, є ліміти на браузер, а коли ліміт вичерпано —
+         запасний режим із локальними репліками (чат не «вмирає»).
+     ===================================================================== */
+  (function () {
+    var KEY = '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';   // ← ключ Groq (вшитий свідомо)
+    var MODEL = 'openai/gpt-oss-120b';
+    var API = 'https://api.groq.com/openai/v1/chat/completions';
+    var LIM = {
+      perMinute: 10,          // усі запити з одного браузера
+      bgPerMinute: 2,         // фонові «пачки» чату
+      perDay: 150,            // усього на браузер за добу
+      sessionBg: 30,          // фонових пачок за одне відкриття Discord
+      bgEvery: [50000, 80000] // пауза між фоновими пачками (мс)
+    };
+    if (typeof showDiscord !== 'function') return;
+
+    var PERS = [
+      { n: 'GamerGirl',   c: '#EB459E', d: 'енергійна геймерка, любить інді й шутери, багато жартує' },
+      { n: 'StreamerBoy', c: '#FEE75C', d: 'стрімер, балакучий, любить розповідати історії зі стрімів' },
+      { n: 'ProPlayer',   c: '#57F287', d: 'досвідчений гравець, дає чіткі поради, трохи зверхній, але добрий' },
+      { n: 'NoobMaster',  c: '#ED4245', d: 'новачок, ставить багато питань, смішно помиляється' },
+      { n: 'TechGuru',    c: '#00B0F4', d: 'технар: залізо, код, гаджети, ШІ' },
+      { n: 'NightOwl',    c: '#B388FF', d: 'нічна пташка, філософствує, любить музику й дивні факти' }
+    ];
+    var BYNAME = {}; PERS.forEach(function (p) { BYNAME[p.n] = p; });
+    var TOPIC = {
+      general: 'загальна балачка: настрій, новини дня, музика, меми, плани на вихідні, їжа, а ще гра Times Clicker (клікер про час) та її апгрейди',
+      games: 'відеоігри: новинки, поради, боси, інді, кооператив, мобільні ігри, кіберспорт',
+      tech: 'технології: залізо, смартфони, програмування, штучний інтелект, оптимізація, ОС, гаджети',
+      reality: 'реальне життя: навчання, робота, час і тайм-менеджмент, звички, подорожі, цікаві історії'
+    };
+    var TEXT = ['general', 'games', 'tech', 'reality'];
+    var BARABULKA = 'Ти — Барабулька, дружній жартівливий український ШІ-помічник у Discord-чаті гри Times Clicker (клікер про час). ' +
+      'Відповідай українською, живо, зазвичай 1–4 речення; можеш пояснювати, жартувати, допомагати з іграми, технологіями, навчанням і життям. ' +
+      'Пам\u2019ятай, про що ви говорили в цій розмові, і враховуй це. Не вигадуй фактів: якщо не знаєш — чесно скажи.';
+
+    var alive = false, extras = true, tokKey = 'max_completion_tokens', coolUntil = 0;
+    var log = [], bgLog = [], sess = { bg: 0 }, convo = [], hist = {}, seeded = {}, busy = {}, nextBg = 0, lastCh = [], typingEl = null;
+    var day = (function () {
+      var d = new Date().toISOString().slice(0, 10), o = { d: d, n: 0 };
+      try { var j = JSON.parse(localStorage.getItem('fxDiscordDay') || 'null'); if (j && j.d === d) o = j; } catch (e) {}
+      return o;
+    })();
+    function bump() { day.n++; try { localStorage.setItem('fxDiscordDay', JSON.stringify(day)); } catch (e) {} }
+    function now() { return Date.now(); }
+    function sleep(ms) { return new Promise(function (r) { setTimeout(r, ms); }); }
+    function rnd(a, b) { return a + Math.random() * (b - a); }
+    function allowed(bg) {
+      var t = now(); if (t < coolUntil || day.n >= LIM.perDay) return false;
+      log = log.filter(function (x) { return t - x < 60000; }); if (log.length >= LIM.perMinute) return false;
+      if (bg) { bgLog = bgLog.filter(function (x) { return t - x < 60000; }); if (bgLog.length >= LIM.bgPerMinute || sess.bg >= LIM.sessionBg) return false; }
+      return true;
+    }
+
+    /* ---------- запит до Groq ---------- */
+    async function groq(messages, o) {
+      o = o || {};
+      var body = { model: MODEL, messages: messages, temperature: o.temp == null ? 0.9 : o.temp };
+      if (extras) { body.reasoning_effort = 'low'; body.include_reasoning = false; }
+      body[tokKey] = o.max || 500;
+      for (var attempt = 0; attempt < 3; attempt++) {
+        var ac = typeof AbortController !== 'undefined' ? new AbortController() : null, tm = setTimeout(function () { if (ac) ac.abort(); }, 22000);
+        try {
+          var r = await fetch(API, { method: 'POST', headers: { 'Authorization': 'Bearer ' + KEY, 'Content-Type': 'application/json' }, body: JSON.stringify(body), signal: ac ? ac.signal : undefined });
+          clearTimeout(tm);
+          if (r.status === 429) { var ra = parseFloat(r.headers.get('retry-after')) || 30; coolUntil = now() + Math.min(ra, 120) * 1000; return { error: 'rate', wait: Math.ceil(ra) }; }
+          if (r.status === 401 || r.status === 403) return { error: 'auth' };
+          if (r.status === 400) {
+            var tx = await r.text();
+            if (extras && /reasoning/i.test(tx)) { extras = false; delete body.reasoning_effort; delete body.include_reasoning; continue; }
+            if (tokKey === 'max_completion_tokens' && /max_completion_tokens/i.test(tx)) { delete body.max_completion_tokens; tokKey = 'max_tokens'; body.max_tokens = o.max || 500; continue; }
+            return { error: 'bad', message: tx.slice(0, 120) };
+          }
+          if (!r.ok) { if (r.status >= 500 && attempt < 2) { await sleep(1200); continue; } return { error: 'http', status: r.status }; }
+          var j = await r.json(); log.push(now()); bump();
+          var rem = parseInt(r.headers.get('x-ratelimit-remaining-tokens'), 10);
+          if (rem >= 0 && rem < 1200) coolUntil = Math.max(coolUntil, now() + 15000);       // бережемо токени/хв
+          var m = j.choices && j.choices[0] && j.choices[0].message;
+          return { text: String((m && m.content) || '').trim() };
+        } catch (e) {
+          clearTimeout(tm);
+          if (attempt < 2) { await sleep(1000 * (attempt + 1)); continue; }
+          return { error: 'net' };
+        }
+      }
+      return { error: 'net' };
+    }
+
+    /* ---------- Барабулька (розмова з пам'яттю на час сесії) ---------- */
+    window.generateAIResponseDirect = async function (u) {
+      convo.push({ role: 'user', content: u });
+      while (convo.length > 16 || convo.reduce(function (a, m) { return a + m.content.length; }, 0) > 4200) convo.shift();
+      var r = await groq([{ role: 'system', content: BARABULKA }].concat(convo), { max: 600, temp: 0.8 });
+      if (r.error || !r.text) {
+        convo.pop();
+        var msg = r.error === 'rate' ? 'Забагато запитів — спробуй за ' + r.wait + ' с' :
+                  r.error === 'auth' ? 'Ключ Groq не приймається' : r.error === 'http' ? 'Сервер відповів ' + r.status :
+                  r.error === 'net' ? 'Немає зв\u2019язку, спробуй ще раз' : 'Спробуйте ще раз';
+        return { error: 'api_fail', message: msg };
+      }
+      convo.push({ role: 'assistant', content: r.text });
+      return r.text;
+    };
+
+    /* ---------- «живий» чат у тематичних каналах ---------- */
+    var LOCAL = {
+      general: [['Хто що слухає сьогодні?', 'Зараз крутиться один плейлист на повторі 🎧'], ['Як у вас день?', 'Нормально, але час летить як шалений 😅'], ['Коли вихідні вже?', 'Ще далеко, тримаймось ☕']],
+      games: [['Як пройти останнього боса?', 'Не лізь у ближній бій, бий здалеку.'], ['Є що пограти вечором?', 'Спробуй якусь інді, там часто дуже круті ідеї.'], ['Шукаю напарника в коопі', 'О, я в ділі, пиши в особисті!']],
+      tech: [['Який ПК зараз брати?', 'Дивись на відеокарту й оперативку, решта — вторинне.'], ['Чому лагає на телефоні?', 'Закрий фонові вкладки й вимкни зайві анімації.'], ['Хтось пробував локальні ШІ-моделі?', 'Так, на хорошій відеокарті цілком реально.']],
+      reality: [['Як ви плануєте день?', 'Я розбиваю на маленькі кроки, так легше починати.'], ['Як перестати відкладати справи?', 'Пообіцяй собі лише 5 хвилин — далі втягується.'], ['Куди поїхати відпочити?', 'У гори! Тиша і повітря, краще за будь-який екран.']]
+    };
+    function pickPers(n, must) {
+      var a = PERS.slice().sort(function () { return Math.random() - .5; });
+      if (must) { a = a.filter(function (p) { return p.n !== must; }); a.unshift(BYNAME[must]); }
+      return a.slice(0, n);
+    }
+    function plain(h) { return h.map(function (x) { return x.u + ': ' + x.m; }).join('\n'); }
+    function prompt(ch, opt) {
+      var last = (hist[ch] || []).slice(-1)[0], act = pickPers(4, last && BYNAME[last.u] ? last.u : null);
+      var sys = 'Ти симулюєш живий український Discord-чат (розмовна мова, трохи сленгу й емодзі, без образ і лінків). Канал: ' + TOPIC[ch] + '.\n' +
+        'Учасники (вигадані): ' + act.map(function (p) { return p.n + ' — ' + p.d; }).join('; ') + '.\n' +
+        'Напиши ' + (opt.n || 4) + ' наступні репліки переписки: різні учасники, по 1–2 короткі речення, природно. ' +
+        'Хтось ставить питання — інший відповідає; можна жартувати, сперечатися, ділитись історією. Не повторюй сказане раніше.' +
+        (opt.user ? ' Користувач «Ви» щойно написав у чаті — відреагуй саме на це (звертайся до нього), потім можна додати ще 1 репліку між учасниками.' : '') +
+        '\nВідповідь — ЛИШЕ JSON-масив: [{"u":"Ім\u2019я","m":"текст"}]. Імена тільки зі списку учасників.';
+      var h = (hist[ch] || []).slice(-10);
+      return [{ role: 'system', content: sys }, { role: 'user', content: h.length ? 'Останні повідомлення:\n' + plain(h) : 'Чат щойно відкрили — почни природну розмову за темою каналу.' }];
+    }
+    function parse(txt) {
+      var m = String(txt).match(/\[[\s\S]*\]/); if (!m) return [];
+      var a; try { a = JSON.parse(m[0]); } catch (e) { return []; }
+      if (!Array.isArray(a)) return [];
+      return a.filter(function (x) { return x && BYNAME[x.u] && typeof x.m === 'string' && x.m.trim(); }).slice(0, 6)
+              .map(function (x) { return { u: x.u, m: x.m.trim().slice(0, 280) }; });
+    }
+    function localLines(ch, userTxt) {
+      var ps = pickPers(2);
+      if (userTxt) {
+        var q = /\?/.test(userTxt), A = q ? ['Гарне питання! Я б спробував так і подивився, що вийде.', 'Хм, залежить від ситуації, але загалом — так.', 'Хтось тут точно знає краще, але мій варіант — спробувати.']
+                                          : ['Круто сказано 👍', 'Ха, я теж так думаю', 'Цікаво! Розкажи більше?', 'Не згоден, але аргумент прийнятий 😄'];
+        return [{ u: ps[0].n, m: A[(Math.random() * A.length) | 0] }, { u: ps[1].n, m: 'А я б додав: ' + (LOCAL[ch] ? LOCAL[ch][(Math.random() * 3) | 0][1] : 'спробуй і розкажеш!') }];
+      }
+      var pr = (LOCAL[ch] || LOCAL.general)[(Math.random() * 3) | 0];
+      return [{ u: ps[0].n, m: pr[0] }, { u: ps[1].n, m: pr[1] }];
+    }
+    function setTyping(ch, who) {
+      var m = document.getElementById('discordMessages'); if (!m) return;
+      if (!typingEl || !typingEl.isConnected) {
+        typingEl = document.createElement('div'); typingEl.className = 'fx-typing'; m.parentNode.insertBefore(typingEl, m.nextSibling);
+      }
+      typingEl.textContent = (who && currentDiscordChannel === ch) ? '✍️ ' + who + ' друкує…' : '';
+    }
+    function push(ch, u, m, color, mine) {
+      (hist[ch] = hist[ch] || []).push({ u: u, m: m }); if (hist[ch].length > 30) hist[ch].shift();
+      addMessageToChannel(ch, esc(u), esc(m), color);
+      if (mine) { var box = document.getElementById('discordMessages'); if (box && box.lastChild && currentDiscordChannel === ch) box.lastChild.classList.add('fx-me'); }
+    }
+    async function play(ch, lines) {
+      for (var i = 0; i < lines.length; i++) {
+        if (!alive) return;
+        var L = lines[i]; setTyping(ch, L.u);
+        await sleep(Math.max(700, Math.min(2600, 450 + L.m.length * 38)));
+        if (!alive) return; setTyping(ch, '');
+        push(ch, L.u, L.m, BYNAME[L.u].c); await sleep(rnd(300, 800));
+      }
+    }
+    async function batch(ch, o) {
+      o = o || {};
+      while (busy[ch]) { await sleep(300); if (!alive) return; }
+      busy[ch] = true;
+      try {
+        var lines = [];
+        if (allowed(!!o.bg)) {
+          if (o.bg) { bgLog.push(now()); sess.bg++; }
+          var r = await groq(prompt(ch, o), { max: 560, temp: 0.95 });
+          if (r.text) lines = parse(r.text);
+        }
+        if (!lines.length) lines = localLines(ch, o.userTxt);
+        if (!alive) return;
+        await play(ch, lines);
+      } catch (e) {} finally { busy[ch] = false; setTyping(ch, ''); }
+    }
+    function userSay(ch, txt) {
+      push(ch, tt('Ви'), txt, '#8EA2FF', true);
+      batch(ch, { user: true, userTxt: txt, n: 3 });
+    }
+    async function askBarabulka(txt) {
+      var inp = document.querySelector('#discordOverlay input[type="text"]');
+      addMessageToChannel('ai', esc(tt('Ви')), esc(txt), '#8EA2FF');
+      var box = document.getElementById('discordMessages'); if (box && box.lastChild) box.lastChild.classList.add('fx-me');
+      if (inp) inp.disabled = true; setTyping('ai', tt('Барабулька'));
+      var ans = await window.generateAIResponseDirect(txt);
+      setTyping('ai', '');
+      if (!alive) return;
+      if (ans && ans.error) addMessageToChannel('ai', esc(tt('Барабулька')), esc(tt('Помилка: ') + ans.message), '#FF4444');
+      else addMessageToChannel('ai', esc(tt('Барабулька')), esc(ans), '#00FFAA');
+      if (inp) { inp.disabled = false; try { inp.focus(); } catch (e) {} }
+    }
+
+    /* ---------- фонова активність (замість шаблонних фраз) ---------- */
+    window.startDiscordActivity = function () {
+      try { if (discordActivityInterval) clearInterval(discordActivityInterval); } catch (e) {}
+      nextBg = now() + 7000;
+      try {
+        discordActivityInterval = setInterval(function () {
+          if (!alive || !discordOverlay || document.hidden || now() < nextBg) return;
+          var ch;
+          for (var k = 0; k < 6; k++) { ch = TEXT[(Math.random() * TEXT.length) | 0]; if (lastCh.indexOf(ch) < 0) break; }
+          lastCh.push(ch); if (lastCh.length > 2) lastCh.shift();
+          var ai = allowed(true);
+          nextBg = now() + (ai ? rnd(LIM.bgEvery[0], LIM.bgEvery[1]) : rnd(20000, 35000));
+          batch(ch, { bg: true, n: 4 });
+        }, 3000);
+      } catch (e) {}
+    };
+
+    /* ---------- обгортки навколо функцій гри ---------- */
+    var oShow = window.showDiscord, oSwitch = window.switchDiscordChannel, oHide = window.hideDiscord;
+    function renderMsg(box, msg) {
+      var md = document.createElement('div');
+      md.style.cssText = 'margin-bottom:20px;padding:10px;background:rgba(0,0,0,0.5);border-radius:8px;border-left:4px solid ' + msg.color + ';animation:fadeIn 0.3s ease;';
+      md.innerHTML = '<div style="display:flex;align-items:center;margin-bottom:5px;"><div style="width:32px;height:32px;background:' + msg.color + ';border-radius:50%;margin-right:10px;display:flex;align-items:center;justify-content:center;font-weight:bold;">' +
+        String(msg.user).replace(/&[a-z]+;/g, '?').charAt(0) + '</div><div><span style="color:' + msg.color + ';font-weight:bold;">' + msg.user + '</span><span style="color:#72767d;font-size:12px;margin-left:10px;">' + msg.time +
+        '</span></div></div><div style="color:#dcddde;padding-left:42px;font-size:14px;">' + msg.message + '</div>';
+      if (msg.user === esc(tt('Ви'))) md.classList.add('fx-me');
+      box.appendChild(md);
+    }
+    window.showDiscord = function () {
+      if (discordOverlay) return;
+      try { userGroqApiKey = KEY; } catch (e) {}
+      alive = true; convo = []; hist = {}; seeded = {}; busy = {}; sess.bg = 0; lastCh = []; typingEl = null;
+      var r = oShow.apply(this, arguments);
+      try {
+        var gm = (discordChannelMessages.general || []);
+        hist.general = gm.map(function (x) { return { u: x.user, m: String(x.message).replace(/<[^>]*>/g, '') }; });
+        var inp = discordOverlay.querySelector('input[type="text"]'), btn = inp && inp.parentNode.querySelector('button');
+        if (btn) btn.onclick = function () {
+          var txt = inp.value.trim(); if (!txt) return;
+          var ch = currentDiscordChannel; if (ch === 'voice' || inp.disabled) return;
+          inp.value = '';
+          if (ch === 'ai') askBarabulka(txt); else userSay(ch, txt);
+        };
+      } catch (e) {}
+      return r;
+    };
+    window.switchDiscordChannel = function (cid) {
+      var r = oSwitch.apply(this, arguments);
+      if (!alive) return r;
+      try {
+        setTyping(cid, '');
+        if (cid === 'reality') {                       // ключ більше не потрібен — це звичайний тематичний канал
+          var box = document.getElementById('discordMessages'), inp = document.querySelector('#discordOverlay input[type="text"]');
+          if (box) { box.innerHTML = ''; (discordChannelMessages.reality || []).forEach(function (m) { renderMsg(box, m); }); box.scrollTop = box.scrollHeight; }
+          if (inp) { inp.disabled = false; inp.placeholder = tt('Напишіть повідомлення...'); }
+        }
+        if (TEXT.indexOf(cid) > -1 && !seeded[cid]) { seeded[cid] = true; setTimeout(function () { if (alive) batch(cid, { n: 4 }); }, 400); }
+      } catch (e) {}
+      return r;
+    };
+    window.hideDiscord = function () {
+      alive = false; convo = []; hist = {}; seeded = {}; busy = {};        // сесія стирається — Барабулька «забуває» розмову
+      try { if (typingEl) typingEl.remove(); } catch (e) {} typingEl = null;
+      return oHide.apply(this, arguments);
     };
   })();
 
