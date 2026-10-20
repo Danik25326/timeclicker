@@ -1,4 +1,4 @@
-/* scenes.js v4 — сучасні версії «сцен» апгрейдів (та сама ідея, новий вигляд).
+/* scenes.js v5 — сучасні версії «сцен» апгрейдів (та сама ідея, новий вигляд).
    Підключається ПІСЛЯ script.js і fx.js. Підміняє функції show…() і використовує
    ті самі глобальні змінні та hide…() гри, тож логіка/нагороди не змінюються. */
 (function () {
@@ -588,6 +588,11 @@
           var ch = currentDiscordChannel; if (ch === 'voice' || inp.disabled) return;
           inp.value = '';
           if (ch === 'ai') askBarabulka(txt); else userSay(ch, txt);
+        };
+        // ВАЖЛИВО: оригінал мав  onkeydown=(e)=>e.key==='Enter'&&sb.click()  — для будь-якої клавіші, крім Enter,
+        // це повертає false, а false з onkeydown СКАСОВУЄ натискання → текст не вводився взагалі.
+        inp.onkeydown = function (e) {
+          if (e.key === 'Enter' && !e.isComposing) { e.preventDefault(); if (btn) btn.click(); }   // нічого не повертаємо
         };
         renderQuota();
       } catch (e) {}
