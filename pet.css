@@ -1,0 +1,50 @@
+/* pet.css v1 — улюбленець: картка покупки, студія, актор на екрані. Підключається ПІСЛЯ features.css */
+
+/* ================= актор ================= */
+#fxPet{position:fixed;left:0;bottom:6px;z-index:47;pointer-events:auto;touch-action:manipulation;will-change:transform;cursor:pointer;-webkit-tap-highlight-color:transparent;user-select:none;-webkit-user-select:none}
+#fxPet .pet-cv,#fxPet .pet-flat{display:block;width:100%;height:100%;pointer-events:none;object-fit:contain}
+#fxPet .pet-flat{transform-origin:50% 90%}
+#fxPet .pet-shadow{position:absolute;left:16%;right:16%;bottom:3%;height:11%;border-radius:50%;background:radial-gradient(ellipse at center,rgba(0,0,0,.5),transparent 70%);pointer-events:none}
+#fxPet .pet-say{position:absolute;left:50%;bottom:100%;width:max-content;max-width:190px;padding:7px 13px;border-radius:16px;background:#fff;color:#1a1a2e;font:600 14px/1.25 'Poppins',system-ui,sans-serif;
+  transform:translate(-50%,8px) scale(.8);opacity:0;transition:opacity .2s,transform .35s var(--fx-spring);pointer-events:none;box-shadow:0 8px 24px rgba(0,0,0,.35);text-align:center}
+#fxPet .pet-say.on{opacity:1;transform:translate(-50%,-2px) scale(1)}
+#fxPet .pet-say::after{content:"";position:absolute;left:50%;top:100%;margin-left:-7px;border:7px solid transparent;border-top-color:#fff}
+body.th-halloween #fxPet .pet-say{background:#ffefd9;color:#3a1500}
+body.th-halloween #fxPet .pet-say::after{border-top-color:#ffefd9}
+
+/* ================= картка у «Множниках» ================= */
+.pet-card{margin-bottom:14px;padding:14px;border-radius:20px;background:linear-gradient(135deg,rgba(236,72,153,.16),rgba(139,92,246,.14));border:1px solid rgba(236,72,153,.4);color:#eef2ff}
+.pet-card .pc-top{display:flex;gap:12px;align-items:center;margin-bottom:10px}
+.pet-card .pc-top b{display:block;font-size:16px;margin-bottom:3px}
+.pet-card .pc-top small{display:block;font-size:12.5px;line-height:1.4;color:#c9d2ef}
+.pet-card .pc-ic{flex:none;width:54px;height:54px;border-radius:16px;background:rgba(255,255,255,.1);display:flex;align-items:center;justify-content:center;font-size:30px}
+.pet-card .pc-th{flex:none;width:54px;height:54px;object-fit:contain;border-radius:14px;background:rgba(255,255,255,.08)}
+.pet-card .pc-note{display:block;margin-top:8px;color:#ffd1e6;font-size:12px}
+.pet-card .fx-btn{width:auto}
+
+/* ================= студія ================= */
+.pet-studio{width:min(580px,96vw);text-align:left}
+.pet-studio h3{text-align:center}
+.pet-studio .ps-hint{font-size:13.5px;color:#b8c4e4;line-height:1.5;margin:0 0 12px;text-align:center}
+.pet-studio .ps-pick{display:flex;width:max-content;margin:18px auto;align-items:center;gap:8px;cursor:pointer}
+.pet-studio .ps-view{display:block;width:100%;max-height:48vh;object-fit:contain;margin:0 auto;border-radius:14px;touch-action:none;cursor:crosshair;border:1px solid rgba(255,255,255,.15)}
+.pet-studio .ps-tools{display:grid;gap:8px;margin:10px 0 4px;font-size:13px;color:#c9d2ef}
+.pet-studio .ps-tools label,.pet-studio .ps-form label{display:grid;gap:5px;font-size:13px;color:#c9d2ef}
+.pet-studio input[type=range]{width:100%;accent-color:#ec4899}
+.pet-studio input[type=text],.pet-studio select{width:100%;padding:10px 12px;border-radius:12px;border:1px solid rgba(255,255,255,.2);background:rgba(255,255,255,.08);color:#fff;font:inherit;font-size:14px}
+.pet-studio select option{background:#101528;color:#fff}
+.pet-studio input[type=file]{font-size:12px;color:#c9d2ef}
+.pet-studio .ps-form{display:grid;gap:10px;margin:8px 0}
+.pet-studio .ps-prev{display:flex;justify-content:center;margin-bottom:6px}
+.pet-studio .ps-prev canvas,.pet-studio .ps-prev img{width:220px;height:220px;border-radius:20px;background:radial-gradient(circle at 50% 40%,rgba(255,255,255,.1),rgba(255,255,255,.02));border:1px solid rgba(255,255,255,.14);object-fit:contain}
+.pet-studio .fx-btn.on{outline:2px solid #fff;outline-offset:1px}
+.pet-studio .fx-row{margin:10px 0 0}
+@keyframes psSpin{to{transform:rotateY(360deg)}}
+.pet-studio .pet-flat.spin{animation:psSpin 3s linear infinite}
+@media (prefers-reduced-motion:reduce){#fxPet .pet-say{transition:none}}
+
+/* дрібні виправлення студії */
+.pet-studio [hidden]{display:none !important}
+.pet-studio input[type=range]{-webkit-appearance:none;appearance:none;height:8px;border-radius:999px;background:rgba(255,255,255,.16);outline:none;padding:0}
+.pet-studio input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:22px;height:22px;border-radius:50%;background:linear-gradient(135deg,#ffb36b,#ec4899);border:2px solid #fff;box-shadow:0 2px 8px rgba(0,0,0,.4);cursor:pointer}
+.pet-studio input[type=range]::-moz-range-thumb{width:20px;height:20px;border-radius:50%;background:linear-gradient(135deg,#ffb36b,#ec4899);border:2px solid #fff;cursor:pointer}

@@ -1,0 +1,130 @@
+/* features.css v1 — вкладка «Події», модальні вікна, Хелловін-тема та сезонні скіни. Підключається ПІСЛЯ scenes.css */
+
+/* ================= спільні кнопки / модальні вікна ================= */
+.fx-btn{padding:12px 22px;border:0;border-radius:999px;font-family:inherit;font-weight:700;font-size:15px;cursor:pointer;color:#06101e;
+  background:linear-gradient(135deg,#7dd3fc,#a78bfa);box-shadow:0 8px 22px rgba(var(--fx-accent-rgb),.3);transition:transform .25s var(--fx-spring),filter .2s,opacity .2s}
+.fx-btn:hover:not(:disabled){transform:translateY(-2px) scale(1.03)}
+.fx-btn:disabled{opacity:.45;cursor:default;filter:saturate(.4)}
+.fx-btn.ghost{background:rgba(255,255,255,.1);color:#fff;border:1px solid rgba(255,255,255,.22);box-shadow:none}
+.fx-btn.sm{padding:7px 16px;font-size:13px}
+.fx-row{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-top:12px}
+.fx-modal{position:fixed;inset:0;z-index:9992;display:flex;align-items:center;justify-content:center;background:rgba(3,5,14,.84);opacity:0;transition:opacity .3s;font-family:'Poppins',system-ui,sans-serif;color:#eef2ff;padding:12px}
+.fx-modal.in{opacity:1}
+.fx-modal-card{position:relative;width:min(520px,94vw);max-height:94vh;overflow:auto;padding:22px;border-radius:26px;background:linear-gradient(160deg,rgba(24,30,66,.97),rgba(8,10,26,.98));
+  border:1px solid rgba(255,255,255,.16);box-shadow:0 30px 90px rgba(0,0,0,.7);transform:translateY(20px) scale(.97);transition:transform .45s var(--fx-spring);text-align:center}
+.fx-modal.in .fx-modal-card{transform:none}
+.fx-modal-card h3{margin:0 0 12px;font-size:20px}
+.fx-modal-card img{width:100%;max-height:62vh;object-fit:contain;border-radius:16px;box-shadow:0 12px 40px rgba(0,0,0,.5)}
+.fx-x{position:absolute;top:10px;right:10px;width:36px;height:36px;border-radius:50%;border:1px solid rgba(255,255,255,.2);background:rgba(255,255,255,.1);color:#fff;font-size:22px;line-height:1;cursor:pointer}
+
+/* ================= вкладка «Події» ================= */
+.top-tabs .tab.fx-dot::after{content:"";position:absolute;top:5px;right:9px;width:9px;height:9px;border-radius:50%;background:#ff3b5c;box-shadow:0 0 8px #ff3b5c;animation:fxDot 1.6s ease-in-out infinite}
+@keyframes fxDot{50%{transform:scale(1.35)}}
+body.fx-lite .top-tabs .tab.fx-dot::after{animation:none}
+.ev-grid{display:grid;gap:14px}
+.ev-card{padding:16px;border-radius:20px;background:linear-gradient(145deg,rgba(255,255,255,.07),rgba(255,255,255,.02));border:1px solid rgba(255,255,255,.12)}
+.ev-h{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px;font-size:16px}
+.ev-streak{font-size:13px;color:#fcd34d;white-space:nowrap}
+.ev-note{font-size:13px;color:#aebbd8;line-height:1.45;margin:6px 0 12px}
+.ev-days{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin-bottom:12px}
+.ev-day{display:flex;flex-direction:column;align-items:center;gap:2px;padding:8px 2px;border-radius:12px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);font-size:11px;text-align:center;min-width:0}
+.ev-day small{font-size:10px;color:#9fb0d4}
+.ev-day i{font-style:normal;font-size:20px}
+.ev-day span{font-weight:700;font-size:11px;overflow:hidden;text-overflow:ellipsis;max-width:100%;white-space:nowrap}
+.ev-day.done{background:rgba(52,211,153,.14);border-color:rgba(52,211,153,.4)}
+.ev-day.today{background:rgba(var(--fx-accent-rgb),.22);border-color:rgba(var(--fx-accent-rgb),.8);box-shadow:0 0 18px rgba(var(--fx-accent-rgb),.4);transform:translateY(-3px)}
+.ev-day.future{opacity:.6}
+.ev-day.big{background:linear-gradient(145deg,rgba(251,191,36,.2),rgba(236,72,153,.12));border-color:rgba(251,191,36,.45)}
+.ev-q{padding:10px 0;border-top:1px solid rgba(255,255,255,.07)}
+.ev-q:first-of-type{border-top:0}
+.ev-q.claimed{opacity:.55}
+.ev-qt{display:flex;justify-content:space-between;gap:10px;font-size:14px;margin-bottom:6px}
+.ev-bar{height:8px;border-radius:999px;background:rgba(255,255,255,.1);overflow:hidden}
+.ev-bar.big{height:12px;margin:6px 0 12px}
+.ev-bar i{display:block;height:100%;border-radius:inherit;background:linear-gradient(90deg,var(--fx-accent),#a78bfa);transition:width .4s var(--fx-ease)}
+.ev-qr{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:6px}
+.ev-qr small{color:#9fb0d4;font-size:12px}
+.ev-rw{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:8px}
+.ev-r{position:relative;padding:8px 10px;border-radius:12px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);font-size:12px;display:flex;flex-direction:column;gap:2px}
+.ev-r b{color:#ffb36b}
+.ev-r.got{background:rgba(255,122,0,.15);border-color:rgba(255,122,0,.5)}
+.ev-r em{position:absolute;top:6px;right:8px;font-style:normal;color:#4ade80}
+.ev-hal{background:linear-gradient(145deg,rgba(255,122,0,.14),rgba(139,60,255,.1));border-color:rgba(255,122,0,.4)}
+body.mobile-version .ev-day small{display:none}
+@media (max-width:420px){.ev-day{padding:6px 0}.ev-day i{font-size:17px}}
+
+/* ================= ХЕЛЛОВІН: тема ================= */
+body.th-halloween::before{
+  background:
+    radial-gradient(40% 35% at 18% 22%,rgba(255,122,0,.26),transparent 70%),
+    radial-gradient(35% 40% at 82% 18%,rgba(139,60,255,.28),transparent 70%),
+    radial-gradient(45% 40% at 70% 88%,rgba(255,60,0,.16),transparent 70%),
+    radial-gradient(60% 60% at 50% 50%,#170a22,#06030b 80%) !important;
+}
+body.th-halloween.fx-lite::before{background:radial-gradient(60% 45% at 20% 18%,rgba(255,122,0,.2),transparent 70%),radial-gradient(50% 40% at 82% 85%,rgba(139,60,255,.2),transparent 70%),#08040d !important}
+body.th-halloween::after{background:radial-gradient(120% 90% at 50% 50%,transparent 50%,rgba(35,8,0,.65) 100%),radial-gradient(70% 22% at 50% 108%,rgba(255,110,0,.3),transparent 70%)}
+body.th-halloween.fx-lite::after{display:none}
+body.th-halloween .editable-title{background:linear-gradient(100deg,#fff 15%,#ffc27a 50%,#ff7a00 85%);background-size:200% 100%;-webkit-background-clip:text;background-clip:text}
+body.th-halloween .editable-title::after{content:" 🎃";-webkit-text-fill-color:initial}
+body.th-halloween .top-tabs .tab.active{background:linear-gradient(135deg,#ffb36b,#ff7a00);color:#2a0d00;box-shadow:0 0 22px rgba(255,122,0,.6),inset 0 1px 0 rgba(255,255,255,.6)}
+body.th-halloween .fx-btn{background:linear-gradient(135deg,#ffb36b,#ff7a00);color:#2a0d00}
+body.th-halloween .fx-btn.ghost{background:rgba(255,255,255,.1);color:#fff}
+body.th-halloween #clickableClock .second{background:linear-gradient(180deg,#e9d5ff,#a855f7 50%,#6b21a8);box-shadow:0 0 14px #a855f7,0 0 30px rgba(168,85,247,.55)}
+body.th-halloween #clickableClock .center-dot{background:radial-gradient(circle at 35% 30%,#fff,#a855f7 55%,#4c1d95);box-shadow:0 0 20px #a855f7,0 3px 8px rgba(0,0,0,.6)}
+body.th-halloween[data-hand-skin="darkblue"] #clickableClock .hand:not(.second){background:linear-gradient(180deg,#fff1dc,#ff9a3c 45%,#a83d00) !important;box-shadow:0 0 16px rgba(255,122,0,.65) !important;--hc:#ff9a3c}
+body.th-halloween .skin[data-skin="neon-blue"]{--c:#ff7a00}
+body.th-halloween .upgrade-btn[data-ic]::before{background:rgba(255,122,0,.18);border-color:rgba(255,122,0,.4)}
+
+/* декор: павутиння, кажани, місяць */
+#fxDeco{position:fixed;inset:0;z-index:48;pointer-events:none;overflow:hidden}
+#fxDeco .web{position:absolute;top:0;opacity:.42}
+#fxDeco .web.l{left:0}
+#fxDeco .web.r{right:0;transform:scaleX(-1)}
+#fxDeco .moon{position:absolute;top:70px;right:14%;width:84px;height:84px;border-radius:50%;background:radial-gradient(circle at 35% 35%,#fffbe8,#ffe9a8 60%,#f3c969);opacity:.2;box-shadow:0 0 70px 20px rgba(255,214,120,.25)}
+#fxDeco .bat{position:absolute;left:-60px;font-style:normal;font-size:26px;opacity:.85;animation:fxBat 18s linear infinite}
+#fxDeco .b1{top:12%;animation-duration:17s}
+#fxDeco .b2{top:26%;font-size:20px;animation-duration:24s;animation-delay:-9s}
+#fxDeco .b3{top:7%;font-size:30px;animation-duration:30s;animation-delay:-18s}
+@keyframes fxBat{0%{transform:translate3d(0,0,0) rotate(-8deg)}25%{transform:translate3d(28vw,40px,0) rotate(6deg)}50%{transform:translate3d(60vw,-10px,0) rotate(-6deg)}75%{transform:translate3d(90vw,50px,0) rotate(7deg)}100%{transform:translate3d(115vw,10px,0) rotate(-8deg)}}
+body.fx-lite #fxDeco .b2,body.fx-lite #fxDeco .b3,body.fx-lite #fxDeco .moon{display:none}
+body.fx-lite #fxDeco .web{opacity:.3;transform:scale(.7);transform-origin:top left}
+body.fx-lite #fxDeco .web.r{transform:scaleX(-1) scale(.7);transform-origin:top right}
+@media (prefers-reduced-motion:reduce){#fxDeco .bat{animation:none}}
+
+/* ================= сезонні скіни ================= */
+.skin[data-hal]{position:relative}
+.skin[data-hal]::after{content:"🎃";position:absolute;top:5px;right:7px;font-size:13px;opacity:.9}
+.skin[data-type="clockSkins"][data-skin="pumpkin"]{--c:#ff7a00}
+.skin[data-type="clockSkins"][data-skin="witch"]{--c:#84cc16}
+.skin[data-type="clockSkins"][data-skin="blood"]{--c:#dc2626}
+.skin[data-type="shapes"][data-skin="pumpkin"] .fx-pv{border-radius:50%/44%;width:42px;height:34px;margin:2px 0}
+.skin[data-type="shapes"][data-skin="tombstone"] .fx-pv{border-radius:50% 50% 5px 5px/46% 46% 5px 5px}
+.skin[data-type="handSkins"][data-skin="bone"]{--h:linear-gradient(90deg,#d9cfb4,#fffaf0,#cfc4a6)}
+.skin[data-type="handSkins"][data-skin="flame"]{--h:linear-gradient(#fff3a0,#ff9a1a,#e0360c)}
+.skin[data-type="effects"][data-skin="ghost"] .fx-pv::before,
+.skin[data-type="effects"][data-skin="bats"] .fx-pv::before,
+.skin[data-type="effects"][data-skin="candy"] .fx-pv::before{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:27px}
+.skin[data-type="effects"][data-skin="ghost"] .fx-pv::before{content:"👻"}
+.skin[data-type="effects"][data-skin="bats"] .fx-pv::before{content:"🦇"}
+.skin[data-type="effects"][data-skin="candy"] .fx-pv::before{content:"🍬"}
+.skin[data-type="effects"][data-skin="ghost"] .fx-pv,.skin[data-type="effects"][data-skin="bats"] .fx-pv,.skin[data-type="effects"][data-skin="candy"] .fx-pv{background:none;box-shadow:none}
+
+/* форми годинника */
+.clock.pumpkin{border-radius:50%/44%}
+.clock.tombstone{border-radius:50% 50% 8% 8%/44% 44% 8% 8%}
+body[data-shape="pumpkin"] #clockWrapper::before{border-radius:50%/44%}
+body[data-shape="tombstone"] #clockWrapper::before{border-radius:50% 50% 8% 8%/44% 44% 8% 8%}
+
+/* стрілки */
+body[data-hand-skin="bone"] #clickableClock .hand:not(.second){background:linear-gradient(90deg,#d9cfb4,#fffaf0 45%,#cfc4a6) !important;box-shadow:0 0 12px rgba(255,250,235,.55) !important;--hc:#fffaf0}
+body[data-hand-skin="flame"] #clickableClock .hand:not(.second){background:linear-gradient(180deg,#fff3a0,#ff9a1a 45%,#e0360c) !important;box-shadow:0 0 18px #ff6a00,0 0 36px rgba(255,80,0,.6) !important;--hc:#ffb347}
+body.fx-lite[data-hand-skin="bone"] #clickableClock .hand:not(.second),body.fx-lite[data-hand-skin="flame"] #clickableClock .hand:not(.second){box-shadow:none !important}
+
+/* ефекти кліку */
+@keyframes clickGhost{0%,100%{transform:scale(1)}40%{transform:scale(1.06);border-color:#c8ffdc;box-shadow:0 0 80px #9dffc0,0 0 150px rgba(157,255,192,.5)}}
+@keyframes clickBats{0%,100%{transform:scale(1)}40%{transform:scale(1.06);border-color:#a855f7;box-shadow:0 0 80px #a855f7,0 0 150px rgba(168,85,247,.55)}}
+@keyframes clickCandy{0%,100%{transform:scale(1)}40%{transform:scale(1.07);border-color:#ff9a1a;box-shadow:0 0 80px #ff7a00,0 0 150px rgba(255,122,0,.55)}}
+.click-effect-ghost{animation:clickGhost .45s var(--fx-ease)}
+.click-effect-bats{animation:clickBats .45s var(--fx-ease)}
+.click-effect-candy{animation:clickCandy .45s var(--fx-ease)}
+body.fx-lite .click-effect-ghost,body.fx-lite .click-effect-bats,body.fx-lite .click-effect-candy{animation:fxLitePulse .22s ease-out !important}
