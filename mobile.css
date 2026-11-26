@@ -1,0 +1,36 @@
+/* mobile.css v1 — телефони: туторіал, вузькі екрани, захист від жестів. Підключається ПІСЛЯ pet.css */
+
+/* ===== жести: без «pull-to-refresh» (вистрибування на початок) і без зуму подвійним тапом по годиннику; щипок для зуму лишається ===== */
+html,body{overscroll-behavior:none}
+html{touch-action:manipulation}
+body.mobile-version{overflow-x:hidden}
+
+/* ===== туторіал на телефонах: компактне «нижнє вікно» ===== */
+body.mobile-version .tutorial-dialogue-box{
+  left:8px !important;right:8px !important;width:auto !important;max-width:none !important;transform:none !important;
+  top:auto !important;bottom:calc(8px + env(safe-area-inset-bottom)) !important;
+  padding:12px 14px 12px !important;border-radius:16px !important;text-align:left !important;
+  display:none;flex-direction:column;overflow:hidden;transition:none !important;box-shadow:0 0 30px rgba(14,165,233,.45) !important}
+body.mobile-version .tutorial-dialogue-box[style*="display: block"]{display:flex !important}
+body.mobile-version .tutorial-dialogue-box.fx-at-top{top:calc(48px + env(safe-area-inset-top)) !important;bottom:auto !important}
+body.mobile-version .tutorial-dialogue-box.fx-at-bottom{top:auto !important;bottom:calc(8px + env(safe-area-inset-bottom)) !important}
+body.mobile-version .tutorial-dialogue-box.dialogue-top:not(.fx-at-bottom):not(.fx-at-top){top:calc(48px + env(safe-area-inset-top)) !important;bottom:auto !important}
+body.mobile-version #tutorialText{font-size:14.5px !important;line-height:1.42 !important;min-height:0 !important;margin-bottom:10px !important;overflow-y:auto;flex:1 1 auto;-webkit-overflow-scrolling:touch}
+body.mobile-version #tutorialDialogue > div[style*="display:flex"]{flex:none;justify-content:space-between !important}
+body.mobile-version #tutorialBackBtn,body.mobile-version #tutorialNextBtn{min-height:42px;padding:9px 18px !important;font-size:14px !important}
+body.mobile-version #tutorialNextBtn{flex:1}
+body.mobile-version #tutorialChoiceBtns{flex-direction:column}
+body.mobile-version #tutorialChoiceBtns button{padding:12px 16px !important;font-size:14px;width:100%}
+body.mobile-version #skipTutorialTopBtn{top:calc(8px + env(safe-area-inset-top)) !important;right:8px !important;padding:6px 12px !important;font-size:12px !important;border-radius:999px !important}
+#fxTutProg{font-size:11px;letter-spacing:.06em;color:#7dd3fc;margin:0 0 6px;opacity:.85;flex:none}
+
+/* ===== вузькі екрани (≤380px): клітинка «панель + годинник» більше не ширша за екран ===== */
+@media (max-width:380px){
+  body.mobile-version .container{gap:10px}
+  body.mobile-version .left-panel{width:40%}
+  body.mobile-version .right-panel{width:auto;flex:1 1 0;min-width:0;padding-right:4px}
+  body.mobile-version .clock{width:min(209px,50vw);height:min(209px,50vw)}
+  body.mobile-version #clickableClock .hour{height:23.9%}
+  body.mobile-version #clickableClock .minute{height:35.4%}
+  body.mobile-version #clickableClock .second{height:42.1%}
+}
